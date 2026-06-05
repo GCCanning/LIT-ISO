@@ -13,6 +13,8 @@
 | Port welcome menu -> load IsoCoreFoundation.unity | Claude | claude/menu-port | REVIEW | DONE wiring: ConfigureLaunch() call added + build settings repointed to IsoCoreFoundation. Ready for integrated play-test. |
 | Build settings -> IsoCoreFoundation (shared cfg) | Claude | claude/menu-port | REVIEW | repointed slot 1 from SampleScene; announced in from-claude.md |
 
+| Menu visual style-spec (palette-agnostic) | Claude | claude/menu-style-spec | DONE | `Docs/menu-style-spec.md`; execute after A1 sets palette |
+
 ## Up next (unclaimed)
 - A2 terrain block faces (original art).
 - Save/load `FoundationSaveData`.
