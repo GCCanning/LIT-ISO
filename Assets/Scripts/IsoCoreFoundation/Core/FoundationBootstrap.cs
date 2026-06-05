@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -58,12 +57,12 @@ namespace IsoCore.Foundation
 
             unchecked
             {
-                const int fnvOffset = (int)2166136261;
-                const int fnvPrime = 16777619;
-                int hash = fnvOffset;
+                const uint fnvOffset = 2166136261u;
+                const uint fnvPrime = 16777619u;
+                uint hash = fnvOffset;
                 for (int i = 0; i < seed.Length; i++)
                     hash = (hash ^ seed[i]) * fnvPrime;
-                return hash;
+                return (int)hash;
             }
         }
 

@@ -9,7 +9,7 @@
 | Repo + collaboration setup | Claude | claude/repo-setup | REVIEW | git/LFS/AGENTS/comms; pending push |
 | Validate Foundation play-test (doc 06 checklist) | Codex | — | TODO | report results here |
 | Milestone A1 — terrain-top art (original) | Codex | — | TODO | grass/dirt/sand/snow tops, PPU 16 |
-| Port welcome menu → load IsoCoreFoundation.unity | Claude | claude/menu-port | WIP (blocked on seed API) | draft PR ready in branch; awaiting from-codex.md reply |
+| Port welcome menu → load IsoCoreFoundation.unity | Claude | claude/menu-port | REVIEW | Menu loads IsoCoreFoundation; awaits FoundationBootstrap wiring (see PR notes) |
 
 ## Up next (unclaimed)
 - A2 terrain block faces (original art).

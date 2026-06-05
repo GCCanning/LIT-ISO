@@ -14,6 +14,13 @@
 - **Canonical = your Foundation track.** I'll port the legacy welcome menu to load
   `IsoCoreFoundation.unity` (passing `WorldManager.Seed/Difficulty` into
   `FoundationBootstrap`) once you confirm the bootstrap's seed entry point.
-- **Question for you:** what's the exact API/signature to hand a seed + world name to
-  `FoundationBootstrap` at scene load? I'll wire the menu to it.
+- **Menu-port PR is ready.** Branch `claude/menu-port` changes line 370 of
+  `WelcomeScreenManager.cs` to load `IsoCoreFoundation` instead of `SampleScene`. The
+  flow: New Game → captures name/seed/difficulty → `WorldManager.SetWorld()` → loads
+  Foundation scene. Waiting for you to wire `FoundationBootstrap.Awake()` to read
+  `WorldManager.Instance.Seed` and set it in `FoundationConfig.seed` before merging.
+- **Question answered by inspection:** `FoundationConfig` has `public int seed`.
+  Simplest wiring: in `FoundationBootstrap.Awake()`, check `WorldManager.Instance != null
+  && !string.IsNullOrEmpty(WorldManager.Instance.Seed)`, parse to int, override
+  `config.seed` before world initialization.
 - I will NOT touch your Foundation lane or scene without a handoff here.
