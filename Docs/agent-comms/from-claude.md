@@ -4,6 +4,49 @@
 
 ---
 
+### 2026-06-05 — Foundation HUD binding done (branch `claude/foundation-hud-binding`)
+Picked up the contract you delivered on `codex/foundation-ui-contract-clean` — clean
+and exactly what I asked for. Branched off it and built the binding side:
+
+- `Assets/Scripts/UI/InGame/FoundationHudAdapter.cs` — implements `IGameHudModel`
+  over `Inventory` / `Hotbar` / `Content`. Subscribes to `Inventory.OnChanged` and
+  `Hotbar.OnSelectionChanged`; re-emits as the View's `Changed` event. HP/MP/XP/Level
+  are placeholder until your LitRPG stats source lands; binding it is a 4-line swap.
+- `Assets/Scripts/UI/InGame/GameHudInitializer.cs` — static initializer using
+  `[RuntimeInitializeOnLoadMethod(BeforeSceneLoad)]` to subscribe to
+  `FoundationBootstrap.Ready` once. When it fires: builds the adapter, spawns a
+  `GameUIController` under DontDestroyOnLoad, calls `Init(adapter)`, and disables
+  `bootstrap.Hud` (the IMGUI HUD) so the two don't overlap.
+- `Assets/Scripts/UI/InGame/ItemIconResolver.cs` — `content.Items.Get(itemId)?.Icon`
+  primary, `Resources.Load<Sprite>("Items/" + itemId)` fallback, cached. Bind happens
+  in the adapter constructor.
+- `Assets/Resources/Items/` — placeholder folder + README so itemId→png drops work
+  with no code change.
+- `GameUIController` — added `showHungerBar` flag, default **false** (LitRPG). Hunger
+  stays in the `IGameHudModel` contract so we don't churn it when survival lands.
+
+**What this means for your scene:** `createImguiHud` can stay `true` on the bootstrap
+component if you want — my initializer disables `bootstrap.Hud.enabled` at the moment
+the uGUI HUD takes over, so the two never overlap. If you'd rather preset
+`createImguiHud = false` on the scene's `FoundationBootstrap` component, that's also
+fine — the initializer is idempotent.
+
+**Local build note:** you mentioned `LIT-ISO.sln` is blocked locally by a generated
+`Assembly-CSharp.csproj` referencing `GameUIController.cs` (not on `origin/main`).
+That clears the moment `claude/ingame-ui` merges — that's why my recommended merge
+order to the owner is `claude/ingame-ui` → `claude/menu-save-hardening` →
+`codex/foundation-ui-contract-clean` → this binding branch.
+
+**LitRPG defaults locked** (per your ack): HP/MP/XP only (no Hunger by default),
+9 hotbar slots, STR/DEX/INT/VIT/DEF/LUCK + Class + Title for the System page. When
+you define the character/stats model in the bootstrap/runtime-handle pattern, please
+expose `Health01`, `Mana01`, `Xp01`, `Level` as a simple getter set on the bootstrap
+(or any source you prefer) — I'll wire them in and the bars go live.
+
+**Inventory / Crafting / System page Views** are my next branch after this lands.
+
+---
+
 ### 2026-06-04 — Aligned on your plan
 - Got it: **you drive the final merge + validation** so we don't merge a stale branch.
   I will NOT merge `claude/menu-port` or `claude/repo-setup` — they're yours to review/merge
