@@ -158,7 +158,7 @@ namespace LitIso.UI.InGame
             col.anchorMin = col.anchorMax = new Vector2(0f, 0f);
             col.pivot = new Vector2(0f, 0f);
             col.anchoredPosition = new Vector2(24f, 24f);
-            col.sizeDelta = new Vector2(320f, 30f * rowCount + 20f);
+            col.sizeDelta = new Vector2(320f, 38f * rowCount + 24f);
 
             // Optional decorative plate behind the bars (vitals_bg). Renders only if art exists.
             var plate = Spr("vitals_bg");
@@ -173,11 +173,11 @@ namespace LitIso.UI.InGame
             }
 
             int row = 0;
-            _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", label: "HP");
-            _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   label: "MP");
+            _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", 24f, "bar_track", "HP");
+            _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   24f, "bar_track", "MP");
             if (showHungerBar)
-                _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", label: "FOOD");
-            _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 14f, "bar_xp_track", label: "XP");
+                _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", 24f, "bar_track", "FOOD");
+            _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 18f, "bar_xp_track", "XP");
 
             // Level label sits on the XP bar.
             _levelText = NewText(col, "Level", "Lv 1", 16, TextAnchor.MiddleLeft);
@@ -194,16 +194,35 @@ namespace LitIso.UI.InGame
         // (e.g. "HP" / "MP" / "XP") so the bars are identifiable at a glance.
         Image Bar(RectTransform parent, string name, int row, Color fillCol, string fillSkin, float h = 24f, string trackSkin = "bar_track", string label = null)
         {
-            float gap = 6f;
+            // Wider vertical gap so the bars don't visually crowd each other.
+            float gap = 12f;
+            // Labels sit OUTSIDE the track to the left; the track + fill occupy the
+            // remaining width. labelW=0 when no label so a no-label bar fills the row.
+            float labelW = string.IsNullOrEmpty(label) ? 0f : 40f;
+            float trackW = 296f - labelW;
             float y = -(row * (h + gap));
+
+            // Label sits to the left of the track on its own rect — keeps the colored
+            // fill visually unobstructed and the label is readable on the dark panel.
+            if (!string.IsNullOrEmpty(label))
+            {
+                int sz = Mathf.Max(11, Mathf.RoundToInt(h * 0.6f));
+                var lbl = NewText(parent, name + "Lbl", label, sz, TextAnchor.MiddleRight);
+                lbl.raycastTarget = false;
+                var lr = lbl.rectTransform;
+                lr.anchorMin = lr.anchorMax = new Vector2(0f, 1f);
+                lr.pivot = new Vector2(0f, 1f);
+                lr.anchoredPosition = new Vector2(0f, y);
+                lr.sizeDelta = new Vector2(labelW - 6f, h);
+            }
 
             var track = NewImage(parent, name + "Track", Spr(trackSkin), BarTrack);
             track.type = Image.Type.Sliced;
             var tr = track.rectTransform;
             tr.anchorMin = tr.anchorMax = new Vector2(0f, 1f);
             tr.pivot = new Vector2(0f, 1f);
-            tr.anchoredPosition = new Vector2(0f, y);
-            tr.sizeDelta = new Vector2(296f, h);
+            tr.anchoredPosition = new Vector2(labelW, y);
+            tr.sizeDelta = new Vector2(trackW, h);
 
             var fillSprite = Spr(fillSkin);
             var fill = NewImage(tr, name + "Fill", fillSprite, fillCol);
@@ -218,24 +237,6 @@ namespace LitIso.UI.InGame
             var fr = fill.rectTransform;
             fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one;
             fr.offsetMin = new Vector2(4f, 4f); fr.offsetMax = new Vector2(-4f, -4f);
-
-            // Label sits over the bar's left edge in front of the fill (raycastTarget
-            // off so it doesn't intercept). Renders only when label was provided.
-            // Created after the fill so it sits on top in the hierarchy order.
-            if (!string.IsNullOrEmpty(label))
-            {
-                int sz = Mathf.Max(10, Mathf.RoundToInt(h * 0.55f));
-                var lbl = NewText(track.transform, "Lbl", label, sz, TextAnchor.MiddleLeft);
-                lbl.raycastTarget = false;
-                var lr = lbl.rectTransform;
-                lr.anchorMin = Vector2.zero; lr.anchorMax = Vector2.one;
-                lr.offsetMin = new Vector2(8f, 0f); lr.offsetMax = new Vector2(-8f, 0f);
-                // Slight outline so the label stays legible over either an empty track
-                // or the colored fill underneath.
-                var outline = lbl.gameObject.AddComponent<Outline>();
-                outline.effectColor = new Color(0f, 0f, 0f, 0.7f);
-                outline.effectDistance = new Vector2(1f, -1f);
-            }
             return fill;
         }
 

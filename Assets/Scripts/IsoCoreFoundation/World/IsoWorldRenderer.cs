@@ -15,6 +15,9 @@ namespace IsoCore.Foundation
         readonly Dictionary<long, SpriteRenderer> _active = new();
         readonly Stack<SpriteRenderer> _pool = new();
         readonly List<long> _removeBuffer = new();
+        // Per-ground-tile stack of child SpriteRenderers (one per height level below the
+        // surface). Filled lazily when stacking is enabled; reused across pool rents.
+        readonly Dictionary<SpriteRenderer, List<SpriteRenderer>> _stacks = new();
 
         public IsoWorldRenderer(Transform parent, FoundationContent content)
         {
@@ -38,6 +41,10 @@ namespace IsoCore.Foundation
 
         void Recycle(SpriteRenderer sr)
         {
+            // Hide stack children too — they live as children of the pooled GameObject
+            // and would otherwise still render after recycling. (Re-shown by EnsureStack.)
+            if (_stacks.TryGetValue(sr, out var stack))
+                foreach (var child in stack) if (child != null) child.gameObject.SetActive(false);
             sr.gameObject.SetActive(false);
             _pool.Push(sr);
         }
@@ -84,9 +91,59 @@ namespace IsoCore.Foundation
             // fall back to the procedural placeholder cube if no art is present.
             // Real pixel-art tiles already carry their own colour; PlaceholderArt.Cube
             // bakes 'col' into its texture, so sr.color stays white either way.
-            sr.sprite = TileSpriteResolver.Resolve(block) ?? PlaceholderArt.Cube(col, levels);
+            var surfaceSprite = TileSpriteResolver.Resolve(block);
+            sr.sprite = surfaceSprite ?? PlaceholderArt.Cube(col, levels);
             sr.transform.position = IsoGrid.CellToWorld(wx, wy, cell.Height);
             sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, cell.Height, IsoGrid.LayerGround);
+
+            // Stacked tiles for height > 0 — only when using real tile sprites.
+            // (PlaceholderArt.Cube already paints side faces in-sprite, so stacking
+            // there would double up.) Each level below the surface gets its own
+            // SpriteRenderer drawing the same surface sprite, positioned one cell
+            // lower. Adjacent cells at the same height naturally tessellate at every
+            // level because each level's tile sits at IsoGrid.CellToWorld(wx, wy, h).
+            if (surfaceSprite != null && !cell.Water && cell.Height > 0)
+                EnsureStack(sr, world, wx, wy, cell.Height, surfaceSprite);
+            else
+                HideStack(sr);
+        }
+
+        void EnsureStack(SpriteRenderer sr, IsoWorld world, int wx, int wy, int height, Sprite sprite)
+        {
+            if (!_stacks.TryGetValue(sr, out var stack))
+            {
+                stack = new List<SpriteRenderer>();
+                _stacks[sr] = stack;
+            }
+
+            // Grow the children list to cover every level below the surface.
+            while (stack.Count < height)
+            {
+                var go = new GameObject("StackTile");
+                go.transform.SetParent(sr.transform.parent, false); // sibling of the surface SR (same flat parent)
+                stack.Add(go.AddComponent<SpriteRenderer>());
+            }
+
+            // Configure the active levels, hide the rest.
+            for (int i = 0; i < stack.Count; i++)
+            {
+                var child = stack[i];
+                if (i < height)
+                {
+                    child.gameObject.SetActive(true);
+                    child.sprite = sprite;
+                    child.transform.position = IsoGrid.CellToWorld(wx, wy, i);
+                    child.sortingOrder = IsoGrid.SortingOrder(wx, wy, i, IsoGrid.LayerGround);
+                }
+                else child.gameObject.SetActive(false);
+            }
+        }
+
+        void HideStack(SpriteRenderer sr)
+        {
+            if (!_stacks.TryGetValue(sr, out var stack)) return;
+            foreach (var child in stack)
+                if (child != null) child.gameObject.SetActive(false);
         }
     }
 }
