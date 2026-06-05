@@ -11,6 +11,7 @@ namespace IsoCore.Foundation
     {
         [Header("Render")]
         public Color color = Color.white;
+        public Sprite icon;
 
         [Header("Classification")]
         public ItemCategory category = ItemCategory.Resource;
@@ -32,6 +33,7 @@ namespace IsoCore.Foundation
         public bool PlacesPlaceable => !string.IsNullOrEmpty(placeableId);
         public bool IsPlaceable => PlacesBlock || PlacesPlaceable;
         public bool IsSeed => !string.IsNullOrEmpty(plantCropId);
+        public Sprite Icon => icon;
     }
 
     public class ItemDatabase : Database<ItemDefinition> { }

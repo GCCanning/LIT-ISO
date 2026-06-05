@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -12,16 +13,32 @@ namespace IsoCore.Foundation
     {
         public const string DefaultWorldName = "Untitled World";
 
+        public static event Action<FoundationBootstrap> Ready;
+
         static bool s_HasLaunchOptions;
         static LaunchOptions s_LaunchOptions;
 
         public FoundationConfig config = new();
         [Tooltip("Inventory slot count.")] public int inventorySlots = 36;
         [Tooltip("Hotbar slot count.")] public int hotbarSlots = 9;
+        [Tooltip("Create the temporary IMGUI FoundationHUD. Disable when an external uGUI HUD binds to this bootstrap.")]
+        public bool createImguiHud = true;
         public float cameraSize = 6f;
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
         public int ActiveDifficulty { get; private set; } = 1;
+        public FoundationContent Content { get; private set; }
+        public IsoWorld World { get; private set; }
+        public Inventory Inventory { get; private set; }
+        public Hotbar Hotbar { get; private set; }
+        public IsoFoundationPlayer Player { get; private set; }
+        public IsoWorldController WorldController { get; private set; }
+        public PlacementSystem Placement { get; private set; }
+        public FarmingSystem Farming { get; private set; }
+        public MobSpawner MobSpawner { get; private set; }
+        public DayNightSystem DayNight { get; private set; }
+        public CraftingSystem Crafting { get; private set; }
+        public FoundationHUD Hud { get; private set; }
 
         Camera _cam;
         Transform _playerT;
@@ -70,69 +87,74 @@ namespace IsoCore.Foundation
         {
             ApplyLaunchOptions();
 
-            var content = FoundationContent.BuildDefault();
-            var sampler = new IsoTerrainSampler(config, content);
-            var world = new IsoWorld(sampler, content, config.chunkSize);
+            Content = FoundationContent.BuildDefault();
+            var sampler = new IsoTerrainSampler(config, Content);
+            World = new IsoWorld(sampler, Content, config.chunkSize);
 
             // Player.
             var playerGo = new GameObject("Player");
             playerGo.transform.SetParent(transform, false);
-            var player = playerGo.AddComponent<IsoFoundationPlayer>();
-            player.Init(world, config);
+            Player = playerGo.AddComponent<IsoFoundationPlayer>();
+            Player.Init(World, config);
             _playerT = playerGo.transform;
 
             // World streaming controller.
             var controllerGo = new GameObject("WorldController");
             controllerGo.transform.SetParent(transform, false);
-            var controller = controllerGo.AddComponent<IsoWorldController>();
-            controller.Init(world, content, config, _playerT);
+            WorldController = controllerGo.AddComponent<IsoWorldController>();
+            WorldController.Init(World, Content, config, _playerT);
 
             // Inventory + hotbar + starter items.
-            var inventory = new Inventory(inventorySlots, content);
-            var hotbar = new Hotbar(inventory, hotbarSlots);
+            Inventory = new Inventory(inventorySlots, Content);
+            Hotbar = new Hotbar(Inventory, hotbarSlots);
             if (config.starterItems != null)
-                foreach (var s in config.starterItems) inventory.Add(s.itemId, s.count);
+                foreach (var s in config.starterItems) Inventory.Add(s.itemId, s.count);
 
             // Placement.
             var placementGo = new GameObject("PlacementSystem");
             placementGo.transform.SetParent(transform, false);
-            var placement = placementGo.AddComponent<PlacementSystem>();
+            Placement = placementGo.AddComponent<PlacementSystem>();
 
             // Camera (before placement init — it needs the camera).
             SetupCamera();
-            placement.Init(world, content, inventory, hotbar, _cam, player);
+            Placement.Init(World, Content, Inventory, Hotbar, _cam, Player);
 
             // Crafting (station proximity via placement).
-            var crafting = new CraftingSystem(content, inventory);
-            crafting.StationAvailable = st =>
-                placement.IsStationInRange(_playerT.position, config.interactRange * 1.5f, st);
+            Crafting = new CraftingSystem(Content, Inventory);
+            Crafting.StationAvailable = st =>
+                Placement.IsStationInRange(_playerT.position, config.interactRange * 1.5f, st);
 
             // Farming.
             var farmingGo = new GameObject("FarmingSystem");
             farmingGo.transform.SetParent(transform, false);
-            var farming = farmingGo.AddComponent<FarmingSystem>();
-            farming.Init(world, content, inventory, hotbar, _cam);
+            Farming = farmingGo.AddComponent<FarmingSystem>();
+            Farming.Init(World, Content, Inventory, Hotbar, _cam);
 
             // Mob spawner.
             var spawnerGo = new GameObject("MobSpawner");
             spawnerGo.transform.SetParent(transform, false);
-            var spawner = spawnerGo.AddComponent<MobSpawner>();
-            spawner.Init(world, content, config, player);
+            MobSpawner = spawnerGo.AddComponent<MobSpawner>();
+            MobSpawner.Init(World, Content, config, Player);
 
             // Day/night clock.
-            var dayNight = gameObject.AddComponent<DayNightSystem>();
+            DayNight = gameObject.AddComponent<DayNightSystem>();
 
             // HUD.
-            var hud = gameObject.AddComponent<FoundationHUD>();
-            hud.Init(inventory, hotbar, content, crafting, player, world, dayNight);
+            if (createImguiHud)
+            {
+                Hud = gameObject.AddComponent<FoundationHUD>();
+                Hud.Init(Inventory, Hotbar, Content, Crafting, Player, World, DayNight);
+            }
 
             // Input router.
             var interaction = gameObject.AddComponent<PlayerInteraction>();
-            interaction.Init(player, controller, content, config, inventory, hotbar, placement, farming, hud);
+            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud);
 
-            Debug.Log($"[FoundationBootstrap] Ready. Blocks:{content.Blocks.Count} Items:{content.Items.Count} " +
-                      $"Placeables:{content.Placeables.Count} Recipes:{content.Recipes.Count} " +
-                      $"Nodes:{content.Nodes.Count} Mobs:{content.Mobs.Count} Biomes:{content.Biomes.Count} " +
+            Ready?.Invoke(this);
+
+            Debug.Log($"[FoundationBootstrap] Ready. Blocks:{Content.Blocks.Count} Items:{Content.Items.Count} " +
+                      $"Placeables:{Content.Placeables.Count} Recipes:{Content.Recipes.Count} " +
+                      $"Nodes:{Content.Nodes.Count} Mobs:{Content.Mobs.Count} Biomes:{Content.Biomes.Count} " +
                       $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty}");
         }
 

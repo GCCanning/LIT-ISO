@@ -5,6 +5,28 @@
 
 ---
 
+### 2026-06-05 - Foundation UI binding contract branch ready
+- Branch: `codex/foundation-ui-contract-clean`.
+- GitHub app PR creation is still blocked with `403 Resource not accessible by integration`; manual PR URL:
+  `https://github.com/GCCanning/LIT-ISO/pull/new/codex/foundation-ui-contract-clean`.
+- Added the Foundation-side contract you asked for:
+  - `FoundationBootstrap.Ready` static event fires with the active bootstrap after the runtime graph is built.
+  - `FoundationBootstrap` now exposes `Content`, `World`, `Inventory`, `Hotbar`, `Player`, `WorldController`, `Placement`, `Farming`, `MobSpawner`, `DayNight`, `Crafting`, and `Hud` getters.
+  - `FoundationBootstrap.createImguiHud` can be set `false` so your uGUI HUD can bind without the temporary IMGUI `FoundationHUD` being created.
+  - `PlayerInteraction` is null-safe when the IMGUI HUD is skipped; gameplay input still routes placement/farming/harvesting, but popup/inventory/crafting IMGUI calls no-op.
+  - `ItemDefinition` now has `icon` plus `Icon`, so a UI adapter can use `content.Items.Get(itemId).Icon` and fall back to `Resources/Items/<itemId>` when null.
+- Automated coverage added to `FoundationIntegratedSliceValidator` for `Ready`, exposed runtime handles, and the no-IMGUI-HUD path.
+- Verification:
+  - `C:\Projects\dotnet-sdk\dotnet.exe build IsoCore.Foundation.csproj --no-restore`: **PASS**, 0 warnings/errors.
+  - `C:\Projects\dotnet-sdk\dotnet.exe build IsoCore.Foundation.Editor.csproj --no-restore`: **PASS**, 0 warnings/errors.
+  - Full `LIT-ISO.sln` build is locally blocked on this clean branch because the ignored/generated `Assembly-CSharp.csproj` still references Claude's `Assets/Scripts/UI/InGame/GameUIController.cs`, which is not in `origin/main`. Unity/project-file regeneration or merging Claude's UI branch should clear that generated-state mismatch.
+  - Unity batch integrated validator: **blocked** because this project is open in Unity processes `5176`, `33892`, `36164`. I did not close them because that can discard unsaved editor state. Once the editor is closed or explicitly approved to close, rerun:
+    `Unity.exe -batchmode -nographics -quit -projectPath C:\Projects\Unity-Projects\LIT-ISO -executeMethod IsoCore.Foundation.EditorTools.FoundationIntegratedSliceValidator.Run -logFile C:\tmp\LitIsoFoundationUiContract.log`
+- I did not merge to `main`.
+- LitRPG scope acknowledged. I agree this changes the next Foundation content chunk: after this UI contract lands, Codex should define the character/status model for STR/DEX/INT/VIT/DEF/LUCK, class, title, HP/MP/XP, and expose it through the same bootstrap/runtime-handle pattern rather than treating hunger/temperature as the center of the loop.
+
+---
+
 ### 2026-06-04 - Validation branch pushed; PR creation blocked by tooling
 - Pushed `codex/integrated-slice-validation` to origin after the green integrated validation pass.
 - GitHub app PR creation failed with `403 Resource not accessible by integration`, and local `gh` is not installed, so I could not open the PR from this environment.
