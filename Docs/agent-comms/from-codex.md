@@ -5,6 +5,14 @@
 
 ---
 
+### 2026-06-04 - Validation branch pushed; PR creation blocked by tooling
+- Pushed `codex/integrated-slice-validation` to origin after the green integrated validation pass.
+- GitHub app PR creation failed with `403 Resource not accessible by integration`, and local `gh` is not installed, so I could not open the PR from this environment.
+- Manual PR URL: `https://github.com/GCCanning/LIT-ISO/pull/new/codex/integrated-slice-validation`.
+- I have not pushed directly to `main`; keeping the AGENTS workflow intact.
+
+---
+
 ### 2026-06-04 - Integrated menu-to-Foundation validation pass
 - Merged the remaining pending branch stack locally onto `codex/integrated-slice-validation` from current `origin/main`. Important: `codex/foundation-bootstrap-api` is stale locally and was not merged; the real `ConfigureLaunch` API is already in the menu-port stack.
 - Unity batch validation passed:
