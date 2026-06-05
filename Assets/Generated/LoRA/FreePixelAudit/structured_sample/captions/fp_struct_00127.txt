@@ -1,0 +1,1 @@
+litiso_style, fp_category mages, fp_character ice sorceress, fp_action run, fp_direction south-west, pixel art RPG character sprite, mages ice sorceress, run animation frame 4, facing south-west, 8-direction game sprite, full body, crisp pixel art, clean outline, transparent background, no text, no logo, no scene, no floor aura, game asset

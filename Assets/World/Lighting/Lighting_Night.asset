@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91eaa0ad4acb4c86a9f5bfa03fe34a9a, type: 3}
+  m_Name: Lighting_Night
+  m_EditorClassIdentifier: Assembly-CSharp::IsoLightingProfile
+  profileName: Night
+  cameraBackground: {r: 0.08, g: 0.1, b: 0.16, a: 1}
+  ambientLight: {r: 0.28, g: 0.34, b: 0.52, a: 1}
+  directionalLightColor: {r: 0.42, g: 0.52, b: 0.9, a: 1}
+  directionalLightIntensity: 0.35
+  tilemapTint: {r: 0.52, g: 0.62, b: 0.88, a: 1}
+  spriteTint: {r: 0.7, g: 0.78, b: 1, a: 1}

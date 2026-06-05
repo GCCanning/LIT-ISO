@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-04T03:52:33.347566+00:00",
+  "sourceOutputDir": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim",
+  "unityAssetDir": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\Review\\AssetForgeSmoke\\UnityExportSmoke4D_20260604_035233",
+  "unityManifest": "Assets/Generated/Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035233/manifest.json",
+  "actions": {
+    "idle": {
+      "label": "Idle",
+      "fps": 4.0,
+      "framesPerDirection": 1,
+      "directionMode": "variant",
+      "sheet": "actions/idle.png",
+      "contact": null
+    }
+  },
+  "nextStep": "In Unity: LIT-ISO > Asset Forge > Rebuild Generated Asset Automation"
+}

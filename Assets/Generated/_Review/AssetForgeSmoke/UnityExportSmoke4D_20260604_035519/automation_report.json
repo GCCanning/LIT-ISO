@@ -1,0 +1,17 @@
+{
+  "assetName": "UnityExportSmoke4D",
+  "assetMode": "character",
+  "success": true,
+  "promotionReady": true,
+  "productionPreset": "unityexportsmoke4d",
+  "loraName": "",
+  "loraCheckpoint": "",
+  "loraStrength": 0,
+  "acceptedFrameCount": 8,
+  "rejectedFrameCount": 0,
+  "qaWarnCount": 0,
+  "qaFailCount": 0,
+  "generatedAt": "2026-06-04T15:28:18.3125012Z",
+  "generated": ["Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_S.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_SE.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_E.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_NE.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_N.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_NW.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_W.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Clips/UnityExportSmoke4D_idle_SW.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Controllers/UnityExportSmoke4D.controller", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035519/Automation/Prefabs/UnityExportSmoke4D.prefab"],
+  "errors": []
+}

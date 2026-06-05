@@ -1,0 +1,1 @@
+litiso_style, fp_category mages, fp_character fire mage, fp_action idle, fp_direction south, pixel art RPG character sprite, mages fire mage, idle animation frame 1, facing south, 8-direction game sprite, full body, crisp pixel art, clean outline, transparent background, no text, no logo, no scene, no floor aura, game asset

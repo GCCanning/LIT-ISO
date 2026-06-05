@@ -1,0 +1,37 @@
+﻿{
+    "generatedAt":  "2026-06-03T07:39:25.9615567-07:00",
+    "generatedRoot":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated",
+    "scannedManifests":  2,
+    "skipped":  1,
+    "total":  1,
+    "ready":  1,
+    "blocked":  0,
+    "skippedEntries":  [
+                           {
+                               "manifestPath":  ".\\Assets\\Generated\\LoRA\\FreePixelAudit\\structured_sample\\manifest.json",
+                               "reason":  "not an Asset Forge Unity export manifest",
+                               "source":  "freepixel.art",
+                               "trigger":  "litiso_style"
+                           }
+                       ],
+    "entries":  [
+                    {
+                        "assetName":  "SmokeTestAdventurer",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\Characters\\Player\\AssetForge\\SmokeTestAdventurer\\manifest.json",
+                        "loraName":  "smoke_fixture",
+                        "loraCheckpoint":  "none",
+                        "acceptedFrameCount":  2,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+                                         "Unity automation_report.json has not been generated"
+                                     ]
+                    }
+                ]
+}

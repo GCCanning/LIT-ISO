@@ -1,0 +1,4758 @@
+fileFormatVersion: 2
+guid: 415bcbcf7edfde244be383cb201bc05b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8638253055315937588
+    second: plain_black_0
+  - first:
+      213: 512916927110149362
+    second: plain_black_1
+  - first:
+      213: 5089424485356681136
+    second: plain_black_2
+  - first:
+      213: -764128667291043647
+    second: plain_black_3
+  - first:
+      213: 2482004925828589955
+    second: plain_black_4
+  - first:
+      213: 3419067599518860285
+    second: plain_black_5
+  - first:
+      213: -7508923888689131136
+    second: plain_black_6
+  - first:
+      213: -7716874132318116190
+    second: plain_black_7
+  - first:
+      213: 3924666182312958613
+    second: plain_black_8
+  - first:
+      213: 6769158116879522317
+    second: plain_black_9
+  - first:
+      213: 3246374749417309054
+    second: plain_black_10
+  - first:
+      213: 1869968460040348094
+    second: plain_black_11
+  - first:
+      213: -3755011693073477577
+    second: plain_black_12
+  - first:
+      213: -1411297636940565048
+    second: plain_black_13
+  - first:
+      213: 8450690154892415415
+    second: plain_black_14
+  - first:
+      213: 6568231358850088987
+    second: plain_black_15
+  - first:
+      213: -8128325003125048399
+    second: plain_black_16
+  - first:
+      213: 5730535437362918263
+    second: plain_black_17
+  - first:
+      213: -6315771706526651540
+    second: plain_black_18
+  - first:
+      213: 2271419924636903632
+    second: plain_black_19
+  - first:
+      213: -6701491733997969901
+    second: plain_black_20
+  - first:
+      213: 2421553878715092386
+    second: plain_black_21
+  - first:
+      213: -40410132328593684
+    second: plain_black_22
+  - first:
+      213: 4896377538415528792
+    second: plain_black_23
+  - first:
+      213: -4146584110373698364
+    second: plain_black_24
+  - first:
+      213: 1757913858723808562
+    second: plain_black_25
+  - first:
+      213: 52897212450629708
+    second: plain_black_26
+  - first:
+      213: -3666139616808305009
+    second: plain_black_27
+  - first:
+      213: 175203161437816686
+    second: plain_black_28
+  - first:
+      213: 5757855168578542420
+    second: plain_black_29
+  - first:
+      213: -2710089491277963127
+    second: plain_black_30
+  - first:
+      213: -7519639480556743891
+    second: plain_black_31
+  - first:
+      213: -4531811638334045146
+    second: plain_black_32
+  - first:
+      213: 3837309193945419258
+    second: plain_black_33
+  - first:
+      213: 7166745775987439261
+    second: plain_black_34
+  - first:
+      213: 1366075159366994566
+    second: plain_black_35
+  - first:
+      213: -1446896378588776482
+    second: plain_black_36
+  - first:
+      213: -5878907392766400824
+    second: plain_black_37
+  - first:
+      213: 3757537046239926599
+    second: plain_black_38
+  - first:
+      213: 2700958060838815869
+    second: plain_black_39
+  - first:
+      213: -4824986668321287539
+    second: plain_black_40
+  - first:
+      213: 6282157111582959614
+    second: plain_black_41
+  - first:
+      213: 2521104909780913140
+    second: plain_black_42
+  - first:
+      213: -5319680505558901581
+    second: plain_black_43
+  - first:
+      213: 6007932327728467387
+    second: plain_black_44
+  - first:
+      213: 1530554731434463680
+    second: plain_black_45
+  - first:
+      213: -1793685338742880203
+    second: plain_black_46
+  - first:
+      213: 4846292006564791755
+    second: plain_black_47
+  - first:
+      213: -3467458127955469415
+    second: plain_black_48
+  - first:
+      213: -5828875790644508822
+    second: plain_black_49
+  - first:
+      213: -9122748172613236125
+    second: plain_black_50
+  - first:
+      213: 6851641888361581967
+    second: plain_black_51
+  - first:
+      213: -5277266090549642483
+    second: plain_black_52
+  - first:
+      213: -7626842858755094114
+    second: plain_black_53
+  - first:
+      213: -1083107995965200410
+    second: plain_black_54
+  - first:
+      213: 5887000400753736155
+    second: plain_black_55
+  - first:
+      213: -6687954059796853514
+    second: plain_black_56
+  - first:
+      213: -7540641065469560643
+    second: plain_black_57
+  - first:
+      213: 5731962966213509602
+    second: plain_black_58
+  - first:
+      213: 2074710576783752826
+    second: plain_black_59
+  - first:
+      213: -4035543750353616512
+    second: plain_black_60
+  - first:
+      213: 1182243315121337745
+    second: plain_black_61
+  - first:
+      213: 8545573146230949653
+    second: plain_black_62
+  - first:
+      213: -5080632923884998828
+    second: plain_black_63
+  - first:
+      213: 16752573380668835
+    second: plain_black_64
+  - first:
+      213: -7538037191067217782
+    second: plain_black_65
+  - first:
+      213: -5397558781252813245
+    second: plain_black_66
+  - first:
+      213: -8155913725895928133
+    second: plain_black_67
+  - first:
+      213: -7560973132172972741
+    second: plain_black_68
+  - first:
+      213: -3053329713541227041
+    second: plain_black_69
+  - first:
+      213: -2705173871441180260
+    second: plain_black_70
+  - first:
+      213: -2089391727225346668
+    second: plain_black_71
+  - first:
+      213: -2914098682425404527
+    second: plain_black_72
+  - first:
+      213: 748572014309850447
+    second: plain_black_73
+  - first:
+      213: -9012500288261641184
+    second: plain_black_74
+  - first:
+      213: -7369848128725999866
+    second: plain_black_75
+  - first:
+      213: 1968186335843454078
+    second: plain_black_76
+  - first:
+      213: -8104096484150454401
+    second: plain_black_77
+  - first:
+      213: -2804801259319446984
+    second: plain_black_78
+  - first:
+      213: -8951361533910816657
+    second: plain_black_79
+  - first:
+      213: -1011031879156468699
+    second: plain_black_80
+  - first:
+      213: -3997972292783561043
+    second: plain_black_81
+  - first:
+      213: 1231479427922278974
+    second: plain_black_82
+  - first:
+      213: 6723433689662704457
+    second: plain_black_83
+  - first:
+      213: 8032446724297974542
+    second: plain_black_84
+  - first:
+      213: -4748952858794034436
+    second: plain_black_85
+  - first:
+      213: -1228836633449591698
+    second: plain_black_86
+  - first:
+      213: 6015354262933836943
+    second: plain_black_87
+  - first:
+      213: -5816371269330677368
+    second: plain_black_88
+  - first:
+      213: 6596310903718916697
+    second: plain_black_89
+  - first:
+      213: -7031672929771867572
+    second: plain_black_90
+  - first:
+      213: 7787541477461915615
+    second: plain_black_91
+  - first:
+      213: -6699116354046291466
+    second: plain_black_92
+  - first:
+      213: 8914871035465195531
+    second: plain_black_93
+  - first:
+      213: -7267297100123908326
+    second: plain_black_94
+  - first:
+      213: 1442197879484135310
+    second: plain_black_95
+  - first:
+      213: 5656005779677664551
+    second: plain_black_96
+  - first:
+      213: 3920647826876040793
+    second: plain_black_97
+  - first:
+      213: -1632625802284348816
+    second: plain_black_98
+  - first:
+      213: 5447611643715641297
+    second: plain_black_99
+  - first:
+      213: 2945144729551642541
+    second: plain_black_100
+  - first:
+      213: 777277632742105400
+    second: plain_black_101
+  - first:
+      213: -1553940245946472707
+    second: plain_black_102
+  - first:
+      213: -6760088859810203096
+    second: plain_black_103
+  - first:
+      213: 3245817726184383125
+    second: plain_black_104
+  - first:
+      213: -740661548056872770
+    second: plain_black_105
+  - first:
+      213: 2461476907571159663
+    second: plain_black_106
+  - first:
+      213: -3250729013903673504
+    second: plain_black_107
+  - first:
+      213: -4954223371008509116
+    second: plain_black_108
+  - first:
+      213: -6937536366879392267
+    second: plain_black_109
+  - first:
+      213: 2203369660033775259
+    second: plain_black_110
+  - first:
+      213: -4148073643570714180
+    second: plain_black_111
+  - first:
+      213: 1753914580799200222
+    second: plain_black_112
+  - first:
+      213: -316162131038923002
+    second: plain_black_113
+  - first:
+      213: 6391718620977009507
+    second: plain_black_114
+  - first:
+      213: -8147318114967307300
+    second: plain_black_115
+  - first:
+      213: 9217992141391403443
+    second: plain_black_116
+  - first:
+      213: -3755352200920892926
+    second: plain_black_117
+  - first:
+      213: -8270845381656293126
+    second: plain_black_118
+  - first:
+      213: -8437495284349569447
+    second: plain_black_119
+  - first:
+      213: -3272621725279737777
+    second: plain_black_120
+  - first:
+      213: -5558940949191981420
+    second: plain_black_121
+  - first:
+      213: 8680498780741209887
+    second: plain_black_122
+  - first:
+      213: 7183690168282923143
+    second: plain_black_123
+  - first:
+      213: 2131741704802620743
+    second: plain_black_124
+  - first:
+      213: -964582940668076435
+    second: plain_black_125
+  - first:
+      213: -5166994669215399980
+    second: plain_black_126
+  - first:
+      213: -8246009517555944779
+    second: plain_black_127
+  - first:
+      213: -7603556029780363128
+    second: plain_black_128
+  - first:
+      213: -3855560398784548223
+    second: plain_black_129
+  - first:
+      213: -3450738897504954111
+    second: plain_black_130
+  - first:
+      213: 4451405813659864222
+    second: plain_black_131
+  - first:
+      213: -1588143304798565317
+    second: plain_black_132
+  - first:
+      213: -9183053144906285538
+    second: plain_black_133
+  - first:
+      213: 8352462993949935531
+    second: plain_black_134
+  - first:
+      213: 6982049632667053444
+    second: plain_black_135
+  - first:
+      213: 6915799364728630130
+    second: plain_black_136
+  - first:
+      213: 442300182222818485
+    second: plain_black_137
+  - first:
+      213: 2464225345176145105
+    second: plain_black_138
+  - first:
+      213: -4354465210762507655
+    second: plain_black_139
+  - first:
+      213: 2722321863996463961
+    second: plain_black_140
+  - first:
+      213: -6770512785955460661
+    second: plain_black_141
+  - first:
+      213: 341759831468902404
+    second: plain_black_142
+  - first:
+      213: 7319964229530260182
+    second: plain_black_143
+  - first:
+      213: 8569176568197757811
+    second: plain_black_144
+  - first:
+      213: 928614363953981318
+    second: plain_black_145
+  - first:
+      213: 277586020577075287
+    second: plain_black_146
+  - first:
+      213: -320141369885659041
+    second: plain_black_147
+  - first:
+      213: 2674137003741909545
+    second: plain_black_148
+  - first:
+      213: 431214580799219007
+    second: plain_black_149
+  - first:
+      213: -3880877112981718392
+    second: plain_black_150
+  - first:
+      213: -7559427007854706687
+    second: plain_black_151
+  - first:
+      213: -8127777025398969166
+    second: plain_black_152
+  - first:
+      213: -9187778111085961158
+    second: plain_black_153
+  - first:
+      213: -5191061863015763677
+    second: plain_black_154
+  - first:
+      213: 1949450368719706743
+    second: plain_black_155
+  - first:
+      213: 7714265690279434587
+    second: plain_black_156
+  - first:
+      213: 1916080790180539964
+    second: plain_black_157
+  - first:
+      213: 7541716190876552353
+    second: plain_black_158
+  - first:
+      213: 1696618234386399876
+    second: plain_black_159
+  - first:
+      213: -5417950065123001476
+    second: plain_black_160
+  - first:
+      213: -625519098719367557
+    second: plain_black_161
+  - first:
+      213: -9149001298708638562
+    second: plain_black_162
+  - first:
+      213: -1612203809270182318
+    second: plain_black_163
+  - first:
+      213: -2038546326092872618
+    second: plain_black_164
+  - first:
+      213: -621847593496356886
+    second: plain_black_165
+  - first:
+      213: 1884207455853055657
+    second: plain_black_166
+  - first:
+      213: 479010870274347480
+    second: plain_black_167
+  - first:
+      213: -6052526811599264619
+    second: plain_black_168
+  - first:
+      213: -2360972087396816424
+    second: plain_black_169
+  - first:
+      213: -129805478118995997
+    second: plain_black_170
+  - first:
+      213: 5896876782178209570
+    second: plain_black_171
+  - first:
+      213: 2054709694142147362
+    second: plain_black_172
+  - first:
+      213: -4584036918736191309
+    second: plain_black_173
+  - first:
+      213: -7434707201807740004
+    second: plain_black_174
+  - first:
+      213: -8318929097227855786
+    second: plain_black_175
+  - first:
+      213: -3602460155697667880
+    second: plain_black_176
+  - first:
+      213: 5066371320666255953
+    second: plain_black_177
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 1
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: plain_black_0
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc6f5f51d92ce1880800000000000000
+      internalID: -8638253055315937588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_1
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f47fa74a3f3e1700800000000000000
+      internalID: 512916927110149362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_2
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b73cd0ca9441a640800000000000000
+      internalID: 5089424485356681136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_3
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c8bc6f86054565f0800000000000000
+      internalID: -764128667291043647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_4
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38968ce645ad17220800000000000000
+      internalID: 2482004925828589955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_5
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df38e54edd7f27f20800000000000000
+      internalID: 3419067599518860285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_6
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0815d39d181fac790800000000000000
+      internalID: -7508923888689131136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_7
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a627c6ccd728e490800000000000000
+      internalID: -7716874132318116190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_8
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59a90ca5917377630800000000000000
+      internalID: 3924666182312958613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_9
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0a5e095171e0fd50800000000000000
+      internalID: 6769158116879522317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_10
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7301d272a07d0d20800000000000000
+      internalID: 3246374749417309054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_11
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb1a3e9286673f910800000000000000
+      internalID: 1869968460040348094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_12
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 730dae292c483ebc0800000000000000
+      internalID: -3755011693073477577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_13
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c53fcdc6401a6ce0800000000000000
+      internalID: -1411297636940565048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_14
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b1d0451ce1e64570800000000000000
+      internalID: 8450690154892415415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_15
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1047d2fe9b072b50800000000000000
+      internalID: 6568231358850088987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_16
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bb3ec1b973623f80800000000000000
+      internalID: -8128325003125048399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_17
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 773fdcc5e93f68f40800000000000000
+      internalID: 5730535437362918263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_18
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6b2406681fd958a0800000000000000
+      internalID: -6315771706526651540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_19
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d82abf0364b58f10800000000000000
+      internalID: 2271419924636903632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_20
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31e95d126c48ff2a0800000000000000
+      internalID: -6701491733997969901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_21
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ad48493c661b9120800000000000000
+      internalID: 2421553878715092386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_22
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce64a31e23f607ff0800000000000000
+      internalID: -40410132328593684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_23
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85b8577dd6d63f340800000000000000
+      internalID: 4896377538415528792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_24
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c485ed98bf5476c0800000000000000
+      internalID: -4146584110373698364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_25
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23508f6375d556810800000000000000
+      internalID: 1757913858723808562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_26
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c486ab50cbdebb000800000000000000
+      internalID: 52897212450629708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_27
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8e772b41714f1dc0800000000000000
+      internalID: -3666139616808305009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_28
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e67c609d8527e6200800000000000000
+      internalID: 175203161437816686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_29
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45b5547f4c208ef40800000000000000
+      internalID: 5757855168578542420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_30
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 980abd267f3d36ad0800000000000000
+      internalID: -2710089491277963127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_31
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d239962bbbfd4a790800000000000000
+      internalID: -7519639480556743891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_32
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6244e145355cb11c0800000000000000
+      internalID: -4531811638334045146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_33
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afd0576816cd04530800000000000000
+      internalID: 3837309193945419258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_34
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d96334def45657360800000000000000
+      internalID: 7166745775987439261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_35
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a0e82ae1645f210800000000000000
+      internalID: 1366075159366994566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_36
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed7ba6fd8679bebe0800000000000000
+      internalID: -1446896378588776482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_37
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c6adb2cfdce96ea0800000000000000
+      internalID: -5878907392766400824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_38
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74950870904752430800000000000000
+      internalID: 3757537046239926599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_39
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d788689cb0bbb7520800000000000000
+      internalID: 2700958060838815869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_40
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d82d6b460343a0db0800000000000000
+      internalID: -4824986668321287539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_41
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef7a813db94be2750800000000000000
+      internalID: 6282157111582959614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_42
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb0cfcde83ccf220800000000000000
+      internalID: 2521104909780913140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_43
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bc579bd3c2bc26b0800000000000000
+      internalID: -5319680505558901581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_44
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbd47d4ee96706350800000000000000
+      internalID: 6007932327728467387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_45
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c1d1744b6f9d3510800000000000000
+      internalID: 1530554731434463680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_46
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 538876110bc8b17e0800000000000000
+      internalID: -1793685338742880203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_47
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc50c1937ec714340800000000000000
+      internalID: 4846292006564791755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_48
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 928
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99b5ca9343d11efc0800000000000000
+      internalID: -3467458127955469415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_49
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 928
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6782c2e95cab1fa0800000000000000
+      internalID: -5828875790644508822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_50
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 928
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36a4b041fdc756180800000000000000
+      internalID: -9122748172613236125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_51
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8d8af3fefbe51f50800000000000000
+      internalID: 6851641888361581967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_52
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0bf297637263c6b0800000000000000
+      internalID: -5277266090549642483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_53
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e998d2624d2082690800000000000000
+      internalID: -7626842858755094114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_54
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e7eb17240708f0f0800000000000000
+      internalID: -1083107995965200410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_55
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd9328f7ca3d2b150800000000000000
+      internalID: 5887000400753736155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_56
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fc4da7873d9f23a0800000000000000
+      internalID: -6687954059796853514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_57
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db8b6f927e24a5790800000000000000
+      internalID: -7540641065469560643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_58
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e1c9d2d2f50c8f40800000000000000
+      internalID: 5731962966213509602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_59
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7ef0fcf64adacc10800000000000000
+      internalID: 2074710576783752826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_60
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08100ac175edef7c0800000000000000
+      internalID: -4035543750353616512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_61
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19533e3080c286010800000000000000
+      internalID: 1182243315121337745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_62
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51786370089f79670800000000000000
+      internalID: 8545573146230949653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_63
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 794
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45f2ea92647fd79b0800000000000000
+      internalID: -5080632923884998828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_64
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3adad6170648b3000800000000000000
+      internalID: 16752573380668835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_65
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8051caec13836790800000000000000
+      internalID: -7538037191067217782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_66
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34eb22dc2e40815b0800000000000000
+      internalID: -5397558781252813245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_67
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 794
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb69d3d9daf50de80800000000000000
+      internalID: -8155913725895928133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_68
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3dae8cfef6021790800000000000000
+      internalID: -7560973132172972741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_69
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fddda328dc460a5d0800000000000000
+      internalID: -3053329713541227041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_70
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 734
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c99841152ba457ad0800000000000000
+      internalID: -2705173871441180260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_71
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 495e71e4b4df003e0800000000000000
+      internalID: -2089391727225346668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_72
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 193999910ba0f87d0800000000000000
+      internalID: -2914098682425404527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_73
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4dbcb9e746736a00800000000000000
+      internalID: 748572014309850447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_74
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 734
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02c2f04fcba2de280800000000000000
+      internalID: -9012500288261641184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_75
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60f95be8c2a09b990800000000000000
+      internalID: -7369848128725999866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_76
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7c0ab76b07605b10800000000000000
+      internalID: 1968186335843454078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_77
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7758bc5f27788f80800000000000000
+      internalID: -8104096484150454401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_78
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83232b87d185319d0800000000000000
+      internalID: -2804801259319446984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_79
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f68662b7c1066c380800000000000000
+      internalID: -8951361533910816657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_80
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5247842dcd718f1f0800000000000000
+      internalID: -1011031879156468699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_81
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 672
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da628c2c1695488c0800000000000000
+      internalID: -3997972292783561043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_82
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3a3289d308171110800000000000000
+      internalID: 1231479427922278974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_83
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94b4d37815f6e4d50800000000000000
+      internalID: 6723433689662704457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_84
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e03e70fecbbf87f60800000000000000
+      internalID: 8032446724297974542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_85
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 672
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfa71843984581eb0800000000000000
+      internalID: -4748952858794034436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_86
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6c0040b79b42fee0800000000000000
+      internalID: -1228836633449591698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_87
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f849d48d4d4da7350800000000000000
+      internalID: 6015354262933836943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_88
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 606
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 881d1c1a529184fa0800000000000000
+      internalID: -5816371269330677368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_89
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 952b33471ddca8b50800000000000000
+      internalID: 6596310903718916697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_90
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c42b73cc9ba7a6e90800000000000000
+      internalID: -7031672929771867572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_91
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd7fcbda6b7e21c60800000000000000
+      internalID: 7787541477461915615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_92
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 606
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f19f006b25f703a0800000000000000
+      internalID: -6699116354046291466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_93
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b00625749fbf7bb70800000000000000
+      internalID: 8914871035465195531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_94
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1753ed8acf552b90800000000000000
+      internalID: -7267297100123908326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_95
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e87397e8457b30410800000000000000
+      internalID: 1442197879484135310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_96
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7255e313a4b2e7e40800000000000000
+      internalID: 5656005779677664551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_97
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 537
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9568a521d60f86630800000000000000
+      internalID: 3920647826876040793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_98
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 537
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07a44bb9b7fb759e0800000000000000
+      internalID: -1632625802284348816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_99
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dfd3f16dedc99b40800000000000000
+      internalID: 5447611643715641297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_100
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daf1a0907814fd820800000000000000
+      internalID: 2945144729551642541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_101
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 831237783e179ca00800000000000000
+      internalID: 777277632742105400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_102
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df66d26549b4f6ae0800000000000000
+      internalID: -1553940245946472707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_103
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 477
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82affec9ff65f22a0800000000000000
+      internalID: -6760088859810203096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_104
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 592e2ee56067b0d20800000000000000
+      internalID: 3245817726184383125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_105
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb877490f34a8b5f0800000000000000
+      internalID: -740661548056872770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_106
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f622b9ab43ce82220800000000000000
+      internalID: 2461476907571159663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_107
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06737395f2713e2d0800000000000000
+      internalID: -3250729013903673504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_108
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44b7919b7101f3bb0800000000000000
+      internalID: -4954223371008509116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_109
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fdbcc35e6be8bf90800000000000000
+      internalID: -6937536366879392267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_110
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 415
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b96bf272801f39e10800000000000000
+      internalID: 2203369660033775259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_111
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 416
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb9aec4aff41f66c0800000000000000
+      internalID: -4148073643570714180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_112
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edb1ae2c408275810800000000000000
+      internalID: 1753914580799200222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_113
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6079ef78734cc9bf0800000000000000
+      internalID: -316162131038923002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_114
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36395939832f3b850800000000000000
+      internalID: 6391718620977009507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_115
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 349
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdbb44d3759eeee80800000000000000
+      internalID: -8147318114967307300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_116
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b91af97303ecef70800000000000000
+      internalID: 9217992141391403443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_117
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20af0a9e11f42ebc0800000000000000
+      internalID: -3755352200920892926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_118
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af0523a32fd083d80800000000000000
+      internalID: -8270845381656293126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_119
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9567f4e1ebef7ea80800000000000000
+      internalID: -8437495284349569447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_120
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f48a97441ef4592d0800000000000000
+      internalID: -3272621725279737777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_121
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 281
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4960a04c8acaad2b0800000000000000
+      internalID: -5558940949191981420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_122
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1f8a4b56a3577870800000000000000
+      internalID: 8680498780741209887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_123
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78048f0b52891b360800000000000000
+      internalID: 7183690168282923143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_124
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74555ab39c7759d10800000000000000
+      internalID: 2131741704802620743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_125
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6ed3111dec1d92f0800000000000000
+      internalID: -964582940668076435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_126
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4df341969b52b48b0800000000000000
+      internalID: -5166994669215399980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_127
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b27693780a409d80800000000000000
+      internalID: -8246009517555944779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_128
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8887927831eba7690800000000000000
+      internalID: -7603556029780363128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_129
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1823264be3c4e7ac0800000000000000
+      internalID: -3855560398784548223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_130
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 109189961438c10d0800000000000000
+      internalID: -3450738897504954111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_131
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9c0e42c00296cd30800000000000000
+      internalID: 4451405813659864222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_132
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3c01112418c5f9e0800000000000000
+      internalID: -1588143304798565317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_133
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1eb35091dd3f8080800000000000000
+      internalID: -9183053144906285538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_134
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba74bf9f6d8e9e370800000000000000
+      internalID: 8352462993949935531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_135
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48d244ff52935e060800000000000000
+      internalID: 6982049632667053444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_136
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27ba58871ead9ff50800000000000000
+      internalID: 6915799364728630130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_137
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bc4b7d1cad532600800000000000000
+      internalID: 442300182222818485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_138
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 225
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dc0db935efa23220800000000000000
+      internalID: 2464225345176145105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_139
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 226
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97a44b536f4d193c0800000000000000
+      internalID: -4354465210762507655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_140
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 227
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95bd9c3df41a7c520800000000000000
+      internalID: 2722321863996463961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_141
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 225
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc962ed2e7e4a02a0800000000000000
+      internalID: -6770512785955460661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_142
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 408833981cc2eb400800000000000000
+      internalID: 341759831468902404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_143
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d297b51facb59560800000000000000
+      internalID: 7319964229530260182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_144
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37b3705ffa4dbe670800000000000000
+      internalID: 8569176568197757811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_145
+      rect:
+        serializedVersion: 2
+        x: 790
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6876dc018d913ec00800000000000000
+      internalID: 928614363953981318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_146
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7506c17d30f2ad300800000000000000
+      internalID: 277586020577075287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_147
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f50fe0ace11ae8bf0800000000000000
+      internalID: -320141369885659041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_148
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92293cccf617c1520800000000000000
+      internalID: 2674137003741909545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_149
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f35a186606bfbf500800000000000000
+      internalID: 431214580799219007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_150
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88af7c7d3da542ac0800000000000000
+      internalID: -3880877112981718392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_151
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 100835b1035871790800000000000000
+      internalID: -7559427007854706687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_152
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bc6383bbd5543f80800000000000000
+      internalID: -8127777025398969166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_153
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a30ac95ac747e7080800000000000000
+      internalID: -9187778111085961158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_154
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3213edf2db4a5f7b0800000000000000
+      internalID: -5191061863015763677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_155
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77adace18c6dd0b10800000000000000
+      internalID: 1949450368719706743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_156
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b59d61cf5c39e0b60800000000000000
+      internalID: 7714265690279434587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_157
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3e29aba359479a10800000000000000
+      internalID: 1916080790180539964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_158
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac420afaee89a860800000000000000
+      internalID: 7541716190876552353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_159
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4824d0c8b499b8710800000000000000
+      internalID: 1696618234386399876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_160
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7bf98d0f139fc4b0800000000000000
+      internalID: -5417950065123001476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_161
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7e0c90a1b5b157f0800000000000000
+      internalID: -625519098719367557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_162
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9452e4dac7380180800000000000000
+      internalID: -9149001298708638562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_163
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25e4be26d2d40a9e0800000000000000
+      internalID: -1612203809270182318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_164
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 97
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6548e07cae0a5b3e0800000000000000
+      internalID: -2038546326092872618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_165
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 98
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae7d73d88e0ce57f0800000000000000
+      internalID: -621847593496356886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_166
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 99
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ae8349b2bc062a10800000000000000
+      internalID: 1884207455853055657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_167
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 97
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d1d04e39d9c5a600800000000000000
+      internalID: 479010870274347480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_168
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5942919beea110ca0800000000000000
+      internalID: -6052526811599264619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_169
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d9a91e35642c3fd0800000000000000
+      internalID: -2360972087396816424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_170
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e741dafa96d23ef0800000000000000
+      internalID: -129805478118995997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_171
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22f0bfdb03ae5d150800000000000000
+      internalID: 5896876782178209570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_172
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 33
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22be4eb949bc38c10800000000000000
+      internalID: 2054709694142147362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_173
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 32
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b0047da5ba3260c0800000000000000
+      internalID: -4584036918736191309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_174
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 25
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c931633d03d92d890800000000000000
+      internalID: -7434707201807740004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_175
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 20
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6589218cf0a3d8c80800000000000000
+      internalID: -8318929097227855786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_176
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 12
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d06426339d710ec0800000000000000
+      internalID: -3602460155697667880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_black_177
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 0
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 152f9849fdd5f4640800000000000000
+      internalID: 5066371320666255953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      plain_black_0: -8638253055315937588
+      plain_black_1: 512916927110149362
+      plain_black_10: 3246374749417309054
+      plain_black_100: 2945144729551642541
+      plain_black_101: 777277632742105400
+      plain_black_102: -1553940245946472707
+      plain_black_103: -6760088859810203096
+      plain_black_104: 3245817726184383125
+      plain_black_105: -740661548056872770
+      plain_black_106: 2461476907571159663
+      plain_black_107: -3250729013903673504
+      plain_black_108: -4954223371008509116
+      plain_black_109: -6937536366879392267
+      plain_black_11: 1869968460040348094
+      plain_black_110: 2203369660033775259
+      plain_black_111: -4148073643570714180
+      plain_black_112: 1753914580799200222
+      plain_black_113: -316162131038923002
+      plain_black_114: 6391718620977009507
+      plain_black_115: -8147318114967307300
+      plain_black_116: 9217992141391403443
+      plain_black_117: -3755352200920892926
+      plain_black_118: -8270845381656293126
+      plain_black_119: -8437495284349569447
+      plain_black_12: -3755011693073477577
+      plain_black_120: -3272621725279737777
+      plain_black_121: -5558940949191981420
+      plain_black_122: 8680498780741209887
+      plain_black_123: 7183690168282923143
+      plain_black_124: 2131741704802620743
+      plain_black_125: -964582940668076435
+      plain_black_126: -5166994669215399980
+      plain_black_127: -8246009517555944779
+      plain_black_128: -7603556029780363128
+      plain_black_129: -3855560398784548223
+      plain_black_13: -1411297636940565048
+      plain_black_130: -3450738897504954111
+      plain_black_131: 4451405813659864222
+      plain_black_132: -1588143304798565317
+      plain_black_133: -9183053144906285538
+      plain_black_134: 8352462993949935531
+      plain_black_135: 6982049632667053444
+      plain_black_136: 6915799364728630130
+      plain_black_137: 442300182222818485
+      plain_black_138: 2464225345176145105
+      plain_black_139: -4354465210762507655
+      plain_black_14: 8450690154892415415
+      plain_black_140: 2722321863996463961
+      plain_black_141: -6770512785955460661
+      plain_black_142: 341759831468902404
+      plain_black_143: 7319964229530260182
+      plain_black_144: 8569176568197757811
+      plain_black_145: 928614363953981318
+      plain_black_146: 277586020577075287
+      plain_black_147: -320141369885659041
+      plain_black_148: 2674137003741909545
+      plain_black_149: 431214580799219007
+      plain_black_15: 6568231358850088987
+      plain_black_150: -3880877112981718392
+      plain_black_151: -7559427007854706687
+      plain_black_152: -8127777025398969166
+      plain_black_153: -9187778111085961158
+      plain_black_154: -5191061863015763677
+      plain_black_155: 1949450368719706743
+      plain_black_156: 7714265690279434587
+      plain_black_157: 1916080790180539964
+      plain_black_158: 7541716190876552353
+      plain_black_159: 1696618234386399876
+      plain_black_16: -8128325003125048399
+      plain_black_160: -5417950065123001476
+      plain_black_161: -625519098719367557
+      plain_black_162: -9149001298708638562
+      plain_black_163: -1612203809270182318
+      plain_black_164: -2038546326092872618
+      plain_black_165: -621847593496356886
+      plain_black_166: 1884207455853055657
+      plain_black_167: 479010870274347480
+      plain_black_168: -6052526811599264619
+      plain_black_169: -2360972087396816424
+      plain_black_17: 5730535437362918263
+      plain_black_170: -129805478118995997
+      plain_black_171: 5896876782178209570
+      plain_black_172: 2054709694142147362
+      plain_black_173: -4584036918736191309
+      plain_black_174: -7434707201807740004
+      plain_black_175: -8318929097227855786
+      plain_black_176: -3602460155697667880
+      plain_black_177: 5066371320666255953
+      plain_black_18: -6315771706526651540
+      plain_black_19: 2271419924636903632
+      plain_black_2: 5089424485356681136
+      plain_black_20: -6701491733997969901
+      plain_black_21: 2421553878715092386
+      plain_black_22: -40410132328593684
+      plain_black_23: 4896377538415528792
+      plain_black_24: -4146584110373698364
+      plain_black_25: 1757913858723808562
+      plain_black_26: 52897212450629708
+      plain_black_27: -3666139616808305009
+      plain_black_28: 175203161437816686
+      plain_black_29: 5757855168578542420
+      plain_black_3: -764128667291043647
+      plain_black_30: -2710089491277963127
+      plain_black_31: -7519639480556743891
+      plain_black_32: -4531811638334045146
+      plain_black_33: 3837309193945419258
+      plain_black_34: 7166745775987439261
+      plain_black_35: 1366075159366994566
+      plain_black_36: -1446896378588776482
+      plain_black_37: -5878907392766400824
+      plain_black_38: 3757537046239926599
+      plain_black_39: 2700958060838815869
+      plain_black_4: 2482004925828589955
+      plain_black_40: -4824986668321287539
+      plain_black_41: 6282157111582959614
+      plain_black_42: 2521104909780913140
+      plain_black_43: -5319680505558901581
+      plain_black_44: 6007932327728467387
+      plain_black_45: 1530554731434463680
+      plain_black_46: -1793685338742880203
+      plain_black_47: 4846292006564791755
+      plain_black_48: -3467458127955469415
+      plain_black_49: -5828875790644508822
+      plain_black_5: 3419067599518860285
+      plain_black_50: -9122748172613236125
+      plain_black_51: 6851641888361581967
+      plain_black_52: -5277266090549642483
+      plain_black_53: -7626842858755094114
+      plain_black_54: -1083107995965200410
+      plain_black_55: 5887000400753736155
+      plain_black_56: -6687954059796853514
+      plain_black_57: -7540641065469560643
+      plain_black_58: 5731962966213509602
+      plain_black_59: 2074710576783752826
+      plain_black_6: -7508923888689131136
+      plain_black_60: -4035543750353616512
+      plain_black_61: 1182243315121337745
+      plain_black_62: 8545573146230949653
+      plain_black_63: -5080632923884998828
+      plain_black_64: 16752573380668835
+      plain_black_65: -7538037191067217782
+      plain_black_66: -5397558781252813245
+      plain_black_67: -8155913725895928133
+      plain_black_68: -7560973132172972741
+      plain_black_69: -3053329713541227041
+      plain_black_7: -7716874132318116190
+      plain_black_70: -2705173871441180260
+      plain_black_71: -2089391727225346668
+      plain_black_72: -2914098682425404527
+      plain_black_73: 748572014309850447
+      plain_black_74: -9012500288261641184
+      plain_black_75: -7369848128725999866
+      plain_black_76: 1968186335843454078
+      plain_black_77: -8104096484150454401
+      plain_black_78: -2804801259319446984
+      plain_black_79: -8951361533910816657
+      plain_black_8: 3924666182312958613
+      plain_black_80: -1011031879156468699
+      plain_black_81: -3997972292783561043
+      plain_black_82: 1231479427922278974
+      plain_black_83: 6723433689662704457
+      plain_black_84: 8032446724297974542
+      plain_black_85: -4748952858794034436
+      plain_black_86: -1228836633449591698
+      plain_black_87: 6015354262933836943
+      plain_black_88: -5816371269330677368
+      plain_black_89: 6596310903718916697
+      plain_black_9: 6769158116879522317
+      plain_black_90: -7031672929771867572
+      plain_black_91: 7787541477461915615
+      plain_black_92: -6699116354046291466
+      plain_black_93: 8914871035465195531
+      plain_black_94: -7267297100123908326
+      plain_black_95: 1442197879484135310
+      plain_black_96: 5656005779677664551
+      plain_black_97: 3920647826876040793
+      plain_black_98: -1632625802284348816
+      plain_black_99: 5447611643715641297
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

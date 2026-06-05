@@ -1,0 +1,38 @@
+# Unity generated folders
+/Library/
+/Temp/
+/Obj/
+/Build/
+/Builds/
+/Logs/
+/UserSettings/
+
+# Unity generated files
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity crash/debug output
+sysinfo.txt
+*.stackdump
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
+.idea/
+
+# AI agent / toolchain scratch (never commit)
+.dotnet/
+TempEvalDryRun/
+TempEvalDryRunFreshOnly/

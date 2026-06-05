@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0dd032b1976a7f4e82fa1a3ed71b38d, type: 3}
+  m_Name: BiomeDefinition_Desert
+  m_EditorClassIdentifier: Assembly-CSharp::IsoBiomeDefinition
+  biomeName: Desert
+  biomeKind: 2
+  temperatureMin: 0.58
+  temperatureMax: 1
+  moistureMin: 0
+  moistureMax: 0.42
+  elevationMin: 0
+  elevationMax: 0.7
+  flatGroundTile: {fileID: 11400000, guid: 3152ed6d0cc59d54fa8ee0ea59412829, type: 2}
+  flatGroundVariants:
+  - {fileID: 11400000, guid: fb746cdab0ec8e54cad132ee946dc959, type: 2}
+  - {fileID: 11400000, guid: a1317a4d07efcaf4cab75efc8d84f397, type: 2}
+  raisedRuleTile: {fileID: 11400000, guid: cdb7575da9d10f346ad8b0a600400c28, type: 2}
+  raisedGroundVariants:
+  - {fileID: 11400000, guid: 6be7c6c7786fa7a45afae2d6002cbcc6, type: 2}
+  - {fileID: 11400000, guid: 47465ad4810369b4d813f096f784ce64, type: 2}
+  midElevationTile: {fileID: 11400000, guid: 47465ad4810369b4d813f096f784ce64, type: 2}
+  peakTile: {fileID: 0}
+  decorationTiles: []
+  treeTiles: []
+  groundCoverTiles: []
+  rockTiles: []
+  forestNoiseScale: 0.05
+  forestThreshold: 0.52
+  treeDensityInForest: 0.4
+  groundCoverChance: 0.06
+  rockClusterThreshold: 0.7
+  rockChanceInCluster: 0.12
+  decorationChance: 0.04
+  baseDecorationDensity: 0.04
+  transitionDecorationMultiplier: 0.25
+  colliderCliffSouth: {fileID: 11400000, guid: 7e12fb73967d34777ba76171e8be7b04, type: 2}
+  colliderCliffWest: {fileID: 11400000, guid: 2655b78189c934c049014795a63848c2, type: 2}
+  colliderCliffNorth: {fileID: 11400000, guid: 9fda3ab080ea045df984418fa0ae89fa, type: 2}
+  colliderCliffEast: {fileID: 11400000, guid: 7fa49cf4a88c04426910476f99b98ed5, type: 2}
+  raisedTileThreshold: 0.72
+  heightNoiseScale: 0.065
+  biomeNoiseOffset: 101

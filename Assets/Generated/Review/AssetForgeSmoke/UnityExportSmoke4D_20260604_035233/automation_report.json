@@ -1,0 +1,17 @@
+{
+  "assetName": "UnityExportSmoke4D",
+  "assetMode": "character",
+  "success": true,
+  "promotionReady": true,
+  "productionPreset": "unityexportsmoke4d",
+  "loraName": "",
+  "loraCheckpoint": "",
+  "loraStrength": 0,
+  "acceptedFrameCount": 1,
+  "rejectedFrameCount": 0,
+  "qaWarnCount": 0,
+  "qaFailCount": 0,
+  "generatedAt": "2026-06-04T15:28:19.1837747Z",
+  "generated": ["Assets/Generated/Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035233/Automation", "Assets/Generated/Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035233/Automation/Clips/UnityExportSmoke4D_idle.anim", "Assets/Generated/Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035233/Automation/Controllers/UnityExportSmoke4D.controller", "Assets/Generated/Review/AssetForgeSmoke/UnityExportSmoke4D_20260604_035233/Automation/Prefabs/UnityExportSmoke4D.prefab"],
+  "errors": []
+}

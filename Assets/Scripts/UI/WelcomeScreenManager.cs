@@ -1,0 +1,669 @@
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// Welcome / Main Menu system for LIT-ISO. Procedurally builds three screens:
+///   1. Main Menu (New Game / Load Game / Options / Quit)
+///   2. Create World (name + seed input, difficulty slider)
+///   3. Load Game (list of saved worlds)
+///
+/// All built with colored panels + LitIsoFont, sprite-ready (no sprites required yet).
+/// Saves world config as JSON in a dedicated folder.
+/// </summary>
+public class WelcomeScreenManager : MonoBehaviour
+{
+    private enum Screen { MainMenu, CreateWorld, LoadGame, Options }
+
+    [Header("Background")]
+    [Tooltip("Optional splash/background image for the menu (e.g., campfire scene). Assign in inspector or leave null.")]
+    public Sprite backgroundImage;
+
+    [Header("Layout")]
+    public float panelWidth = 500f;
+    public float panelHeight = 600f;
+    public float buttonHeight = 50f;
+    public float spacing = 12f;
+
+    [Header("Palette")]
+    public Color panelBg = new Color(0.07f, 0.09f, 0.13f, 0.95f);
+    public Color panelBorder = new Color(0.30f, 0.36f, 0.42f, 1f);
+    public Color buttonBg = new Color(0.15f, 0.18f, 0.24f, 0.9f);
+    public Color buttonBgHover = new Color(0.22f, 0.26f, 0.34f, 1f);
+    public Color buttonText = new Color(0.95f, 0.91f, 0.74f, 1f);
+    public Color inputBg = new Color(0.05f, 0.06f, 0.09f, 0.9f);
+    public Color inputText = new Color(0.90f, 0.90f, 0.90f, 1f);
+    public Color labelText = new Color(0.75f, 0.75f, 0.75f, 1f);
+
+    private Screen currentScreen = Screen.MainMenu;
+    private Canvas mainCanvas;
+    private RectTransform contentPanel;
+
+    // World creation data
+    private InputField worldNameInput;
+    private InputField seedInput;
+    private Slider difficultySlider;
+    private Text difficultyLabel;
+
+    // Load game data
+    private List<WorldSaveData> savedWorlds = new List<WorldSaveData>();
+    private RectTransform worldListContent;
+
+    // Save path
+    private string savePath => Path.Combine(Application.persistentDataPath, "LitIsoWorlds");
+
+    [System.Serializable]
+    public class WorldSaveData
+    {
+        public string worldName = "Untitled World";
+        public string seed = "12345";
+        public int difficulty = 2; // 0=easy, 1=normal, 2=hard
+        public long createdTicks;
+
+        public string filename => $"{worldName}_{createdTicks}.world.json";
+    }
+
+    private void Awake()
+    {
+        EnsureSaveFolder();
+        BuildCanvas();
+        ShowScreen(Screen.MainMenu);
+    }
+
+    private void EnsureSaveFolder()
+    {
+        if (!Directory.Exists(savePath))
+        {
+            Directory.CreateDirectory(savePath);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Screen Management
+    // -------------------------------------------------------------------------
+
+    private void ShowScreen(Screen screen)
+    {
+        currentScreen = screen;
+        if (contentPanel != null)
+        {
+            Destroy(contentPanel.gameObject);
+        }
+
+        switch (screen)
+        {
+            case Screen.MainMenu:
+                BuildMainMenu();
+                break;
+            case Screen.CreateWorld:
+                BuildCreateWorld();
+                break;
+            case Screen.LoadGame:
+                BuildLoadGame();
+                break;
+            case Screen.Options:
+                BuildOptions();
+                break;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Main Menu
+    // -------------------------------------------------------------------------
+
+    private void BuildMainMenu()
+    {
+        contentPanel = CreateMainPanel("MainMenu");
+
+        Text title = CreateText("Title", contentPanel, "LIT-ISO", 52, buttonText, TextAnchor.MiddleCenter);
+        RectTransform titleRect = title.rectTransform;
+        titleRect.anchorMin = new Vector2(0.5f, 1f);
+        titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -40f);
+        titleRect.sizeDelta = new Vector2(panelWidth - 40f, 60f);
+
+        float buttonY = -120f;
+        float buttonSpacing = buttonHeight + spacing;
+
+        CreateMenuButton("NewGameBtn", contentPanel, "New Game", () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
+        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame), 0f, buttonY - buttonSpacing);
+        CreateMenuButton("OptionsBtn", contentPanel, "Options", () => ShowScreen(Screen.Options), 0f, buttonY - 2 * buttonSpacing);
+        CreateMenuButton("QuitBtn", contentPanel, "Quit", () => Application.Quit(), 0f, buttonY - 3 * buttonSpacing);
+    }
+
+    // -------------------------------------------------------------------------
+    // Create World
+    // -------------------------------------------------------------------------
+
+    private void BuildCreateWorld()
+    {
+        contentPanel = CreateMainPanel("CreateWorld");
+
+        float y = -30f;
+
+        // World Name
+        CreateLabel("NameLabel", contentPanel, "World Name", y);
+        y -= 24f;
+        worldNameInput = CreateInputField("WorldNameInput", contentPanel, "Enter world name...", y);
+        y -= buttonHeight + spacing + 12f;
+
+        // Seed
+        CreateLabel("SeedLabel", contentPanel, "Seed (leave blank for random)", y);
+        y -= 24f;
+        seedInput = CreateInputField("SeedInput", contentPanel, "e.g. 12345", y);
+        y -= buttonHeight + spacing + 12f;
+
+        // Difficulty
+        CreateLabel("DifficultyLabel", contentPanel, "Difficulty", y);
+        y -= 24f;
+        difficultySlider = CreateSlider("DifficultySlider", contentPanel, y, 0f, 2f, 1f);
+        difficultyLabel = CreateText("DifficultyValue", contentPanel, "Normal", 18, labelText, TextAnchor.MiddleCenter);
+        RectTransform diffLabelRect = difficultyLabel.rectTransform;
+        diffLabelRect.anchorMin = new Vector2(0.5f, 0f);
+        diffLabelRect.anchorMax = new Vector2(0.5f, 0f);
+        diffLabelRect.pivot = new Vector2(0.5f, 0f);
+        diffLabelRect.anchoredPosition = new Vector2(0f, -buttonHeight - spacing * 2);
+        diffLabelRect.sizeDelta = new Vector2(panelWidth - 40f, 24f);
+
+        difficultySlider.onValueChanged.AddListener(UpdateDifficultyLabel);
+        UpdateDifficultyLabel(1f);
+
+        // Buttons
+        float btnY = -panelHeight + 60f;
+        CreateMenuButton("PlayBtn", contentPanel, "Play", OnCreateWorldPlay, -80f, btnY);
+        CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.MainMenu), 80f, btnY);
+    }
+
+    private void OnCreateWorldPlay()
+    {
+        string worldName = worldNameInput.text;
+        if (string.IsNullOrWhiteSpace(worldName))
+        {
+            worldName = "Untitled World";
+        }
+
+        string seed = seedInput.text;
+        if (string.IsNullOrWhiteSpace(seed))
+        {
+            seed = Random.Range(0, 999999).ToString();
+        }
+
+        int difficulty = Mathf.RoundToInt(difficultySlider.value);
+
+        WorldSaveData world = new WorldSaveData
+        {
+            worldName = worldName,
+            seed = seed,
+            difficulty = difficulty,
+            createdTicks = System.DateTime.Now.Ticks
+        };
+
+        SaveWorld(world);
+        LaunchWorld(world);
+    }
+
+    private void UpdateDifficultyLabel(float value)
+    {
+        int difficulty = Mathf.RoundToInt(value);
+        string label = difficulty switch
+        {
+            0 => "Easy",
+            1 => "Normal",
+            2 => "Hard",
+            _ => "Unknown"
+        };
+        if (difficultyLabel != null)
+        {
+            difficultyLabel.text = label;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Load Game
+    // -------------------------------------------------------------------------
+
+    private void BuildLoadGame()
+    {
+        contentPanel = CreateMainPanel("LoadGame");
+
+        Text title = CreateText("LoadTitle", contentPanel, "Load World", 40, buttonText, TextAnchor.MiddleCenter);
+        RectTransform titleRect = title.rectTransform;
+        titleRect.anchorMin = new Vector2(0.5f, 1f);
+        titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -20f);
+        titleRect.sizeDelta = new Vector2(panelWidth - 40f, 50f);
+
+        // Scroll list of worlds
+        worldListContent = CreateScrollList("WorldList", contentPanel, -80f);
+
+        RefreshWorldList();
+
+        // Back button
+        CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.MainMenu), 0f, -panelHeight + 50f);
+    }
+
+    private void RefreshWorldList()
+    {
+        savedWorlds.Clear();
+        if (Directory.Exists(savePath))
+        {
+            string[] files = Directory.GetFiles(savePath, "*.world.json");
+            foreach (string file in files)
+            {
+                try
+                {
+                    string json = File.ReadAllText(file);
+                    WorldSaveData world = JsonUtility.FromJson<WorldSaveData>(json);
+                    savedWorlds.Add(world);
+                }
+                catch { }
+            }
+        }
+
+        // Sort by creation time descending (newest first)
+        savedWorlds.Sort((a, b) => b.createdTicks.CompareTo(a.createdTicks));
+
+        if (worldListContent != null)
+        {
+            foreach (Transform child in worldListContent)
+            {
+                Destroy(child.gameObject);
+            }
+
+            if (savedWorlds.Count == 0)
+            {
+                Text noWorlds = CreateText("NoWorlds", worldListContent, "No saved worlds yet", 20, buttonText, TextAnchor.MiddleCenter);
+                RectTransform noRect = noWorlds.rectTransform;
+                noRect.sizeDelta = new Vector2(panelWidth - 80f, 50f);
+            }
+            else
+            {
+                for (int i = 0; i < savedWorlds.Count; i++)
+                {
+                    WorldSaveData world = savedWorlds[i];
+                    RectTransform entry = CreatePanel("Entry", worldListContent, buttonBg, panelBorder);
+                    entry.sizeDelta = new Vector2(panelWidth - 80f, 60f);
+
+                    Text entryText = CreateText("Name", entry, $"{world.worldName} (Seed: {world.seed})", 16, buttonText, TextAnchor.MiddleLeft);
+                    RectTransform entryTextRect = entryText.rectTransform;
+                    entryTextRect.anchorMin = new Vector2(0f, 0.5f);
+                    entryTextRect.anchorMax = new Vector2(1f, 0.5f);
+                    entryTextRect.pivot = new Vector2(0f, 0.5f);
+                    entryTextRect.offsetMin = new Vector2(12f, 0f);
+                    entryTextRect.offsetMax = new Vector2(-12f, 0f);
+
+                    int capturedIdx = i;
+                    CreateSmallButton("PlayBtn", entry, "Play", () => LaunchWorld(savedWorlds[capturedIdx]), -60f, 0f);
+                    CreateSmallButton("DeleteBtn", entry, "Delete", () => DeleteWorld(capturedIdx), 0f, 0f);
+                }
+            }
+        }
+    }
+
+    private void DeleteWorld(int index)
+    {
+        if (index >= 0 && index < savedWorlds.Count)
+        {
+            WorldSaveData world = savedWorlds[index];
+            string file = Path.Combine(savePath, world.filename);
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
+            RefreshWorldList();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Options (placeholder)
+    // -------------------------------------------------------------------------
+
+    private void BuildOptions()
+    {
+        contentPanel = CreateMainPanel("Options");
+
+        Text title = CreateText("OptionsTitle", contentPanel, "Options", 40, buttonText, TextAnchor.MiddleCenter);
+        RectTransform titleRect = title.rectTransform;
+        titleRect.anchorMin = new Vector2(0.5f, 1f);
+        titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -20f);
+        titleRect.sizeDelta = new Vector2(panelWidth - 40f, 50f);
+
+        Text placeholder = CreateText("Placeholder", contentPanel, "Options coming soon...", 24, buttonText, TextAnchor.MiddleCenter);
+        RectTransform placeholderRect = placeholder.rectTransform;
+        placeholderRect.anchorMin = new Vector2(0.5f, 0.5f);
+        placeholderRect.anchorMax = new Vector2(0.5f, 0.5f);
+        placeholderRect.pivot = new Vector2(0.5f, 0.5f);
+        placeholderRect.sizeDelta = new Vector2(panelWidth - 40f, 100f);
+
+        CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.MainMenu), 0f, -panelHeight + 50f);
+    }
+
+    // -------------------------------------------------------------------------
+    // World Save/Load
+    // -------------------------------------------------------------------------
+
+    private void SaveWorld(WorldSaveData world)
+    {
+        string json = JsonUtility.ToJson(world, true);
+        string filepath = Path.Combine(savePath, world.filename);
+        File.WriteAllText(filepath, json);
+    }
+
+    private void LaunchWorld(WorldSaveData world)
+    {
+        // Ensure WorldManager exists and is configured
+        if (WorldManager.Instance == null)
+        {
+            GameObject wmGO = new GameObject("WorldManager");
+            wmGO.AddComponent<WorldManager>();
+        }
+
+        WorldManager.Instance.SetWorld(world.worldName, world.seed, world.difficulty);
+        Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty})");
+
+        // Load the main game scene with the configured world
+        UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
+    }
+
+    // -------------------------------------------------------------------------
+    // UI Building Helpers
+    // -------------------------------------------------------------------------
+
+    private void BuildCanvas()
+    {
+        GameObject canvasGO = new GameObject("WelcomeScreenCanvas");
+        mainCanvas = canvasGO.AddComponent<Canvas>();
+        mainCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        canvasGO.AddComponent<GraphicRaycaster>();
+        transform.SetParent(canvasGO.transform, false);
+
+        // Resolve the background sprite. Prefer the inspector-assigned one, but fall
+        // back to loading from Resources so the menu ALWAYS has art with zero manual
+        // wiring (Resources/UI/CampfireMenu.png).
+        Sprite bg = backgroundImage != null
+            ? backgroundImage
+            : Resources.Load<Sprite>("UI/CampfireMenu");
+
+        if (bg != null)
+        {
+            GameObject bgGO = new GameObject("Background", typeof(RectTransform));
+            bgGO.transform.SetParent(mainCanvas.transform, false);
+            bgGO.transform.SetAsFirstSibling();  // Behind everything
+            RectTransform bgRT = bgGO.GetComponent<RectTransform>();
+            bgRT.anchorMin = Vector2.zero;
+            bgRT.anchorMax = Vector2.one;
+            bgRT.offsetMin = Vector2.zero;
+            bgRT.offsetMax = Vector2.zero;
+
+            Image bgImage = bgGO.AddComponent<Image>();
+            bgImage.sprite = bg;
+            bgImage.type = Image.Type.Simple;
+            bgImage.preserveAspect = false;  // Fill the whole screen
+            bgImage.color = Color.white;
+        }
+        else
+        {
+            // No art found — paint a dark fallback so the menu still reads cleanly.
+            GameObject bgGO = new GameObject("BackgroundFallback", typeof(RectTransform));
+            bgGO.transform.SetParent(mainCanvas.transform, false);
+            bgGO.transform.SetAsFirstSibling();
+            RectTransform bgRT = bgGO.GetComponent<RectTransform>();
+            bgRT.anchorMin = Vector2.zero;
+            bgRT.anchorMax = Vector2.one;
+            bgRT.offsetMin = Vector2.zero;
+            bgRT.offsetMax = Vector2.zero;
+            Image bgImage = bgGO.AddComponent<Image>();
+            bgImage.color = new Color(0.06f, 0.07f, 0.10f, 1f);
+        }
+    }
+
+    private RectTransform CreateMainPanel(string name)
+    {
+        RectTransform rt = CreatePanel(name, mainCanvas.transform, panelBg, panelBorder);
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(panelWidth, panelHeight);
+        return rt;
+    }
+
+    private RectTransform CreatePanel(string name, Transform parent, Color bg, Color border)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+
+        Image bgImage = go.AddComponent<Image>();
+        bgImage.color = bg;
+
+        Outline outline = go.AddComponent<Outline>();
+        outline.effectColor = border;
+        outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+        return rt;
+    }
+
+    private void CreateMenuButton(string name, Transform parent, string text, System.Action onClick, float x, float y)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 1f);
+        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = new Vector2(x, y);
+        rt.sizeDelta = new Vector2(200f, buttonHeight);
+
+        Image bgImage = go.AddComponent<Image>();
+        bgImage.color = buttonBg;
+
+        Outline outline = go.AddComponent<Outline>();
+        outline.effectColor = panelBorder;
+        outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+        Button button = go.AddComponent<Button>();
+        button.targetGraphic = bgImage;
+        button.onClick.AddListener(() => onClick?.Invoke());
+
+        // Hover animation
+        ColorBlock colors = button.colors;
+        colors.normalColor = buttonBg;
+        colors.highlightedColor = buttonBgHover;
+        colors.pressedColor = new Color(0.10f, 0.12f, 0.18f, 1f);
+        colors.selectedColor = buttonBgHover;
+        button.colors = colors;
+
+        Text btnText = CreateText("Text", rt, text, 20, this.buttonText, TextAnchor.MiddleCenter);
+        RectTransform textRect = btnText.rectTransform;
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+    }
+
+    private void CreateSmallButton(string name, Transform parent, string text, System.Action onClick, float x, float y)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(1f, 0.5f);
+        rt.anchorMax = new Vector2(1f, 0.5f);
+        rt.pivot = new Vector2(1f, 0.5f);
+        rt.anchoredPosition = new Vector2(x, y);
+        rt.sizeDelta = new Vector2(50f, 40f);
+
+        Image bgImage = go.AddComponent<Image>();
+        bgImage.color = buttonBg;
+
+        Button button = go.AddComponent<Button>();
+        button.targetGraphic = bgImage;
+        button.onClick.AddListener(() => onClick?.Invoke());
+
+        ColorBlock colors = button.colors;
+        colors.normalColor = buttonBg;
+        colors.highlightedColor = buttonBgHover;
+        button.colors = colors;
+
+        Text btnText = CreateText("Text", rt, text, 14, this.buttonText, TextAnchor.MiddleCenter);
+        RectTransform textRect = btnText.rectTransform;
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+    }
+
+    private void CreateLabel(string name, Transform parent, string text, float y)
+    {
+        Text label = CreateText(name, parent, text, 16, labelText, TextAnchor.MiddleLeft);
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchorMin = new Vector2(0f, 1f);
+        labelRect.anchorMax = new Vector2(0f, 1f);
+        labelRect.pivot = new Vector2(0f, 1f);
+        labelRect.anchoredPosition = new Vector2(20f, y);
+        labelRect.sizeDelta = new Vector2(panelWidth - 40f, 24f);
+        label.color = labelText;
+    }
+
+    private InputField CreateInputField(string name, Transform parent, string placeholder, float y)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 1f);
+        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = new Vector2(0f, y);
+        rt.sizeDelta = new Vector2(panelWidth - 40f, buttonHeight);
+
+        Image bgImage = go.AddComponent<Image>();
+        bgImage.color = inputBg;
+
+        InputField inputField = go.AddComponent<InputField>();
+        inputField.targetGraphic = bgImage;
+        inputField.textComponent = CreateText("Text", rt, "", 18, inputText, TextAnchor.MiddleLeft);
+        RectTransform textRect = inputField.textComponent.rectTransform;
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = new Vector2(10f, 0f);
+        textRect.offsetMax = new Vector2(-10f, 0f);
+        inputField.textComponent.color = inputText;
+
+        Text placeholderText = CreateText("Placeholder", inputField.textComponent.transform, placeholder, 18, new Color(0.5f, 0.5f, 0.5f, 0.5f), TextAnchor.MiddleLeft);
+        RectTransform placeholderRect = placeholderText.rectTransform;
+        placeholderRect.anchorMin = Vector2.zero;
+        placeholderRect.anchorMax = Vector2.one;
+        placeholderRect.offsetMin = new Vector2(10f, 0f);
+        placeholderRect.offsetMax = new Vector2(-10f, 0f);
+        inputField.placeholder = placeholderText;
+
+        return inputField;
+    }
+
+    private Slider CreateSlider(string name, Transform parent, float y, float minVal, float maxVal, float initialVal)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 1f);
+        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = new Vector2(0f, y);
+        rt.sizeDelta = new Vector2(panelWidth - 80f, 30f);
+
+        Image bgImage = go.AddComponent<Image>();
+        bgImage.color = inputBg;
+
+        Slider slider = go.AddComponent<Slider>();
+        slider.fillRect = null;
+        slider.handleRect = CreateHandle(slider.transform).GetComponent<RectTransform>();
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.minValue = minVal;
+        slider.maxValue = maxVal;
+        slider.value = initialVal;
+
+        return slider;
+    }
+
+    private GameObject CreateHandle(Transform parent)
+    {
+        GameObject handle = new GameObject("Handle", typeof(RectTransform));
+        handle.transform.SetParent(parent, false);
+        RectTransform rt = handle.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(20f, 30f);
+
+        Image img = handle.AddComponent<Image>();
+        img.color = new Color(0.98f, 0.85f, 0.45f, 1f);
+
+        return handle;
+    }
+
+    private RectTransform CreateScrollList(string name, Transform parent, float y)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 1f);
+        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = new Vector2(0f, y);
+        rt.sizeDelta = new Vector2(panelWidth - 40f, panelHeight - 200f);
+
+        Image bgImage = go.AddComponent<Image>();
+        bgImage.color = new Color(0.04f, 0.05f, 0.07f, 0.8f);
+
+        ScrollRect scroll = go.AddComponent<ScrollRect>();
+        scroll.vertical = true;
+        scroll.horizontal = false;
+
+        GameObject viewport = new GameObject("Viewport", typeof(RectTransform));
+        viewport.transform.SetParent(rt, false);
+        RectTransform vpRect = viewport.GetComponent<RectTransform>();
+        vpRect.anchorMin = Vector2.zero;
+        vpRect.anchorMax = Vector2.one;
+        vpRect.offsetMin = Vector2.zero;
+        vpRect.offsetMax = Vector2.zero;
+        viewport.AddComponent<Image>();
+        Image vpMask = viewport.AddComponent<Image>();
+        vpMask.color = Color.clear;
+        viewport.AddComponent<Mask>();
+
+        GameObject content = new GameObject("Content", typeof(RectTransform));
+        content.transform.SetParent(vpRect, false);
+        RectTransform contentRect = content.GetComponent<RectTransform>();
+        contentRect.anchorMin = new Vector2(0.5f, 1f);
+        contentRect.anchorMax = new Vector2(0.5f, 1f);
+        contentRect.pivot = new Vector2(0.5f, 1f);
+        contentRect.sizeDelta = new Vector2(panelWidth - 80f, 0f);
+
+        VerticalLayoutGroup layout = content.AddComponent<VerticalLayoutGroup>();
+        layout.spacing = spacing;
+        layout.childForceExpandHeight = false;
+
+        scroll.content = contentRect;
+        scroll.viewport = vpRect;
+
+        return contentRect;
+    }
+
+    private Text CreateText(string name, Transform parent, string content, int size, Color textColor, TextAnchor anchor)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        Text text = go.AddComponent<Text>();
+        text.text = content;
+        text.color = textColor;
+        text.alignment = anchor;
+        text.horizontalOverflow = HorizontalWrapMode.Overflow;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
+        LitIsoFont.Apply(text, size);
+        return text;
+    }
+}

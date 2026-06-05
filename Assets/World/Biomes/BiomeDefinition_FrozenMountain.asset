@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0dd032b1976a7f4e82fa1a3ed71b38d, type: 3}
+  m_Name: BiomeDefinition_FrozenMountain
+  m_EditorClassIdentifier: Assembly-CSharp::IsoBiomeDefinition
+  biomeName: Frozen Mountain
+  biomeKind: 3
+  temperatureMin: 0
+  temperatureMax: 0.34
+  moistureMin: 0
+  moistureMax: 1
+  elevationMin: 0.58
+  elevationMax: 1
+  flatGroundTile: {fileID: 11400000, guid: 00a49e32d3048f8408d6bd00a81f46d9, type: 2}
+  flatGroundVariants:
+  - {fileID: 11400000, guid: 77c91fc06982639439f4df82d7c5d97c, type: 2}
+  - {fileID: 11400000, guid: 45008f92726043a4abadf03a81430678, type: 2}
+  raisedRuleTile: {fileID: 11400000, guid: 379fd0665a30c3742b8f7147acb88d9c, type: 2}
+  raisedGroundVariants:
+  - {fileID: 11400000, guid: f84b12e27ceeac749ba15cb2200fbfff, type: 2}
+  midElevationTile: {fileID: 11400000, guid: 45008f92726043a4abadf03a81430678, type: 2}
+  peakTile: {fileID: 11400000, guid: 00a49e32d3048f8408d6bd00a81f46d9, type: 2}
+  decorationTiles: []
+  treeTiles: []
+  groundCoverTiles: []
+  rockTiles: []
+  forestNoiseScale: 0.05
+  forestThreshold: 0.52
+  treeDensityInForest: 0.4
+  groundCoverChance: 0.06
+  rockClusterThreshold: 0.7
+  rockChanceInCluster: 0.12
+  decorationChance: 0.035
+  baseDecorationDensity: 0.035
+  transitionDecorationMultiplier: 0.35
+  colliderCliffSouth: {fileID: 11400000, guid: 7e12fb73967d34777ba76171e8be7b04, type: 2}
+  colliderCliffWest: {fileID: 11400000, guid: 2655b78189c934c049014795a63848c2, type: 2}
+  colliderCliffNorth: {fileID: 11400000, guid: 9fda3ab080ea045df984418fa0ae89fa, type: 2}
+  colliderCliffEast: {fileID: 11400000, guid: 7fa49cf4a88c04426910476f99b98ed5, type: 2}
+  raisedTileThreshold: 0.58
+  heightNoiseScale: 0.095
+  biomeNoiseOffset: 211

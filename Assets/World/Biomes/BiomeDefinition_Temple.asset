@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0dd032b1976a7f4e82fa1a3ed71b38d, type: 3}
+  m_Name: BiomeDefinition_Temple
+  m_EditorClassIdentifier: Assembly-CSharp::IsoBiomeDefinition
+  biomeName: Temple
+  biomeKind: 5
+  temperatureMin: 0.45
+  temperatureMax: 1
+  moistureMin: 0
+  moistureMax: 0.65
+  elevationMin: 0
+  elevationMax: 1
+  flatGroundTile: {fileID: 11400000, guid: 40055ab7969d1da469697bd8cbc74670, type: 2}
+  flatGroundVariants:
+  - {fileID: 11400000, guid: 78c5e35c4336d2146ab0a4ce7b44ce14, type: 2}
+  raisedRuleTile: {fileID: 11400000, guid: 970e75d741d486d4aa5d0e2ba6ec7e13, type: 2}
+  raisedGroundVariants:
+  - {fileID: 11400000, guid: 3db0b9e7ad952704baa47e26ebf3906e, type: 2}
+  - {fileID: 11400000, guid: 7bf281396c092e441a872b432e8b73c1, type: 2}
+  midElevationTile: {fileID: 11400000, guid: 3db0b9e7ad952704baa47e26ebf3906e, type: 2}
+  peakTile: {fileID: 11400000, guid: 40055ab7969d1da469697bd8cbc74670, type: 2}
+  decorationTiles: []
+  treeTiles: []
+  groundCoverTiles: []
+  rockTiles: []
+  forestNoiseScale: 0.05
+  forestThreshold: 0.52
+  treeDensityInForest: 0.4
+  groundCoverChance: 0.06
+  rockClusterThreshold: 0.7
+  rockChanceInCluster: 0.12
+  decorationChance: 0.025
+  baseDecorationDensity: 0.025
+  transitionDecorationMultiplier: 0.25
+  colliderCliffSouth: {fileID: 11400000, guid: 7e12fb73967d34777ba76171e8be7b04, type: 2}
+  colliderCliffWest: {fileID: 11400000, guid: 2655b78189c934c049014795a63848c2, type: 2}
+  colliderCliffNorth: {fileID: 11400000, guid: 9fda3ab080ea045df984418fa0ae89fa, type: 2}
+  colliderCliffEast: {fileID: 11400000, guid: 7fa49cf4a88c04426910476f99b98ed5, type: 2}
+  raisedTileThreshold: 0.7
+  heightNoiseScale: 0.07
+  biomeNoiseOffset: 419

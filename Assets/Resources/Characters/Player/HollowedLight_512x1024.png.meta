@@ -1,0 +1,936 @@
+fileFormatVersion: 2
+guid: fa5c2cd514bd65b409b0354fa722d712
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2752609573929234550
+    second: HollowedLight_512x1024_0
+  - first:
+      213: 8865588798952105766
+    second: HollowedLight_512x1024_1
+  - first:
+      213: -6281989804805173971
+    second: HollowedLight_512x1024_2
+  - first:
+      213: -6043394883076845008
+    second: HollowedLight_512x1024_3
+  - first:
+      213: 6564528251732119439
+    second: HollowedLight_512x1024_4
+  - first:
+      213: 6653227973210595203
+    second: HollowedLight_512x1024_5
+  - first:
+      213: -8136620932382273882
+    second: HollowedLight_512x1024_6
+  - first:
+      213: -6080544154511965778
+    second: HollowedLight_512x1024_7
+  - first:
+      213: -3407369988455294022
+    second: HollowedLight_512x1024_8
+  - first:
+      213: -1408446536992584145
+    second: HollowedLight_512x1024_9
+  - first:
+      213: 2044985722041297620
+    second: HollowedLight_512x1024_10
+  - first:
+      213: -8862849641423907464
+    second: HollowedLight_512x1024_11
+  - first:
+      213: -7126332618573379547
+    second: HollowedLight_512x1024_12
+  - first:
+      213: 4241603382183839951
+    second: HollowedLight_512x1024_13
+  - first:
+      213: -6797250360532031617
+    second: HollowedLight_512x1024_14
+  - first:
+      213: -1966628314228134035
+    second: HollowedLight_512x1024_15
+  - first:
+      213: 6843268342431670836
+    second: HollowedLight_512x1024_16
+  - first:
+      213: 2473839271893168937
+    second: HollowedLight_512x1024_17
+  - first:
+      213: -6201564987958494055
+    second: HollowedLight_512x1024_18
+  - first:
+      213: 231550370373603472
+    second: HollowedLight_512x1024_19
+  - first:
+      213: -2379529902236030782
+    second: HollowedLight_512x1024_20
+  - first:
+      213: 3669240746282055340
+    second: HollowedLight_512x1024_21
+  - first:
+      213: -7023235041631354233
+    second: HollowedLight_512x1024_22
+  - first:
+      213: 6622761371607355629
+    second: HollowedLight_512x1024_23
+  - first:
+      213: 8820459127883576341
+    second: HollowedLight_512x1024_24
+  - first:
+      213: 2402635550842996276
+    second: HollowedLight_512x1024_25
+  - first:
+      213: -2324782550673898707
+    second: HollowedLight_512x1024_26
+  - first:
+      213: 8932961982760327751
+    second: HollowedLight_512x1024_27
+  - first:
+      213: 7306826082222898144
+    second: HollowedLight_512x1024_28
+  - first:
+      213: -3003211281187650180
+    second: HollowedLight_512x1024_29
+  - first:
+      213: -6750896208374223604
+    second: HollowedLight_512x1024_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 898
+        width: 54
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6703463d2db333620800000000000000
+      internalID: 2752609573929234550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_1
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 898
+        width: 53
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 627e83e6a06e80b70800000000000000
+      internalID: 8865588798952105766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_2
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 898
+        width: 53
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2d46f15e83e1d8a0800000000000000
+      internalID: -6281989804805173971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_3
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 898
+        width: 52
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0329ac48f5c812ca0800000000000000
+      internalID: -6043394883076845008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_4
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 765
+        width: 51
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8f42822aa3e91b50800000000000000
+      internalID: 6564528251732119439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_5
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 768
+        width: 48
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38fd8e06793055c50800000000000000
+      internalID: 6653227973210595203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_6
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 765
+        width: 50
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aec8552f5ae41f80800000000000000
+      internalID: -8136620932382273882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_7
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 767
+        width: 50
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea18c3dbe419d9ba0800000000000000
+      internalID: -6080544154511965778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_8
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 636
+        width: 49
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abb9bcb6c0796b0d0800000000000000
+      internalID: -3407369988455294022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_9
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 635
+        width: 46
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2e8d6d3651347ce0800000000000000
+      internalID: -1408446536992584145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_10
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 636
+        width: 48
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4da640dedaf316c10800000000000000
+      internalID: 2044985722041297620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_11
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 637
+        width: 48
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 875da316535d00580800000000000000
+      internalID: -8862849641423907464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_12
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 502
+        width: 50
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52887a68d3e2a1d90800000000000000
+      internalID: -7126332618573379547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_13
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 504
+        width: 48
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc8c9299dc33dda30800000000000000
+      internalID: 4241603382183839951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_14
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 504
+        width: 47
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f77a71b7fc05ba1a0800000000000000
+      internalID: -6797250360532031617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_15
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 504
+        width: 47
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6fe435c7f125b4e0800000000000000
+      internalID: -1966628314228134035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_16
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 372
+        width: 52
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 432e05ddc4c28fe50800000000000000
+      internalID: 6843268342431670836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_17
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 372
+        width: 51
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9237a98f5b7d45220800000000000000
+      internalID: 2473839271893168937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_18
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 372
+        width: 51
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99cfb31308d9fe9a0800000000000000
+      internalID: -6201564987958494055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_19
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 372
+        width: 50
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0909ab5c5d1a63300800000000000000
+      internalID: 231550370373603472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_20
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 242
+        width: 49
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c82dc449263afed0800000000000000
+      internalID: -2379529902236030782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_21
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 243
+        width: 49
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca6f78da403cbe230800000000000000
+      internalID: 3669240746282055340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_22
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 241
+        width: 49
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 782cc79b0f4788e90800000000000000
+      internalID: -7023235041631354233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_23
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 241
+        width: 47
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de0d5dae066c8eb50800000000000000
+      internalID: 6622761371607355629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_24
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 118
+        width: 47
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5143a5118d0986a70800000000000000
+      internalID: 8820459127883576341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_25
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 3
+        width: 47
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 436c8b4cd40e75120800000000000000
+      internalID: 2402635550842996276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_26
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 7
+        width: 47
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d234e0f5696bcbfd0800000000000000
+      internalID: -2324782550673898707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_27
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 6
+        width: 47
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74a9f7e289148fb70800000000000000
+      internalID: 8932961982760327751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_28
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 116
+        width: 47
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eb747acb9f076560800000000000000
+      internalID: 7306826082222898144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_29
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 2
+        width: 46
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c754d5f50437256d0800000000000000
+      internalID: -3003211281187650180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HollowedLight_512x1024_30
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 117
+        width: 46
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0da2509aafff42a0800000000000000
+      internalID: -6750896208374223604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      HollowedLight_512x1024_0: 2752609573929234550
+      HollowedLight_512x1024_1: 8865588798952105766
+      HollowedLight_512x1024_10: 2044985722041297620
+      HollowedLight_512x1024_11: -8862849641423907464
+      HollowedLight_512x1024_12: -7126332618573379547
+      HollowedLight_512x1024_13: 4241603382183839951
+      HollowedLight_512x1024_14: -6797250360532031617
+      HollowedLight_512x1024_15: -1966628314228134035
+      HollowedLight_512x1024_16: 6843268342431670836
+      HollowedLight_512x1024_17: 2473839271893168937
+      HollowedLight_512x1024_18: -6201564987958494055
+      HollowedLight_512x1024_19: 231550370373603472
+      HollowedLight_512x1024_2: -6281989804805173971
+      HollowedLight_512x1024_20: -2379529902236030782
+      HollowedLight_512x1024_21: 3669240746282055340
+      HollowedLight_512x1024_22: -7023235041631354233
+      HollowedLight_512x1024_23: 6622761371607355629
+      HollowedLight_512x1024_24: 8820459127883576341
+      HollowedLight_512x1024_25: 2402635550842996276
+      HollowedLight_512x1024_26: -2324782550673898707
+      HollowedLight_512x1024_27: 8932961982760327751
+      HollowedLight_512x1024_28: 7306826082222898144
+      HollowedLight_512x1024_29: -3003211281187650180
+      HollowedLight_512x1024_3: -6043394883076845008
+      HollowedLight_512x1024_30: -6750896208374223604
+      HollowedLight_512x1024_4: 6564528251732119439
+      HollowedLight_512x1024_5: 6653227973210595203
+      HollowedLight_512x1024_6: -8136620932382273882
+      HollowedLight_512x1024_7: -6080544154511965778
+      HollowedLight_512x1024_8: -3407369988455294022
+      HollowedLight_512x1024_9: -1408446536992584145
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

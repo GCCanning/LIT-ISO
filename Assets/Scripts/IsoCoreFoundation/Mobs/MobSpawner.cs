@@ -1,0 +1,101 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace IsoCore.Foundation
+{
+    /// <summary>
+    /// Spawns biome-appropriate wildlife in a ring around the player up to a cap,
+    /// and despawns mobs that wander too far. Bounded per-interval work.
+    /// </summary>
+    public class MobSpawner : MonoBehaviour
+    {
+        IsoWorld _world;
+        FoundationContent _content;
+        FoundationConfig _cfg;
+        IsoFoundationPlayer _player;
+        Transform _mobParent;
+
+        readonly List<Mob> _mobs = new();
+        float _timer;
+
+        public int Count => _mobs.Count;
+
+        public void Init(IsoWorld world, FoundationContent content, FoundationConfig cfg, IsoFoundationPlayer player)
+        {
+            _world = world; _content = content; _cfg = cfg; _player = player;
+            _mobParent = new GameObject("Mobs").transform;
+            _mobParent.SetParent(transform, false);
+            _timer = 1f;
+        }
+
+        void Update()
+        {
+            if (_world == null) return;
+            _timer -= Time.deltaTime;
+            if (_timer <= 0f)
+            {
+                _timer = _cfg.mobSpawnInterval;
+                TrySpawn();
+            }
+            DespawnFar();
+        }
+
+        void TrySpawn()
+        {
+            _mobs.RemoveAll(m => !m);
+            if (_mobs.Count >= _cfg.mobCap) return;
+
+            Vector2 origin = _player.Ground; // height-0 plane (WorldToCell assumes this)
+            float ang = Random.value * Mathf.PI * 2f;
+            float dist = Random.Range(_cfg.mobSpawnRadius * 0.5f, _cfg.mobSpawnRadius);
+            Vector2 ground = origin + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * dist;
+
+            var c = IsoGrid.WorldToCell(new Vector3(ground.x, ground.y, 0f));
+            if (!_world.IsWalkable(c.x, c.y)) return;
+
+            var biome = _world.GetBiome(c.x, c.y);
+            var def = PickMob(biome);
+            if (def == null) return;
+
+            var go = new GameObject($"Mob_{def.id}");
+            go.transform.SetParent(_mobParent, false);
+            var mob = go.AddComponent<Mob>();
+            mob.Init(def, _world, ground);
+            _mobs.Add(mob);
+        }
+
+        MobDefinition PickMob(BiomeDefinition biome)
+        {
+            if (biome == null || biome.mobs == null || biome.mobs.Length == 0) return null;
+            float total = 0f;
+            foreach (var m in biome.mobs) if (m.mob != null) total += Mathf.Max(0f, m.weight);
+            if (total <= 0f) return null;
+
+            float roll = Random.value * total;
+            foreach (var m in biome.mobs)
+            {
+                float w = m.mob != null ? Mathf.Max(0f, m.weight) : 0f;
+                if (w <= 0f) continue; // never select a zero/negative-weight entry
+                roll -= w;
+                if (roll < 0f) return m.mob;
+            }
+            return null;
+        }
+
+        void DespawnFar()
+        {
+            float r2 = _cfg.mobDespawnRadius * _cfg.mobDespawnRadius;
+            Vector2 p = _player.Ground;
+            for (int i = _mobs.Count - 1; i >= 0; i--)
+            {
+                var m = _mobs[i];
+                if (!m) { _mobs.RemoveAt(i); continue; }
+                if ((m.Ground - p).sqrMagnitude > r2) // planar distance on the height-0 plane
+                {
+                    Destroy(m.gameObject);
+                    _mobs.RemoveAt(i);
+                }
+            }
+        }
+    }
+}

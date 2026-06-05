@@ -1,0 +1,220 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        TILE SYSTEM QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════════════════
+
+BIOME SELECTION FLOW:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                               │
+│  World Position (x, y) → Perlin Noise Sample with Biome Offset              │
+│         ↓                                                                     │
+│  Noise Value → Biome Index Selection (0-5)                                   │
+│         ↓                                                                     │
+│  ┌─ Plains (offset: 0)     [MAIN]  - Balanced terrain, max decoration      │
+│  ├─ Desert (offset: 101)   [ALT]   - Sparse, sandy  decorations            │
+│  ├─ Frozen Mountain (211)  [ALT]   - High elevation, no decoration         │
+│  ├─ Frozen Cave (307)      [ALT]   - Underground, coral decorations         │
+│  ├─ Temple (419)           [ALT]   - Lava/stone, animated, no decoration   │
+│  └─ Basic (523)            [FALLBACK] - Gray test tiles                     │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+HEIGHT GENERATION:
+   Flat (height=0)              Raised (height=1)
+   ↓                            ↓
+   Perlin < threshold           Perlin ≥ threshold
+   (varies per biome)           (varies per biome)
+   ↓                            ↓
+   NeighbourTile_[Biome]        NeighbourTile_[Biome]
+   _FlatGrass/Sand/Snow         _RaisedGrass/Sand/Snow
+                                + Cliff Colliders
+
+TILE PLACEMENT LAYERS (per cell):
+   Layer 0: Ground      ← NeighbourTile (contextual)
+   Layer 1: Decoration  ← RandomTile (variety) OR collider
+   Layer 2: Collision   ← TilemapCollider2D (physical interaction)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+BIOME DETAIL MATRIX:
+
+┌────────────────┬──────────┬──────────┬────────┬──────────┬─────────┐
+│ BIOME          │ NOISE    │ RAISED%  │ DECO%  │ VARIANTS │ SPECIAL │
+│                │ OFFSET   │ THRESHOLD│        │          │         │
+├────────────────┼──────────┼──────────┼────────┼──────────┼─────────┤
+│ Plains         │ 0        │ 68%      │ 1.8%   │ Abundant │ Plants  │
+│ Desert         │ 101      │ 72%      │ 0.8%   │ Medium   │ Coral   │
+│ Fro.Mountain   │ 211      │ 58%      │  —     │ Minimal  │ Bare    │
+│ Fro.Cave       │ 307      │ 62%      │ 1.2%   │ Sparse   │ Coral   │
+│ Temple         │ 419      │ 70%      │  —     │ Minimal  │ Lava*   │
+│ Basic          │ 523      │ 66%      │  —     │  None    │ Test    │
+└────────────────┴──────────┴──────────┴────────┴──────────┴─────────┘
+* Animated lava (shader/particle effect)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+TILE TYPES EXPLAINED:
+
+NeighbourTile (14 types)
+├─ What: Rules-based tile that checks adjacent cells
+├─ Why: Seamless terrain blending (no visible seams at boundaries)
+├─ How: RuleTile system checks 8 neighbors (N, S, E, W, NE, NW, SE, SW)
+├─ Output: Single sprite from rule-matching
+└─ Examples: NeighbourTile_Plains_FlatGrass
+
+RandomTile (15 types)
+├─ What: Tile that picks randomly from sprite variants
+├─ Why: Visual variety (prevents monotonous repeating tiles)
+├─ How: Contains multiple sprites, picks one at placement
+├─ Output: Different sprite each placement (deterministic seed)
+└─ Examples: RandomTile_Plains_Plants (18 variants)
+
+ColliderTile (15 types)
+├─ What: Invisible collision shape for cliff edges
+├─ Why: Physical interaction (player can't walk through cliffs)
+├─ How: Placed when flat cell is next to raised cell
+├─ Output: Polygon/box collider
+└─ Examples: tile-border-left, tile-border-right, slope-a
+
+═══════════════════════════════════════════════════════════════════════════════
+
+RESOURCE SYSTEM:
+
+Item Definition (6 items)
+┌─────────────┬─────────────┬──────────┬──────────┐
+│ Item ID     │ Display     │ Category │ MaxStack │
+├─────────────┼─────────────┼──────────┼──────────┤
+│ wood        │ Wood        │ Resource │   999    │
+│ pinecone    │ Pinecone    │ Resource │   999    │
+│ treesap     │ Treesap     │ Resource │   999    │
+│ stone       │ Stone       │ Resource │   999    │
+│ copper_ore  │ Copper Ore  │ Resource │   999    │
+│ coin        │ Coin        │ Currency │  9999    │
+└─────────────┴─────────────┴──────────┴──────────┘
+
+Resource Node (2 types)
+┌───────────────┬──────────────┬────────┬─────────┬──────────┐
+│ Node          │ Spawn Chance │ Cooldown│ Radius  │ Spacing  │
+├───────────────┼──────────────┼────────┼─────────┼──────────┤
+│ Oak Tree      │     6%       │  45s   │  1.3u   │  2.5u    │
+│ Rock          │     4%       │  60s   │  1.2u   │  3.0u    │
+└───────────────┴──────────────┴────────┴─────────┴──────────┘
+
+Drops per Node:
+Oak Tree:  Wood (1-3) 100%, Pinecone (0-2) 40%, Treesap (0-1) 20%
+Rock:      Stone (1-3) 100%, Copper Ore (0-1) 30%
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CHUNK GENERATION SEQUENCE:
+
+1. Player Position
+        ↓
+2. Calculate Chunk Coordinate (32x32 cells)
+        ↓
+3. Iterate 32x32 cells in chunk:
+
+   For each cell (x, y):
+
+   a) Sample biome via Perlin(x + offset, y + offset)
+
+   b) Sample height via Perlin(x + seed, y + seed)
+      → Flat if < threshold
+      → Raised if ≥ threshold
+
+   c) Place ground tile
+      FLAT:   NeighbourTile_[Biome]_FlatGrass
+      RAISED: NeighbourTile_[Biome]_RaisedGrass
+
+   d) If RAISED, place elevation sprite:
+      RandomTile_[Biome]_RaisedGrass (visual only)
+
+   e) If RAISED, place cliff colliders:
+      Check 4 neighbors (N, S, E, W)
+      → If neighbor is FLAT, place tile-border-[direction]
+
+   f) If FLAT and Rand() < decorationChance:
+      Place RandomTile_[Biome]_Plants (decoration)
+
+   g) If FLAT and Rand() < spawnChance:
+      Instantiate ResourceNode(Oak Tree | Rock)
+
+4. Finalize: CompositeCollider2D merges all colliders
+
+═══════════════════════════════════════════════════════════════════════════════
+
+SPRITE ASSET ORGANIZATION:
+
+Assets/Tilemaps/Isometric/Sprites/
+├── Basic/                    (Test tiles)
+│   ├── Flat/              → 17 gray squares (base00-base16)
+│   └── Raised/            → 18 gray cubes (cube00-cube16, slopes)
+│
+├── Plains/                   (Grass biome)
+│   ├── Flat/              → Grass variants
+│   ├── Raised/            → Elevated grass
+│   └── Decoration/        → 18 sprites (flowers, grass tufts, rocks)
+│
+├── Desert/                   (Sand biome)
+│   ├── Flat/              → Sand variants
+│   ├── Raised/            → Sand dunes, rock formations
+│   └── Decoration/        → Coral, cactus, palms, bones (~10)
+│
+├── FrozenMountain/           (Snow biome)
+│   ├── Flat/              → Snow ground
+│   ├── Raised/            → Snow peaks, rocks
+│   └── Decoration/        → (none)
+│
+├── FrozenCave/               (Underground biome)
+│   ├── Raised/            → Cave floor & walls
+│   └── Decoration/        → Ice crystals, growths (~8)
+│
+└── Temple/                   (Lava biome)
+    ├── Flat/              → Stone/lava ground
+    ├── Raised/            → Lava walls, platforms
+    └── Decoration/        → (none)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+MISSING COMPONENTS (needs sprites/sounds):
+
+❌ Item Icons           → Item_*.icon (32×32 sprites)
+❌ Node Sprites         → ResourceNode.nodeSprites[]
+❌ Harvest Sounds       → ResourceNode.harvestSound
+❌ Stump Sprite         → ResourceNode.harvestedSprite (post-harvest visual)
+❌ Color Palettes       → (not currently used, but folder exists)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+KEY PARAMETERS TO TWEAK:
+
+File: Assets/World/Biomes/BiomeDefinition_Plains.asset
+
+decorationChance: 0.018
+└─ Increase → More plants visible (0.04 = 4% per cell)
+└─ Decrease → Sparse world (0.01 = 1% per cell)
+
+raisedTileThreshold: 0.68
+└─ Increase → More flat terrain (fewer cliffs)
+└─ Decrease → More elevated terrain (more cliffs)
+
+heightNoiseScale: 0.08
+└─ Increase → Larger terrain features
+└─ Decrease → Smaller, more chaotic terrain
+
+File: Assets/World/ResourceNodes/Node_OakTree.asset
+
+spawnChance: 0.06
+└─ Increase → More trees visible (0.10 = 10% per cell)
+└─ Decrease → Fewer trees (0.03 = 3% per cell)
+
+harvestCooldown: 45
+└─ Respawn time in seconds after harvest
+
+minimumSpacing: 2.5
+└─ Distance in units between trees (prevents clustering)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+End of Quick Reference
+
+For detailed information, see: TILE_INVENTORY.md

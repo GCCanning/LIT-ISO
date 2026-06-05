@@ -1,0 +1,18 @@
+{
+    "name": "IsoCore.Foundation.Editor",
+    "rootNamespace": "IsoCore.Foundation.EditorTools",
+    "references": [
+        "IsoCore.Foundation"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

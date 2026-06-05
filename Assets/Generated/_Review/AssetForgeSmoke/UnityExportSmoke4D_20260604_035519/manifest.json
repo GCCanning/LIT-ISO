@@ -1,0 +1,187 @@
+{
+  "version": 2,
+  "source": "LIT-ISO Asset Forge",
+  "pipeline": "Pixel Pipeline local Asset Forge export",
+  "assetName": "UnityExportSmoke4D",
+  "assetMode": "character",
+  "category": "_Review/AssetForgeSmoke",
+  "exportedAt": "2026-06-04T03:55:19.485426+00:00",
+  "directionOrder": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N",
+    "NW",
+    "W",
+    "SW"
+  ],
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "columns": 1,
+  "rows": 8,
+  "actions": {
+    "idle": {
+      "label": "Idle",
+      "fps": 4.0,
+      "framesPerDirection": 1,
+      "directionMode": "8-direction",
+      "sheet": "actions/idle.png",
+      "contact": null
+    }
+  },
+  "pixelsPerUnit": 128,
+  "anchor": {
+    "x": 128,
+    "y": 244,
+    "normalized": {
+      "x": 0.5,
+      "y": 0.046875
+    }
+  },
+  "spriteImport": {
+    "pixelsPerUnit": 128,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.046875
+    },
+    "filterMode": "Point",
+    "compression": "Uncompressed"
+  },
+  "productionPreset": {
+    "id": "unityexportsmoke4d",
+    "label": "UnityExportSmoke4D"
+  },
+  "lora": {
+    "name": "",
+    "checkpoint": "",
+    "strength": 0
+  },
+  "loraEvaluations": [
+    {
+      "id": "idle_S_0",
+      "action": "idle",
+      "direction": "S",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_SE_0",
+      "action": "idle",
+      "direction": "SE",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_E_0",
+      "action": "idle",
+      "direction": "E",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_NE_0",
+      "action": "idle",
+      "direction": "NE",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_N_0",
+      "action": "idle",
+      "direction": "N",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_NW_0",
+      "action": "idle",
+      "direction": "NW",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_W_0",
+      "action": "idle",
+      "direction": "W",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    },
+    {
+      "id": "idle_SW_0",
+      "action": "idle",
+      "direction": "SW",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    }
+  ],
+  "acceptedFrames": [
+    {
+      "id": "idle_S_0",
+      "action": "idle",
+      "direction": "S",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_SE_0",
+      "action": "idle",
+      "direction": "SE",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_E_0",
+      "action": "idle",
+      "direction": "E",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_NE_0",
+      "action": "idle",
+      "direction": "NE",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_N_0",
+      "action": "idle",
+      "direction": "N",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_NW_0",
+      "action": "idle",
+      "direction": "NW",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_W_0",
+      "action": "idle",
+      "direction": "W",
+      "frame": 0,
+      "qaStatus": "pass"
+    },
+    {
+      "id": "idle_SW_0",
+      "action": "idle",
+      "direction": "SW",
+      "frame": 0,
+      "qaStatus": "pass"
+    }
+  ],
+  "rejectedFrames": [],
+  "idle": "actions/idle.png",
+  "notes": "Exported from C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim"
+}

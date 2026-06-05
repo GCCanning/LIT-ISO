@@ -1,0 +1,17 @@
+{
+  "assetName": "UnityExportSmokeWalk",
+  "assetMode": "character",
+  "success": true,
+  "promotionReady": true,
+  "productionPreset": "unityexportsmokewalk",
+  "loraName": "PixelArtRedmond-Lite64.safetensors",
+  "loraCheckpoint": "DreamShaper_8_pruned.safetensors",
+  "loraStrength": 0,
+  "acceptedFrameCount": 32,
+  "rejectedFrameCount": 0,
+  "qaWarnCount": 0,
+  "qaFailCount": 0,
+  "generatedAt": "2026-06-04T15:28:16.8153166Z",
+  "generated": ["Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_S.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_SE.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_E.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_NE.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_N.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_NW.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_W.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Clips/UnityExportSmokeWalk_walk_SW.anim", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Controllers/UnityExportSmokeWalk.controller", "Assets/Generated/_Review/AssetForgeSmoke/UnityExportSmokeWalk_20260604_152022/Automation/Prefabs/UnityExportSmokeWalk.prefab"],
+  "errors": []
+}

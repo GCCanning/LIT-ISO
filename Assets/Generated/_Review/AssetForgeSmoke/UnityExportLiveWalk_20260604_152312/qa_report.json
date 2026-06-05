@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "frame_count": 32,
+  "expected_size": [
+    256,
+    256
+  ],
+  "summary": "PASS \u2014 32 frames, 5 issue(s):\n  [WARN] frame 4 (walk_SE_00.png): alpha_jump \u2014 Opaque area changed 95% vs previous frame (20.4% \u2192 39.6%)\n  [WARN] frame 20 (walk_NW_00.png): alpha_jump \u2014 Opaque area changed 42% vs previous frame (27.7% \u2192 16.0%)\n  [WARN] frame 4 (walk_SE_00.png): colour_drift \u2014 Colour histogram correlation vs previous frame: 0.624 (threshold 0.7)\n  [WARN] frame 16 (walk_N_00.png): colour_drift \u2014 Colour histogram correlation vs previous frame: 0.685 (threshold 0.7)\n  [WARN] frame 20 (walk_NW_00.png): colour_drift \u2014 Colour histogram correlation vs previous frame: 0.629 (threshold 0.7)",
+  "issues": [
+    {
+      "frame_index": 4,
+      "filename": "walk_SE_00.png",
+      "issue_type": "alpha_jump",
+      "severity": "warn",
+      "detail": "Opaque area changed 95% vs previous frame (20.4% \u2192 39.6%)"
+    },
+    {
+      "frame_index": 20,
+      "filename": "walk_NW_00.png",
+      "issue_type": "alpha_jump",
+      "severity": "warn",
+      "detail": "Opaque area changed 42% vs previous frame (27.7% \u2192 16.0%)"
+    },
+    {
+      "frame_index": 4,
+      "filename": "walk_SE_00.png",
+      "issue_type": "colour_drift",
+      "severity": "warn",
+      "detail": "Colour histogram correlation vs previous frame: 0.624 (threshold 0.7)"
+    },
+    {
+      "frame_index": 16,
+      "filename": "walk_N_00.png",
+      "issue_type": "colour_drift",
+      "severity": "warn",
+      "detail": "Colour histogram correlation vs previous frame: 0.685 (threshold 0.7)"
+    },
+    {
+      "frame_index": 20,
+      "filename": "walk_NW_00.png",
+      "issue_type": "colour_drift",
+      "severity": "warn",
+      "detail": "Colour histogram correlation vs previous frame: 0.629 (threshold 0.7)"
+    }
+  ]
+}
