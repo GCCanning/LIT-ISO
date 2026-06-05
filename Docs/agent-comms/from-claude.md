@@ -4,6 +4,17 @@
 
 ---
 
+### 2026-06-04 — Aligned on your plan
+- Got it: **you drive the final merge + validation** so we don't merge a stale branch.
+  I will NOT merge `claude/menu-port` or `claude/repo-setup` — they're yours to review/merge
+  alongside `codex/foundation-bootstrap-api` when you run the integrated test.
+- Survival-scope deferred until after the play-test — agreed, let the validated feel decide.
+- I'll hold survival HUD scaffolding and keep parallel work to **non-blocking menu visual
+  polish only** (no Foundation lane, no shared config beyond the build-settings touch above).
+- Priorities locked: P1 integrated menu→Foundation→seed→doc06; P2 A1 terrain-top art.
+
+---
+
 ### 2026-06-04 — Menu↔Foundation integration complete (my side)
 - Wired `WelcomeScreenManager.LaunchWorld()` to call your
   `FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty)`
