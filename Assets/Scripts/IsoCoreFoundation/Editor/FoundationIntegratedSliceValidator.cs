@@ -132,9 +132,19 @@ namespace IsoCore.Foundation.EditorTools
 
             var go = new GameObject("FoundationBootstrap_IntegratedValidation");
             var boot = go.AddComponent<FoundationBootstrap>();
-            typeof(FoundationBootstrap)
-                .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
-                ?.Invoke(boot, null);
+            FoundationBootstrap readyBoot = null;
+            void OnReady(FoundationBootstrap b) => readyBoot = b;
+            FoundationBootstrap.Ready += OnReady;
+            try
+            {
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(boot, null);
+            }
+            finally
+            {
+                FoundationBootstrap.Ready -= OnReady;
+            }
 
             add("ConfigureLaunch seed applied before Foundation world build",
                 boot.config != null && boot.config.seed == expected,
@@ -153,6 +163,18 @@ namespace IsoCore.Foundation.EditorTools
             add("Foundation runtime graph creates MobSpawner", go.transform.Find("MobSpawner") != null);
             add("Foundation runtime graph creates HUD and input router",
                 go.GetComponent<FoundationHUD>() != null && go.GetComponent<PlayerInteraction>() != null);
+            add("FoundationBootstrap Ready event fires with active instance",
+                readyBoot == boot,
+                readyBoot != null ? readyBoot.name : "not fired");
+            add("FoundationBootstrap exposes Content/World runtime handles",
+                boot.Content != null && boot.World != null);
+            add("FoundationBootstrap exposes Inventory/Hotbar runtime handles",
+                boot.Inventory != null && boot.Hotbar != null &&
+                boot.Inventory.SlotCount == boot.inventorySlots && boot.Hotbar.Size == boot.hotbarSlots);
+            add("FoundationBootstrap exposes gameplay system handles",
+                boot.Player != null && boot.WorldController != null && boot.Placement != null &&
+                boot.Farming != null && boot.MobSpawner != null && boot.DayNight != null &&
+                boot.Crafting != null && boot.Hud != null);
 
             var spawner = go.GetComponentInChildren<MobSpawner>();
             bool spawned = TryForceMobSpawn(spawner);
@@ -160,6 +182,21 @@ namespace IsoCore.Foundation.EditorTools
                 spawner != null ? $"count {spawner.Count}" : "spawner missing");
 
             UnityEngine.Object.DestroyImmediate(go);
+
+            var headlessGo = new GameObject("FoundationBootstrap_NoImguiHudValidation");
+            var headlessBoot = headlessGo.AddComponent<FoundationBootstrap>();
+            headlessBoot.createImguiHud = false;
+            typeof(FoundationBootstrap)
+                .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.Invoke(headlessBoot, null);
+            add("FoundationBootstrap can skip temporary IMGUI HUD",
+                headlessBoot.Hud == null && headlessGo.GetComponent<FoundationHUD>() == null &&
+                headlessGo.GetComponent<PlayerInteraction>() != null);
+            add("FoundationBootstrap exposes UI binding handles without IMGUI HUD",
+                headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
+                headlessBoot.Content != null && headlessBoot.World != null);
+            UnityEngine.Object.DestroyImmediate(headlessGo);
+
             FoundationBootstrap.ClearLaunchOptions();
         }
 
