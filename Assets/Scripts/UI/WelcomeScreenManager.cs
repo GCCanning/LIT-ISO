@@ -17,9 +17,18 @@ public class WelcomeScreenManager : MonoBehaviour
 {
     private enum Screen { MainMenu, CreateWorld, LoadGame, Options }
 
-    [Header("Background")]
-    [Tooltip("Optional splash/background image for the menu (e.g., campfire scene). Assign in inspector or leave null.")]
-    public Sprite backgroundImage;
+    [Header("Menu skin (all optional)")]
+    [Tooltip("Each slot can be assigned in the inspector OR auto-loaded by filename from " +
+             "Resources/UI/Menu/. Any slot left empty falls back to the procedural look, " +
+             "so the menu always works even with no images.")]
+    public Sprite backgroundImage;   // Resources/UI/Menu/background  (full-screen splash)
+    public Sprite logoImage;         // Resources/UI/Menu/logo        (title wordmark, top of main menu)
+    public Sprite panelImage;        // Resources/UI/Menu/panel       (9-sliced card frame)
+    public Sprite buttonImage;       // Resources/UI/Menu/button      (9-sliced button, rest)
+    public Sprite buttonHoverImage;  // Resources/UI/Menu/button_hover(9-sliced button, hover)
+
+    [Tooltip("Logo display height in px (its width scales to preserve aspect).")]
+    public float logoHeight = 180f;
 
     [Header("Layout")]
     public float panelWidth = 500f;
@@ -80,8 +89,25 @@ public class WelcomeScreenManager : MonoBehaviour
     private void Awake()
     {
         EnsureSaveFolder();
+        LoadSkin();
         BuildCanvas();
         ShowScreen(Screen.MainMenu);
+    }
+
+    /// <summary>
+    /// Fills any unassigned skin slot from Resources/UI/Menu/&lt;name&gt;. Drop PNGs there
+    /// (imported as Sprite) and they appear automatically — no inspector wiring needed.
+    /// Anything still missing falls back to the procedural look.
+    /// </summary>
+    private void LoadSkin()
+    {
+        if (backgroundImage == null)
+            backgroundImage = Resources.Load<Sprite>("UI/Menu/background")
+                           ?? Resources.Load<Sprite>("UI/CampfireMenu"); // legacy fallback
+        if (logoImage == null)        logoImage        = Resources.Load<Sprite>("UI/Menu/logo");
+        if (panelImage == null)       panelImage       = Resources.Load<Sprite>("UI/Menu/panel");
+        if (buttonImage == null)      buttonImage      = Resources.Load<Sprite>("UI/Menu/button");
+        if (buttonHoverImage == null) buttonHoverImage = Resources.Load<Sprite>("UI/Menu/button_hover");
     }
 
     private void EnsureSaveFolder()
@@ -129,13 +155,35 @@ public class WelcomeScreenManager : MonoBehaviour
     {
         contentPanel = CreateMainPanel("MainMenu");
 
-        Text title = CreateText("Title", contentPanel, "LIT-ISO", 52, buttonText, TextAnchor.MiddleCenter);
-        RectTransform titleRect = title.rectTransform;
-        titleRect.anchorMin = new Vector2(0.5f, 1f);
-        titleRect.anchorMax = new Vector2(0.5f, 1f);
-        titleRect.pivot = new Vector2(0.5f, 1f);
-        titleRect.anchoredPosition = new Vector2(0f, -40f);
-        titleRect.sizeDelta = new Vector2(panelWidth - 40f, 60f);
+        if (logoImage != null)
+        {
+            // Logo art provided → use it as the title wordmark.
+            GameObject logoGO = new GameObject("Logo", typeof(RectTransform));
+            logoGO.transform.SetParent(contentPanel, false);
+            RectTransform logoRect = logoGO.GetComponent<RectTransform>();
+            logoRect.anchorMin = new Vector2(0.5f, 1f);
+            logoRect.anchorMax = new Vector2(0.5f, 1f);
+            logoRect.pivot = new Vector2(0.5f, 1f);
+            logoRect.anchoredPosition = new Vector2(0f, -24f);
+            float aspect = (float)logoImage.rect.width / Mathf.Max(1f, logoImage.rect.height);
+            logoRect.sizeDelta = new Vector2(logoHeight * aspect, logoHeight);
+
+            Image logo = logoGO.AddComponent<Image>();
+            logo.sprite = logoImage;
+            logo.preserveAspect = true;
+            logo.color = Color.white;
+        }
+        else
+        {
+            // No logo art → fall back to a styled text title.
+            Text title = CreateText("Title", contentPanel, "LIT-ISO", 52, buttonText, TextAnchor.MiddleCenter);
+            RectTransform titleRect = title.rectTransform;
+            titleRect.anchorMin = new Vector2(0.5f, 1f);
+            titleRect.anchorMax = new Vector2(0.5f, 1f);
+            titleRect.pivot = new Vector2(0.5f, 1f);
+            titleRect.anchoredPosition = new Vector2(0f, -40f);
+            titleRect.sizeDelta = new Vector2(panelWidth - 40f, 60f);
+        }
 
         float buttonY = -120f;
         float buttonSpacing = buttonHeight + spacing;
@@ -434,16 +482,21 @@ public class WelcomeScreenManager : MonoBehaviour
             bgGO.transform.SetParent(mainCanvas.transform, false);
             bgGO.transform.SetAsFirstSibling();  // Behind everything
             RectTransform bgRT = bgGO.GetComponent<RectTransform>();
-            bgRT.anchorMin = Vector2.zero;
-            bgRT.anchorMax = Vector2.one;
-            bgRT.offsetMin = Vector2.zero;
-            bgRT.offsetMax = Vector2.zero;
+            bgRT.anchorMin = new Vector2(0.5f, 0.5f);
+            bgRT.anchorMax = new Vector2(0.5f, 0.5f);
+            bgRT.pivot = new Vector2(0.5f, 0.5f);
+            bgRT.anchoredPosition = Vector2.zero;
 
             Image bgImage = bgGO.AddComponent<Image>();
             bgImage.sprite = bg;
             bgImage.type = Image.Type.Simple;
-            bgImage.preserveAspect = false;  // Fill the whole screen
             bgImage.color = Color.white;
+
+            // Cover-fit: fill the screen while preserving aspect (crops the overflow),
+            // so the splash never stretches/distorts at any resolution or aspect ratio.
+            AspectRatioFitter fitter = bgGO.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = (float)bg.rect.width / Mathf.Max(1f, bg.rect.height);
         }
         else
         {
@@ -478,11 +531,21 @@ public class WelcomeScreenManager : MonoBehaviour
         RectTransform rt = go.GetComponent<RectTransform>();
 
         Image bgImage = go.AddComponent<Image>();
-        bgImage.color = bg;
-
-        Outline outline = go.AddComponent<Outline>();
-        outline.effectColor = border;
-        outline.effectDistance = new Vector2(1.5f, -1.5f);
+        if (panelImage != null)
+        {
+            // Skinned: 9-sliced frame art (set proper Border in the sprite import).
+            bgImage.sprite = panelImage;
+            bgImage.type = Image.Type.Sliced;
+            bgImage.color = Color.white;
+        }
+        else
+        {
+            // Procedural fallback: flat fill + 1px outline.
+            bgImage.color = bg;
+            Outline outline = go.AddComponent<Outline>();
+            outline.effectColor = border;
+            outline.effectDistance = new Vector2(1.5f, -1.5f);
+        }
 
         return rt;
     }
@@ -499,23 +562,42 @@ public class WelcomeScreenManager : MonoBehaviour
         rt.sizeDelta = new Vector2(200f, buttonHeight);
 
         Image bgImage = go.AddComponent<Image>();
-        bgImage.color = buttonBg;
-
-        Outline outline = go.AddComponent<Outline>();
-        outline.effectColor = panelBorder;
-        outline.effectDistance = new Vector2(1.5f, -1.5f);
-
         Button button = go.AddComponent<Button>();
         button.targetGraphic = bgImage;
         button.onClick.AddListener(() => onClick?.Invoke());
 
-        // Hover animation
-        ColorBlock colors = button.colors;
-        colors.normalColor = buttonBg;
-        colors.highlightedColor = buttonBgHover;
-        colors.pressedColor = new Color(0.10f, 0.12f, 0.18f, 1f);
-        colors.selectedColor = buttonBgHover;
-        button.colors = colors;
+        if (buttonImage != null)
+        {
+            // Skinned button: 9-sliced art, sprite-swap on hover/press if a hover art exists.
+            bgImage.sprite = buttonImage;
+            bgImage.type = Image.Type.Sliced;
+            bgImage.color = Color.white;
+            if (buttonHoverImage != null)
+            {
+                button.transition = Selectable.Transition.SpriteSwap;
+                button.spriteState = new SpriteState
+                {
+                    highlightedSprite = buttonHoverImage,
+                    pressedSprite = buttonHoverImage,
+                    selectedSprite = buttonHoverImage
+                };
+            }
+        }
+        else
+        {
+            // Procedural fallback: flat fill + outline + colour-tint hover.
+            bgImage.color = buttonBg;
+            Outline outline = go.AddComponent<Outline>();
+            outline.effectColor = panelBorder;
+            outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+            ColorBlock colors = button.colors;
+            colors.normalColor = buttonBg;
+            colors.highlightedColor = buttonBgHover;
+            colors.pressedColor = new Color(0.10f, 0.12f, 0.18f, 1f);
+            colors.selectedColor = buttonBgHover;
+            button.colors = colors;
+        }
 
         Text btnText = CreateText("Text", rt, text, 20, this.buttonText, TextAnchor.MiddleCenter);
         RectTransform textRect = btnText.rectTransform;
