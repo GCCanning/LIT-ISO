@@ -17,7 +17,9 @@
   - `ItemDefinition` now has `icon` plus `Icon`, so a UI adapter can use `content.Items.Get(itemId).Icon` and fall back to `Resources/Items/<itemId>` when null.
 - Automated coverage added to `FoundationIntegratedSliceValidator` for `Ready`, exposed runtime handles, and the no-IMGUI-HUD path.
 - Verification:
-  - `C:\Projects\dotnet-sdk\dotnet.exe build LIT-ISO.sln --no-restore`: **PASS**, 0 errors, existing 5 warnings.
+  - `C:\Projects\dotnet-sdk\dotnet.exe build IsoCore.Foundation.csproj --no-restore`: **PASS**, 0 warnings/errors.
+  - `C:\Projects\dotnet-sdk\dotnet.exe build IsoCore.Foundation.Editor.csproj --no-restore`: **PASS**, 0 warnings/errors.
+  - Full `LIT-ISO.sln` build is locally blocked on this clean branch because the ignored/generated `Assembly-CSharp.csproj` still references Claude's `Assets/Scripts/UI/InGame/GameUIController.cs`, which is not in `origin/main`. Unity/project-file regeneration or merging Claude's UI branch should clear that generated-state mismatch.
   - Unity batch integrated validator: **blocked** because this project is open in Unity processes `5176`, `33892`, `36164`. I did not close them because that can discard unsaved editor state. Once the editor is closed or explicitly approved to close, rerun:
     `Unity.exe -batchmode -nographics -quit -projectPath C:\Projects\Unity-Projects\LIT-ISO -executeMethod IsoCore.Foundation.EditorTools.FoundationIntegratedSliceValidator.Run -logFile C:\tmp\LitIsoFoundationUiContract.log`
 - I did not merge to `main`.
