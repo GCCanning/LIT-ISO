@@ -1,0 +1,308 @@
+{
+  "tiles": {
+    "dirt_1": {
+      "source_tile_id": "t000",
+      "original_name": "Dirt_1"
+    },
+    "dirt_2": {
+      "source_tile_id": "t001",
+      "original_name": "Dirt_2"
+    },
+    "dirt_3": {
+      "source_tile_id": "t002",
+      "original_name": "Dirt_\u00a3"
+    },
+    "dirt_4": {
+      "source_tile_id": "t003",
+      "original_name": "Dirt_4"
+    },
+    "dirt_5": {
+      "source_tile_id": "t004",
+      "original_name": "Dirt_5"
+    },
+    "dirt_6": {
+      "source_tile_id": "t005",
+      "original_name": "Dirt_6"
+    },
+    "dirt_7": {
+      "source_tile_id": "t006",
+      "original_name": "Dirt_7"
+    },
+    "dirt_8": {
+      "source_tile_id": "t007",
+      "original_name": "Dirt_8"
+    },
+    "dirt_9": {
+      "source_tile_id": "t008",
+      "original_name": "Dirt_9"
+    },
+    "dirt_10": {
+      "source_tile_id": "t009",
+      "original_name": "Dirt_10"
+    },
+    "dirt_11": {
+      "source_tile_id": "t010",
+      "original_name": "Dirt_11"
+    },
+    "dirt_12": {
+      "source_tile_id": "t011",
+      "original_name": "Dirt_12"
+    },
+    "dirt_13": {
+      "source_tile_id": "t012",
+      "original_name": "Dirt_13"
+    },
+    "dirt_14": {
+      "source_tile_id": "t013",
+      "original_name": "Dirt_14"
+    },
+    "dirt_15": {
+      "source_tile_id": "t014",
+      "original_name": "Dirt_!5"
+    },
+    "dirt_16": {
+      "source_tile_id": "t015",
+      "original_name": "Dirt_!6"
+    },
+    "dirt_17": {
+      "source_tile_id": "t016",
+      "original_name": "Dirt_!7"
+    },
+    "red_soil1": {
+      "source_tile_id": "t017",
+      "original_name": "Red_Soil1"
+    },
+    "red_soil2": {
+      "source_tile_id": "t018",
+      "original_name": "Red_Soil2"
+    },
+    "red_soil_grassy1": {
+      "source_tile_id": "t019",
+      "original_name": "Red_Soil_Grassy1"
+    },
+    "red_soil_grassy2": {
+      "source_tile_id": "t020",
+      "original_name": "Red_Soil_Grassy2"
+    },
+    "red_soil3": {
+      "source_tile_id": "t021",
+      "original_name": "Red_Soil3"
+    },
+    "grass_1": {
+      "source_tile_id": "t022",
+      "original_name": "Grass_1"
+    },
+    "grass_2": {
+      "source_tile_id": "t023",
+      "original_name": "Grass_2"
+    },
+    "grass_3": {
+      "source_tile_id": "t024",
+      "original_name": "Grass_3"
+    },
+    "soil": {
+      "source_tile_id": "t025",
+      "original_name": "Soil"
+    },
+    "soil_grassy": {
+      "source_tile_id": "t026",
+      "original_name": "Soil_grassy"
+    },
+    "grass_4": {
+      "source_tile_id": "t027",
+      "original_name": "Grass_4"
+    },
+    "grass_5": {
+      "source_tile_id": "t028",
+      "original_name": "Grass_5"
+    },
+    "longgrass1": {
+      "source_tile_id": "t029",
+      "original_name": "LongGrass1"
+    },
+    "longgrass2": {
+      "source_tile_id": "t030",
+      "original_name": "LongGrass2"
+    },
+    "longgrass3": {
+      "source_tile_id": "t031",
+      "original_name": "LongGrass3"
+    },
+    "longgrass4": {
+      "source_tile_id": "t032",
+      "original_name": "LongGrass4"
+    },
+    "longgrass5": {
+      "source_tile_id": "t033",
+      "original_name": "LongGrass5"
+    },
+    "longgrass6": {
+      "source_tile_id": "t034",
+      "original_name": "LongGrass6"
+    },
+    "longgrass7": {
+      "source_tile_id": "t035",
+      "original_name": "LongGrass7"
+    },
+    "extralonggrass": {
+      "source_tile_id": "t036",
+      "original_name": "ExtraLongGrass"
+    },
+    "flowerpatch1": {
+      "source_tile_id": "t041",
+      "original_name": "FlowerPatch1"
+    },
+    "rocktile_1": {
+      "source_tile_id": "t061",
+      "original_name": "RockTile_1"
+    },
+    "rock_pile": {
+      "source_tile_id": "t062",
+      "original_name": "Rock_Pile"
+    },
+    "rock_tileplain": {
+      "source_tile_id": "t063",
+      "original_name": "Rock_TilePlain"
+    },
+    "rock_stack": {
+      "source_tile_id": "t064",
+      "original_name": "Rock_Stack"
+    },
+    "rock_boulder": {
+      "source_tile_id": "t065",
+      "original_name": "Rock_Boulder"
+    },
+    "rock_waterbordr": {
+      "source_tile_id": "t066",
+      "original_name": "Rock_WaterBordr"
+    },
+    "smallrockpile": {
+      "source_tile_id": "t067",
+      "original_name": "SmallRockPile"
+    },
+    "rock_stack2": {
+      "source_tile_id": "t068",
+      "original_name": "Rock_stack2"
+    },
+    "rocksmooth_water": {
+      "source_tile_id": "t069",
+      "original_name": "RockSmooth_Water"
+    },
+    "rock_pile_water1": {
+      "source_tile_id": "t070",
+      "original_name": "Rock_Pile_Water1"
+    },
+    "rock_pile_water2": {
+      "source_tile_id": "t071",
+      "original_name": "Rock_Pile_Water2"
+    },
+    "rock_pile_water3": {
+      "source_tile_id": "t072",
+      "original_name": "Rock_Pile_Water3"
+    },
+    "rock_pile_water4": {
+      "source_tile_id": "t073",
+      "original_name": "Rock_Pile_Water4"
+    },
+    "rock_pile_water5": {
+      "source_tile_id": "t074",
+      "original_name": "Rock_Pile_Water5"
+    },
+    "rock_pile_small1": {
+      "source_tile_id": "t075",
+      "original_name": "Rock_Pile_Small1"
+    },
+    "rock_pile_small2": {
+      "source_tile_id": "t076",
+      "original_name": "Rock_Pile_Small2"
+    },
+    "rock_cluster_water1": {
+      "source_tile_id": "t077",
+      "original_name": "Rock_Cluster_Water1"
+    },
+    "rock_cluster_water2": {
+      "source_tile_id": "t078",
+      "original_name": "Rock_Cluster_Water2"
+    },
+    "rock_cluster_water3": {
+      "source_tile_id": "t079",
+      "original_name": "Rock_Cluster_Water3"
+    },
+    "rock_cluster_water4": {
+      "source_tile_id": "t080",
+      "original_name": "Rock_Cluster_Water4"
+    },
+    "rock_cluster_water5": {
+      "source_tile_id": "t081",
+      "original_name": "Rock_Cluster_Water5"
+    },
+    "water_sw_dark_light_wave": {
+      "source_tile_id": "t086",
+      "original_name": "Water_SW_Dark_Light_Wave"
+    },
+    "water_sw_dark_light_gentle_wave": {
+      "source_tile_id": "t087",
+      "original_name": "Water_SW_Dark_Light_Gentle_WAVE"
+    },
+    "ice1plain": {
+      "source_tile_id": "t104",
+      "original_name": "Ice1Plain"
+    },
+    "ice2ne": {
+      "source_tile_id": "t105",
+      "original_name": "Ice2NE"
+    },
+    "ice3nw": {
+      "source_tile_id": "t106",
+      "original_name": "Ice3NW"
+    },
+    "ice4se": {
+      "source_tile_id": "t107",
+      "original_name": "Ice4SE"
+    },
+    "icese": {
+      "source_tile_id": "t108",
+      "original_name": "IceSE"
+    },
+    "icenwe": {
+      "source_tile_id": "t109",
+      "original_name": "IceNWE"
+    },
+    "iceswe": {
+      "source_tile_id": "t110",
+      "original_name": "IceSWE"
+    },
+    "icebordered": {
+      "source_tile_id": "t113",
+      "original_name": "IceBordered"
+    },
+    "icecracked": {
+      "source_tile_id": "t114",
+      "original_name": "IceCracked"
+    },
+    "icenws": {
+      "source_tile_id": "t111",
+      "original_name": "IceNWS"
+    },
+    "icense": {
+      "source_tile_id": "t112",
+      "original_name": "IceNSE"
+    },
+    "watertextured1": {
+      "source_tile_id": "t102",
+      "original_name": "WaterTextured1"
+    },
+    "watertexture2": {
+      "source_tile_id": "t103",
+      "original_name": "WaterTexture2"
+    },
+    "shallowwaterplain": {
+      "source_tile_id": "t101",
+      "original_name": "ShallowWaterPlain"
+    },
+    "deepwaterplain": {
+      "source_tile_id": "t092",
+      "original_name": "DeepWaterPlain"
+    }
+  }
+}
