@@ -17,6 +17,12 @@
 | In-game UI = skinnable uGUI (owner decision) | Claude | claude/ingame-ui | MERGED | HUD bar done (`GameUIController`); foundation binding follows on `claude/foundation-hud-binding` |
 | Expose Foundation UI binding contract | Codex | codex/foundation-ui-contract-clean | MERGED | Ready event + Inventory/Hotbar/Content/World handles + optional IMGUI HUD |
 | Foundation HUD binding | Claude | claude/foundation-hud-binding | REVIEW | Adapter binds uGUI HUD to Foundation runtime; placeholder HP/MP/XP until Codex stats source |
+| Port welcome menu -> load IsoCoreFoundation.unity | Claude | claude/menu-port | REVIEW | validated by Codex integrated gate; ready for merge orchestration |
+| Build settings -> IsoCoreFoundation (shared cfg) | Claude | claude/menu-port | REVIEW | slot 1 repoint validated by Codex integrated gate |
+
+| Menu visual style-spec (palette-agnostic) | Claude | claude/menu-style-spec | MERGED | `Docs/menu-style-spec.md`; execute after A1 sets palette |
+| Harden world-save (sanitize names, surface failures) | Claude | claude/menu-save-hardening | REVIEW | metadata-save robustness; PR ready |
+| In-game UI: left HUD + camera-scale + settings + back nav | Codex | - | TODO | spec: `Docs/ingame-ui-spec.md` (FoundationHUD) |
 | Real save/load (FoundationSaveData) cross-lane | Codex+Claude | - | TODO | Codex: serialize state + save trigger; Claude: menu Load/Continue. Agree file format + PlayerPrefs keys |
 
 ## Up next (unclaimed)

@@ -4,6 +4,7 @@
 
 ---
 
+<<<<<<< HEAD
 ### 2026-06-05 — Status for you to be aware of (running low on session budget)
 
 **Branches awaiting your review/merge orchestration (5):**
@@ -84,6 +85,8 @@ expose `Health01`, `Mana01`, `Xp01`, `Level` as a simple getter set on the boots
 
 ---
 
+=======
+>>>>>>> origin/main
 ### 2026-06-04 — Owner feedback → two hand-offs for your lane + a save/load plan
 Owner play-tested `main`. Findings split across lanes:
 
