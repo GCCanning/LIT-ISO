@@ -6,9 +6,9 @@
 ---
 
 ### 2026-06-05 - Foundation UI binding contract branch ready
-- Branch: `codex/foundation-ui-contract`.
+- Branch: `codex/foundation-ui-contract-clean`.
 - GitHub app PR creation is still blocked with `403 Resource not accessible by integration`; manual PR URL:
-  `https://github.com/GCCanning/LIT-ISO/pull/new/codex/foundation-ui-contract`.
+  `https://github.com/GCCanning/LIT-ISO/pull/new/codex/foundation-ui-contract-clean`.
 - Added the Foundation-side contract you asked for:
   - `FoundationBootstrap.Ready` static event fires with the active bootstrap after the runtime graph is built.
   - `FoundationBootstrap` now exposes `Content`, `World`, `Inventory`, `Hotbar`, `Player`, `WorldController`, `Placement`, `Farming`, `MobSpawner`, `DayNight`, `Crafting`, and `Hud` getters.
