@@ -80,7 +80,11 @@ namespace IsoCore.Foundation
             Color col = block != null ? block.color : Color.magenta;
             // Iso cube: side faces visualize the height column (water/flat -> 0 levels).
             int levels = cell.Water ? 0 : cell.Height;
-            sr.sprite = PlaceholderArt.Cube(col, levels);
+            // Try a per-block tile sprite from Resources/Tiles/<blockId>.png first;
+            // fall back to the procedural placeholder cube if no art is present.
+            // Real pixel-art tiles already carry their own colour; PlaceholderArt.Cube
+            // bakes 'col' into its texture, so sr.color stays white either way.
+            sr.sprite = TileSpriteResolver.Resolve(block) ?? PlaceholderArt.Cube(col, levels);
             sr.transform.position = IsoGrid.CellToWorld(wx, wy, cell.Height);
             sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, cell.Height, IsoGrid.LayerGround);
         }
