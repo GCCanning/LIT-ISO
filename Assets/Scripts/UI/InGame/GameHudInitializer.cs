@@ -22,6 +22,7 @@ namespace LitIso.UI.InGame
     {
         static FoundationHudAdapter _adapter;
         static GameUIController _hud;
+        static GamePanelsController _panels;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Hook()
@@ -48,6 +49,19 @@ namespace LitIso.UI.InGame
                 _hud = go.AddComponent<GameUIController>();
             }
             _hud.Init(_adapter);
+
+            // Spawn the in-game panels controller (Inventory / Crafting / Character
+            // Sheet) alongside the HUD. Defaults to placeholder models; adapters can
+            // bind via BindInventory/BindCrafting/BindCharacter once data sources land.
+            if (_panels == null)
+            {
+                var pgo = new GameObject("[uGUI Panels]");
+                Object.DontDestroyOnLoad(pgo);
+                _panels = pgo.AddComponent<GamePanelsController>();
+            }
+            // The inventory adapter shares the HUD's data plumbing, so panels stay in
+            // sync with the hotbar without a second subscription.
+            _panels.BindInventory(new FoundationInventoryAdapter(bootstrap.Inventory, bootstrap.Content));
 
             // Disable the temporary IMGUI HUD so the two don't overlap. The scene's
             // FoundationBootstrap.createImguiHud field also lets Codex preset this to
