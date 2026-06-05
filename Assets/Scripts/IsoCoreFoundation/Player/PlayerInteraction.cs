@@ -32,8 +32,8 @@ namespace IsoCore.Foundation
             if (_player == null) return;
             HandleHotbar();
 
-            if (Input.GetKeyDown(KeyCode.I)) _hud.ToggleInventory();
-            if (Input.GetKeyDown(KeyCode.C)) _hud.ToggleCrafting(StationType.Hand);
+            if (Input.GetKeyDown(KeyCode.I)) _hud?.ToggleInventory();
+            if (Input.GetKeyDown(KeyCode.C)) _hud?.ToggleCrafting(StationType.Hand);
             if (Input.GetKeyDown(KeyCode.E)) Interact();
             if (Input.GetMouseButtonDown(0)) TryPlace();
             if (Input.GetMouseButtonDown(1)) TryRemove();
@@ -67,18 +67,18 @@ namespace IsoCore.Foundation
             var inter = _placement.NearestInteractable(pos, range);
             if (inter != null && inter.Def.interaction == InteractionKind.CraftingStation)
             {
-                _hud.ToggleCrafting(inter.Def.stationType);
+                _hud?.ToggleCrafting(inter.Def.stationType);
                 return;
             }
             if (inter != null && inter.Def.interaction == InteractionKind.Container)
             {
-                _hud.Flash($"Opened {inter.Def.Display} (empty)");
+                _hud?.Flash($"Opened {inter.Def.Display} (empty)");
                 return;
             }
 
             // Harvest a mature crop if one is in range.
-            if (_farming.TryHarvestCrop(pos, range, out bool cropFull)) { _hud.Flash("Harvested crop"); return; }
-            if (cropFull) { _hud.Flash("Inventory full!"); return; }
+            if (_farming.TryHarvestCrop(pos, range, out bool cropFull)) { _hud?.Flash("Harvested crop"); return; }
+            if (cropFull) { _hud?.Flash("Inventory full!"); return; }
 
             // Otherwise harvest the nearest resource node.
             var node = _controller.NearestNode(pos, range);
@@ -87,32 +87,33 @@ namespace IsoCore.Foundation
                 var (tool, tier) = SelectedToolInfo();
                 if (node.RequiresMissingTool(tool))
                 {
-                    _hud.Flash($"Needs a {node.Def.requiredTool}");
+                    _hud?.Flash($"Needs a {node.Def.requiredTool}");
                     return;
                 }
                 bool depleted = node.Harvest(_inv, tool, tier, out bool full);
                 if (full)
                 {
-                    _hud.Flash("Inventory full!");
+                    _hud?.Flash("Inventory full!");
                     return;
                 }
-                _hud.Flash(depleted ? $"Harvested {node.Def.Display}" : $"Hitting {node.Def.Display}…");
+                if (_hud == null) return;
+                _hud.Flash(depleted ? $"Harvested {node.Def.Display}" : $"Hitting {node.Def.Display}...");
             }
-            else _hud.Flash("Nothing to interact with");
+            else _hud?.Flash("Nothing to interact with");
         }
 
         void TryPlace()
         {
-            if (_hud.PointerOverUI) return;
+            if (_hud != null && _hud.PointerOverUI) return;
             string farmMsg = _farming.TryUseSelected(); // hoe tills / seed plants
-            if (farmMsg != null) { _hud.Flash(farmMsg); return; }
-            if (_placement.TryPlaceSelected()) _hud.Flash("Placed");
+            if (farmMsg != null) { _hud?.Flash(farmMsg); return; }
+            if (_placement.TryPlaceSelected()) _hud?.Flash("Placed");
         }
 
         void TryRemove()
         {
-            if (_hud.PointerOverUI) return;
-            if (_placement.TryRemoveAtCursor()) _hud.Flash("Removed");
+            if (_hud != null && _hud.PointerOverUI) return;
+            if (_placement.TryRemoveAtCursor()) _hud?.Flash("Removed");
         }
     }
 }
