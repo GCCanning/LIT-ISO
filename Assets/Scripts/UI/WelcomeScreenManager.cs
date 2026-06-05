@@ -366,8 +366,9 @@ public class WelcomeScreenManager : MonoBehaviour
         WorldManager.Instance.SetWorld(world.worldName, world.seed, world.difficulty);
         Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty})");
 
-        // Load the main game scene with the configured world
-        UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
+        // Load the Foundation scene (canonical game) with the configured world.
+        // FoundationBootstrap reads WorldManager.Instance.Seed and wires it into FoundationConfig.
+        UnityEngine.SceneManagement.SceneManager.LoadScene("IsoCoreFoundation");
     }
 
     // -------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -10,16 +11,66 @@ namespace IsoCore.Foundation
     [DisallowMultipleComponent]
     public class FoundationBootstrap : MonoBehaviour
     {
+        public const string DefaultWorldName = "Untitled World";
+
+        static bool s_HasLaunchOptions;
+        static LaunchOptions s_LaunchOptions;
+
         public FoundationConfig config = new();
         [Tooltip("Inventory slot count.")] public int inventorySlots = 36;
         [Tooltip("Hotbar slot count.")] public int hotbarSlots = 9;
         public float cameraSize = 6f;
 
+        public string ActiveWorldName { get; private set; } = DefaultWorldName;
+        public int ActiveDifficulty { get; private set; } = 1;
+
         Camera _cam;
         Transform _playerT;
 
+        /// <summary>
+        /// Call before loading IsoCoreFoundation.unity to hand menu/world settings into
+        /// the isolated Foundation scene without coupling it to the legacy WorldManager.
+        /// </summary>
+        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1)
+        {
+            s_LaunchOptions = new LaunchOptions(
+                NormalizeWorldName(worldName),
+                SeedStringToInt(seed),
+                Mathf.Clamp(difficulty, 0, 2));
+            s_HasLaunchOptions = true;
+        }
+
+        /// <summary>Clears any pending menu handoff; useful for editor tests and scene rebuilds.</summary>
+        public static void ClearLaunchOptions()
+        {
+            s_HasLaunchOptions = false;
+            s_LaunchOptions = default;
+        }
+
+        public static int SeedStringToInt(string seed)
+        {
+            if (string.IsNullOrWhiteSpace(seed))
+                return 1337;
+
+            seed = seed.Trim();
+            if (int.TryParse(seed, out int parsed))
+                return parsed;
+
+            unchecked
+            {
+                const int fnvOffset = (int)2166136261;
+                const int fnvPrime = 16777619;
+                int hash = fnvOffset;
+                for (int i = 0; i < seed.Length; i++)
+                    hash = (hash ^ seed[i]) * fnvPrime;
+                return hash;
+            }
+        }
+
         void Awake()
         {
+            ApplyLaunchOptions();
+
             var content = FoundationContent.BuildDefault();
             var sampler = new IsoTerrainSampler(config, content);
             var world = new IsoWorld(sampler, content, config.chunkSize);
@@ -82,7 +133,24 @@ namespace IsoCore.Foundation
 
             Debug.Log($"[FoundationBootstrap] Ready. Blocks:{content.Blocks.Count} Items:{content.Items.Count} " +
                       $"Placeables:{content.Placeables.Count} Recipes:{content.Recipes.Count} " +
-                      $"Nodes:{content.Nodes.Count} Mobs:{content.Mobs.Count} Biomes:{content.Biomes.Count}");
+                      $"Nodes:{content.Nodes.Count} Mobs:{content.Mobs.Count} Biomes:{content.Biomes.Count} " +
+                      $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty}");
+        }
+
+        void ApplyLaunchOptions()
+        {
+            if (config == null)
+                config = new FoundationConfig();
+
+            ActiveWorldName = DefaultWorldName;
+            ActiveDifficulty = 1;
+
+            if (!s_HasLaunchOptions)
+                return;
+
+            ActiveWorldName = s_LaunchOptions.worldName;
+            ActiveDifficulty = s_LaunchOptions.difficulty;
+            config.seed = s_LaunchOptions.seed;
         }
 
         void SetupCamera()
@@ -108,6 +176,25 @@ namespace IsoCore.Foundation
                 var p = _playerT.position;
                 _cam.transform.position = new Vector3(p.x, p.y, -10f);
             }
+        }
+
+        struct LaunchOptions
+        {
+            public readonly string worldName;
+            public readonly int seed;
+            public readonly int difficulty;
+
+            public LaunchOptions(string worldName, int seed, int difficulty)
+            {
+                this.worldName = worldName;
+                this.seed = seed;
+                this.difficulty = difficulty;
+            }
+        }
+
+        static string NormalizeWorldName(string worldName)
+        {
+            return string.IsNullOrWhiteSpace(worldName) ? DefaultWorldName : worldName.Trim();
         }
     }
 }
