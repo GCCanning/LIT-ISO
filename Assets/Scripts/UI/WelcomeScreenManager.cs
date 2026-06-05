@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using IsoCore.Foundation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -366,8 +367,13 @@ public class WelcomeScreenManager : MonoBehaviour
         WorldManager.Instance.SetWorld(world.worldName, world.seed, world.difficulty);
         Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty})");
 
-        // Load the Foundation scene (canonical game) with the configured world.
-        // FoundationBootstrap reads WorldManager.Instance.Seed and wires it into FoundationConfig.
+        // Hand the world settings into the isolated Foundation scene (Codex's API).
+        // ConfigureLaunch must be called BEFORE LoadScene so FoundationBootstrap.Awake()
+        // picks up the seed/name/difficulty. WorldManager.SetWorld above stays for the
+        // legacy save-list registry.
+        FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty);
+
+        // Load the Foundation scene (canonical game).
         UnityEngine.SceneManagement.SceneManager.LoadScene("IsoCoreFoundation");
     }
 
