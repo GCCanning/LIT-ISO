@@ -62,7 +62,19 @@ public class WelcomeScreenManager : MonoBehaviour
         public int difficulty = 2; // 0=easy, 1=normal, 2=hard
         public long createdTicks;
 
-        public string filename => $"{worldName}_{createdTicks}.world.json";
+        // createdTicks is the unique key; the name is sanitized so worlds named with
+        // characters illegal in filenames (: / ? * " etc.) don't silently fail to save.
+        public string filename => $"{SanitizeName(worldName)}_{createdTicks}.world.json";
+
+        private static string SanitizeName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "world";
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                name = name.Replace(c, '_');
+            }
+            return name.Trim();
+        }
     }
 
     private void Awake()
@@ -201,7 +213,13 @@ public class WelcomeScreenManager : MonoBehaviour
             createdTicks = System.DateTime.Now.Ticks
         };
 
-        SaveWorld(world);
+        if (!SaveWorld(world))
+        {
+            // Save failed (e.g. disk/permissions) — surface it instead of launching a
+            // world that won't appear in Load Game.
+            Debug.LogError("World not created: save failed. Not launching.");
+            return;
+        }
         LaunchWorld(world);
     }
 
@@ -348,11 +366,22 @@ public class WelcomeScreenManager : MonoBehaviour
     // World Save/Load
     // -------------------------------------------------------------------------
 
-    private void SaveWorld(WorldSaveData world)
+    private bool SaveWorld(WorldSaveData world)
     {
-        string json = JsonUtility.ToJson(world, true);
-        string filepath = Path.Combine(savePath, world.filename);
-        File.WriteAllText(filepath, json);
+        try
+        {
+            EnsureSaveFolder();
+            string json = JsonUtility.ToJson(world, true);
+            string filepath = Path.Combine(savePath, world.filename);
+            File.WriteAllText(filepath, json);
+            Debug.Log($"Saved world metadata: {filepath}");
+            return true;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to save world '{world.worldName}': {e.Message}");
+            return false;
+        }
     }
 
     private void LaunchWorld(WorldSaveData world)
