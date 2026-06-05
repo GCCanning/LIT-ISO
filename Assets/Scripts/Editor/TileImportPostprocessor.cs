@@ -35,9 +35,13 @@ internal sealed class TileImportPostprocessor : AssetPostprocessor
         ti.sRGBTexture = true;
         ti.alphaIsTransparency = true;
         ti.wrapMode = TextureWrapMode.Clamp;
-        // Sprite settings.
-        ti.spritePixelsPerUnit = 64f;  // matches PlaceholderArt.PPU so tiles align with the placeholder cubes
-        ti.spritePivot = new Vector2(0.5f, 0.5f);
+        // Sprite settings: PPU 32 (each 32-px tile spans one full cell width),
+        // pivot at (0.5, 0.75) — the diamond top centre of a cube-style tile sits
+        // ~3/4 of the way up the PNG, matching where PlaceholderArt.Cube places its
+        // pivot so my tiles drop into the same world position as the placeholders.
+        ti.spritePixelsPerUnit = 32f;
+        ti.spriteAlignment = (int)SpriteAlignment.Custom;
+        ti.spritePivot = new Vector2(0.5f, 0.75f);
     }
 }
 #endif
