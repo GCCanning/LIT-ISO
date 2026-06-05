@@ -1,0 +1,116 @@
+{
+  "source": "ISO-CORE metadata-only inventories",
+  "copyrightGuard": "Do not export, copy, or wire ISO-CORE asset payloads. Generate original LIT-ISO art using these scale and coverage targets only.",
+  "styleSuffix": "2:1 isometric pixel art for an original cozy survival crafting game, transparent background, crisp square pixels, PPU 16 target, point-filtered look, no blur, no anti-aliasing, no painterly rendering, no baked ground shadow, consistent palette. Do not copy or imitate ISO-CORE assets; create a new original sprite.",
+  "batches": [
+    {
+      "id": "A1_terrain_tops",
+      "priority": 1,
+      "targetSize": "64x32",
+      "pivot": "center",
+      "assets": [
+        "grass_top_01", "grass_top_02", "grass_top_03", "grass_top_04",
+        "grass_top_05", "grass_top_06", "grass_top_07", "grass_top_08",
+        "dirt_top_01", "dirt_top_02", "dirt_top_03", "dirt_top_04", "dirt_top_05", "dirt_top_06",
+        "sand_top_01", "sand_top_02", "sand_top_03", "sand_top_04", "sand_top_05", "sand_top_06",
+        "snow_top_01", "snow_top_02", "snow_top_03", "snow_top_04", "snow_top_05", "snow_top_06", "snow_top_07", "snow_top_08",
+        "clay_top_01", "clay_top_02", "clay_top_03", "clay_top_04",
+        "tilled_soil_01", "tilled_soil_02", "tilled_soil_03",
+        "water_top_01", "water_top_02", "water_top_03", "water_top_04",
+        "wood_floor_01", "wood_floor_02", "wood_floor_03", "wood_floor_04", "wood_floor_05", "wood_floor_06", "wood_floor_07", "wood_floor_08",
+        "stone_path_01", "stone_path_02", "stone_path_03", "stone_path_04"
+      ]
+    },
+    {
+      "id": "A2_terrain_blocks",
+      "priority": 2,
+      "targetSize": "64x64",
+      "pivot": "top-center",
+      "assets": [
+        "grass_block_face", "dirt_block_face", "sand_block_face", "snow_block_face",
+        "clay_block_face", "soil_block_face", "stone_block_face", "water_edge_face",
+        "grass_cliff_south", "grass_cliff_west", "grass_cliff_north", "grass_cliff_east",
+        "sand_cliff_south", "snow_cliff_south", "clay_cliff_south"
+      ]
+    },
+    {
+      "id": "A3_resource_nodes",
+      "priority": 3,
+      "targetSize": "32x48 or 64x64",
+      "pivot": "bottom-center",
+      "assets": [
+        "oak_tree", "pine_tree", "birch_tree", "palm_tree", "maple_tree", "dead_tree",
+        "tree_stump", "berry_bush", "fiber_bush", "desert_bush",
+        "small_rock_01", "small_rock_02", "large_rock_01", "large_rock_02",
+        "copper_ore_vein", "iron_ore_vein", "gold_ore_vein",
+        "ruin_stone_01", "ruin_stone_02", "ruin_stone_03", "skeletal_remains"
+      ]
+    },
+    {
+      "id": "A4_stations_placeables",
+      "priority": 4,
+      "targetSize": "32x48 or 64x64",
+      "pivot": "bottom-center",
+      "assets": [
+        "workbench", "crafting_table", "furnace", "kiln", "cooking_pot",
+        "anvil", "chest", "bed", "wood_lantern", "fire_pit", "composter",
+        "extractor", "well", "bridge", "wood_fence", "wood_gate",
+        "teleport_pillar", "magic_table", "sewing_station", "windmill", "small_house"
+      ]
+    },
+    {
+      "id": "A5_farming_plants",
+      "priority": 5,
+      "targetSize": "32x48",
+      "pivot": "bottom-center",
+      "assets": [
+        "carrot_stage_1", "carrot_stage_2", "carrot_stage_3",
+        "wheat_stage_1", "wheat_stage_2", "wheat_stage_3", "wheat_stage_4",
+        "potato_stage_1", "potato_stage_2", "potato_stage_3",
+        "pumpkin_stage_1", "pumpkin_stage_2", "pumpkin_stage_3",
+        "sugar_beet_stage_1", "sugar_beet_stage_2", "sugar_beet_stage_3",
+        "voidroot_stage_1", "voidroot_stage_2", "voidroot_stage_3",
+        "bluebell_flower", "sun_flower", "glow_flower", "spiral_flower",
+        "mushroom_white", "mushroom_red", "cactus_small", "cactus_tall",
+        "lilypad", "seaweed", "tall_grass"
+      ]
+    },
+    {
+      "id": "A6_items_tools_icons",
+      "priority": 6,
+      "targetSize": "16x16 icons plus 32x48 product props",
+      "pivot": "center for icons, bottom-center for props",
+      "assets": [
+        "wood_icon", "stone_icon", "fiber_icon", "copper_ore_icon", "copper_bar_icon",
+        "iron_ore_icon", "iron_bar_icon", "gold_ore_icon", "gold_bar_icon", "steel_bar_icon",
+        "carrot_icon", "wheat_icon", "potato_icon", "pumpkin_icon", "sugar_beet_icon",
+        "carrot_seed_icon", "wheat_seed_icon", "pumpkin_seed_icon", "voidroot_seed_icon",
+        "copper_axe", "copper_hoe", "copper_pickaxe", "copper_shovel", "copper_sword",
+        "iron_axe", "iron_hoe", "iron_pickaxe", "iron_shovel", "iron_sword",
+        "steel_axe", "steel_hoe", "steel_pickaxe", "steel_shovel", "steel_sword"
+      ]
+    },
+    {
+      "id": "A7_mobs",
+      "priority": 7,
+      "targetSize": "32x48",
+      "pivot": "bottom-center",
+      "assets": [
+        "deer_idle_s", "deer_walk_s", "fox_idle_s", "fox_walk_s",
+        "slime_idle_s", "slime_hop_s", "frog_idle_s", "frog_hop_s",
+        "fish_idle_s", "armadillo_idle_s", "bee_fly_s", "butterfly_fly_s", "firefly_fly_s"
+      ]
+    },
+    {
+      "id": "A8_ui",
+      "priority": 8,
+      "targetSize": "16x16 and 32x32",
+      "pivot": "center",
+      "assets": [
+        "hotbar_slot", "hotbar_slot_selected", "inventory_slot", "craft_button",
+        "health_heart", "energy_bolt", "temperature_icon", "coin_icon",
+        "world_slot_row", "delete_world_button", "recipe_ingredient_slot", "progress_arrow"
+      ]
+    }
+  ]
+}

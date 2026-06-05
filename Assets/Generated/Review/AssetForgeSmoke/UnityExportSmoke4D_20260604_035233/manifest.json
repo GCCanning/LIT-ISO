@@ -1,0 +1,82 @@
+{
+  "version": 2,
+  "source": "LIT-ISO Asset Forge",
+  "pipeline": "Pixel Pipeline local Asset Forge export",
+  "assetName": "UnityExportSmoke4D",
+  "assetMode": "character",
+  "category": "Review/AssetForgeSmoke",
+  "exportedAt": "2026-06-04T03:52:33.346057+00:00",
+  "directionOrder": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N",
+    "NW",
+    "W",
+    "SW"
+  ],
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "columns": 1,
+  "rows": 1,
+  "actions": {
+    "idle": {
+      "label": "Idle",
+      "fps": 4.0,
+      "framesPerDirection": 1,
+      "directionMode": "variant",
+      "sheet": "actions/idle.png",
+      "contact": null
+    }
+  },
+  "pixelsPerUnit": 128,
+  "anchor": {
+    "x": 128,
+    "y": 244,
+    "normalized": {
+      "x": 0.5,
+      "y": 0.046875
+    }
+  },
+  "spriteImport": {
+    "pixelsPerUnit": 128,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.046875
+    },
+    "filterMode": "Point",
+    "compression": "Uncompressed"
+  },
+  "productionPreset": {
+    "id": "unityexportsmoke4d",
+    "label": "UnityExportSmoke4D"
+  },
+  "lora": {
+    "name": "",
+    "checkpoint": "",
+    "strength": 0
+  },
+  "loraEvaluations": [
+    {
+      "id": "idle_variant_0",
+      "action": "idle",
+      "direction": "variant",
+      "frame": 0,
+      "qaStatus": "pass",
+      "status": "accepted"
+    }
+  ],
+  "acceptedFrames": [
+    {
+      "id": "idle_variant_0",
+      "action": "idle",
+      "direction": "variant",
+      "frame": 0,
+      "qaStatus": "pass"
+    }
+  ],
+  "rejectedFrames": [],
+  "idle": "actions/idle.png",
+  "notes": "Exported from C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim"
+}

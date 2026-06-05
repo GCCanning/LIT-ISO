@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 960dfb829ce8d5a4c9712f807fb6d561, type: 3}
+  m_Name: Enemy_Slime_Common
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDefinition
+  enemyId: slime_common
+  displayName: Common Slime
+  variant: 0
+  rank: 0
+  xpReward: 10
+  goldMin: 0
+  goldMax: 5
+  maxHealth: 20
+  moveSpeed: 1.45
+  detectionRadius: 4.3
+  leashRadius: 6.5
+  attackRange: 0.42
+  contactDamage: 4
+  attackCooldown: 0.9
+  visualScale: 0.85
+  colliderRadius: 0.2
+  tint: {r: 0.78, g: 1, b: 0.72, a: 1}
+  wanderRadius: 2.5
+  wanderPauseMin: 0.4
+  wanderPauseMax: 1.8
+  idleFrames:
+  - {fileID: 2800000, guid: 80dec3a5fac85794b87f2a96baaca451, type: 3}
+  - {fileID: 2800000, guid: 431952c4f4b03cd45bdef7eb6b29ae42, type: 3}
+  - {fileID: 2800000, guid: 8ae8de11074c62746a69650725b7d070, type: 3}
+  - {fileID: 2800000, guid: cd57e58549801bf43bd3bf8f6cdd62ae, type: 3}
+  moveFrames:
+  - {fileID: 2800000, guid: e94221b1819c42246a4b055a26499424, type: 3}
+  - {fileID: 2800000, guid: 10f26479ce8b56b4d97a86b611c19cd2, type: 3}
+  - {fileID: 2800000, guid: fb64d3002f5f53d4da08e6a180261008, type: 3}
+  - {fileID: 2800000, guid: 887a793b6833a8e4caca36a98f7f5e4b, type: 3}
+  attackFrames:
+  - {fileID: 2800000, guid: 64c5f463c4ef8684ea9c3b49df298048, type: 3}
+  - {fileID: 2800000, guid: 65aaee5487a1e244385ba4b4ec02e709, type: 3}
+  - {fileID: 2800000, guid: 26b4aa7de3503994a8f1385aea894296, type: 3}
+  - {fileID: 2800000, guid: 20147987c68f6c24b9bee9d976bfedb5, type: 3}
+  - {fileID: 2800000, guid: 2aadcb60143601141b70824e5d41a600, type: 3}
+  hurtFrames:
+  - {fileID: 2800000, guid: 46f5fe154e1b7dc459aa5f736b757100, type: 3}
+  - {fileID: 2800000, guid: f28f9a7761d613c438efb73916d23ed3, type: 3}
+  - {fileID: 2800000, guid: 82bf372605cf5c141aa4a61675b740de, type: 3}
+  - {fileID: 2800000, guid: 15b9b083b3be9ae44baba857de2ee7ed, type: 3}
+  dieFrames:
+  - {fileID: 2800000, guid: 80cb012242b69d8418fdb45ac1de5bfd, type: 3}
+  - {fileID: 2800000, guid: fab7a516db76b194eafe3c9ed347a89c, type: 3}
+  - {fileID: 2800000, guid: 8e2cf7e71ec64b54a8a14191201e3256, type: 3}
+  - {fileID: 2800000, guid: 5175a20440dc4c343a768a9d4825edf9, type: 3}
+  pixelsPerUnit: 32
+  idleFrameDuration: 0.18
+  moveFrameDuration: 0.12
+  attackFrameDuration: 0.08
+  hurtFrameDuration: 0.08
+  dieFrameDuration: 0.1

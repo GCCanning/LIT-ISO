@@ -1,0 +1,4758 @@
+fileFormatVersion: 2
+guid: e0e1bd7e3968c5349b38179719c4b0a4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5018220361354665839
+    second: plain_blonde_0
+  - first:
+      213: 4137170058970454667
+    second: plain_blonde_1
+  - first:
+      213: -987917285097045692
+    second: plain_blonde_2
+  - first:
+      213: 282658093976638639
+    second: plain_blonde_3
+  - first:
+      213: -4767394956698245335
+    second: plain_blonde_4
+  - first:
+      213: -4947912357961923580
+    second: plain_blonde_5
+  - first:
+      213: 32117705410389611
+    second: plain_blonde_6
+  - first:
+      213: 3238680297923427763
+    second: plain_blonde_7
+  - first:
+      213: -6532987078829111942
+    second: plain_blonde_8
+  - first:
+      213: 5127687061083270944
+    second: plain_blonde_9
+  - first:
+      213: 482561654464721044
+    second: plain_blonde_10
+  - first:
+      213: 5690952340929559653
+    second: plain_blonde_11
+  - first:
+      213: -7163704325441460060
+    second: plain_blonde_12
+  - first:
+      213: -7007245951708783204
+    second: plain_blonde_13
+  - first:
+      213: -4675254412706350922
+    second: plain_blonde_14
+  - first:
+      213: -6654317098800771728
+    second: plain_blonde_15
+  - first:
+      213: 2626088735080283958
+    second: plain_blonde_16
+  - first:
+      213: 7637341615249564241
+    second: plain_blonde_17
+  - first:
+      213: 2620792714886149760
+    second: plain_blonde_18
+  - first:
+      213: -6979676000436273281
+    second: plain_blonde_19
+  - first:
+      213: -6904846249870682931
+    second: plain_blonde_20
+  - first:
+      213: 5614865550588252538
+    second: plain_blonde_21
+  - first:
+      213: 2198237031925306933
+    second: plain_blonde_22
+  - first:
+      213: 996814383076791199
+    second: plain_blonde_23
+  - first:
+      213: 1821353722706795544
+    second: plain_blonde_24
+  - first:
+      213: -106736912004938979
+    second: plain_blonde_25
+  - first:
+      213: -5173246132265053959
+    second: plain_blonde_26
+  - first:
+      213: 7456163217277374476
+    second: plain_blonde_27
+  - first:
+      213: 6151725256882715905
+    second: plain_blonde_28
+  - first:
+      213: -5578678317206181440
+    second: plain_blonde_29
+  - first:
+      213: -1998425043030612952
+    second: plain_blonde_30
+  - first:
+      213: 1063752745914227112
+    second: plain_blonde_31
+  - first:
+      213: 4964598718102942978
+    second: plain_blonde_32
+  - first:
+      213: -4129405149679149183
+    second: plain_blonde_33
+  - first:
+      213: 5254591134406569885
+    second: plain_blonde_34
+  - first:
+      213: -4164505927182955444
+    second: plain_blonde_35
+  - first:
+      213: -1878761455845755803
+    second: plain_blonde_36
+  - first:
+      213: 5142468203088040473
+    second: plain_blonde_37
+  - first:
+      213: 2409637610534234661
+    second: plain_blonde_38
+  - first:
+      213: -4652099919429315521
+    second: plain_blonde_39
+  - first:
+      213: -8390021346681439215
+    second: plain_blonde_40
+  - first:
+      213: -3134047654795533280
+    second: plain_blonde_41
+  - first:
+      213: 3817345006562748815
+    second: plain_blonde_42
+  - first:
+      213: 5858584808497854899
+    second: plain_blonde_43
+  - first:
+      213: -4527633183507854468
+    second: plain_blonde_44
+  - first:
+      213: -1700338520235063605
+    second: plain_blonde_45
+  - first:
+      213: -6126063327174616968
+    second: plain_blonde_46
+  - first:
+      213: -1627728711950465236
+    second: plain_blonde_47
+  - first:
+      213: 4778469269336254586
+    second: plain_blonde_48
+  - first:
+      213: 291551083407249130
+    second: plain_blonde_49
+  - first:
+      213: 3197381046830586609
+    second: plain_blonde_50
+  - first:
+      213: 1986738954403355768
+    second: plain_blonde_51
+  - first:
+      213: -8853978540556267999
+    second: plain_blonde_52
+  - first:
+      213: 426890807222131177
+    second: plain_blonde_53
+  - first:
+      213: -8584214744058690487
+    second: plain_blonde_54
+  - first:
+      213: 6003509294728537185
+    second: plain_blonde_55
+  - first:
+      213: -2737697729901063592
+    second: plain_blonde_56
+  - first:
+      213: 4914625628118707403
+    second: plain_blonde_57
+  - first:
+      213: -2670309407381572853
+    second: plain_blonde_58
+  - first:
+      213: 3423022395326078359
+    second: plain_blonde_59
+  - first:
+      213: -5737399781635531276
+    second: plain_blonde_60
+  - first:
+      213: -8590553947745052980
+    second: plain_blonde_61
+  - first:
+      213: 3394135647802898483
+    second: plain_blonde_62
+  - first:
+      213: 1442226200431039867
+    second: plain_blonde_63
+  - first:
+      213: -8706200705996260880
+    second: plain_blonde_64
+  - first:
+      213: -7835455520719671202
+    second: plain_blonde_65
+  - first:
+      213: -3698658116795440275
+    second: plain_blonde_66
+  - first:
+      213: -4022011402000252637
+    second: plain_blonde_67
+  - first:
+      213: -7488705633323114486
+    second: plain_blonde_68
+  - first:
+      213: 3036899798965923421
+    second: plain_blonde_69
+  - first:
+      213: 135223612182011140
+    second: plain_blonde_70
+  - first:
+      213: 8334722693673394975
+    second: plain_blonde_71
+  - first:
+      213: -7439002998851477245
+    second: plain_blonde_72
+  - first:
+      213: 9071437226827801411
+    second: plain_blonde_73
+  - first:
+      213: -3905592547119266557
+    second: plain_blonde_74
+  - first:
+      213: -715512787334274279
+    second: plain_blonde_75
+  - first:
+      213: -5615403897260790209
+    second: plain_blonde_76
+  - first:
+      213: 7481433055000215846
+    second: plain_blonde_77
+  - first:
+      213: 4350451360283151938
+    second: plain_blonde_78
+  - first:
+      213: -1624761665312783025
+    second: plain_blonde_79
+  - first:
+      213: 847629084354412767
+    second: plain_blonde_80
+  - first:
+      213: 6047779512402887569
+    second: plain_blonde_81
+  - first:
+      213: -4135475253610930102
+    second: plain_blonde_82
+  - first:
+      213: -700779651614806142
+    second: plain_blonde_83
+  - first:
+      213: -9049033784070780684
+    second: plain_blonde_84
+  - first:
+      213: 2436016181417612497
+    second: plain_blonde_85
+  - first:
+      213: 8163747127040371570
+    second: plain_blonde_86
+  - first:
+      213: 6977233864372394568
+    second: plain_blonde_87
+  - first:
+      213: -208239718434249521
+    second: plain_blonde_88
+  - first:
+      213: 6579231943540063735
+    second: plain_blonde_89
+  - first:
+      213: 7042809425250068167
+    second: plain_blonde_90
+  - first:
+      213: 2392951403268766762
+    second: plain_blonde_91
+  - first:
+      213: -6837091087964095701
+    second: plain_blonde_92
+  - first:
+      213: 2199786292033608299
+    second: plain_blonde_93
+  - first:
+      213: -434708464252056185
+    second: plain_blonde_94
+  - first:
+      213: 6029632980126490900
+    second: plain_blonde_95
+  - first:
+      213: -2684989402982025665
+    second: plain_blonde_96
+  - first:
+      213: -3392935383256510640
+    second: plain_blonde_97
+  - first:
+      213: 344625402229444771
+    second: plain_blonde_98
+  - first:
+      213: 3567008852600824154
+    second: plain_blonde_99
+  - first:
+      213: 1653888643438935482
+    second: plain_blonde_100
+  - first:
+      213: 4229345201494491524
+    second: plain_blonde_101
+  - first:
+      213: 8675960040850586096
+    second: plain_blonde_102
+  - first:
+      213: -4875517064947319884
+    second: plain_blonde_103
+  - first:
+      213: -3280928650216777015
+    second: plain_blonde_104
+  - first:
+      213: 8054058400417622213
+    second: plain_blonde_105
+  - first:
+      213: 1752486360457908774
+    second: plain_blonde_106
+  - first:
+      213: -4030928796565030514
+    second: plain_blonde_107
+  - first:
+      213: -135244198756824968
+    second: plain_blonde_108
+  - first:
+      213: 4669590139879403198
+    second: plain_blonde_109
+  - first:
+      213: 4103887612276798184
+    second: plain_blonde_110
+  - first:
+      213: 1576783469335447571
+    second: plain_blonde_111
+  - first:
+      213: -1384347778688841311
+    second: plain_blonde_112
+  - first:
+      213: 237210375605779187
+    second: plain_blonde_113
+  - first:
+      213: 2013462348630232358
+    second: plain_blonde_114
+  - first:
+      213: 5135127585876958437
+    second: plain_blonde_115
+  - first:
+      213: -6726004401021148737
+    second: plain_blonde_116
+  - first:
+      213: -5439210890054274890
+    second: plain_blonde_117
+  - first:
+      213: 5130017417006278469
+    second: plain_blonde_118
+  - first:
+      213: -2165218840360809470
+    second: plain_blonde_119
+  - first:
+      213: -1664006999306531954
+    second: plain_blonde_120
+  - first:
+      213: 8600776328779755951
+    second: plain_blonde_121
+  - first:
+      213: 2913226576900420973
+    second: plain_blonde_122
+  - first:
+      213: 7616705544098037552
+    second: plain_blonde_123
+  - first:
+      213: 8592523207402283977
+    second: plain_blonde_124
+  - first:
+      213: 7974655783087112107
+    second: plain_blonde_125
+  - first:
+      213: -2316373298317693043
+    second: plain_blonde_126
+  - first:
+      213: 7715180354784400068
+    second: plain_blonde_127
+  - first:
+      213: -6808347083813531076
+    second: plain_blonde_128
+  - first:
+      213: -2600272195472156335
+    second: plain_blonde_129
+  - first:
+      213: -4307111132575068822
+    second: plain_blonde_130
+  - first:
+      213: -4488087521857872133
+    second: plain_blonde_131
+  - first:
+      213: 3072020700809261441
+    second: plain_blonde_132
+  - first:
+      213: 4128044267697890219
+    second: plain_blonde_133
+  - first:
+      213: -1138931416877706333
+    second: plain_blonde_134
+  - first:
+      213: -6234370794506623107
+    second: plain_blonde_135
+  - first:
+      213: 1023387060275184720
+    second: plain_blonde_136
+  - first:
+      213: -2211671758567403446
+    second: plain_blonde_137
+  - first:
+      213: -2969091569979812065
+    second: plain_blonde_138
+  - first:
+      213: -4736562203546519038
+    second: plain_blonde_139
+  - first:
+      213: 1244249760299855035
+    second: plain_blonde_140
+  - first:
+      213: -2786732696042493097
+    second: plain_blonde_141
+  - first:
+      213: -519552289413665589
+    second: plain_blonde_142
+  - first:
+      213: -2290334955243948552
+    second: plain_blonde_143
+  - first:
+      213: -8220419979844309817
+    second: plain_blonde_144
+  - first:
+      213: 7399218007237575149
+    second: plain_blonde_145
+  - first:
+      213: 8878684379167719297
+    second: plain_blonde_146
+  - first:
+      213: 5919128503480943544
+    second: plain_blonde_147
+  - first:
+      213: -20581634857749358
+    second: plain_blonde_148
+  - first:
+      213: 1244098394148426735
+    second: plain_blonde_149
+  - first:
+      213: -7684092088013076431
+    second: plain_blonde_150
+  - first:
+      213: 6069028048430754384
+    second: plain_blonde_151
+  - first:
+      213: 4270023316977551639
+    second: plain_blonde_152
+  - first:
+      213: -7565086074464051674
+    second: plain_blonde_153
+  - first:
+      213: -6121924742912214751
+    second: plain_blonde_154
+  - first:
+      213: 3629079737560444547
+    second: plain_blonde_155
+  - first:
+      213: -377506049127475199
+    second: plain_blonde_156
+  - first:
+      213: 2606120290105562104
+    second: plain_blonde_157
+  - first:
+      213: -6056616002749080447
+    second: plain_blonde_158
+  - first:
+      213: 7094063829807865842
+    second: plain_blonde_159
+  - first:
+      213: -1250196526579290826
+    second: plain_blonde_160
+  - first:
+      213: -229233377863193454
+    second: plain_blonde_161
+  - first:
+      213: 316789963695132146
+    second: plain_blonde_162
+  - first:
+      213: 1977308470138541822
+    second: plain_blonde_163
+  - first:
+      213: -2695027656607330539
+    second: plain_blonde_164
+  - first:
+      213: -7430138707693194938
+    second: plain_blonde_165
+  - first:
+      213: -4935302523272621072
+    second: plain_blonde_166
+  - first:
+      213: 9173653015366508142
+    second: plain_blonde_167
+  - first:
+      213: -1823237061196028910
+    second: plain_blonde_168
+  - first:
+      213: -1276652710800631495
+    second: plain_blonde_169
+  - first:
+      213: -5187792267103469143
+    second: plain_blonde_170
+  - first:
+      213: -4115851788855128077
+    second: plain_blonde_171
+  - first:
+      213: 7029112708437296753
+    second: plain_blonde_172
+  - first:
+      213: -1670351661609990232
+    second: plain_blonde_173
+  - first:
+      213: 8099878112351733683
+    second: plain_blonde_174
+  - first:
+      213: 1105072476748118434
+    second: plain_blonde_175
+  - first:
+      213: -5914727130560520119
+    second: plain_blonde_176
+  - first:
+      213: -263045423198716632
+    second: plain_blonde_177
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 1
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: plain_blonde_0
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 190a2d44b23bb5ab0800000000000000
+      internalID: -5018220361354665839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_1
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8ad05cbf3e2a6930800000000000000
+      internalID: 4137170058970454667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_2
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4418252a6763a42f0800000000000000
+      internalID: -987917285097045692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_3
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa4dd54f9043ce300800000000000000
+      internalID: 282658093976638639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_4
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927230eab8fc6ddb0800000000000000
+      internalID: -4767394956698245335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_5
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4040ae3fceb755bb0800000000000000
+      internalID: -4947912357961923580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_6
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1306
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66acf502ea127000800000000000000
+      internalID: 32117705410389611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_7
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bd38ca529a12fc20800000000000000
+      internalID: 3238680297923427763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_8
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a758c247dda2655a0800000000000000
+      internalID: -6532987078829111942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_9
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02f2c33e634392740800000000000000
+      internalID: 5127687061083270944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_10
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 490389c944762b600800000000000000
+      internalID: 482561654464721044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_11
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56cb8ca80035afe40800000000000000
+      internalID: 5690952340929559653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_12
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a8e126fed8659c90800000000000000
+      internalID: -7163704325441460060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_13
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1247
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9d9a92dee241ce90800000000000000
+      internalID: -7007245951708783204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_14
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b87f08d1e82e1fb0800000000000000
+      internalID: -4675254412706350922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_15
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07d0c2fcadd17a3a0800000000000000
+      internalID: -6654317098800771728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_16
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63f7d1b7acdb17420800000000000000
+      internalID: 2626088735080283958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_17
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15222451cb94df960800000000000000
+      internalID: 7637341615249564241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_18
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08678b0b61dee5420800000000000000
+      internalID: 2620792714886149760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_19
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7f3da258a5332f90800000000000000
+      internalID: -6979676000436273281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_20
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1185
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc415cf4bee0d20a0800000000000000
+      internalID: -6904846249870682931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_21
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a71146c28720ced40800000000000000
+      internalID: 5614865550588252538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_22
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 536540c0fe4b18e10800000000000000
+      internalID: 2198237031925306933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_23
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f93da4a666565dd00800000000000000
+      internalID: 996814383076791199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_24
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81c16449f8fb64910800000000000000
+      internalID: 1821353722706795544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_25
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d130683185bc48ef0800000000000000
+      internalID: -106736912004938979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_26
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f09dae3d00f438b0800000000000000
+      internalID: -5173246132265053959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_27
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 1119
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c00d62111fc997760800000000000000
+      internalID: 7456163217277374476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_28
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10dfa4427815f5550800000000000000
+      internalID: 6151725256882715905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_29
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c960caa0ad8492b0800000000000000
+      internalID: -5578678317206181440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_30
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8246aefe20b2444e0800000000000000
+      internalID: -1998425043030612952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_31
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a950158c7533ce00800000000000000
+      internalID: 1063752745914227112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_32
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 205b2e40b3cc5e440800000000000000
+      internalID: 4964598718102942978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_33
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18f94b715e761b6c0800000000000000
+      internalID: -4129405149679149183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_34
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 1049
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9f6836fbce0ce840800000000000000
+      internalID: 5254591134406569885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_35
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1050
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4c40497ce3b436c0800000000000000
+      internalID: -4164505927182955444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_36
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5643e96f86c4de5e0800000000000000
+      internalID: -1878761455845755803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_37
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 912ddc1b597bd5740800000000000000
+      internalID: 5142468203088040473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_38
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a6055d3a0c07120800000000000000
+      internalID: 2409637610534234661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_39
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f34daca65cb607fb0800000000000000
+      internalID: -4652099919429315521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_40
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11cbb159908a09b80800000000000000
+      internalID: -8390021346681439215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_41
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02424ca4340a184d0800000000000000
+      internalID: -3134047654795533280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_42
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f89a84dee0fe9f430800000000000000
+      internalID: 3817345006562748815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_43
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 991
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b9b30dd7dfdd4150800000000000000
+      internalID: 5858584808497854899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_44
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7b4eb7ab9d9a21c0800000000000000
+      internalID: -4527633183507854468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_45
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc6c977ef1f2768e0800000000000000
+      internalID: -1700338520235063605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_46
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87895387cd9dbfaa0800000000000000
+      internalID: -6126063327174616968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_47
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c270d7d4c552969e0800000000000000
+      internalID: -1627728711950465236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_48
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 928
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7868e8ab78805240800000000000000
+      internalID: 4778469269336254586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_49
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 928
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aee8e586a2ccb0400800000000000000
+      internalID: 291551083407249130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_50
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 928
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fa57e32f116f5c20800000000000000
+      internalID: 3197381046830586609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_51
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 929
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87c94a68d80529b10800000000000000
+      internalID: 1986738954403355768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_52
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12e46318d69502580800000000000000
+      internalID: -8853978540556267999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_53
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e9da5a6dee9ce500800000000000000
+      internalID: 426890807222131177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_54
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94406b0eb2ebed880800000000000000
+      internalID: -8584214744058690487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_55
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 164ec0645efb05350800000000000000
+      internalID: 6003509294728537185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_56
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8529ada6b6eb10ad0800000000000000
+      internalID: -2737697729901063592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_57
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcceb0058f1443440800000000000000
+      internalID: 4914625628118707403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_58
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0333acedb721fad0800000000000000
+      internalID: -2670309407381572853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_59
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 863
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79d1e9b8bb4018f20800000000000000
+      internalID: 3423022395326078359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_60
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fdd531fb49a060b0800000000000000
+      internalID: -5737399781635531276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_61
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc693d003b838c880800000000000000
+      internalID: -8590553947745052980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_62
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33838c683646a1f20800000000000000
+      internalID: 3394135647802898483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_63
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 794
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b75147a8611d30410800000000000000
+      internalID: 1442226200431039867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_64
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f976d7d59c5d2780800000000000000
+      internalID: -8706200705996260880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_65
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e50712ac7bed24390800000000000000
+      internalID: -7835455520719671202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_66
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d63eac20a0abbacc0800000000000000
+      internalID: -3698658116795440275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_67
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 794
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 321443d70f1fe28c0800000000000000
+      internalID: -4022011402000252637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_68
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 795
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a002f4247e5c21890800000000000000
+      internalID: -7488705633323114486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_69
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5ea1d7e64c352a20800000000000000
+      internalID: 3036899798965923421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_70
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 734
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40d9a59a82960e100800000000000000
+      internalID: 135223612182011140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_71
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f132ac17122eaa370800000000000000
+      internalID: 8334722693673394975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_72
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3016462af2a53c890800000000000000
+      internalID: -7439002998851477245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_73
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3436353681834ed70800000000000000
+      internalID: 9071437226827801411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_74
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 734
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3050b87654c8cc9c0800000000000000
+      internalID: -3905592547119266557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_75
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 913e0be29ecf116f0800000000000000
+      internalID: -715512787334274279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_76
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3e2d6938e31212b0800000000000000
+      internalID: -5615403897260790209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_77
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 735
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6214726a9b363d760800000000000000
+      internalID: 7481433055000215846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_78
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24eca466678ef5c30800000000000000
+      internalID: 4350451360283151938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_79
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f450c5eafdfa379e0800000000000000
+      internalID: -1624761665312783025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_80
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd00c3a492263cb00800000000000000
+      internalID: 847629084354412767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_81
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 672
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 193c8ac8c670ee350800000000000000
+      internalID: 6047779512402887569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_82
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a402a13ea27db96c0800000000000000
+      internalID: -4135475253610930102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_83
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28f6da7ae945646f0800000000000000
+      internalID: -700779651614806142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_84
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f8c3fb97bf5b6280800000000000000
+      internalID: -9049033784070780684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_85
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 672
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d410887fc77ec120800000000000000
+      internalID: 2436016181417612497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_86
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 673
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27b6b5732c47b4170800000000000000
+      internalID: 8163747127040371570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_87
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84a1eb09b3d14d060800000000000000
+      internalID: 6977233864372394568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_88
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 606
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc46992541f2c1df0800000000000000
+      internalID: -208239718434249521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_89
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fdbb9928902e4b50800000000000000
+      internalID: 6579231943540063735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_90
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c6adcc9bd51db160800000000000000
+      internalID: 7042809425250068167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_91
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2c7b947f98753120800000000000000
+      internalID: 2392951403268766762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_92
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 606
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2b39e441e5cd11a0800000000000000
+      internalID: -6837091087964095701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_93
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6adf664af5378e10800000000000000
+      internalID: 2199786292033608299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_94
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78d866774fa97f9f0800000000000000
+      internalID: -434708464252056185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_95
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 607
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4116b62cf3f8da350800000000000000
+      internalID: 6029632980126490900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_96
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3671991d500dbad0800000000000000
+      internalID: -2684989402982025665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_97
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 537
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05f4427de3fd9e0d0800000000000000
+      internalID: -3392935383256510640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_98
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 537
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a056783afa58c400800000000000000
+      internalID: 344625402229444771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_99
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5122f117af808130800000000000000
+      internalID: 3567008852600824154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_100
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abdfa3265fac3f610800000000000000
+      internalID: 1653888643438935482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_101
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 538
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 481059f7d07a1ba30800000000000000
+      internalID: 4229345201494491524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_102
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f9f160a0b3376870800000000000000
+      internalID: 8675960040850586096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_103
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 477
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bbb57f9f0fa65cb0800000000000000
+      internalID: -4875517064947319884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_104
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ca5d6696ccc772d0800000000000000
+      internalID: -3280928650216777015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_105
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c8a4256173c5cf60800000000000000
+      internalID: 8054058400417622213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_106
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6229fcc4f05125810800000000000000
+      internalID: 1752486360457908774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_107
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 479
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8939d5cd934f08c0800000000000000
+      internalID: -4030928796565030514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_108
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 878ca272e148f1ef0800000000000000
+      internalID: -135244198756824968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_109
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebead2edd77bdc040800000000000000
+      internalID: 4669590139879403198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_110
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 415
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e272ef3a00f3f830800000000000000
+      internalID: 4103887612276798184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_111
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 416
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3188271163cd1e510800000000000000
+      internalID: 1576783469335447571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_112
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a986a5a70fc9cce0800000000000000
+      internalID: -1384347778688841311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_113
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 417
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3faf40f649dba4300800000000000000
+      internalID: 237210375605779187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_114
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62d8aba965141fb10800000000000000
+      internalID: 2013462348630232358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_115
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 349
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ec51801553a34740800000000000000
+      internalID: 5135127585876958437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_116
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb1ab6712ae68a2a0800000000000000
+      internalID: -6726004401021148737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_117
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b0f0ef738a0484b0800000000000000
+      internalID: -5439210890054274890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_118
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 547e93829ab713740800000000000000
+      internalID: 5130017417006278469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_119
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 351
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20c8f4fbfe893f1e0800000000000000
+      internalID: -2165218840360809470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_120
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8b029e437248e8e0800000000000000
+      internalID: -1664006999306531954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_121
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 281
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa1718d80881c5770800000000000000
+      internalID: 8600776328779755951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_122
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d657062032cdd6820800000000000000
+      internalID: 2913226576900420973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_123
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f36ba5659f3b960800000000000000
+      internalID: 7616705544098037552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_124
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c3638df456ce3770800000000000000
+      internalID: 8592523207402283977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_125
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baffbe4ee2babae60800000000000000
+      internalID: 7974655783087112107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_126
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8fe29202c69adfd0800000000000000
+      internalID: -2316373298317693043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_127
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c21ff8e7a3d11b60800000000000000
+      internalID: 7715180354784400068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_128
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c325ab14664e381a0800000000000000
+      internalID: -6808347083813531076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_129
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1599e8d073af9ebd0800000000000000
+      internalID: -2600272195472156335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_130
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6d8bb6be311a34c0800000000000000
+      internalID: -4307111132575068822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_131
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfe5cc28d2c17b1c0800000000000000
+      internalID: -4488087521857872133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_132
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 282
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 181f1661d8202aa20800000000000000
+      internalID: 3072020700809261441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_133
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba36831e362c94930800000000000000
+      internalID: 4128044267697890219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_134
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a3d87129e3b130f0800000000000000
+      internalID: -1138931416877706333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_135
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d77ec532bc01b79a0800000000000000
+      internalID: -6234370794506623107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_136
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0540f63fb1dc33e00800000000000000
+      internalID: 1023387060275184720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_137
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4093d6e0409e41e0800000000000000
+      internalID: -2211671758567403446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_138
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 225
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f171fb1b2faabc6d0800000000000000
+      internalID: -2969091569979812065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_139
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 226
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20a711175c9544eb0800000000000000
+      internalID: -4736562203546519038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_140
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 227
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbca98e8096744110800000000000000
+      internalID: 1244249760299855035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_141
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 225
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75bab60b0698359d0800000000000000
+      internalID: -2786732696042493097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_142
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcce14b02fd2ac8f0800000000000000
+      internalID: -519552289413665589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_143
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f536003e781730e0800000000000000
+      internalID: -2290334955243948552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_144
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cc2bdcf4933bed80800000000000000
+      internalID: -8220419979844309817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_145
+      rect:
+        serializedVersion: 2
+        x: 790
+        y: 223
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de1c119239d4fa660800000000000000
+      internalID: 7399218007237575149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_146
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18ff91dc66c673b70800000000000000
+      internalID: 8878684379167719297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_147
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b30fd55308f42250800000000000000
+      internalID: 5919128503480943544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_148
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2943865bc11e6bff0800000000000000
+      internalID: -20581634857749358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_149
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe3d9d0e5ece34110800000000000000
+      internalID: 1244098394148426735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_150
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 138479045fe9c5590800000000000000
+      internalID: -7684092088013076431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_151
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05ae89edad4893450800000000000000
+      internalID: 6069028048430754384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_152
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 719051f459b224b30800000000000000
+      internalID: 4270023316977551639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_153
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62ed05cfb4a630790800000000000000
+      internalID: -7565086074464051674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_154
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 129fa05b1ed8a0ba0800000000000000
+      internalID: -6121924742912214751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_155
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38eabda2bc41d5230800000000000000
+      internalID: 3629079737560444547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_156
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10812399f34d2caf0800000000000000
+      internalID: -377506049127475199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_157
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f31ea5989cca2420800000000000000
+      internalID: 2606120290105562104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_158
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 161
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18cd137b5d392fba0800000000000000
+      internalID: -6056616002749080447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_159
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ff15ad977d237260800000000000000
+      internalID: 7094063829807865842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_160
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63d60d502e866aee0800000000000000
+      internalID: -1250196526579290826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_161
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29c2dc5157991dcf0800000000000000
+      internalID: -229233377863193454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_162
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fd05762bc6756400800000000000000
+      internalID: 316789963695132146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_163
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef69afdc39fc07b10800000000000000
+      internalID: 1977308470138541822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_164
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 97
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51f011c00a6599ad0800000000000000
+      internalID: -2695027656607330539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_165
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 98
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64131104638d2e890800000000000000
+      internalID: -7430138707693194938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_166
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 99
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f31f31e088428bb0800000000000000
+      internalID: -4935302523272621072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_167
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 97
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6e9c9930dc5f4f70800000000000000
+      internalID: 9173653015366508142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_168
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21465128d8f82b6e0800000000000000
+      internalID: -1823237061196028910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_169
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 939503f9f1b684ee0800000000000000
+      internalID: -1276652710800631495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_170
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a187ce4b624108b0800000000000000
+      internalID: -5187792267103469143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_171
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 95
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ff4221da9e81e6c0800000000000000
+      internalID: -4115851788855128077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_172
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 33
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 176c69834cc6c8160800000000000000
+      internalID: 7029112708437296753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_173
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 32
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a7c0cf7308b1d8e0800000000000000
+      internalID: -1670351661609990232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_174
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 25
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b7cfaa6a3c886070800000000000000
+      internalID: 8099878112351733683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_175
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 20
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a9f1ab0091065f00800000000000000
+      internalID: 1105072476748118434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_176
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 12
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9402397230baaeda0800000000000000
+      internalID: -5914727130560520119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: plain_blonde_177
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 0
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82db27ec499795cf0800000000000000
+      internalID: -263045423198716632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      plain_blonde_0: -5018220361354665839
+      plain_blonde_1: 4137170058970454667
+      plain_blonde_10: 482561654464721044
+      plain_blonde_100: 1653888643438935482
+      plain_blonde_101: 4229345201494491524
+      plain_blonde_102: 8675960040850586096
+      plain_blonde_103: -4875517064947319884
+      plain_blonde_104: -3280928650216777015
+      plain_blonde_105: 8054058400417622213
+      plain_blonde_106: 1752486360457908774
+      plain_blonde_107: -4030928796565030514
+      plain_blonde_108: -135244198756824968
+      plain_blonde_109: 4669590139879403198
+      plain_blonde_11: 5690952340929559653
+      plain_blonde_110: 4103887612276798184
+      plain_blonde_111: 1576783469335447571
+      plain_blonde_112: -1384347778688841311
+      plain_blonde_113: 237210375605779187
+      plain_blonde_114: 2013462348630232358
+      plain_blonde_115: 5135127585876958437
+      plain_blonde_116: -6726004401021148737
+      plain_blonde_117: -5439210890054274890
+      plain_blonde_118: 5130017417006278469
+      plain_blonde_119: -2165218840360809470
+      plain_blonde_12: -7163704325441460060
+      plain_blonde_120: -1664006999306531954
+      plain_blonde_121: 8600776328779755951
+      plain_blonde_122: 2913226576900420973
+      plain_blonde_123: 7616705544098037552
+      plain_blonde_124: 8592523207402283977
+      plain_blonde_125: 7974655783087112107
+      plain_blonde_126: -2316373298317693043
+      plain_blonde_127: 7715180354784400068
+      plain_blonde_128: -6808347083813531076
+      plain_blonde_129: -2600272195472156335
+      plain_blonde_13: -7007245951708783204
+      plain_blonde_130: -4307111132575068822
+      plain_blonde_131: -4488087521857872133
+      plain_blonde_132: 3072020700809261441
+      plain_blonde_133: 4128044267697890219
+      plain_blonde_134: -1138931416877706333
+      plain_blonde_135: -6234370794506623107
+      plain_blonde_136: 1023387060275184720
+      plain_blonde_137: -2211671758567403446
+      plain_blonde_138: -2969091569979812065
+      plain_blonde_139: -4736562203546519038
+      plain_blonde_14: -4675254412706350922
+      plain_blonde_140: 1244249760299855035
+      plain_blonde_141: -2786732696042493097
+      plain_blonde_142: -519552289413665589
+      plain_blonde_143: -2290334955243948552
+      plain_blonde_144: -8220419979844309817
+      plain_blonde_145: 7399218007237575149
+      plain_blonde_146: 8878684379167719297
+      plain_blonde_147: 5919128503480943544
+      plain_blonde_148: -20581634857749358
+      plain_blonde_149: 1244098394148426735
+      plain_blonde_15: -6654317098800771728
+      plain_blonde_150: -7684092088013076431
+      plain_blonde_151: 6069028048430754384
+      plain_blonde_152: 4270023316977551639
+      plain_blonde_153: -7565086074464051674
+      plain_blonde_154: -6121924742912214751
+      plain_blonde_155: 3629079737560444547
+      plain_blonde_156: -377506049127475199
+      plain_blonde_157: 2606120290105562104
+      plain_blonde_158: -6056616002749080447
+      plain_blonde_159: 7094063829807865842
+      plain_blonde_16: 2626088735080283958
+      plain_blonde_160: -1250196526579290826
+      plain_blonde_161: -229233377863193454
+      plain_blonde_162: 316789963695132146
+      plain_blonde_163: 1977308470138541822
+      plain_blonde_164: -2695027656607330539
+      plain_blonde_165: -7430138707693194938
+      plain_blonde_166: -4935302523272621072
+      plain_blonde_167: 9173653015366508142
+      plain_blonde_168: -1823237061196028910
+      plain_blonde_169: -1276652710800631495
+      plain_blonde_17: 7637341615249564241
+      plain_blonde_170: -5187792267103469143
+      plain_blonde_171: -4115851788855128077
+      plain_blonde_172: 7029112708437296753
+      plain_blonde_173: -1670351661609990232
+      plain_blonde_174: 8099878112351733683
+      plain_blonde_175: 1105072476748118434
+      plain_blonde_176: -5914727130560520119
+      plain_blonde_177: -263045423198716632
+      plain_blonde_18: 2620792714886149760
+      plain_blonde_19: -6979676000436273281
+      plain_blonde_2: -987917285097045692
+      plain_blonde_20: -6904846249870682931
+      plain_blonde_21: 5614865550588252538
+      plain_blonde_22: 2198237031925306933
+      plain_blonde_23: 996814383076791199
+      plain_blonde_24: 1821353722706795544
+      plain_blonde_25: -106736912004938979
+      plain_blonde_26: -5173246132265053959
+      plain_blonde_27: 7456163217277374476
+      plain_blonde_28: 6151725256882715905
+      plain_blonde_29: -5578678317206181440
+      plain_blonde_3: 282658093976638639
+      plain_blonde_30: -1998425043030612952
+      plain_blonde_31: 1063752745914227112
+      plain_blonde_32: 4964598718102942978
+      plain_blonde_33: -4129405149679149183
+      plain_blonde_34: 5254591134406569885
+      plain_blonde_35: -4164505927182955444
+      plain_blonde_36: -1878761455845755803
+      plain_blonde_37: 5142468203088040473
+      plain_blonde_38: 2409637610534234661
+      plain_blonde_39: -4652099919429315521
+      plain_blonde_4: -4767394956698245335
+      plain_blonde_40: -8390021346681439215
+      plain_blonde_41: -3134047654795533280
+      plain_blonde_42: 3817345006562748815
+      plain_blonde_43: 5858584808497854899
+      plain_blonde_44: -4527633183507854468
+      plain_blonde_45: -1700338520235063605
+      plain_blonde_46: -6126063327174616968
+      plain_blonde_47: -1627728711950465236
+      plain_blonde_48: 4778469269336254586
+      plain_blonde_49: 291551083407249130
+      plain_blonde_5: -4947912357961923580
+      plain_blonde_50: 3197381046830586609
+      plain_blonde_51: 1986738954403355768
+      plain_blonde_52: -8853978540556267999
+      plain_blonde_53: 426890807222131177
+      plain_blonde_54: -8584214744058690487
+      plain_blonde_55: 6003509294728537185
+      plain_blonde_56: -2737697729901063592
+      plain_blonde_57: 4914625628118707403
+      plain_blonde_58: -2670309407381572853
+      plain_blonde_59: 3423022395326078359
+      plain_blonde_6: 32117705410389611
+      plain_blonde_60: -5737399781635531276
+      plain_blonde_61: -8590553947745052980
+      plain_blonde_62: 3394135647802898483
+      plain_blonde_63: 1442226200431039867
+      plain_blonde_64: -8706200705996260880
+      plain_blonde_65: -7835455520719671202
+      plain_blonde_66: -3698658116795440275
+      plain_blonde_67: -4022011402000252637
+      plain_blonde_68: -7488705633323114486
+      plain_blonde_69: 3036899798965923421
+      plain_blonde_7: 3238680297923427763
+      plain_blonde_70: 135223612182011140
+      plain_blonde_71: 8334722693673394975
+      plain_blonde_72: -7439002998851477245
+      plain_blonde_73: 9071437226827801411
+      plain_blonde_74: -3905592547119266557
+      plain_blonde_75: -715512787334274279
+      plain_blonde_76: -5615403897260790209
+      plain_blonde_77: 7481433055000215846
+      plain_blonde_78: 4350451360283151938
+      plain_blonde_79: -1624761665312783025
+      plain_blonde_8: -6532987078829111942
+      plain_blonde_80: 847629084354412767
+      plain_blonde_81: 6047779512402887569
+      plain_blonde_82: -4135475253610930102
+      plain_blonde_83: -700779651614806142
+      plain_blonde_84: -9049033784070780684
+      plain_blonde_85: 2436016181417612497
+      plain_blonde_86: 8163747127040371570
+      plain_blonde_87: 6977233864372394568
+      plain_blonde_88: -208239718434249521
+      plain_blonde_89: 6579231943540063735
+      plain_blonde_9: 5127687061083270944
+      plain_blonde_90: 7042809425250068167
+      plain_blonde_91: 2392951403268766762
+      plain_blonde_92: -6837091087964095701
+      plain_blonde_93: 2199786292033608299
+      plain_blonde_94: -434708464252056185
+      plain_blonde_95: 6029632980126490900
+      plain_blonde_96: -2684989402982025665
+      plain_blonde_97: -3392935383256510640
+      plain_blonde_98: 344625402229444771
+      plain_blonde_99: 3567008852600824154
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

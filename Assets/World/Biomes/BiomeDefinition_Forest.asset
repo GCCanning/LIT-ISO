@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0dd032b1976a7f4e82fa1a3ed71b38d, type: 3}
+  m_Name: BiomeDefinition_Forest
+  m_EditorClassIdentifier: Assembly-CSharp::IsoBiomeDefinition
+  biomeName: Forest
+  biomeKind: 7
+  temperatureMin: 0
+  temperatureMax: 1
+  moistureMin: 0.58
+  moistureMax: 1
+  elevationMin: 0
+  elevationMax: 1
+  flatGroundTile: {fileID: 11400000, guid: d7fb4d1d0065b1340a408e555c2b5a94, type: 2}
+  flatGroundVariants:
+  - {fileID: 11400000, guid: 739d9c76a05e863419d2aa2a25eac230, type: 2}
+  raisedRuleTile: {fileID: 11400000, guid: d7fb4d1d0065b1340a408e555c2b5a94, type: 2}
+  raisedGroundVariants:
+  - {fileID: 11400000, guid: 739d9c76a05e863419d2aa2a25eac230, type: 2}
+  midElevationTile: {fileID: 0}
+  peakTile: {fileID: 0}
+  decorationTiles: []
+  treeTiles:
+  - {fileID: 11400000, guid: 2d58abd497d2db147bfcb68216d9d67d, type: 2}
+  - {fileID: 11400000, guid: 2d58abd497d2db147bfcb68216d9d67d, type: 2}
+  - {fileID: 11400000, guid: e0c1979fe8a9bb64b99d0a0d3b5aafdc, type: 2}
+  - {fileID: 11400000, guid: eac806f5f61629345a2b48e400635c43, type: 2}
+  groundCoverTiles:
+  - {fileID: 11400000, guid: cb9459d240416564386106f164242564, type: 2}
+  - {fileID: 11400000, guid: e9cb114a0aae5c342a1aadbf2f7b26c4, type: 2}
+  - {fileID: 11400000, guid: 81963acd18669034b859dfc06558781b, type: 2}
+  - {fileID: 11400000, guid: 7ad88ee7e1ef30540a8b13d518c7fbe0, type: 2}
+  - {fileID: 11400000, guid: a6353c91760275746a54fb8a907d4627, type: 2}
+  rockTiles:
+  - {fileID: 11400000, guid: 20ef3f738b8db1343801984946f9c3c8, type: 2}
+  - {fileID: 11400000, guid: c666a210844b8a348a7f00578c37ba73, type: 2}
+  forestNoiseScale: 0.04
+  forestThreshold: 0.4
+  treeDensityInForest: 0.55
+  groundCoverChance: 0.13
+  rockClusterThreshold: 0.68
+  rockChanceInCluster: 0.1
+  decorationChance: 0.1
+  baseDecorationDensity: 0.1
+  transitionDecorationMultiplier: 0.5
+  colliderCliffSouth: {fileID: 11400000, guid: 7e12fb73967d34777ba76171e8be7b04, type: 2}
+  colliderCliffWest: {fileID: 11400000, guid: 2655b78189c934c049014795a63848c2, type: 2}
+  colliderCliffNorth: {fileID: 11400000, guid: 9fda3ab080ea045df984418fa0ae89fa, type: 2}
+  colliderCliffEast: {fileID: 11400000, guid: 7fa49cf4a88c04426910476f99b98ed5, type: 2}
+  raisedTileThreshold: 0.78
+  heightNoiseScale: 0.045
+  biomeNoiseOffset: 53

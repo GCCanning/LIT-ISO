@@ -1,0 +1,17 @@
+{
+  "assetName": "SmokeTestAdventurer",
+  "assetMode": "character",
+  "success": true,
+  "promotionReady": true,
+  "productionPreset": "smoke_test_adventurer",
+  "loraName": "smoke_fixture",
+  "loraCheckpoint": "none",
+  "loraStrength": 0,
+  "acceptedFrameCount": 2,
+  "rejectedFrameCount": 0,
+  "qaWarnCount": 0,
+  "qaFailCount": 0,
+  "generatedAt": "2026-06-03T22:40:15.2213056Z",
+  "generated": ["Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_S.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_SE.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_E.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_NE.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_N.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_NW.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_W.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_idle_SW.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_S.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_SE.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_E.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_NE.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_N.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_NW.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_W.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Clips/SmokeTestAdventurer_walk_SW.anim", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Controllers/SmokeTestAdventurer.controller", "Assets/Generated/Characters/Player/AssetForge/SmokeTestAdventurer/Automation/Prefabs/SmokeTestAdventurer.prefab"],
+  "errors": []
+}

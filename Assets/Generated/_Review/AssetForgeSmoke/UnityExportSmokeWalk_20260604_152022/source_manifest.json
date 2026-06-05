@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "kind": "asset_animation",
+  "asset_type": "character",
+  "asset_mode": "character",
+  "source_output_dir": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim",
+  "source_manifest": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\manifest.json",
+  "source_asset_name": "armored_knight_with_dark_hood_cyan_glowing_trim",
+  "generated_at": "2026-06-04T15:18:50.018394+00:00",
+  "provider": "local",
+  "generation_method": "deterministic_frame_offsets",
+  "action": "walk",
+  "motion": "walk",
+  "fps": 6.0,
+  "loop": true,
+  "ping_pong": false,
+  "direction_mode": "8-direction",
+  "directions": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N",
+    "NW",
+    "W",
+    "SW"
+  ],
+  "frame_width": 256,
+  "frame_height": 256,
+  "columns": 4,
+  "rows": 8,
+  "actions": {
+    "walk": {
+      "label": "Walk",
+      "fps": 6.0,
+      "framesPerDirection": 4,
+      "directionMode": "8-direction",
+      "sheet": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\actions\\walk.png",
+      "contact": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\contact_sheets\\walk_contact.png",
+      "loop": true,
+      "pingPong": false
+    }
+  },
+  "sheet": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\actions\\walk.png",
+  "preview": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\preview\\walk_S.gif",
+  "contact_sheet": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\contact_sheets\\walk_contact.png",
+  "frames": {
+    "S": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\S\\walk_S_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\S\\walk_S_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\S\\walk_S_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\S\\walk_S_03.png"
+    ],
+    "SE": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SE\\walk_SE_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SE\\walk_SE_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SE\\walk_SE_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SE\\walk_SE_03.png"
+    ],
+    "E": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\E\\walk_E_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\E\\walk_E_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\E\\walk_E_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\E\\walk_E_03.png"
+    ],
+    "NE": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NE\\walk_NE_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NE\\walk_NE_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NE\\walk_NE_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NE\\walk_NE_03.png"
+    ],
+    "N": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\N\\walk_N_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\N\\walk_N_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\N\\walk_N_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\N\\walk_N_03.png"
+    ],
+    "NW": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NW\\walk_NW_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NW\\walk_NW_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NW\\walk_NW_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\NW\\walk_NW_03.png"
+    ],
+    "W": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\W\\walk_W_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\W\\walk_W_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\W\\walk_W_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\W\\walk_W_03.png"
+    ],
+    "SW": [
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SW\\walk_SW_00.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SW\\walk_SW_01.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SW\\walk_SW_02.png",
+      "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\frames\\SW\\walk_SW_03.png"
+    ]
+  },
+  "lora": {
+    "name": "PixelArtRedmond-Lite64.safetensors",
+    "checkpoint": "DreamShaper_8_pruned.safetensors",
+    "strength": 0
+  },
+  "qa": {
+    "status": "pass",
+    "report": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_151848_smoke_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk\\qa\\qa_report.json"
+  },
+  "post_processing": {
+    "cell_size": 256,
+    "source_direction_mode": "8-direction"
+  },
+  "notes": "Local animation scaffold; replace frames with AI/generated pose frames as quality improves.",
+  "unity_export_status": "not_exported"
+}

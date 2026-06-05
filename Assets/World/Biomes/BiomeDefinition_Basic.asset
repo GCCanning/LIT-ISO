@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0dd032b1976a7f4e82fa1a3ed71b38d, type: 3}
+  m_Name: BiomeDefinition_Basic
+  m_EditorClassIdentifier: Assembly-CSharp::IsoBiomeDefinition
+  biomeName: Basic
+  biomeKind: 6
+  temperatureMin: 0
+  temperatureMax: 1
+  moistureMin: 0
+  moistureMax: 1
+  elevationMin: 0
+  elevationMax: 1
+  flatGroundTile: {fileID: 11400000, guid: a075f375c3e41b14e95a9e3ddb0795b0, type: 2}
+  flatGroundVariants: []
+  raisedRuleTile: {fileID: 11400000, guid: 066d44386601cb54ea1478e2714f9223, type: 2}
+  raisedGroundVariants: []
+  midElevationTile: {fileID: 0}
+  peakTile: {fileID: 0}
+  decorationTiles: []
+  treeTiles: []
+  groundCoverTiles: []
+  rockTiles: []
+  forestNoiseScale: 0.05
+  forestThreshold: 0.52
+  treeDensityInForest: 0.4
+  groundCoverChance: 0.06
+  rockClusterThreshold: 0.7
+  rockChanceInCluster: 0.12
+  decorationChance: 0
+  baseDecorationDensity: 0
+  transitionDecorationMultiplier: 0.25
+  colliderCliffSouth: {fileID: 11400000, guid: 7e12fb73967d34777ba76171e8be7b04, type: 2}
+  colliderCliffWest: {fileID: 11400000, guid: 2655b78189c934c049014795a63848c2, type: 2}
+  colliderCliffNorth: {fileID: 11400000, guid: 9fda3ab080ea045df984418fa0ae89fa, type: 2}
+  colliderCliffEast: {fileID: 11400000, guid: 7fa49cf4a88c04426910476f99b98ed5, type: 2}
+  raisedTileThreshold: 0.66
+  heightNoiseScale: 0.08
+  biomeNoiseOffset: 523

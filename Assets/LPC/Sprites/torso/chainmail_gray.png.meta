@@ -1,0 +1,5018 @@
+fileFormatVersion: 2
+guid: c8002906adb024d4e9feaea2076d6a96
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3260953900404795740
+    second: chainmail_gray_0
+  - first:
+      213: 7461331065942303697
+    second: chainmail_gray_1
+  - first:
+      213: -6081978803007496901
+    second: chainmail_gray_2
+  - first:
+      213: -4042098807509115314
+    second: chainmail_gray_3
+  - first:
+      213: 4943602892201515827
+    second: chainmail_gray_4
+  - first:
+      213: -6922739467100164205
+    second: chainmail_gray_5
+  - first:
+      213: -6446792346901418440
+    second: chainmail_gray_6
+  - first:
+      213: -7807168346246783456
+    second: chainmail_gray_7
+  - first:
+      213: 5841886884459883855
+    second: chainmail_gray_8
+  - first:
+      213: 6178800447248612799
+    second: chainmail_gray_9
+  - first:
+      213: 4689782450297947855
+    second: chainmail_gray_10
+  - first:
+      213: 7804343992966879508
+    second: chainmail_gray_11
+  - first:
+      213: 8444314979992983565
+    second: chainmail_gray_12
+  - first:
+      213: 5673482939772172222
+    second: chainmail_gray_13
+  - first:
+      213: 1405609951503119972
+    second: chainmail_gray_14
+  - first:
+      213: -8356630955206264540
+    second: chainmail_gray_15
+  - first:
+      213: 737066928360289347
+    second: chainmail_gray_16
+  - first:
+      213: 6229588601959541763
+    second: chainmail_gray_17
+  - first:
+      213: 2050372140632131034
+    second: chainmail_gray_18
+  - first:
+      213: -8691496911124772593
+    second: chainmail_gray_19
+  - first:
+      213: -6761898886917608087
+    second: chainmail_gray_20
+  - first:
+      213: 8585570840737634412
+    second: chainmail_gray_21
+  - first:
+      213: 6184238117378731463
+    second: chainmail_gray_22
+  - first:
+      213: 1543544178377554549
+    second: chainmail_gray_23
+  - first:
+      213: 4433938395758771403
+    second: chainmail_gray_24
+  - first:
+      213: 8514916304521316163
+    second: chainmail_gray_25
+  - first:
+      213: -8735148764403589541
+    second: chainmail_gray_26
+  - first:
+      213: 3243048038416427109
+    second: chainmail_gray_27
+  - first:
+      213: -2932197913176382249
+    second: chainmail_gray_28
+  - first:
+      213: 6554553151225993965
+    second: chainmail_gray_29
+  - first:
+      213: -5312586866215305101
+    second: chainmail_gray_30
+  - first:
+      213: -40581645146302091
+    second: chainmail_gray_31
+  - first:
+      213: 8590692840394309769
+    second: chainmail_gray_32
+  - first:
+      213: -3409502594166579945
+    second: chainmail_gray_33
+  - first:
+      213: 3415335120898762779
+    second: chainmail_gray_34
+  - first:
+      213: -6417680789304640105
+    second: chainmail_gray_35
+  - first:
+      213: -195611849370690328
+    second: chainmail_gray_36
+  - first:
+      213: -7500720700883857799
+    second: chainmail_gray_37
+  - first:
+      213: -7105245872631662551
+    second: chainmail_gray_38
+  - first:
+      213: 3280935062748750768
+    second: chainmail_gray_39
+  - first:
+      213: 7791297678002348982
+    second: chainmail_gray_40
+  - first:
+      213: -9143535849715795269
+    second: chainmail_gray_41
+  - first:
+      213: -5679968034185402103
+    second: chainmail_gray_42
+  - first:
+      213: 7023549875138099418
+    second: chainmail_gray_43
+  - first:
+      213: 4038075440190648494
+    second: chainmail_gray_44
+  - first:
+      213: -8251228102495290051
+    second: chainmail_gray_45
+  - first:
+      213: 8082636605264313029
+    second: chainmail_gray_46
+  - first:
+      213: -1362833836746826138
+    second: chainmail_gray_47
+  - first:
+      213: 467940809372605060
+    second: chainmail_gray_48
+  - first:
+      213: -3373978401420258899
+    second: chainmail_gray_49
+  - first:
+      213: -5038458147174466242
+    second: chainmail_gray_50
+  - first:
+      213: 9133338744162783043
+    second: chainmail_gray_51
+  - first:
+      213: -4370122683106017237
+    second: chainmail_gray_52
+  - first:
+      213: -6145326822446426385
+    second: chainmail_gray_53
+  - first:
+      213: -341092507822631617
+    second: chainmail_gray_54
+  - first:
+      213: -8855086965538457176
+    second: chainmail_gray_55
+  - first:
+      213: -2215313450610712231
+    second: chainmail_gray_56
+  - first:
+      213: 8707295648472120502
+    second: chainmail_gray_57
+  - first:
+      213: -1515073788843730794
+    second: chainmail_gray_58
+  - first:
+      213: 1019851219142734370
+    second: chainmail_gray_59
+  - first:
+      213: -7165727900116360548
+    second: chainmail_gray_60
+  - first:
+      213: 2147689658058444187
+    second: chainmail_gray_61
+  - first:
+      213: -2145667405735838118
+    second: chainmail_gray_62
+  - first:
+      213: 4792421473866509283
+    second: chainmail_gray_63
+  - first:
+      213: 2037441847157447171
+    second: chainmail_gray_64
+  - first:
+      213: -7968471409643305430
+    second: chainmail_gray_65
+  - first:
+      213: 272317999672962768
+    second: chainmail_gray_66
+  - first:
+      213: 3274320551143310406
+    second: chainmail_gray_67
+  - first:
+      213: 2956535307776425958
+    second: chainmail_gray_68
+  - first:
+      213: -8420398922723606343
+    second: chainmail_gray_69
+  - first:
+      213: 334775409306228449
+    second: chainmail_gray_70
+  - first:
+      213: 8998932067111026310
+    second: chainmail_gray_71
+  - first:
+      213: 3955811162482773207
+    second: chainmail_gray_72
+  - first:
+      213: 4194524741492835428
+    second: chainmail_gray_73
+  - first:
+      213: -5335821362245480667
+    second: chainmail_gray_74
+  - first:
+      213: -8839135052980838444
+    second: chainmail_gray_75
+  - first:
+      213: 7283223461727531713
+    second: chainmail_gray_76
+  - first:
+      213: 1545895033883772292
+    second: chainmail_gray_77
+  - first:
+      213: -1521039178012951154
+    second: chainmail_gray_78
+  - first:
+      213: 5066173943648902242
+    second: chainmail_gray_79
+  - first:
+      213: 2570411634835587232
+    second: chainmail_gray_80
+  - first:
+      213: 5339299504267690700
+    second: chainmail_gray_81
+  - first:
+      213: -3095351066967089651
+    second: chainmail_gray_82
+  - first:
+      213: 4290596431855382608
+    second: chainmail_gray_83
+  - first:
+      213: 6559436636378021011
+    second: chainmail_gray_84
+  - first:
+      213: -6088242170386149403
+    second: chainmail_gray_85
+  - first:
+      213: -1162538595380120386
+    second: chainmail_gray_86
+  - first:
+      213: -8579362228807017569
+    second: chainmail_gray_87
+  - first:
+      213: -5675148764905790868
+    second: chainmail_gray_88
+  - first:
+      213: 2371669360954219140
+    second: chainmail_gray_89
+  - first:
+      213: 4363007408283381730
+    second: chainmail_gray_90
+  - first:
+      213: -2545105474839804879
+    second: chainmail_gray_91
+  - first:
+      213: 5907134810192808229
+    second: chainmail_gray_92
+  - first:
+      213: -952485983428467452
+    second: chainmail_gray_93
+  - first:
+      213: -4856933732704462278
+    second: chainmail_gray_94
+  - first:
+      213: -5054798663003827621
+    second: chainmail_gray_95
+  - first:
+      213: -6176560581294191316
+    second: chainmail_gray_96
+  - first:
+      213: -5334278602454480654
+    second: chainmail_gray_97
+  - first:
+      213: 4516408342011226773
+    second: chainmail_gray_98
+  - first:
+      213: 5462475215021194303
+    second: chainmail_gray_99
+  - first:
+      213: -5499884489007290533
+    second: chainmail_gray_100
+  - first:
+      213: -1499091887716577049
+    second: chainmail_gray_101
+  - first:
+      213: -8232846026828647573
+    second: chainmail_gray_102
+  - first:
+      213: -1053688016172960998
+    second: chainmail_gray_103
+  - first:
+      213: 7787505943349728994
+    second: chainmail_gray_104
+  - first:
+      213: -76607566059434565
+    second: chainmail_gray_105
+  - first:
+      213: -1323522627465967362
+    second: chainmail_gray_106
+  - first:
+      213: 671992630806743297
+    second: chainmail_gray_107
+  - first:
+      213: -4254727351381285390
+    second: chainmail_gray_108
+  - first:
+      213: 2212544548172002771
+    second: chainmail_gray_109
+  - first:
+      213: -6917942949765667910
+    second: chainmail_gray_110
+  - first:
+      213: -2770741035035266500
+    second: chainmail_gray_111
+  - first:
+      213: -8381141863837548275
+    second: chainmail_gray_112
+  - first:
+      213: 7945300358630303860
+    second: chainmail_gray_113
+  - first:
+      213: -6758803664183087757
+    second: chainmail_gray_114
+  - first:
+      213: -3016610449988113992
+    second: chainmail_gray_115
+  - first:
+      213: 7101979848577351654
+    second: chainmail_gray_116
+  - first:
+      213: -4538085427306593799
+    second: chainmail_gray_117
+  - first:
+      213: 8828532723187436816
+    second: chainmail_gray_118
+  - first:
+      213: -4240541647630931334
+    second: chainmail_gray_119
+  - first:
+      213: -2506142870284590735
+    second: chainmail_gray_120
+  - first:
+      213: 2059484169981715723
+    second: chainmail_gray_121
+  - first:
+      213: -790029926893294633
+    second: chainmail_gray_122
+  - first:
+      213: -6399640570852408230
+    second: chainmail_gray_123
+  - first:
+      213: -3739312576656367962
+    second: chainmail_gray_124
+  - first:
+      213: 3282785534717807344
+    second: chainmail_gray_125
+  - first:
+      213: 720028425660839386
+    second: chainmail_gray_126
+  - first:
+      213: 5312481327942390299
+    second: chainmail_gray_127
+  - first:
+      213: 7969825026019806716
+    second: chainmail_gray_128
+  - first:
+      213: 99199757495535126
+    second: chainmail_gray_129
+  - first:
+      213: 6164380653077662537
+    second: chainmail_gray_130
+  - first:
+      213: -4694729760642592127
+    second: chainmail_gray_131
+  - first:
+      213: 5368332296495223084
+    second: chainmail_gray_132
+  - first:
+      213: -8057255150985369513
+    second: chainmail_gray_133
+  - first:
+      213: 4714410355583544156
+    second: chainmail_gray_134
+  - first:
+      213: -3984864641909433351
+    second: chainmail_gray_135
+  - first:
+      213: 5882724507969707521
+    second: chainmail_gray_136
+  - first:
+      213: 1670853526818249060
+    second: chainmail_gray_137
+  - first:
+      213: 9024305646291802684
+    second: chainmail_gray_138
+  - first:
+      213: -7591328045766968963
+    second: chainmail_gray_139
+  - first:
+      213: 2288634882953660872
+    second: chainmail_gray_140
+  - first:
+      213: -5982461281159680977
+    second: chainmail_gray_141
+  - first:
+      213: -5631077425108941096
+    second: chainmail_gray_142
+  - first:
+      213: -4975826252681254716
+    second: chainmail_gray_143
+  - first:
+      213: -8672383243572628291
+    second: chainmail_gray_144
+  - first:
+      213: -3029932117450535295
+    second: chainmail_gray_145
+  - first:
+      213: 2081693577642252807
+    second: chainmail_gray_146
+  - first:
+      213: 461492532851404527
+    second: chainmail_gray_147
+  - first:
+      213: -1903495798123978994
+    second: chainmail_gray_148
+  - first:
+      213: -569428729389332499
+    second: chainmail_gray_149
+  - first:
+      213: 8299611772389453254
+    second: chainmail_gray_150
+  - first:
+      213: 4877380924806559473
+    second: chainmail_gray_151
+  - first:
+      213: -3885719273150095919
+    second: chainmail_gray_152
+  - first:
+      213: 7753961170693569574
+    second: chainmail_gray_153
+  - first:
+      213: 4437091188290501366
+    second: chainmail_gray_154
+  - first:
+      213: -4893909771220685827
+    second: chainmail_gray_155
+  - first:
+      213: -5900030872972393154
+    second: chainmail_gray_156
+  - first:
+      213: 2536764720223091898
+    second: chainmail_gray_157
+  - first:
+      213: -4260027634614335208
+    second: chainmail_gray_158
+  - first:
+      213: 4215860012108494458
+    second: chainmail_gray_159
+  - first:
+      213: 8940885956872447120
+    second: chainmail_gray_160
+  - first:
+      213: -2218090941035677069
+    second: chainmail_gray_161
+  - first:
+      213: 5891067824107417795
+    second: chainmail_gray_162
+  - first:
+      213: -3485380819490150120
+    second: chainmail_gray_163
+  - first:
+      213: -3971991935503643759
+    second: chainmail_gray_164
+  - first:
+      213: 1051673151312614443
+    second: chainmail_gray_165
+  - first:
+      213: 539399820750877548
+    second: chainmail_gray_166
+  - first:
+      213: 1757594589772551255
+    second: chainmail_gray_167
+  - first:
+      213: -5440705535996578923
+    second: chainmail_gray_168
+  - first:
+      213: 4408280800455527223
+    second: chainmail_gray_169
+  - first:
+      213: 4361204622928594478
+    second: chainmail_gray_170
+  - first:
+      213: 7009007718479724164
+    second: chainmail_gray_171
+  - first:
+      213: -837633504509254111
+    second: chainmail_gray_172
+  - first:
+      213: 5089382928918805540
+    second: chainmail_gray_173
+  - first:
+      213: 940888611665281756
+    second: chainmail_gray_174
+  - first:
+      213: -2406497939409531202
+    second: chainmail_gray_175
+  - first:
+      213: 3649048408825246764
+    second: chainmail_gray_176
+  - first:
+      213: 4761704695109849418
+    second: chainmail_gray_177
+  - first:
+      213: 4053717027525245052
+    second: chainmail_gray_178
+  - first:
+      213: -8525933100818459351
+    second: chainmail_gray_179
+  - first:
+      213: 4069750730422185799
+    second: chainmail_gray_180
+  - first:
+      213: -589758994248597745
+    second: chainmail_gray_181
+  - first:
+      213: -6672562967412279469
+    second: chainmail_gray_182
+  - first:
+      213: -8536381747993408854
+    second: chainmail_gray_183
+  - first:
+      213: -1344184875369454096
+    second: chainmail_gray_184
+  - first:
+      213: 8198119532858021213
+    second: chainmail_gray_185
+  - first:
+      213: 7321922120695902490
+    second: chainmail_gray_186
+  - first:
+      213: -4244808713000416036
+    second: chainmail_gray_187
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 1
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: chainmail_gray_0
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 1287
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c596d8e8b4c314d20800000000000000
+      internalID: 3260953900404795740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_1
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 1287
+        width: 30
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d3e3199219fb8760800000000000000
+      internalID: 7461331065942303697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_2
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 1287
+        width: 30
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3d584b9088789ba0800000000000000
+      internalID: -6081978803007496901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_3
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 1287
+        width: 34
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4e936fec8497e7c0800000000000000
+      internalID: -4042098807509115314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_4
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 1287
+        width: 42
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33bd34c53a43b9440800000000000000
+      internalID: 4943602892201515827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_5
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 1287
+        width: 42
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39feae6022d7def90800000000000000
+      internalID: -6922739467100164205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_6
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 1287
+        width: 34
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83eeb3e54846886a0800000000000000
+      internalID: -6446792346901418440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_7
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 1224
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02e5944d0cd57a390800000000000000
+      internalID: -7807168346246783456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_8
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 1224
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4dae367b2d821150800000000000000
+      internalID: 5841886884459883855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_9
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 1224
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbd374425428fb550800000000000000
+      internalID: 6178800447248612799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_10
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 1224
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc6cedf7a44751140800000000000000
+      internalID: 4689782450297947855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_11
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 1224
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4199ebd23899e4c60800000000000000
+      internalID: 7804343992966879508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_12
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 1224
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d08ddf10cbb303570800000000000000
+      internalID: 8444314979992983565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_13
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 1224
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb7fb50aca24cbe40800000000000000
+      internalID: 5673482939772172222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_14
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 1160
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 466f81cbdcab18310800000000000000
+      internalID: 1405609951503119972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_15
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 1160
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 429b5ebeb68470c80800000000000000
+      internalID: -8356630955206264540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_16
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 1160
+        width: 30
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3447a9857769a3a00800000000000000
+      internalID: 737066928360289347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_17
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 1160
+        width: 34
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30cee94e3d1f37650800000000000000
+      internalID: 6229588601959541763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_18
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 1160
+        width: 42
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad54cbb3992647c10800000000000000
+      internalID: 2050372140632131034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_19
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 1160
+        width: 40
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f09c00edb99916780800000000000000
+      internalID: -8691496911124772593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_20
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 1160
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96daa26d9c8e822a0800000000000000
+      internalID: -6761898886917608087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_21
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1096
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c685e1cf033162770800000000000000
+      internalID: 8585570840737634412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_22
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 1096
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd2ac06dc3d2d550800000000000000
+      internalID: 6184238117378731463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_23
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 1096
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57af05f8045cb6510800000000000000
+      internalID: 1543544178377554549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_24
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 1096
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bccba2b9a73888d30800000000000000
+      internalID: 4433938395758771403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_25
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 1096
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 347cc27d34f0b2670800000000000000
+      internalID: 8514916304521316163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_26
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 1096
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5e1885ca7486c680800000000000000
+      internalID: -8735148764403589541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_27
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 1096
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 568a65f220f910d20800000000000000
+      internalID: 3243048038416427109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_28
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 1031
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d4eafd888dbe47d0800000000000000
+      internalID: -2932197913176382249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_29
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 1031
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dea1e301d5376fa50800000000000000
+      internalID: 6554553151225993965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_30
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 1031
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 370c4d87466e546b0800000000000000
+      internalID: -5312586866215305101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_31
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 1031
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57957a07533df6ff0800000000000000
+      internalID: -40581645146302091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_32
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1031
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 980c1367f95483770800000000000000
+      internalID: 8590692840394309769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_33
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1031
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71d9de574730fa0d0800000000000000
+      internalID: -3409502594166579945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_34
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 1031
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b18261e7235b56f20800000000000000
+      internalID: 3415335120898762779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_35
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 1031
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79df5af0351dfe6a0800000000000000
+      internalID: -6417680789304640105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_36
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 968
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec17643f0c094df0800000000000000
+      internalID: -195611849370690328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_37
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 968
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97e0668534618e790800000000000000
+      internalID: -7500720700883857799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_38
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 968
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 928baf72688156d90800000000000000
+      internalID: -7105245872631662551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_39
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 968
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b363427e09388d20800000000000000
+      internalID: 3280935062748750768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_40
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 968
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b3e7a445ff302c60800000000000000
+      internalID: 7791297678002348982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_41
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 968
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbaf3a6d692ab1180800000000000000
+      internalID: -9143535849715795269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_42
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 968
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9092ecaaa23bc21b0800000000000000
+      internalID: -5679968034185402103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_43
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 968
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad878d92669a87160800000000000000
+      internalID: 7023549875138099418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_44
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 904
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea0faccd7302a0830800000000000000
+      internalID: 4038075440190648494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_45
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 905
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3d3c06f1cfbd7d80800000000000000
+      internalID: -8251228102495290051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_46
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 905
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ca39593b2b4b2070800000000000000
+      internalID: 8082636605264313029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_47
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 905
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66e92d898dd361de0800000000000000
+      internalID: -1362833836746826138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_48
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 905
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a1096dfa57e7600800000000000000
+      internalID: 467940809372605060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_49
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 904
+        width: 23
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da1518f15883d21d0800000000000000
+      internalID: -3373978401420258899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_50
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 905
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d3ef1920dc31ab0800000000000000
+      internalID: -5038458147174466242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_51
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 905
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34f8223823320ce70800000000000000
+      internalID: 9133338744162783043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_52
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 840
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b20c698d2943a53c0800000000000000
+      internalID: -4370122683106017237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_53
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 840
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe6966770d967baa0800000000000000
+      internalID: -6145326822446426385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_54
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 840
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f355fabdb22344bf0800000000000000
+      internalID: -341092507822631617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_55
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 840
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a973e332596c1580800000000000000
+      internalID: -8855086965538457176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_56
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 840
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95124366720a141e0800000000000000
+      internalID: -2215313450610712231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_57
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 840
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bc3c71524786d870800000000000000
+      internalID: 8707295648472120502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_58
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 840
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 698d67f8a6069fae0800000000000000
+      internalID: -1515073788843730794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_59
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 840
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22270c8c74d372e00800000000000000
+      internalID: 1019851219142734370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_60
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 776
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c926574c0783e8c90800000000000000
+      internalID: -7165727900116360548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_61
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 777
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9d8a547d502ecd10800000000000000
+      internalID: 2147689658058444187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_62
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 777
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5e3bfadcde0932e0800000000000000
+      internalID: -2145667405735838118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_63
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 776
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3eb64cb60f9128240800000000000000
+      internalID: 4792421473866509283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_64
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 777
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30ad55ea092764c10800000000000000
+      internalID: 2037441847157447171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_65
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 777
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a26ca51c87d4a6190800000000000000
+      internalID: -7968471409643305430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_66
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 777
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0dea37427c777c300800000000000000
+      internalID: 272317999672962768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_67
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 776
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64488a37139b07d20800000000000000
+      internalID: 3274320551143310406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_68
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 777
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eff9e1b239b70920800000000000000
+      internalID: 2956535307776425958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_69
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 712
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b04afffacbb42b80800000000000000
+      internalID: -8420398922723606343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_70
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 711
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e6db37067c55a400800000000000000
+      internalID: 334775409306228449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_71
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 712
+        width: 20
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68e36026901a2ec70800000000000000
+      internalID: 8998932067111026310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_72
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 712
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dc8f422b4dd5e630800000000000000
+      internalID: 3955811162482773207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_73
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 712
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46484426702f53a30800000000000000
+      internalID: 4194524741492835428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_74
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 713
+        width: 26
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52fca6ecdba53f5b0800000000000000
+      internalID: -5335821362245480667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_75
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 713
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4df9f554085155580800000000000000
+      internalID: -8839135052980838444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_76
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 712
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c27f087625331560800000000000000
+      internalID: 7283223461727531713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_77
+      rect:
+        serializedVersion: 2
+        x: 536
+        y: 712
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 485cea2c75f147510800000000000000
+      internalID: 1545895033883772292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_78
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 648
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8df5192dee24eae0800000000000000
+      internalID: -1521039178012951154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_79
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 649
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26c58892c5aae4640800000000000000
+      internalID: 5066173943648902242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_80
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 649
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a008e463cfeba320800000000000000
+      internalID: 2570411634835587232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_81
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 648
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc28b4d3c90091a40800000000000000
+      internalID: 5339299504267690700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_82
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 649
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0edc4eba9a1b05d0800000000000000
+      internalID: -3095351066967089651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_83
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 649
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0507c43e8b24b8b30800000000000000
+      internalID: 4290596431855382608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_84
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 649
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39cbefd0edcc70b50800000000000000
+      internalID: 6559436636378021011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_85
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 648
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ef849fb008328ba0800000000000000
+      internalID: -6088242170386149403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_86
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 649
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb4bfa09e45dddfe0800000000000000
+      internalID: -1162538595380120386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_87
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 584
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9bdd80228bffe880800000000000000
+      internalID: -8579362228807017569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_88
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 583
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c622b4c3442dd31b0800000000000000
+      internalID: -5675148764905790868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_89
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 584
+        width: 20
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a9a58d7bcd9e020800000000000000
+      internalID: 2371669360954219140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_90
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 584
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2efe0232f148c8c30800000000000000
+      internalID: 4363007408283381730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_91
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 584
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13485402e08fdacd0800000000000000
+      internalID: -2545105474839804879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_92
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 583
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52903e100db5af150800000000000000
+      internalID: 5907134810192808229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_93
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 584
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40525386b0718c2f0800000000000000
+      internalID: -952485983428467452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_94
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 584
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3ad984d084b89cb0800000000000000
+      internalID: -4856933732704462278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_95
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 584
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b529980c56fb9d9b0800000000000000
+      internalID: -5054798663003827621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_96
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 519
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2d874a40e2784aa0800000000000000
+      internalID: -6176560581294191316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_97
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 519
+        width: 28
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f8cbbf8fd5d8f5b0800000000000000
+      internalID: -5334278602454480654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_98
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 519
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59aa03645718dae30800000000000000
+      internalID: 4516408342011226773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_99
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 519
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3cb6b1444c9ecb40800000000000000
+      internalID: 5462475215021194303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_100
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 519
+        width: 35
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b572a07623c7ca3b0800000000000000
+      internalID: -5499884489007290533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_101
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 519
+        width: 36
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e0dbf2eed7223be0800000000000000
+      internalID: -1499091887716577049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_102
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 456
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b637468782e0fbd80800000000000000
+      internalID: -8232846026828647573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_103
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 455
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a13bcebf45c8061f0800000000000000
+      internalID: -1053688016172960998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_104
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 456
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e69a9f3567c21c60800000000000000
+      internalID: 7787505943349728994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_105
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 456
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbd8be513d5dfeef0800000000000000
+      internalID: -76607566059434565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_106
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 456
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef803b1ce27e1ade0800000000000000
+      internalID: -1323522627465967362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_107
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 456
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1098ae2ccb5635900800000000000000
+      internalID: 671992630806743297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_108
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 392
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f5a7c4340c24f4c0800000000000000
+      internalID: -4254727351381285390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_109
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 392
+        width: 28
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d5f4834b8984be10800000000000000
+      internalID: 2212544548172002771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_110
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 392
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab3acce3a878eff90800000000000000
+      internalID: -6917942949765667910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_111
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 392
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c32ff1a65b95c89d0800000000000000
+      internalID: -2770741035035266500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_112
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 392
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d01cec941e330bb80800000000000000
+      internalID: -8381141863837548275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_113
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 392
+        width: 36
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47861f58490634e60800000000000000
+      internalID: 7945300358630303860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_114
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 328
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37d22c980e7e332a0800000000000000
+      internalID: -6758803664183087757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_115
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 327
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b92ab647c8d226d0800000000000000
+      internalID: -3016610449988113992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_116
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 328
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ef7f6c5b0d4f8260800000000000000
+      internalID: 7101979848577351654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_117
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 328
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f18301095b7501c0800000000000000
+      internalID: -4538085427306593799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_118
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 328
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01dcf757cbf358a70800000000000000
+      internalID: 8828532723187436816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_119
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 328
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7a65bdb6d19625c0800000000000000
+      internalID: -4240541647630931334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_120
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 263
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1712f4c6654683dd0800000000000000
+      internalID: -2506142870284590735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_121
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 262
+        width: 27
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b05ec44e0f1c49c10800000000000000
+      internalID: 2059484169981715723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_122
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 263
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dbe89d97ff3905f0800000000000000
+      internalID: -790029926893294633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_123
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 261
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a540a2cbec8ef27a0800000000000000
+      internalID: -6399640570852408230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_124
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 261
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ae1f34f50b4b1cc0800000000000000
+      internalID: -3739312576656367962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_125
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 261
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fa45a60d0cce8d20800000000000000
+      internalID: 3282785534717807344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_126
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 261
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad5b2bbc90e0ef900800000000000000
+      internalID: 720028425660839386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_127
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 261
+        width: 25
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b12d6ebfe99b9b940800000000000000
+      internalID: 5312481327942390299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_128
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 261
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfdcded92a18a9e60800000000000000
+      internalID: 7969825026019806716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_129
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 261
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 616835367ad606100800000000000000
+      internalID: 99199757495535126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_130
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 261
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94b0cfe2b874c8550800000000000000
+      internalID: 6164380653077662537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_131
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 261
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 182917c0828f8deb0800000000000000
+      internalID: -4694729760642592127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_132
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 261
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c21dad0f7c5208a40800000000000000
+      internalID: 5368332296495223084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_133
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 200
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 758a4dc1121ee2090800000000000000
+      internalID: -8057255150985369513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_134
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 200
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5beaf98d33fc6140800000000000000
+      internalID: 4714410355583544156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_135
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 200
+        width: 28
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fb59fc88bae2b8c0800000000000000
+      internalID: -3984864641909433351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_136
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 200
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10ed401a5c2a3a150800000000000000
+      internalID: 5882724507969707521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_137
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 200
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 469d5b91e60103710800000000000000
+      internalID: 1670853526818249060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_138
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 214
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3a56c72c26cc3d70800000000000000
+      internalID: 9024305646291802684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_139
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 200
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d79799aec5f26a690800000000000000
+      internalID: -7591328045766968963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_140
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 200
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c94503ec4dd2cf10800000000000000
+      internalID: 2288634882953660872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_141
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 200
+        width: 33
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2ce2f549270afca0800000000000000
+      internalID: -5982461281159680977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_142
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 200
+        width: 34
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d609a5aae46ad1b0800000000000000
+      internalID: -5631077425108941096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_143
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 200
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c8eed0e26052fab0800000000000000
+      internalID: -4975826252681254716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_144
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 214
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db4bdc2636185a780800000000000000
+      internalID: -8672383243572628291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_145
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 200
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18e40dddac483f5d0800000000000000
+      internalID: -3029932117450535295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_146
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 200
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70a14929749a3ec10800000000000000
+      internalID: 2081693577642252807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_147
+      rect:
+        serializedVersion: 2
+        x: 786
+        y: 200
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fee6a17730d876600800000000000000
+      internalID: 461492532851404527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_148
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 136
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0f1f5128ac6595e0800000000000000
+      internalID: -1903495798123978994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_149
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 136
+        width: 27
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de7c8db669bf818f0800000000000000
+      internalID: -569428729389332499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_150
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 136
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cd6cea0fe42e2370800000000000000
+      internalID: 8299611772389453254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_151
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 136
+        width: 20
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f67c511c10ffa340800000000000000
+      internalID: 4877380924806559473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_152
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 154
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dddff298e6231ac0800000000000000
+      internalID: -3885719273150095919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_153
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 136
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62cbc5d3a9a9b9b60800000000000000
+      internalID: 7753961170693569574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_154
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 152
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fa32125de6b39d30800000000000000
+      internalID: 4437091188290501366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_155
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 136
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfbe39bfdf6551cb0800000000000000
+      internalID: -4893909771220685827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_156
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 154
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3584a44e21ee1ea0800000000000000
+      internalID: -5900030872972393154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_157
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 136
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abcf3ab9216643320800000000000000
+      internalID: 2536764720223091898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_158
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 156
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8190779df6751e4c0800000000000000
+      internalID: -4260027634614335208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_159
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 136
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a76308c285eb18a30800000000000000
+      internalID: 4215860012108494458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_160
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 156
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09429ac2868641c70800000000000000
+      internalID: 8940885956872447120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_161
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 136
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37a7e048a02c731e0800000000000000
+      internalID: -2218090941035677069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_162
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 155
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c0f7ab49f641c150800000000000000
+      internalID: 5891067824107417795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_163
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 136
+        width: 16
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 819645b6c9071afc0800000000000000
+      internalID: -3485380819490150120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_164
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 136
+        width: 20
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19bc6911166a0e8c0800000000000000
+      internalID: -3971991935503643759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_165
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 136
+        width: 19
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b24ddcbb82b489e00800000000000000
+      internalID: 1051673151312614443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_166
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 136
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c63f3c377455c7700800000000000000
+      internalID: 539399820750877548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_167
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 72
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7549a8e97fa346810800000000000000
+      internalID: 1757594589772551255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_168
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 72
+        width: 22
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5933c6f142bbe74b0800000000000000
+      internalID: -5440705535996578923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_169
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 72
+        width: 28
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73b835d280c5d2d30800000000000000
+      internalID: 4408280800455527223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_170
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 72
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2643767f7c168c30800000000000000
+      internalID: 4361204622928594478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_171
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 86
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48e74f7726ff44160800000000000000
+      internalID: 7009007718479724164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_172
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 72
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 126a2cff3c02064f0800000000000000
+      internalID: -837633504509254111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_173
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 72
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42c74242fce11a640800000000000000
+      internalID: 5089382928918805540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_174
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 72
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2058f0535be0d00800000000000000
+      internalID: 940888611665281756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_175
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 72
+        width: 33
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebe09c0dfd66a9ed0800000000000000
+      internalID: -2406497939409531202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_176
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 72
+        width: 34
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c24bb30c13604a230800000000000000
+      internalID: 3649048408825246764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_177
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 86
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a41155d0139f41240800000000000000
+      internalID: 4761704695109849418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_178
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 72
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c783895b822b14830800000000000000
+      internalID: 4053717027525245052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_179
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 72
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92598f2640dcda980800000000000000
+      internalID: -8525933100818459351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_180
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 72
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74f63331ab8aa7830800000000000000
+      internalID: 4069750730422185799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_181
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 72
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0f78b4c151c0d7f0800000000000000
+      internalID: -589758994248597745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_182
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 8
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 357f6f9755b4663a0800000000000000
+      internalID: -6672562967412279469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_183
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 9
+        width: 32
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa89b3270ea88980800000000000000
+      internalID: -8536381747993408854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_184
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 5
+        width: 30
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f5a6274afe785de0800000000000000
+      internalID: -1344184875369454096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_185
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 5
+        width: 31
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d559136974295c170800000000000000
+      internalID: 8198119532858021213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_186
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 6
+        width: 30
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1177252061bc9560800000000000000
+      internalID: 7321922120695902490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: chainmail_gray_187
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 10
+        width: 30
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdc802a27f86715c0800000000000000
+      internalID: -4244808713000416036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      chainmail_gray_0: 3260953900404795740
+      chainmail_gray_1: 7461331065942303697
+      chainmail_gray_10: 4689782450297947855
+      chainmail_gray_100: -5499884489007290533
+      chainmail_gray_101: -1499091887716577049
+      chainmail_gray_102: -8232846026828647573
+      chainmail_gray_103: -1053688016172960998
+      chainmail_gray_104: 7787505943349728994
+      chainmail_gray_105: -76607566059434565
+      chainmail_gray_106: -1323522627465967362
+      chainmail_gray_107: 671992630806743297
+      chainmail_gray_108: -4254727351381285390
+      chainmail_gray_109: 2212544548172002771
+      chainmail_gray_11: 7804343992966879508
+      chainmail_gray_110: -6917942949765667910
+      chainmail_gray_111: -2770741035035266500
+      chainmail_gray_112: -8381141863837548275
+      chainmail_gray_113: 7945300358630303860
+      chainmail_gray_114: -6758803664183087757
+      chainmail_gray_115: -3016610449988113992
+      chainmail_gray_116: 7101979848577351654
+      chainmail_gray_117: -4538085427306593799
+      chainmail_gray_118: 8828532723187436816
+      chainmail_gray_119: -4240541647630931334
+      chainmail_gray_12: 8444314979992983565
+      chainmail_gray_120: -2506142870284590735
+      chainmail_gray_121: 2059484169981715723
+      chainmail_gray_122: -790029926893294633
+      chainmail_gray_123: -6399640570852408230
+      chainmail_gray_124: -3739312576656367962
+      chainmail_gray_125: 3282785534717807344
+      chainmail_gray_126: 720028425660839386
+      chainmail_gray_127: 5312481327942390299
+      chainmail_gray_128: 7969825026019806716
+      chainmail_gray_129: 99199757495535126
+      chainmail_gray_13: 5673482939772172222
+      chainmail_gray_130: 6164380653077662537
+      chainmail_gray_131: -4694729760642592127
+      chainmail_gray_132: 5368332296495223084
+      chainmail_gray_133: -8057255150985369513
+      chainmail_gray_134: 4714410355583544156
+      chainmail_gray_135: -3984864641909433351
+      chainmail_gray_136: 5882724507969707521
+      chainmail_gray_137: 1670853526818249060
+      chainmail_gray_138: 9024305646291802684
+      chainmail_gray_139: -7591328045766968963
+      chainmail_gray_14: 1405609951503119972
+      chainmail_gray_140: 2288634882953660872
+      chainmail_gray_141: -5982461281159680977
+      chainmail_gray_142: -5631077425108941096
+      chainmail_gray_143: -4975826252681254716
+      chainmail_gray_144: -8672383243572628291
+      chainmail_gray_145: -3029932117450535295
+      chainmail_gray_146: 2081693577642252807
+      chainmail_gray_147: 461492532851404527
+      chainmail_gray_148: -1903495798123978994
+      chainmail_gray_149: -569428729389332499
+      chainmail_gray_15: -8356630955206264540
+      chainmail_gray_150: 8299611772389453254
+      chainmail_gray_151: 4877380924806559473
+      chainmail_gray_152: -3885719273150095919
+      chainmail_gray_153: 7753961170693569574
+      chainmail_gray_154: 4437091188290501366
+      chainmail_gray_155: -4893909771220685827
+      chainmail_gray_156: -5900030872972393154
+      chainmail_gray_157: 2536764720223091898
+      chainmail_gray_158: -4260027634614335208
+      chainmail_gray_159: 4215860012108494458
+      chainmail_gray_16: 737066928360289347
+      chainmail_gray_160: 8940885956872447120
+      chainmail_gray_161: -2218090941035677069
+      chainmail_gray_162: 5891067824107417795
+      chainmail_gray_163: -3485380819490150120
+      chainmail_gray_164: -3971991935503643759
+      chainmail_gray_165: 1051673151312614443
+      chainmail_gray_166: 539399820750877548
+      chainmail_gray_167: 1757594589772551255
+      chainmail_gray_168: -5440705535996578923
+      chainmail_gray_169: 4408280800455527223
+      chainmail_gray_17: 6229588601959541763
+      chainmail_gray_170: 4361204622928594478
+      chainmail_gray_171: 7009007718479724164
+      chainmail_gray_172: -837633504509254111
+      chainmail_gray_173: 5089382928918805540
+      chainmail_gray_174: 940888611665281756
+      chainmail_gray_175: -2406497939409531202
+      chainmail_gray_176: 3649048408825246764
+      chainmail_gray_177: 4761704695109849418
+      chainmail_gray_178: 4053717027525245052
+      chainmail_gray_179: -8525933100818459351
+      chainmail_gray_18: 2050372140632131034
+      chainmail_gray_180: 4069750730422185799
+      chainmail_gray_181: -589758994248597745
+      chainmail_gray_182: -6672562967412279469
+      chainmail_gray_183: -8536381747993408854
+      chainmail_gray_184: -1344184875369454096
+      chainmail_gray_185: 8198119532858021213
+      chainmail_gray_186: 7321922120695902490
+      chainmail_gray_187: -4244808713000416036
+      chainmail_gray_19: -8691496911124772593
+      chainmail_gray_2: -6081978803007496901
+      chainmail_gray_20: -6761898886917608087
+      chainmail_gray_21: 8585570840737634412
+      chainmail_gray_22: 6184238117378731463
+      chainmail_gray_23: 1543544178377554549
+      chainmail_gray_24: 4433938395758771403
+      chainmail_gray_25: 8514916304521316163
+      chainmail_gray_26: -8735148764403589541
+      chainmail_gray_27: 3243048038416427109
+      chainmail_gray_28: -2932197913176382249
+      chainmail_gray_29: 6554553151225993965
+      chainmail_gray_3: -4042098807509115314
+      chainmail_gray_30: -5312586866215305101
+      chainmail_gray_31: -40581645146302091
+      chainmail_gray_32: 8590692840394309769
+      chainmail_gray_33: -3409502594166579945
+      chainmail_gray_34: 3415335120898762779
+      chainmail_gray_35: -6417680789304640105
+      chainmail_gray_36: -195611849370690328
+      chainmail_gray_37: -7500720700883857799
+      chainmail_gray_38: -7105245872631662551
+      chainmail_gray_39: 3280935062748750768
+      chainmail_gray_4: 4943602892201515827
+      chainmail_gray_40: 7791297678002348982
+      chainmail_gray_41: -9143535849715795269
+      chainmail_gray_42: -5679968034185402103
+      chainmail_gray_43: 7023549875138099418
+      chainmail_gray_44: 4038075440190648494
+      chainmail_gray_45: -8251228102495290051
+      chainmail_gray_46: 8082636605264313029
+      chainmail_gray_47: -1362833836746826138
+      chainmail_gray_48: 467940809372605060
+      chainmail_gray_49: -3373978401420258899
+      chainmail_gray_5: -6922739467100164205
+      chainmail_gray_50: -5038458147174466242
+      chainmail_gray_51: 9133338744162783043
+      chainmail_gray_52: -4370122683106017237
+      chainmail_gray_53: -6145326822446426385
+      chainmail_gray_54: -341092507822631617
+      chainmail_gray_55: -8855086965538457176
+      chainmail_gray_56: -2215313450610712231
+      chainmail_gray_57: 8707295648472120502
+      chainmail_gray_58: -1515073788843730794
+      chainmail_gray_59: 1019851219142734370
+      chainmail_gray_6: -6446792346901418440
+      chainmail_gray_60: -7165727900116360548
+      chainmail_gray_61: 2147689658058444187
+      chainmail_gray_62: -2145667405735838118
+      chainmail_gray_63: 4792421473866509283
+      chainmail_gray_64: 2037441847157447171
+      chainmail_gray_65: -7968471409643305430
+      chainmail_gray_66: 272317999672962768
+      chainmail_gray_67: 3274320551143310406
+      chainmail_gray_68: 2956535307776425958
+      chainmail_gray_69: -8420398922723606343
+      chainmail_gray_7: -7807168346246783456
+      chainmail_gray_70: 334775409306228449
+      chainmail_gray_71: 8998932067111026310
+      chainmail_gray_72: 3955811162482773207
+      chainmail_gray_73: 4194524741492835428
+      chainmail_gray_74: -5335821362245480667
+      chainmail_gray_75: -8839135052980838444
+      chainmail_gray_76: 7283223461727531713
+      chainmail_gray_77: 1545895033883772292
+      chainmail_gray_78: -1521039178012951154
+      chainmail_gray_79: 5066173943648902242
+      chainmail_gray_8: 5841886884459883855
+      chainmail_gray_80: 2570411634835587232
+      chainmail_gray_81: 5339299504267690700
+      chainmail_gray_82: -3095351066967089651
+      chainmail_gray_83: 4290596431855382608
+      chainmail_gray_84: 6559436636378021011
+      chainmail_gray_85: -6088242170386149403
+      chainmail_gray_86: -1162538595380120386
+      chainmail_gray_87: -8579362228807017569
+      chainmail_gray_88: -5675148764905790868
+      chainmail_gray_89: 2371669360954219140
+      chainmail_gray_9: 6178800447248612799
+      chainmail_gray_90: 4363007408283381730
+      chainmail_gray_91: -2545105474839804879
+      chainmail_gray_92: 5907134810192808229
+      chainmail_gray_93: -952485983428467452
+      chainmail_gray_94: -4856933732704462278
+      chainmail_gray_95: -5054798663003827621
+      chainmail_gray_96: -6176560581294191316
+      chainmail_gray_97: -5334278602454480654
+      chainmail_gray_98: 4516408342011226773
+      chainmail_gray_99: 5462475215021194303
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

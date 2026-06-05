@@ -1,0 +1,1 @@
+litiso_style, fp_category mages, fp_character blue wizard, fp_action idle, fp_direction east, pixel art RPG character sprite, mages blue wizard, idle animation frame 0, facing east, 8-direction game sprite, full body, crisp pixel art, clean outline, transparent background, no text, no logo, no scene, no floor aura, game asset

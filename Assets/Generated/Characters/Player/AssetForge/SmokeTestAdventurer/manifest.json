@@ -1,0 +1,105 @@
+﻿{
+    "version":  2,
+    "source":  "LIT-ISO Asset Forge",
+    "pipeline":  "Asset Forge smoke export validation fixture",
+    "assetName":  "SmokeTestAdventurer",
+    "assetMode":  "character",
+    "category":  "Characters/Player",
+    "exportedAt":  "2026-06-03T07:05:02.5327897-07:00",
+    "directionOrder":  [
+                           "S",
+                           "SE",
+                           "E",
+                           "NE",
+                           "N",
+                           "NW",
+                           "W",
+                           "SW"
+                       ],
+    "frameWidth":  256,
+    "frameHeight":  256,
+    "columns":  4,
+    "rows":  8,
+    "actions":  {
+                    "idle":  {
+                                 "label":  "Idle",
+                                 "fps":  4,
+                                 "framesPerDirection":  4,
+                                 "directionMode":  "8-direction",
+                                 "sheet":  "actions/idle.png",
+                                 "contact":  null
+                             },
+                    "walk":  {
+                                 "label":  "Walk",
+                                 "fps":  8,
+                                 "framesPerDirection":  4,
+                                 "directionMode":  "8-direction",
+                                 "sheet":  "actions/walk.png",
+                                 "contact":  null
+                             }
+                },
+    "pixelsPerUnit":  128,
+    "anchor":  {
+                   "x":  128,
+                   "y":  244,
+                   "normalized":  {
+                                      "x":  0.5,
+                                      "y":  0.046875
+                                  }
+               },
+    "spriteImport":  {
+                         "pixelsPerUnit":  128,
+                         "pivot":  {
+                                       "x":  0.5,
+                                       "y":  0.046875
+                                   },
+                         "filterMode":  "Point",
+                         "compression":  "Uncompressed"
+                     },
+    "productionPreset":  {
+                             "id":  "smoke_test_adventurer",
+                             "label":  "Smoke Test Adventurer"
+                         },
+    "lora":  {
+                 "name":  "smoke_fixture",
+                 "checkpoint":  "none",
+                 "strength":  0
+             },
+    "loraEvaluations":  [
+                            {
+                                "id":  "smoke_idle_s",
+                                "action":  "idle",
+                                "direction":  "S",
+                                "qaStatus":  "pass",
+                                "status":  "accepted"
+                            },
+                            {
+                                "id":  "smoke_walk_e",
+                                "action":  "walk",
+                                "direction":  "E",
+                                "qaStatus":  "pass",
+                                "status":  "accepted"
+                            }
+                        ],
+    "acceptedFrames":  [
+                           {
+                               "id":  "smoke_idle_s",
+                               "action":  "idle",
+                               "direction":  "S",
+                               "qaStatus":  "pass"
+                           },
+                           {
+                               "id":  "smoke_walk_e",
+                               "action":  "walk",
+                               "direction":  "E",
+                               "qaStatus":  "pass"
+                           }
+                       ],
+    "rejectedFrames":  [
+
+                       ],
+    "idle":  "idle.png",
+    "walk":  "walk.png",
+    "preview":  "preview.png",
+    "notes":  "Deterministic smoke fixture for Asset Forge Unity export validation."
+}

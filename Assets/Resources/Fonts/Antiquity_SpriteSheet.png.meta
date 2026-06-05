@@ -1,0 +1,2236 @@
+fileFormatVersion: 2
+guid: 661795da6d5cbc94e840285613c4e8bc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4377327038186363665
+    second: Antiquity_SpriteSheet_0
+  - first:
+      213: 1039192756192804357
+    second: Antiquity_SpriteSheet_1
+  - first:
+      213: 2060038121635496515
+    second: Antiquity_SpriteSheet_2
+  - first:
+      213: -8623950497722739155
+    second: Antiquity_SpriteSheet_3
+  - first:
+      213: 3654827937423561255
+    second: Antiquity_SpriteSheet_4
+  - first:
+      213: -8632162326438668376
+    second: Antiquity_SpriteSheet_5
+  - first:
+      213: -3412108944823231731
+    second: Antiquity_SpriteSheet_6
+  - first:
+      213: -4472352097767985359
+    second: Antiquity_SpriteSheet_7
+  - first:
+      213: -41254859655016648
+    second: Antiquity_SpriteSheet_8
+  - first:
+      213: -8610283469759319928
+    second: Antiquity_SpriteSheet_9
+  - first:
+      213: 4258935377203430964
+    second: Antiquity_SpriteSheet_10
+  - first:
+      213: -9043254918079602447
+    second: Antiquity_SpriteSheet_11
+  - first:
+      213: 7191738575075376447
+    second: Antiquity_SpriteSheet_12
+  - first:
+      213: 394699143276600160
+    second: Antiquity_SpriteSheet_13
+  - first:
+      213: 3592821309882757615
+    second: Antiquity_SpriteSheet_14
+  - first:
+      213: -4084988561724002080
+    second: Antiquity_SpriteSheet_15
+  - first:
+      213: -4599634996467129961
+    second: Antiquity_SpriteSheet_16
+  - first:
+      213: -7146416372333285009
+    second: Antiquity_SpriteSheet_17
+  - first:
+      213: -2492418679633699667
+    second: Antiquity_SpriteSheet_18
+  - first:
+      213: 1771851120008947632
+    second: Antiquity_SpriteSheet_19
+  - first:
+      213: 4187856073802343110
+    second: Antiquity_SpriteSheet_20
+  - first:
+      213: 8504716761688024756
+    second: Antiquity_SpriteSheet_21
+  - first:
+      213: 6226903731110951776
+    second: Antiquity_SpriteSheet_22
+  - first:
+      213: -6176655970726317639
+    second: Antiquity_SpriteSheet_23
+  - first:
+      213: 2584907217168804708
+    second: Antiquity_SpriteSheet_24
+  - first:
+      213: -6707759438548383448
+    second: Antiquity_SpriteSheet_25
+  - first:
+      213: 1926791122658561421
+    second: Antiquity_SpriteSheet_26
+  - first:
+      213: -8327873526809036755
+    second: Antiquity_SpriteSheet_27
+  - first:
+      213: 5150603461086628881
+    second: Antiquity_SpriteSheet_28
+  - first:
+      213: 3579967949996687721
+    second: Antiquity_SpriteSheet_29
+  - first:
+      213: 8696255582618371622
+    second: Antiquity_SpriteSheet_30
+  - first:
+      213: -922965903452280455
+    second: Antiquity_SpriteSheet_31
+  - first:
+      213: 6124607137447346269
+    second: Antiquity_SpriteSheet_32
+  - first:
+      213: -9101297844402833963
+    second: Antiquity_SpriteSheet_33
+  - first:
+      213: 1323128031853509574
+    second: Antiquity_SpriteSheet_34
+  - first:
+      213: -1723298382801297723
+    second: Antiquity_SpriteSheet_35
+  - first:
+      213: -8953678482726073637
+    second: Antiquity_SpriteSheet_36
+  - first:
+      213: -4853494935365868600
+    second: Antiquity_SpriteSheet_37
+  - first:
+      213: -5679375730041582632
+    second: Antiquity_SpriteSheet_38
+  - first:
+      213: 3211694014650574154
+    second: Antiquity_SpriteSheet_39
+  - first:
+      213: 7365103953802345160
+    second: Antiquity_SpriteSheet_40
+  - first:
+      213: 3112442409353174731
+    second: Antiquity_SpriteSheet_41
+  - first:
+      213: 7144473745785677356
+    second: Antiquity_SpriteSheet_42
+  - first:
+      213: 6062955853141003366
+    second: Antiquity_SpriteSheet_43
+  - first:
+      213: 8057540583351212686
+    second: Antiquity_SpriteSheet_44
+  - first:
+      213: -574819637858799332
+    second: Antiquity_SpriteSheet_45
+  - first:
+      213: -1753234452585973997
+    second: Antiquity_SpriteSheet_46
+  - first:
+      213: 6028463662887301200
+    second: Antiquity_SpriteSheet_47
+  - first:
+      213: -4386068801081369825
+    second: Antiquity_SpriteSheet_48
+  - first:
+      213: -3175048768547771422
+    second: Antiquity_SpriteSheet_49
+  - first:
+      213: -97117652104263615
+    second: Antiquity_SpriteSheet_50
+  - first:
+      213: -553376536185004877
+    second: Antiquity_SpriteSheet_51
+  - first:
+      213: 5244860585453569443
+    second: Antiquity_SpriteSheet_52
+  - first:
+      213: -8937050557088504821
+    second: Antiquity_SpriteSheet_53
+  - first:
+      213: -3935734518488181192
+    second: Antiquity_SpriteSheet_54
+  - first:
+      213: 8892734173381598495
+    second: Antiquity_SpriteSheet_55
+  - first:
+      213: -6966518858249194279
+    second: Antiquity_SpriteSheet_56
+  - first:
+      213: 572804636514283042
+    second: Antiquity_SpriteSheet_57
+  - first:
+      213: 7123347546906195365
+    second: Antiquity_SpriteSheet_58
+  - first:
+      213: -6261739610817090184
+    second: Antiquity_SpriteSheet_59
+  - first:
+      213: 5137447549453298346
+    second: Antiquity_SpriteSheet_60
+  - first:
+      213: 6357807256045429503
+    second: Antiquity_SpriteSheet_61
+  - first:
+      213: 2676149848036711581
+    second: Antiquity_SpriteSheet_62
+  - first:
+      213: 3174032232103606706
+    second: Antiquity_SpriteSheet_63
+  - first:
+      213: -1334714473219602100
+    second: Antiquity_SpriteSheet_64
+  - first:
+      213: -7164514206553101725
+    second: Antiquity_SpriteSheet_65
+  - first:
+      213: -2483085433060746275
+    second: Antiquity_SpriteSheet_66
+  - first:
+      213: -7030961345737474840
+    second: Antiquity_SpriteSheet_67
+  - first:
+      213: -915034776137986164
+    second: Antiquity_SpriteSheet_68
+  - first:
+      213: -79429437497017758
+    second: Antiquity_SpriteSheet_69
+  - first:
+      213: 5155729678827638124
+    second: Antiquity_SpriteSheet_70
+  - first:
+      213: -7357620892151173318
+    second: Antiquity_SpriteSheet_71
+  - first:
+      213: 5186975518126929477
+    second: Antiquity_SpriteSheet_72
+  - first:
+      213: 5415332941433892518
+    second: Antiquity_SpriteSheet_73
+  - first:
+      213: 4844972941450891184
+    second: Antiquity_SpriteSheet_74
+  - first:
+      213: -2162485519714842274
+    second: Antiquity_SpriteSheet_75
+  - first:
+      213: -3320378708092552417
+    second: Antiquity_SpriteSheet_76
+  - first:
+      213: -4858866173778280332
+    second: Antiquity_SpriteSheet_77
+  - first:
+      213: -2408215288761244543
+    second: Antiquity_SpriteSheet_78
+  - first:
+      213: 7292071560971436935
+    second: Antiquity_SpriteSheet_79
+  - first:
+      213: 5693790937850880326
+    second: Antiquity_SpriteSheet_80
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11b9fc8cfb36fbc30800000000000000
+      internalID: 4377327038186363665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_1
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50ef70e4e44fb6e00800000000000000
+      internalID: 1039192756192804357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_2
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 342c8dfc1c9b69c10800000000000000
+      internalID: 2060038121635496515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_3
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d26dea6c6b2915880800000000000000
+      internalID: -8623950497722739155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_4
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 96
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7221e4d15ae88b230800000000000000
+      internalID: 3654827937423561255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_5
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a71d196916643880800000000000000
+      internalID: -8632162326438668376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_6
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0bd0e82ef0c5a0d0800000000000000
+      internalID: -3412108944823231731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_7
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13fe01e66730fe1c0800000000000000
+      internalID: -4472352097767985359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_8
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83f01097cee6d6ff0800000000000000
+      internalID: -41254859655016648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_9
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 96
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 880f391bdc0228880800000000000000
+      internalID: -8610283469759319928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_10
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 96
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4360e872927ca1b30800000000000000
+      internalID: 4258935377203430964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_11
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 96
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f0af82b097ef7280800000000000000
+      internalID: -9043254918079602447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_12
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 96
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3d77dc61203ec360800000000000000
+      internalID: 7191738575075376447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_13
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 96
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06b172497c04a7500800000000000000
+      internalID: 394699143276600160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_14
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe1f30d12f34cd130800000000000000
+      internalID: 3592821309882757615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_15
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e038eadb843f47c0800000000000000
+      internalID: -4084988561724002080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_16
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7912f133750da20c0800000000000000
+      internalID: -4599634996467129961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_17
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f61f9063c24d2dc90800000000000000
+      internalID: -7146416372333285009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_18
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dac92e09a66296dd0800000000000000
+      internalID: -2492418679633699667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_19
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b7e20bb431e69810800000000000000
+      internalID: 1771851120008947632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_20
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c2637139e04e1a30800000000000000
+      internalID: 4187856073802343110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_21
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b6a9b7b5d2d60670800000000000000
+      internalID: 8504716761688024756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_22
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06b3c6fa3f76a6650800000000000000
+      internalID: 6226903731110951776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_23
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 76
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b1ff05be1c184aa0800000000000000
+      internalID: -6176655970726317639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_24
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46ba0b82b6f6fd320800000000000000
+      internalID: 2584907217168804708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_25
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 829cc82745049e2a0800000000000000
+      internalID: -6707759438548383448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_26
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 76
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8d807641565dba10800000000000000
+      internalID: 1926791122658561421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_27
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d28fa2c76237d6c80800000000000000
+      internalID: -8327873526809036755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_28
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11c47fc0f8e9a7740800000000000000
+      internalID: 5150603461086628881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_29
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96106de02e99ea130800000000000000
+      internalID: 3579967949996687721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_30
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 56
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 626c9fda06e4fa870800000000000000
+      internalID: 8696255582618371622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_31
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 979ede0a667f033f0800000000000000
+      internalID: -922965903452280455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_32
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 53
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d500f50fdb9fef450800000000000000
+      internalID: 6124607137447346269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_33
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 53
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d5375dc4d1b1b180800000000000000
+      internalID: -9101297844402833963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_34
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 56
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb7dfa4fe1bc5210800000000000000
+      internalID: 1323128031853509574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_35
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 56
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ce9f13504d9518e0800000000000000
+      internalID: -1723298382801297723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_36
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 53
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdacd0ccbd42eb380800000000000000
+      internalID: -8953678482726073637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_37
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 56
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c32c5a321ce4acb0800000000000000
+      internalID: -4853494935365868600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_38
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 56
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db85e83dddce21b0800000000000000
+      internalID: -5679375730041582632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_39
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 56
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a45ee76a0ba329c20800000000000000
+      internalID: 3211694014650574154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_40
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cab634260b163660800000000000000
+      internalID: 7365103953802345160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_41
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce5b5181ed913b20800000000000000
+      internalID: 3112442409353174731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_42
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 53
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c26e8acc405462360800000000000000
+      internalID: 7144473745785677356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_43
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 53
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66c485bb932f32450800000000000000
+      internalID: 6062955853141003366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_44
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 54
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8a51f9487222df60800000000000000
+      internalID: 8057540583351212686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_45
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c11f18bb594d508f0800000000000000
+      internalID: -574819637858799332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_46
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 56
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 317f2aded824ba7e0800000000000000
+      internalID: -1753234452585973997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_47
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 56
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0507fbfd2c769a350800000000000000
+      internalID: 6028463662887301200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_48
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 40
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1b1f1fe9ad8123c0800000000000000
+      internalID: -4386068801081369825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_49
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 40
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2eb2b2697f5ffe3d0800000000000000
+      internalID: -3175048768547771422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_50
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 37
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 148c7ec8208f6aef0800000000000000
+      internalID: -97117652104263615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_51
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 37
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bc18a5e8f20258f0800000000000000
+      internalID: -553376536185004877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_52
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 40
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a5486cf9ec79c840800000000000000
+      internalID: 5244860585453569443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_53
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 40
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b04680d6ed739f380800000000000000
+      internalID: -8937050557088504821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_54
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 40
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 836d44fce467169c0800000000000000
+      internalID: -3935734518488181192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_55
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1d136e6d96596b70800000000000000
+      internalID: 8892734173381598495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_56
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d43ff43204f15f90800000000000000
+      internalID: -6966518858249194279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_57
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22e612538c203f700800000000000000
+      internalID: 572804636514283042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_58
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a57ef05ad63bd260800000000000000
+      internalID: 7123347546906195365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_59
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87d21450005d919a0800000000000000
+      internalID: -6261739610817090184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_60
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa6d5da351eb4740800000000000000
+      internalID: 5137447549453298346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_61
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 40
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff22df6a3087b3850800000000000000
+      internalID: 6357807256045429503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_62
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 37
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9c91f1ab18932520800000000000000
+      internalID: 2676149848036711581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_63
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 40
+        width: 22
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b9fc249f7d6c0c20800000000000000
+      internalID: 3174032232103606706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_64
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 40
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c494c2b12442a7de0800000000000000
+      internalID: -1334714473219602100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_65
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 40
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36aa922d948829c90800000000000000
+      internalID: -7164514206553101725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_66
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 22
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddb977f54fe4a8dd0800000000000000
+      internalID: -2483085433060746275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_67
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 22
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ecb0dd58e10d6e90800000000000000
+      internalID: -7030961345737474840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_68
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 22
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8f8a2b18b42d43f0800000000000000
+      internalID: -915034776137986164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_69
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 22
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26af741f85fc5eef0800000000000000
+      internalID: -79429437497017758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_70
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 22
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6dc570a3d4dc8740800000000000000
+      internalID: 5155729678827638124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_71
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 22
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3f265be7ca74e990800000000000000
+      internalID: -7357620892151173318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_72
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 22
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5467a9080c6dbf740800000000000000
+      internalID: 5186975518126929477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_73
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 22
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ae63aa5e90272b40800000000000000
+      internalID: 5415332941433892518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_74
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 22
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bf4f81783dcc3340800000000000000
+      internalID: 4844972941450891184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_75
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 22
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e59887d80ee4df1e0800000000000000
+      internalID: -2162485519714842274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_76
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 22
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1b7f583825abe1d0800000000000000
+      internalID: -3320378708092552417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_77
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 21
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 470c8c455f6d19cb0800000000000000
+      internalID: -4858866173778280332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_78
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 25
+        width: 26
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 184a8b244fc449ed0800000000000000
+      internalID: -2408215288761244543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_79
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 21
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7834e6c1374a23560800000000000000
+      internalID: 7292071560971436935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Antiquity_SpriteSheet_80
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 26
+        width: 17
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 641a0f3e0b8640f40800000000000000
+      internalID: 5693790937850880326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Antiquity_SpriteSheet_0: 4377327038186363665
+      Antiquity_SpriteSheet_1: 1039192756192804357
+      Antiquity_SpriteSheet_10: 4258935377203430964
+      Antiquity_SpriteSheet_11: -9043254918079602447
+      Antiquity_SpriteSheet_12: 7191738575075376447
+      Antiquity_SpriteSheet_13: 394699143276600160
+      Antiquity_SpriteSheet_14: 3592821309882757615
+      Antiquity_SpriteSheet_15: -4084988561724002080
+      Antiquity_SpriteSheet_16: -4599634996467129961
+      Antiquity_SpriteSheet_17: -7146416372333285009
+      Antiquity_SpriteSheet_18: -2492418679633699667
+      Antiquity_SpriteSheet_19: 1771851120008947632
+      Antiquity_SpriteSheet_2: 2060038121635496515
+      Antiquity_SpriteSheet_20: 4187856073802343110
+      Antiquity_SpriteSheet_21: 8504716761688024756
+      Antiquity_SpriteSheet_22: 6226903731110951776
+      Antiquity_SpriteSheet_23: -6176655970726317639
+      Antiquity_SpriteSheet_24: 2584907217168804708
+      Antiquity_SpriteSheet_25: -6707759438548383448
+      Antiquity_SpriteSheet_26: 1926791122658561421
+      Antiquity_SpriteSheet_27: -8327873526809036755
+      Antiquity_SpriteSheet_28: 5150603461086628881
+      Antiquity_SpriteSheet_29: 3579967949996687721
+      Antiquity_SpriteSheet_3: -8623950497722739155
+      Antiquity_SpriteSheet_30: 8696255582618371622
+      Antiquity_SpriteSheet_31: -922965903452280455
+      Antiquity_SpriteSheet_32: 6124607137447346269
+      Antiquity_SpriteSheet_33: -9101297844402833963
+      Antiquity_SpriteSheet_34: 1323128031853509574
+      Antiquity_SpriteSheet_35: -1723298382801297723
+      Antiquity_SpriteSheet_36: -8953678482726073637
+      Antiquity_SpriteSheet_37: -4853494935365868600
+      Antiquity_SpriteSheet_38: -5679375730041582632
+      Antiquity_SpriteSheet_39: 3211694014650574154
+      Antiquity_SpriteSheet_4: 3654827937423561255
+      Antiquity_SpriteSheet_40: 7365103953802345160
+      Antiquity_SpriteSheet_41: 3112442409353174731
+      Antiquity_SpriteSheet_42: 7144473745785677356
+      Antiquity_SpriteSheet_43: 6062955853141003366
+      Antiquity_SpriteSheet_44: 8057540583351212686
+      Antiquity_SpriteSheet_45: -574819637858799332
+      Antiquity_SpriteSheet_46: -1753234452585973997
+      Antiquity_SpriteSheet_47: 6028463662887301200
+      Antiquity_SpriteSheet_48: -4386068801081369825
+      Antiquity_SpriteSheet_49: -3175048768547771422
+      Antiquity_SpriteSheet_5: -8632162326438668376
+      Antiquity_SpriteSheet_50: -97117652104263615
+      Antiquity_SpriteSheet_51: -553376536185004877
+      Antiquity_SpriteSheet_52: 5244860585453569443
+      Antiquity_SpriteSheet_53: -8937050557088504821
+      Antiquity_SpriteSheet_54: -3935734518488181192
+      Antiquity_SpriteSheet_55: 8892734173381598495
+      Antiquity_SpriteSheet_56: -6966518858249194279
+      Antiquity_SpriteSheet_57: 572804636514283042
+      Antiquity_SpriteSheet_58: 7123347546906195365
+      Antiquity_SpriteSheet_59: -6261739610817090184
+      Antiquity_SpriteSheet_6: -3412108944823231731
+      Antiquity_SpriteSheet_60: 5137447549453298346
+      Antiquity_SpriteSheet_61: 6357807256045429503
+      Antiquity_SpriteSheet_62: 2676149848036711581
+      Antiquity_SpriteSheet_63: 3174032232103606706
+      Antiquity_SpriteSheet_64: -1334714473219602100
+      Antiquity_SpriteSheet_65: -7164514206553101725
+      Antiquity_SpriteSheet_66: -2483085433060746275
+      Antiquity_SpriteSheet_67: -7030961345737474840
+      Antiquity_SpriteSheet_68: -915034776137986164
+      Antiquity_SpriteSheet_69: -79429437497017758
+      Antiquity_SpriteSheet_7: -4472352097767985359
+      Antiquity_SpriteSheet_70: 5155729678827638124
+      Antiquity_SpriteSheet_71: -7357620892151173318
+      Antiquity_SpriteSheet_72: 5186975518126929477
+      Antiquity_SpriteSheet_73: 5415332941433892518
+      Antiquity_SpriteSheet_74: 4844972941450891184
+      Antiquity_SpriteSheet_75: -2162485519714842274
+      Antiquity_SpriteSheet_76: -3320378708092552417
+      Antiquity_SpriteSheet_77: -4858866173778280332
+      Antiquity_SpriteSheet_78: -2408215288761244543
+      Antiquity_SpriteSheet_79: 7292071560971436935
+      Antiquity_SpriteSheet_8: -41254859655016648
+      Antiquity_SpriteSheet_80: 5693790937850880326
+      Antiquity_SpriteSheet_9: -8610283469759319928
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

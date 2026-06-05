@@ -1,0 +1,32 @@
+{
+  "source": "freepixel.art",
+  "source_script": "C:\\Projects\\Pixel Pipeline\\download_freepixel_sprites.py",
+  "trigger_word": "litiso_style",
+  "sprite_size": 128,
+  "direction_order": [
+    "south",
+    "south-east",
+    "east",
+    "north-east",
+    "north",
+    "north-west",
+    "west",
+    "south-west"
+  ],
+  "directional_only": true,
+  "min_directional_rows": 6,
+  "total_frames": 240,
+  "stats": {
+    "sheets_seen": 8,
+    "partial_sheets_skipped": 2,
+    "sheets_downloaded": 6,
+    "frames": 240
+  },
+  "categories": [
+    "mages",
+    "warriors",
+    "rogues",
+    "npcs",
+    "enemies"
+  ]
+}

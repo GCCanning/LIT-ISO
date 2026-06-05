@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "asset_type": "character",
+  "character_id": "armored_knight_with_dark_hood_cyan_glowing_trim",
+  "description": "armored knight with dark hood, cyan glowing trim, amber rune plates, short sword, compact chibi RPG proportions, readable helmet faceplate, high quality pixel art",
+  "provider": "comfyui",
+  "workflow": "generate_single_sprite_refined.json",
+  "checkpoint": "DreamShaper_8_pruned.safetensors",
+  "lora": "PixelArtRedmond-Lite64.safetensors",
+  "directions": [
+    "front",
+    "right",
+    "back",
+    "left"
+  ],
+  "frame_width": 256,
+  "frame_height": 256,
+  "ppu": 128,
+  "anchor": {
+    "mode": "feet",
+    "x": 128,
+    "y": 244,
+    "normalized": {
+      "x": 0.5,
+      "y": 0.046875
+    }
+  },
+  "source_reference": "ref_382fe3b3_FrontCharacter1.jpg",
+  "raw": {
+    "front": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\generated\\character_4d_front_0.png",
+    "right": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\generated\\character_4d_right_0.png",
+    "back": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\generated\\character_4d_back_0.png",
+    "left": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\generated\\character_4d_left_0.png"
+  },
+  "processed": {
+    "front": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\processed\\front.png",
+    "right": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\processed\\right.png",
+    "back": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\processed\\back.png",
+    "left": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\processed\\left.png"
+  },
+  "sheet": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\sheets\\armored_knight_with_dark_hood_cyan_glowing_trim_4d.png",
+  "qa": {
+    "status": "pass",
+    "report": "C:\\Projects\\Pixel Pipeline\\outputs\\sprite_4d_refined\\armored_knight_with_dark_hood_cyan_glowing_trim\\qa\\qa_report.json"
+  },
+  "postprocess": {
+    "cell_size": 256,
+    "target_height": 220,
+    "palette_colours": 64,
+    "pixel_grid": 128
+  },
+  "unity_export_status": "exported",
+  "latest_unity_export": {
+    "unity_asset_dir": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportSmoke4D_20260604_035519",
+    "manifest": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportSmoke4D_20260604_035519\\manifest.json",
+    "exported_at": "2026-06-04T03:55:19.488972+00:00"
+  }
+}

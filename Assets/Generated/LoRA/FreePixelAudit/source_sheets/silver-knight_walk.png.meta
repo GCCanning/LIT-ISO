@@ -1,0 +1,1930 @@
+fileFormatVersion: 2
+guid: fb9077091c621804fa77918c06d02491
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2096479252654011504
+    second: silver-knight_walk_0
+  - first:
+      213: 4982480072597866930
+    second: silver-knight_walk_1
+  - first:
+      213: -8794929372339252507
+    second: silver-knight_walk_2
+  - first:
+      213: 1974262210148463650
+    second: silver-knight_walk_3
+  - first:
+      213: -4827645062483666492
+    second: silver-knight_walk_4
+  - first:
+      213: -7008739945706428810
+    second: silver-knight_walk_5
+  - first:
+      213: 909457397628265816
+    second: silver-knight_walk_6
+  - first:
+      213: -370801108079305481
+    second: silver-knight_walk_7
+  - first:
+      213: -6156291828253718021
+    second: silver-knight_walk_8
+  - first:
+      213: 5809207223146190304
+    second: silver-knight_walk_9
+  - first:
+      213: 2868545108603765538
+    second: silver-knight_walk_10
+  - first:
+      213: 769742141907014657
+    second: silver-knight_walk_11
+  - first:
+      213: 3347382221542702006
+    second: silver-knight_walk_12
+  - first:
+      213: -4966711670969796672
+    second: silver-knight_walk_13
+  - first:
+      213: 4810706048792387260
+    second: silver-knight_walk_14
+  - first:
+      213: 9018774548190040597
+    second: silver-knight_walk_15
+  - first:
+      213: -4206616468815419554
+    second: silver-knight_walk_16
+  - first:
+      213: -1805520337808197785
+    second: silver-knight_walk_17
+  - first:
+      213: 6610916079020882244
+    second: silver-knight_walk_18
+  - first:
+      213: -8731055443519501560
+    second: silver-knight_walk_19
+  - first:
+      213: 4320438662333623426
+    second: silver-knight_walk_20
+  - first:
+      213: 630777664427786589
+    second: silver-knight_walk_21
+  - first:
+      213: -2443241484605866356
+    second: silver-knight_walk_22
+  - first:
+      213: -2334940658522543519
+    second: silver-knight_walk_23
+  - first:
+      213: 4956867253913178027
+    second: silver-knight_walk_24
+  - first:
+      213: 1152812519561054089
+    second: silver-knight_walk_25
+  - first:
+      213: 16283247912940834
+    second: silver-knight_walk_26
+  - first:
+      213: -1457269350366335025
+    second: silver-knight_walk_27
+  - first:
+      213: 9063657389318735325
+    second: silver-knight_walk_28
+  - first:
+      213: -2917792627912123880
+    second: silver-knight_walk_29
+  - first:
+      213: -7726923168175820330
+    second: silver-knight_walk_30
+  - first:
+      213: -356971846375548077
+    second: silver-knight_walk_31
+  - first:
+      213: -8573693499864287235
+    second: silver-knight_walk_32
+  - first:
+      213: -6384975889639173765
+    second: silver-knight_walk_33
+  - first:
+      213: -1582040884441845748
+    second: silver-knight_walk_34
+  - first:
+      213: -1333388538711067973
+    second: silver-knight_walk_35
+  - first:
+      213: -1386532637093229205
+    second: silver-knight_walk_36
+  - first:
+      213: -6031480683063776758
+    second: silver-knight_walk_37
+  - first:
+      213: -5566897719254496616
+    second: silver-knight_walk_38
+  - first:
+      213: -7832756366598586105
+    second: silver-knight_walk_39
+  - first:
+      213: 8794738994830622803
+    second: silver-knight_walk_40
+  - first:
+      213: 7360022496477402356
+    second: silver-knight_walk_41
+  - first:
+      213: 398557582558377858
+    second: silver-knight_walk_42
+  - first:
+      213: 6552053384720244264
+    second: silver-knight_walk_43
+  - first:
+      213: 1402966106495865951
+    second: silver-knight_walk_44
+  - first:
+      213: 8034164416928422421
+    second: silver-knight_walk_45
+  - first:
+      213: -1182324412559842796
+    second: silver-knight_walk_46
+  - first:
+      213: -332301353486191541
+    second: silver-knight_walk_47
+  - first:
+      213: -7552590781683476858
+    second: silver-knight_walk_48
+  - first:
+      213: 7107465010300711000
+    second: silver-knight_walk_49
+  - first:
+      213: 4738169490917049711
+    second: silver-knight_walk_50
+  - first:
+      213: 3955448200063435268
+    second: silver-knight_walk_51
+  - first:
+      213: 9188351864191537659
+    second: silver-knight_walk_52
+  - first:
+      213: 1074600393889593739
+    second: silver-knight_walk_53
+  - first:
+      213: -7964305409893329140
+    second: silver-knight_walk_54
+  - first:
+      213: 8034650493565099063
+    second: silver-knight_walk_55
+  - first:
+      213: -9013524063209788288
+    second: silver-knight_walk_56
+  - first:
+      213: -8524881379892507513
+    second: silver-knight_walk_57
+  - first:
+      213: 8176087362433982406
+    second: silver-knight_walk_58
+  - first:
+      213: -2037826395885556046
+    second: silver-knight_walk_59
+  - first:
+      213: 4447296573609821448
+    second: silver-knight_walk_60
+  - first:
+      213: 8648176412829005911
+    second: silver-knight_walk_61
+  - first:
+      213: -8726918403791326385
+    second: silver-knight_walk_62
+  - first:
+      213: 1033476453038709636
+    second: silver-knight_walk_63
+  - first:
+      213: 621227914754191435
+    second: silver-knight_walk_64
+  - first:
+      213: -5142498603299059374
+    second: silver-knight_walk_65
+  - first:
+      213: 15346682973178715
+    second: silver-knight_walk_66
+  - first:
+      213: -8268596778973485779
+    second: silver-knight_walk_67
+  - first:
+      213: 3183155461770501847
+    second: silver-knight_walk_68
+  - first:
+      213: -3966530982540814668
+    second: silver-knight_walk_69
+  - first:
+      213: 4658445346738508661
+    second: silver-knight_walk_70
+  - first:
+      213: -7443404852167239751
+    second: silver-knight_walk_71
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 1
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: silver-knight_walk_0
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 900
+        width: 44
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09bc4923a3fc7e2e0800000000000000
+      internalID: -2096479252654011504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_1
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 899
+        width: 43
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b988ab4a33552540800000000000000
+      internalID: 4982480072597866930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_2
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 899
+        width: 43
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e2d119555222f580800000000000000
+      internalID: -8794929372339252507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_3
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 900
+        width: 46
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2247061250df56b10800000000000000
+      internalID: 1974262210148463650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_4
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 899
+        width: 47
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c91ef4c462c00db0800000000000000
+      internalID: -4827645062483666492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_5
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 900
+        width: 47
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 676e31d3724fbbe90800000000000000
+      internalID: -7008739945706428810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_6
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 771
+        width: 45
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 855ebf34faa0f9c00800000000000000
+      internalID: 909457397628265816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_7
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 771
+        width: 45
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fc9c965b56aadaf0800000000000000
+      internalID: -370801108079305481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_8
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 770
+        width: 55
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf90c4b1335709aa0800000000000000
+      internalID: -6156291828253718021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_9
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 770
+        width: 55
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e51342e0337e9050800000000000000
+      internalID: 5809207223146190304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_10
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 770
+        width: 49
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 223038cf39e1fc720800000000000000
+      internalID: 2868545108603765538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_11
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 770
+        width: 49
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1041409566caeaa00800000000000000
+      internalID: 769742141907014657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_12
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 770
+        width: 43
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bbb282356a447e20800000000000000
+      internalID: 3347382221542702006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_13
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 770
+        width: 43
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c7fe0ecc02b21bb0800000000000000
+      internalID: -4966711670969796672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_14
+      rect:
+        serializedVersion: 2
+        x: 1060
+        y: 772
+        width: 53
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbed715c9af03c240800000000000000
+      internalID: 4810706048792387260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_15
+      rect:
+        serializedVersion: 2
+        x: 1188
+        y: 772
+        width: 53
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51293360baf192d70800000000000000
+      internalID: 9018774548190040597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_16
+      rect:
+        serializedVersion: 2
+        x: 1326
+        y: 773
+        width: 44
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e57e2f5fb981f95c0800000000000000
+      internalID: -4206616468815419554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_17
+      rect:
+        serializedVersion: 2
+        x: 1454
+        y: 773
+        width: 44
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 767f23e91d081f6e0800000000000000
+      internalID: -1805520337808197785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_18
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 645
+        width: 30
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44935f1d521bebb50800000000000000
+      internalID: 6610916079020882244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_19
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 646
+        width: 61
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b87ce455f05d680800000000000000
+      internalID: -8731055443519501560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_20
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 646
+        width: 54
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28c624e921845fb30800000000000000
+      internalID: 4320438662333623426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_21
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 643
+        width: 29
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d51087c91f8f0c800800000000000000
+      internalID: 630777664427786589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_22
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 644
+        width: 63
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8eb19980dcd71ed0800000000000000
+      internalID: -2443241484605866356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_23
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 647
+        width: 49
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16aa52597df989fd0800000000000000
+      internalID: -2334940658522543519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_24
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 517
+        width: 42
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bafc24c31845ac440800000000000000
+      internalID: 4956867253913178027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_25
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 517
+        width: 42
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9874f01f0ec9fff00800000000000000
+      internalID: 1152812519561054089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_26
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 515
+        width: 52
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 225f3a71789d93000800000000000000
+      internalID: 16283247912940834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_27
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 515
+        width: 52
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcfa95d2f3db6cbe0800000000000000
+      internalID: -1457269350366335025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_28
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 516
+        width: 48
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd50030df5498cd70800000000000000
+      internalID: 9063657389318735325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_29
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 516
+        width: 48
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81a5b05601be187d0800000000000000
+      internalID: -2917792627912123880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_30
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 514
+        width: 43
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d1f42a415474c490800000000000000
+      internalID: -7726923168175820330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_31
+      rect:
+        serializedVersion: 2
+        x: 937
+        y: 514
+        width: 43
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b58fd3ff7cb0bf0800000000000000
+      internalID: -356971846375548077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_32
+      rect:
+        serializedVersion: 2
+        x: 1058
+        y: 513
+        width: 55
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df7738fef2f140980800000000000000
+      internalID: -8573693499864287235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_33
+      rect:
+        serializedVersion: 2
+        x: 1186
+        y: 513
+        width: 55
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b719f96e1420467a0800000000000000
+      internalID: -6384975889639173765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_34
+      rect:
+        serializedVersion: 2
+        x: 1320
+        y: 515
+        width: 48
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c00f2b692367b0ae0800000000000000
+      internalID: -1582040884441845748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_35
+      rect:
+        serializedVersion: 2
+        x: 1448
+        y: 515
+        width: 48
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb2bc8a403ade7de0800000000000000
+      internalID: -1333388538711067973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_36
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 388
+        width: 46
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6d8298a9eb02cce0800000000000000
+      internalID: -1386532637093229205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_37
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 388
+        width: 46
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0a6a506640eb4ca0800000000000000
+      internalID: -6031480683063776758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_38
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 385
+        width: 45
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89a47eed4086eb2b0800000000000000
+      internalID: -5566897719254496616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_39
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 385
+        width: 45
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70146b495957c4390800000000000000
+      internalID: -7832756366598586105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_40
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 388
+        width: 46
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350c72fe4803d0a70800000000000000
+      internalID: 8794738994830622803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_41
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 388
+        width: 46
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f45b69277d042660800000000000000
+      internalID: 7360022496477402356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_42
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 387
+        width: 48
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2873eea7206f78500800000000000000
+      internalID: 398557582558377858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_43
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 387
+        width: 48
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82e55a1d6d19dea50800000000000000
+      internalID: 6552053384720244264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_44
+      rect:
+        serializedVersion: 2
+        x: 1065
+        y: 386
+        width: 49
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5459999d36587310800000000000000
+      internalID: 1402966106495865951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_45
+      rect:
+        serializedVersion: 2
+        x: 1193
+        y: 386
+        width: 49
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51a1a1a68f51f7f60800000000000000
+      internalID: 8034164416928422421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_46
+      rect:
+        serializedVersion: 2
+        x: 1321
+        y: 389
+        width: 48
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4122914063a879fe0800000000000000
+      internalID: -1182324412559842796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_47
+      rect:
+        serializedVersion: 2
+        x: 1449
+        y: 389
+        width: 48
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b44f21bfdad636bf0800000000000000
+      internalID: -332301353486191541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_48
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 260
+        width: 58
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 686dddb03becf2790800000000000000
+      internalID: -7552590781683476858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_49
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 258
+        width: 60
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 850fd7815c9c2a260800000000000000
+      internalID: 7107465010300711000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_50
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 257
+        width: 60
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6544bf4c0c51c140800000000000000
+      internalID: 4738169490917049711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_51
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 262
+        width: 36
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4024d3c5e2394e630800000000000000
+      internalID: 3955448200063435268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_52
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 259
+        width: 52
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf15f68a655938f70800000000000000
+      internalID: 9188351864191537659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_53
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 263
+        width: 45
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b89b8416d5fb9ee00800000000000000
+      internalID: 1074600393889593739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_54
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 131
+        width: 29
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0716982d6a197190800000000000000
+      internalID: -7964305409893329140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_55
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 133
+        width: 59
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73c5d53fd00d08f60800000000000000
+      internalID: 8034650493565099063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_56
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 133
+        width: 66
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08ce1f5ce9789e280800000000000000
+      internalID: -9013524063209788288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_57
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 134
+        width: 29
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c4a2f3d8981b980800000000000000
+      internalID: -8524881379892507513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_58
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 133
+        width: 63
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cf107a232c477170800000000000000
+      internalID: 8176087362433982406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_59
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 133
+        width: 51
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bea35790bf28b3e0800000000000000
+      internalID: -2037826395885556046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_60
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 4
+        width: 37
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80543d0cba8f7bd30800000000000000
+      internalID: 4447296573609821448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_61
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 4
+        width: 37
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 758b591a0ae740870800000000000000
+      internalID: 8648176412829005911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_62
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 6
+        width: 51
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f43f23ee2f1c3e680800000000000000
+      internalID: -8726918403791326385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_63
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 6
+        width: 51
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48b5a13cb55a75e00800000000000000
+      internalID: 1033476453038709636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_64
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 5
+        width: 46
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b40fa7f3f7b0f9800800000000000000
+      internalID: 621227914754191435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_65
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 5
+        width: 46
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 259ca6434cc22a8b0800000000000000
+      internalID: -5142498603299059374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_66
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 4
+        width: 39
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5bc8131ab5863000800000000000000
+      internalID: 15346682973178715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_67
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 4
+        width: 39
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d25a856d90b004d80800000000000000
+      internalID: -8268596778973485779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_68
+      rect:
+        serializedVersion: 2
+        x: 1062
+        y: 3
+        width: 53
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dedca30707dc2c20800000000000000
+      internalID: 3183155461770501847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_69
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 3
+        width: 53
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b6d213461d04f8c0800000000000000
+      internalID: -3966530982540814668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_70
+      rect:
+        serializedVersion: 2
+        x: 1321
+        y: 3
+        width: 49
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5739be18c5f16a040800000000000000
+      internalID: 4658445346738508661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silver-knight_walk_71
+      rect:
+        serializedVersion: 2
+        x: 1449
+        y: 3
+        width: 49
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b7172b49b6b3b890800000000000000
+      internalID: -7443404852167239751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable: {}
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

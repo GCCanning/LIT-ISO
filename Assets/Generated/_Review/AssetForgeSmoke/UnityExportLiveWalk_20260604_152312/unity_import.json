@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-04T15:23:12.571167+00:00",
+  "sourceOutputDir": "C:\\Projects\\Pixel Pipeline\\outputs\\animations\\character\\20260604_152311_live_anim_armored_knight_with_dark_hood_cyan_glowing_trim_walk",
+  "unityAssetDir": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportLiveWalk_20260604_152312",
+  "unityManifest": "Assets/Generated/_Review/AssetForgeSmoke/UnityExportLiveWalk_20260604_152312/manifest.json",
+  "actions": {
+    "walk": {
+      "label": "Walk",
+      "fps": 6.0,
+      "framesPerDirection": 4,
+      "directionMode": "8-direction",
+      "sheet": "actions/walk.png",
+      "contact": null,
+      "loop": true,
+      "pingPong": false
+    }
+  },
+  "nextStep": "In Unity: LIT-ISO > Asset Forge > Rebuild Generated Asset Automation"
+}
