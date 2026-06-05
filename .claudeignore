@@ -1,0 +1,30 @@
+# Workspace indexing exclusions — keep token overhead low
+Library/
+Temp/
+Logs/
+Builds/
+Build/
+.git/
+.gitignore
+.DS_Store
+Thumbs.db
+*.lock
+node_modules/
+__pycache__/
+.dotnet/
+TempEvalDryRun/
+TempEvalDryRunFreshOnly/
+GeneratedAssets/
+Tools/
+
+# LFS pointers aren't needed in index; actual files stay in .git/lfs
+*.lfs
+
+# Build/IDE artifacts
+*.csproj
+*.sln
+*.suo
+*.user
+.vs/
+.vscode/
+.idea/
