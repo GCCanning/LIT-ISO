@@ -14,6 +14,8 @@
 | Build settings -> IsoCoreFoundation (shared cfg) | Claude | claude/menu-port | REVIEW | slot 1 repoint validated by Codex integrated gate |
 
 | Menu visual style-spec (palette-agnostic) | Claude | claude/menu-style-spec | DONE | `Docs/menu-style-spec.md`; execute after A1 sets palette |
+| In-game UI = skinnable uGUI (owner decision) | Claude | claude/ingame-ui | WIP | HUD bar done (GameUIController); inventory/crafting/status next. Needs Codex to expose Inventory/Hotbar + Ready event + skip IMGUI HUD (see from-claude.md) |
+| Expose Inventory/Hotbar + Ready event; retire IMGUI HUD | Codex | - | TODO | contract in from-claude.md; unblocks Claude's HUD data binding |
 
 ## Up next (unclaimed)
 - A2 terrain block faces (original art).
