@@ -188,10 +188,18 @@ public class WelcomeScreenManager : MonoBehaviour
         float buttonY = -120f;
         float buttonSpacing = buttonHeight + spacing;
 
-        CreateMenuButton("NewGameBtn", contentPanel, "New Game", () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
-        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame), 0f, buttonY - buttonSpacing);
-        CreateMenuButton("OptionsBtn", contentPanel, "Options", () => ShowScreen(Screen.Options), 0f, buttonY - 2 * buttonSpacing);
-        CreateMenuButton("QuitBtn", contentPanel, "Quit", () => Application.Quit(), 0f, buttonY - 3 * buttonSpacing);
+        // Continue — only shown when at least one saved world exists.
+        WorldSaveData mostRecent = GetMostRecentWorld();
+        if (mostRecent != null)
+        {
+            CreateMenuButton("ContinueBtn", contentPanel, "Continue", () => LaunchWorld(mostRecent), 0f, buttonY);
+            buttonY -= buttonSpacing;
+        }
+
+        CreateMenuButton("NewGameBtn",  contentPanel, "New Game",  () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
+        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame),    0f, buttonY - buttonSpacing);
+        CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 2 * buttonSpacing);
+        CreateMenuButton("QuitBtn",     contentPanel, "Quit",      () => Application.Quit(),             0f, buttonY - 3 * buttonSpacing);
     }
 
     // -------------------------------------------------------------------------
@@ -448,6 +456,23 @@ public class WelcomeScreenManager : MonoBehaviour
     // -------------------------------------------------------------------------
     // World Save/Load
     // -------------------------------------------------------------------------
+
+    /// <summary>Returns the most recently played world, or null if none exist.</summary>
+    private WorldSaveData GetMostRecentWorld()
+    {
+        if (!Directory.Exists(savePath)) return null;
+        WorldSaveData best = null;
+        foreach (string file in Directory.GetFiles(savePath, "*.world.json"))
+        {
+            try
+            {
+                var w = JsonUtility.FromJson<WorldSaveData>(File.ReadAllText(file));
+                if (best == null || w.createdTicks > best.createdTicks) best = w;
+            }
+            catch { }
+        }
+        return best;
+    }
 
     private bool SaveWorld(WorldSaveData world)
     {
