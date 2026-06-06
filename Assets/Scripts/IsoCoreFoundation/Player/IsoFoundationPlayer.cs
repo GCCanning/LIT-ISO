@@ -22,6 +22,11 @@ namespace IsoCore.Foundation
         /// <summary>Height-0 ground position (what world/cell math expects, unlike the lifted transform).</summary>
         public Vector2 Ground => _ground;
 
+        /// <summary>Last non-zero movement direction (screen space). Drives sprite facing.</summary>
+        public Vector2 MoveDir { get; private set; } = Vector2.down;
+        /// <summary>True on frames the player is actively moving (for walk vs. idle anim).</summary>
+        public bool IsMoving { get; private set; }
+
         public void Init(IsoWorld world, FoundationConfig cfg)
         {
             _world = world; _cfg = cfg;
@@ -39,6 +44,7 @@ namespace IsoCore.Foundation
 
         void Update()
         {
+            IsMoving = false;
             if (_world == null) return;
 
             // Auto-eject if we somehow end up standing in a blocked cell (e.g. terrain
@@ -56,6 +62,8 @@ namespace IsoCore.Foundation
             var dir = new Vector2(ix, iy);
             if (dir.sqrMagnitude < 0.0001f) return;
             if (dir.sqrMagnitude > 1f) dir.Normalize();
+            IsMoving = true;
+            MoveDir = dir;
 
             // Substep so a single large frame delta (hitch / high speed) cannot tunnel
             // through a one-cell-thick blocker. maxStep stays below TileHalfW (0.5).

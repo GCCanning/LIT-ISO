@@ -21,6 +21,13 @@ namespace IsoCore.Foundation
         [Header("Interaction")]
         public InteractionKind interaction = InteractionKind.Decoration;
         public StationType stationType = StationType.None;
+
+        [Header("Light (campfire / lantern)")]
+        [Tooltip("When true, spawns a warm additive glow that fades in at night and flickers.")]
+        public bool emitsLight = false;
+        public Color lightColor = new Color(1f, 0.7f, 0.35f);
+        [Tooltip("Glow radius in world units.")]
+        public float lightRadius = 2.4f;
     }
 
     public class PlaceableDatabase : Database<PlaceableDefinition> { }

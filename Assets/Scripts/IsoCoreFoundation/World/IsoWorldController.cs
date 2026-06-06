@@ -24,6 +24,15 @@ namespace IsoCore.Foundation
         Vector2Int _lastChunk = new(int.MinValue, int.MinValue);
         bool _ready;
 
+        // Frame-amortized streaming: when the player crosses a chunk boundary we compute
+        // the newly-needed cells and reveal them a bounded number per frame, so streaming
+        // never spikes a frame. The wide view radius gives a big off-screen margin, so the
+        // queue drains long before the player can reach the unloaded edge.
+        readonly HashSet<long> _desired = new();
+        readonly List<Vector2Int> _showQueue = new();
+        int _showCursor;
+        const int StreamCellsPerFrame = 110;
+
         static long Key(int wx, int wy) => ((long)(uint)wx << 32) | (uint)wy;
 
         public void Init(IsoWorld world, FoundationContent content, FoundationConfig cfg, Transform player)
@@ -40,7 +49,8 @@ namespace IsoCore.Foundation
 
             World.OnCellChanged += HandleCellChanged;
             _ready = true;
-            Restream(PlayerChunk());
+            Retarget(PlayerChunk());
+            DrainStreaming(int.MaxValue); // full build once at load (behind the scene load)
         }
 
         void OnDestroy()
@@ -60,46 +70,80 @@ namespace IsoCore.Foundation
         {
             if (!_ready) return;
             var pc = PlayerChunk();
-            if (pc != _lastChunk) Restream(pc);
+            if (pc != _lastChunk) Retarget(pc);
+            DrainStreaming(StreamCellsPerFrame); // bounded reveal each frame
         }
 
-        void Restream(Vector2Int center)
+        /// <summary>
+        /// Player crossed into a new chunk: recompute the desired view, hide/despawn what
+        /// left it, and queue the newly-needed cells (nearest-first) to be revealed over the
+        /// next few frames. Cheap work (hide + despawn) happens now; the expensive reveal is
+        /// amortized in DrainStreaming so no single frame spikes.
+        /// </summary>
+        void Retarget(Vector2Int center)
         {
             _lastChunk = center;
-            int r = Config.viewRadiusChunks;
-            int s = World.ChunkSize;
-            var cells = new List<Vector2Int>((2 * r + 1) * (2 * r + 1) * s * s);
-            var residentNodes = new HashSet<long>();
+            int r = Config.viewRadiusChunks, s = World.ChunkSize;
+            int minX = (center.x - r) * s, maxX = (center.x + r + 1) * s - 1;
+            int minY = (center.y - r) * s, maxY = (center.y + r + 1) * s - 1;
 
+            // Ensure chunk terrain exists (sampled once per chunk; cell reads are cached).
             for (int cy = center.y - r; cy <= center.y + r; cy++)
             for (int cx = center.x - r; cx <= center.x + r; cx++)
-            {
                 World.GetOrCreateChunk(cx, cy);
-                int baseX = cx * s, baseY = cy * s;
-                for (int ly = 0; ly < s; ly++)
-                for (int lx = 0; lx < s; lx++)
-                {
-                    int wx = baseX + lx, wy = baseY + ly;
-                    cells.Add(new Vector2Int(wx, wy));
-                    var cell = World.GetCell(wx, wy);
-                    if (cell.HasNode)
-                    {
-                        long nk = Key(wx, wy);
-                        residentNodes.Add(nk);
-                        if (!_nodes.ContainsKey(nk)) SpawnNode(wx, wy, cell.NodeId);
-                    }
-                }
-            }
 
-            _renderer.SetVisible(World, cells);
+            // Rebuild the desired-cell set.
+            _desired.Clear();
+            for (int wy = minY; wy <= maxY; wy++)
+            for (int wx = minX; wx <= maxX; wx++)
+                _desired.Add(Key(wx, wy));
 
+            // Hide tiles + despawn nodes that left the view (cheap, done immediately).
+            _renderer.RetainOnly(_desired);
             _despawn.Clear();
             foreach (var kv in _nodes)
-                if (!residentNodes.Contains(kv.Key)) _despawn.Add(kv.Key);
+                if (!_desired.Contains(kv.Key)) _despawn.Add(kv.Key);
             foreach (var k in _despawn)
             {
                 if (_nodes[k]) Destroy(_nodes[k].gameObject);
                 _nodes.Remove(k);
+            }
+
+            // Queue cells that still need revealing, nearest to the player first so the
+            // on-screen area fills before the off-screen margin.
+            Vector2Int p = _isoPlayer != null ? _isoPlayer.CurrentCell
+                                              : IsoGrid.WorldToCell(_player.position);
+            _showQueue.Clear();
+            for (int wy = minY; wy <= maxY; wy++)
+            for (int wx = minX; wx <= maxX; wx++)
+                if (!_renderer.IsShown(wx, wy)) _showQueue.Add(new Vector2Int(wx, wy));
+            _showQueue.Sort((a, b) =>
+            {
+                int da = (a.x - p.x) * (a.x - p.x) + (a.y - p.y) * (a.y - p.y);
+                int db = (b.x - p.x) * (b.x - p.x) + (b.y - p.y) * (b.y - p.y);
+                return da.CompareTo(db);
+            });
+            _showCursor = 0;
+        }
+
+        /// <summary>Reveals up to <paramref name="budget"/> queued cells (and their nodes).</summary>
+        void DrainStreaming(int budget)
+        {
+            if (_showCursor >= _showQueue.Count) return;
+            int end = (budget == int.MaxValue) ? _showQueue.Count
+                                               : Mathf.Min(_showCursor + budget, _showQueue.Count);
+            for (; _showCursor < end; _showCursor++)
+            {
+                var c = _showQueue[_showCursor];
+                if (_renderer.ShowCell(World, c.x, c.y))
+                {
+                    var cell = World.GetCell(c.x, c.y);
+                    if (cell.HasNode)
+                    {
+                        long nk = Key(c.x, c.y);
+                        if (!_nodes.ContainsKey(nk)) SpawnNode(c.x, c.y, cell.NodeId);
+                    }
+                }
             }
         }
 
@@ -111,6 +155,11 @@ namespace IsoCore.Foundation
             go.transform.SetParent(_nodeParent, false);
             var node = go.AddComponent<ResourceNode>();
             node.Init(def, World, wx, wy);
+            // Fade the prop out when it would hide the player behind it (e.g. walking
+            // behind a tree), preserving the depth illusion without losing the player.
+            go.AddComponent<PropOcclusionFader>();
+            // Cast a sun/moon-driven shadow onto the ground.
+            go.AddComponent<DecorationShadow>();
             _nodes[Key(wx, wy)] = node;
         }
 

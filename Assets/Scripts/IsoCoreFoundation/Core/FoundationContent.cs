@@ -146,10 +146,18 @@ namespace IsoCore.Foundation
                 InteractionKind.CraftingStation, StationType.Workbench, "workbench_item", 0.9f);
             Placeable("chest", new Color(0.70f, 0.55f, 0.35f), true,
                 InteractionKind.Container, StationType.None, "chest_item", 0.8f);
-            Placeable("lantern", new Color(0.95f, 0.85f, 0.40f), false,
+            var lantern = Placeable("lantern", new Color(0.95f, 0.85f, 0.40f), false,
                 InteractionKind.Decoration, StationType.None, "lantern_item", 0.9f);
+            lantern.emitsLight = true;
+            lantern.lightColor = new Color(1f, 0.9f, 0.55f);
+            lantern.lightRadius = 2.2f;
             Placeable("furnace", new Color(0.45f, 0.42f, 0.45f), true,
                 InteractionKind.CraftingStation, StationType.Furnace, "furnace_item", 1.0f);
+            var campfire = Placeable("campfire", new Color(0.5f, 0.32f, 0.2f), false,
+                InteractionKind.Decoration, StationType.None, "campfire_item", 0.5f);
+            campfire.emitsLight = true;
+            campfire.lightColor = new Color(1f, 0.62f, 0.28f);
+            campfire.lightRadius = 3.0f;
 
             // ---- Resource nodes ----
             ResourceNodeDefinition Node(string id, Color col, ToolType tool, bool mandatory, int hits, float h, ItemDrop[] drops)
@@ -168,6 +176,16 @@ namespace IsoCore.Foundation
                 new[] { new ItemDrop("fiber", 1, 2), new ItemDrop("apple", 0, 1, 0.5f) });
             var copperVein = Node("copper_vein", new Color(0.80f, 0.45f, 0.25f), ToolType.Pickaxe, true, 4, 0.95f,
                 new[] { new ItemDrop("copper_ore", 1, 2), new ItemDrop("stone", 0, 1, 0.5f) });
+            // Extra flora for visual variety (art in Resources/Decorations). Pine = a second
+            // tree species for groves; flower = ambient ground cover; stump/log = low woody bits.
+            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 3, 1.5f,
+                new[] { new ItemDrop("wood", 2, 4) });
+            var flower = Node("flower", new Color(0.70f, 0.55f, 0.20f), ToolType.None, false, 1, 0.3f,
+                new[] { new ItemDrop("fiber", 1, 1) });
+            var stump = Node("stump", new Color(0.45f, 0.32f, 0.18f), ToolType.Axe, false, 2, 0.5f,
+                new[] { new ItemDrop("wood", 1, 2) });
+            var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 2, 0.4f,
+                new[] { new ItemDrop("wood", 2, 3) });
 
             // ---- Mobs ----
             MobDefinition Mob(string id, Color col, MobBehavior beh, float speed, float wander, ItemDrop[] drops)
@@ -223,7 +241,7 @@ namespace IsoCore.Foundation
                 new[] { NS(rock, 0.02f), NS(bush, 0.02f) },
                 new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.90f, 0.84f, 0.55f));
             Biome("snow", 0.12f, 0.45f, snowGroup, 1, 2,
-                new[] { NS(tree, 0.04f), NS(rock, 0.03f), NS(copperVein, 0.008f) },
+                new[] { NS(tree, 0.04f), NS(pine, 0.05f), NS(rock, 0.03f), NS(copperVein, 0.008f) },
                 new[] { MS(deer, 1f), MS(fox, 0.5f) }, new Color(0.9f, 0.93f, 0.97f));
 
             // ---- Recipes ----
@@ -238,6 +256,8 @@ namespace IsoCore.Foundation
 
             Recipe("craft_workbench", StationType.Hand,
                 new[] { In("wood", 5) }, new[] { Out("workbench_item", 1) });
+            Recipe("craft_campfire", StationType.Hand,
+                new[] { In("wood", 5), In("stone", 3) }, new[] { Out("campfire_item", 1) });
             Recipe("craft_wood_axe", StationType.Hand,
                 new[] { In("wood", 3), In("fiber", 2) }, new[] { Out("wood_axe", 1) });
             Recipe("craft_wood_pickaxe", StationType.Workbench,

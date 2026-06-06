@@ -9,14 +9,21 @@ namespace IsoCore.Foundation
     /// </summary>
     public static class IsoGrid
     {
-        // 2:1 isometric footprint. One ground cell occupies 1.0 x 0.5 world units.
+        // Classic 2:1 isometric footprint. One ground cell occupies 1.0 x 0.5 world units.
+        // This is the standard isometric proportion — it reads as a lower, more "45°"
+        // angled view rather than a near-top-down one. The pixel-art block tiles' top face
+        // is slightly taller than a true 2:1 diamond, so neighbours overlap by a few pixels
+        // at this spacing: that hides the rear tip behind the nearer tile (no gaps, uniform
+        // grass stays seamless) while giving the steeper, more dimensional look.
         public const float TileWidth = 1.0f;
         public const float TileHeight = 0.5f;
         public const float TileHalfW = TileWidth * 0.5f;   // 0.50
         public const float TileHalfH = TileHeight * 0.5f;  // 0.25
 
-        // Each discrete height level lifts the visual Y by this much.
-        public const float HeightStep = 0.25f;
+        // Each discrete height level lifts the visual Y by this much. Matched to the
+        // pixel-art block tiles' side-wall height (10px at PPU 32 = 0.3125) so stacked
+        // cubes and height cliffs connect flush vertically with no seams or gaps.
+        public const float HeightStep = 0.3125f;
 
         // Sorting: order increases with iso depth (cx+cy), then height, then entity layer.
         // DepthScale must exceed (MaxHeight*HeightScale + maxEntityLayer) so a deeper
@@ -58,7 +65,8 @@ namespace IsoCore.Foundation
 
         public static int SortingOrder(int cx, int cy, int height, int entityLayer)
         {
-            return (cx + cy) * DepthScale + height * HeightScale + entityLayer;
+            // Negated depth => nearer (smaller cx+cy) gets a HIGHER order and renders on top.
+            return -(cx + cy) * DepthScale + height * HeightScale + entityLayer;
         }
     }
 }

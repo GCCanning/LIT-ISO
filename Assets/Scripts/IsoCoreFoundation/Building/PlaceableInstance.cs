@@ -17,8 +17,17 @@ namespace IsoCore.Foundation
             int h = world.GetHeight(wx, wy);
             transform.position = IsoGrid.CellToWorld(wx, wy, h);
             var sr = GetComponent<SpriteRenderer>();
-            sr.sprite = PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
+            sr.sharedMaterial = SpriteAmbient.Material; // day/night tint like the world
+            var art = DecorationSpriteResolver.Resolve(def.id);
+            sr.sprite = art != null ? art : PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
             sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, h, IsoGrid.LayerProp);
+
+            if (def.emitsLight)
+            {
+                var glow = new GameObject("Glow");
+                glow.transform.SetParent(transform, false);
+                glow.AddComponent<CampfireGlow>().Setup(def.lightColor, def.lightRadius, sr.sortingOrder);
+            }
         }
 
         public string Prompt => Def.interaction switch

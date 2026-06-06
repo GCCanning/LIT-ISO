@@ -25,12 +25,20 @@ namespace IsoCore.Foundation
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
             _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming; _hud = hud;
+
+            var hi = new GameObject("TargetHighlight");
+            hi.transform.SetParent(transform, false);
+            _highlight = hi.AddComponent<TargetHighlight>();
+            _highlight.Build();
         }
+
+        TargetHighlight _highlight;
 
         void Update()
         {
             if (_player == null) return;
             HandleHotbar();
+            UpdateHighlight();
 
             if (Input.GetKeyDown(KeyCode.I)) _hud?.ToggleInventory();
             if (Input.GetKeyDown(KeyCode.C)) _hud?.ToggleCrafting(StationType.Hand);
@@ -39,10 +47,17 @@ namespace IsoCore.Foundation
             if (Input.GetMouseButtonDown(1)) TryRemove();
         }
 
+        void UpdateHighlight()
+        {
+            if (_highlight == null) return;
+            var node = _controller.NearestNode(_player.transform.position, _cfg.interactRange);
+            _highlight.SetTarget(node != null, node != null ? node.transform.position : Vector3.zero);
+        }
+
         void HandleHotbar()
         {
             for (int i = 0; i < _hotbar.Size && i < 9; i++)
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i)) _hotbar.Select(i);
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i)) { _hotbar.Select(i); SfxManager.Play("ui_click", 0.6f); }
 
             float scroll = Input.mouseScrollDelta.y;
             if (scroll > 0.01f) _hotbar.Step(-1);
@@ -107,7 +122,7 @@ namespace IsoCore.Foundation
             if (_hud != null && _hud.PointerOverUI) return;
             string farmMsg = _farming.TryUseSelected(); // hoe tills / seed plants
             if (farmMsg != null) { _hud?.Flash(farmMsg); return; }
-            if (_placement.TryPlaceSelected()) _hud?.Flash("Placed");
+            if (_placement.TryPlaceSelected()) { _hud?.Flash("Placed"); SfxManager.Play("place", 0.8f); }
         }
 
         void TryRemove()
