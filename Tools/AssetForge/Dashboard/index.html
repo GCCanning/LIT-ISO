@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LIT-ISO Asset Forge</title>
+  <style>
+    :root {
+      --bg: #0f1110;
+      --surface: #151917;
+      --surface-2: #1c221f;
+      --surface-3: #232b27;
+      --line: #344139;
+      --line-strong: #526257;
+      --text: #f1f3e8;
+      --muted: #9fa99d;
+      --quiet: #78857b;
+      --good: #91ce72;
+      --good-bg: #19301d;
+      --warn: #e5b95f;
+      --warn-bg: #372b16;
+      --bad: #df746b;
+      --bad-bg: #3a1c1b;
+      --accent: #62c4b7;
+      --accent-bg: #183533;
+      --gold: #d6aa4d;
+      --shadow: rgba(0, 0, 0, 0.28);
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(98, 196, 183, 0.05), transparent 260px),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+    button, select, input { font: inherit; }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: end;
+      padding: 22px 28px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(18, 23, 21, 0.96);
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      box-shadow: 0 10px 24px var(--shadow);
+    }
+    .brandline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .mark {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      background: linear-gradient(135deg, var(--accent-bg), transparent);
+      box-shadow: inset 0 0 0 3px rgba(98, 196, 183, 0.12);
+    }
+    h1 { margin: 4px 0 0; font-size: 26px; font-weight: 800; }
+    .subtitle { color: var(--muted); margin-top: 5px; font-size: 13px; max-width: 680px; }
+    .statusbar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(90px, 1fr));
+      gap: 8px;
+      min-width: 430px;
+    }
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: left;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .pill strong { display: block; color: var(--text); font-size: 18px; line-height: 1.05; margin-bottom: 2px; }
+    .pill.pass strong { color: var(--good); }
+    .pill.review strong { color: var(--warn); }
+    .pill.approved strong { color: var(--accent); }
+    main { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 92px); }
+    aside {
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      padding: 18px;
+    }
+    .side-title {
+      color: var(--quiet);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin: 4px 0 10px;
+    }
+    .workspace-list { display: grid; gap: 8px; }
+    .workspace {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 0 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 13px;
+    }
+    .workspace:hover { background: rgba(255, 255, 255, 0.03); color: var(--text); }
+    .workspace.active { background: var(--surface-2); color: var(--text); border-color: var(--line); }
+    .workspace .dot { width: 10px; height: 10px; border-radius: 99px; background: var(--accent); box-shadow: 0 0 0 3px rgba(98, 196, 183, 0.12); }
+    .workspace small { display: block; color: var(--quiet); margin-top: 2px; font-size: 11px; }
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--quiet);
+      font-size: 11px;
+      padding: 2px 7px;
+    }
+    .loader {
+      margin-top: 14px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #111513;
+    }
+    label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    input[type=file] { width: 100%; color: var(--muted); font-size: 12px; }
+    .hint { color: var(--quiet); font-size: 11px; line-height: 1.35; margin-top: 9px; }
+    .content { padding: 24px 28px 40px; }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .toolbar-title { min-width: 240px; }
+    .toolbar-title h2 { margin: 0; font-size: 18px; }
+    .toolbar-title p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    button.action, select {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 8px;
+      min-height: 36px;
+      padding: 0 11px;
+      font-size: 13px;
+    }
+    select { cursor: pointer; }
+    button.action { cursor: pointer; font-weight: 700; }
+    button.action.primary { background: var(--accent-bg); border-color: #3c716b; }
+    button.action.primary:hover { border-color: var(--accent); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    }
+    .card.review { border-color: rgba(229, 185, 95, 0.72); }
+    .card.pass { border-color: rgba(145, 206, 114, 0.38); }
+    .thumb {
+      height: 168px;
+      display: grid;
+      place-items: center;
+      background-color: #0c100f;
+      background-image:
+        linear-gradient(45deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.035) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.035) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .thumb img { image-rendering: pixelated; max-width: 138px; max-height: 138px; filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.35)); }
+    .card.terrain .thumb img { width: 104px; height: 104px; }
+    .card.decoration .thumb img { width: 138px; height: 138px; }
+    .body { padding: 12px; }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .name { font-size: 13px; font-weight: 700; line-height: 1.28; min-height: 34px; word-break: break-word; }
+    .status {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .status.pass { background: var(--good-bg); border-color: rgba(145, 206, 114, 0.5); color: var(--good); }
+    .status.review { background: var(--warn-bg); border-color: rgba(229, 185, 95, 0.55); color: var(--warn); }
+    .meta { color: var(--muted); font-size: 11px; margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; background: rgba(255, 255, 255, 0.02); }
+    .issues {
+      color: var(--warn);
+      font-size: 11px;
+      margin-top: 9px;
+      min-height: 30px;
+      line-height: 1.35;
+    }
+    .issues.clean { color: var(--quiet); }
+    .decision {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .decision label { margin: 0; }
+    .decision select { width: 100%; background: var(--surface-2); }
+    .empty {
+      grid-column: 1 / -1;
+      border: 1px dashed var(--line-strong);
+      border-radius: 8px;
+      padding: 34px;
+      color: var(--muted);
+      background: var(--surface);
+      min-height: 180px;
+      display: grid;
+      align-content: center;
+      gap: 8px;
+    }
+    .empty strong { color: var(--text); font-size: 16px; }
+    .empty code { color: var(--accent); }
+    @media (max-width: 920px) {
+      main { grid-template-columns: 1fr; }
+      aside { border-right: none; border-bottom: 1px solid var(--line); }
+      header { grid-template-columns: 1fr; position: static; }
+      .statusbar { min-width: 0; grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      header, .content, aside { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .toolbar { align-items: stretch; }
+      .filters, .filters select, .action { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="brandline"><span class="mark"></span>Asset Forge</div>
+      <h1>LIT-ISO Production Review</h1>
+      <div class="subtitle">Local approval, dataset capture, and export decisions for generated tiles and props.</div>
+    </div>
+    <div class="statusbar">
+      <div class="pill"><strong id="total">0</strong>Total assets</div>
+      <div class="pill pass"><strong id="pass">0</strong>QA pass</div>
+      <div class="pill review"><strong id="review">0</strong>Needs review</div>
+      <div class="pill approved"><strong id="approved">0</strong>Approved</div>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <div class="side-title">Workspace</div>
+      <div class="workspace-list">
+        <button class="workspace active"><span class="dot"></span><span>Review Pack<small>Sprite QA and approvals</small></span><span class="badge">Live</span></button>
+        <button class="workspace"><span class="dot"></span><span>Dataset<small>Training capture queue</small></span><span class="badge">Next</span></button>
+        <button class="workspace"><span class="dot"></span><span>LoRA Lab<small>Experiment controls</small></span><span class="badge">Static</span></button>
+        <button class="workspace"><span class="dot"></span><span>Unity Export<small>Destination checks</small></span><span class="badge">Ready</span></button>
+      </div>
+      <div class="loader">
+        <label for="reportFile">Load review_report.json</label>
+        <input id="reportFile" type="file" accept=".json" />
+        <div class="hint">Start here to populate the production review board.</div>
+      </div>
+      <div class="loader">
+        <label for="decisionFile">Load review_decisions.json</label>
+        <input id="decisionFile" type="file" accept=".json" />
+        <div class="hint">Optional: restore prior approvals before exporting.</div>
+      </div>
+    </aside>
+    <section class="content">
+      <div class="toolbar">
+        <div class="toolbar-title">
+          <h2>Review Queue</h2>
+          <p id="queueSummary">Load a report to begin.</p>
+        </div>
+        <div class="filters">
+          <select id="categoryFilter">
+            <option value="all">All categories</option>
+            <option value="terrain">Terrain</option>
+            <option value="decoration">Props</option>
+          </select>
+          <select id="statusFilter">
+            <option value="all">All QA states</option>
+            <option value="pass">Pass</option>
+            <option value="review">Needs review</option>
+          </select>
+          <button class="action primary" id="downloadDecisions">Download decisions JSON</button>
+        </div>
+      </div>
+      <div id="grid" class="grid">
+        <div class="empty">
+          <strong>No review pack loaded</strong>
+          <span>Load the pack JSON files from <code>Assets/Generated/_Review/CodexBiomeStarter</code>.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    let report = null;
+    let decisions = new Map();
+
+    const grid = document.getElementById("grid");
+    const reportFile = document.getElementById("reportFile");
+    const decisionFile = document.getElementById("decisionFile");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const queueSummary = document.getElementById("queueSummary");
+
+    function relId(item) {
+      return item.path.replaceAll("\\", "/").replace(/^Assets\/Generated\/_Review\/[^/]+\//, "");
+    }
+
+    function defaultDecision(item) {
+      return item.status === "pass" && (!item.issues || item.issues.length === 0) ? "approved" : "needs_edit";
+    }
+
+    function itemBiome(item) {
+      const parts = item.path.replaceAll("\\", "/").split("/");
+      if (item.category === "decoration") {
+        const decorationIndex = parts.indexOf("Decorations");
+        return decorationIndex >= 0 && parts.length > decorationIndex + 1 ? parts[decorationIndex + 1] : "Shared";
+      }
+      return parts.length >= 2 ? parts[parts.length - 2] : "Shared";
+    }
+
+    function destinationPath(item) {
+      const biome = itemBiome(item);
+      const root = item.category === "decoration" ? "Assets/Generated/Props" : "Assets/Generated/Tiles";
+      return `${root}/${biome}/${item.name}`;
+    }
+
+    function prettyStatus(status) {
+      return status === "pass" ? "Pass" : "Review";
+    }
+
+    function prettyDecision(decision) {
+      return decision.replace("_", " ");
+    }
+
+    function setCounters(items) {
+      document.getElementById("total").textContent = items.length;
+      document.getElementById("pass").textContent = items.filter(x => x.status === "pass").length;
+      document.getElementById("review").textContent = items.filter(x => x.status !== "pass").length;
+      document.getElementById("approved").textContent = items.filter(x => (decisions.get(relId(x)) || defaultDecision(x)) === "approved").length;
+    }
+
+    function setSummary(filtered, items) {
+      if (!report) {
+        queueSummary.textContent = "Load a report to begin.";
+        return;
+      }
+      const pending = items.filter(x => (decisions.get(relId(x)) || defaultDecision(x)) !== "approved").length;
+      queueSummary.textContent = `${filtered.length} visible of ${items.length} assets, ${pending} awaiting approval.`;
+    }
+
+    function render() {
+      if (!report) return;
+      const items = report.items || [];
+      setCounters(items);
+      const filtered = items.filter(item => {
+        return (categoryFilter.value === "all" || item.category === categoryFilter.value)
+          && (statusFilter.value === "all" || item.status === statusFilter.value);
+      });
+      setSummary(filtered, items);
+      if (!filtered.length) {
+        grid.innerHTML = "<div class='empty'><strong>No matches</strong><span>No assets match the current filters.</span></div>";
+        return;
+      }
+      grid.innerHTML = filtered.map(item => {
+        const id = relId(item);
+        const decision = decisions.get(id) || defaultDecision(item);
+        const issues = (item.issues || []).join(", ");
+        const src = "/" + item.path.replaceAll("\\", "/");
+        const statusClass = item.status === "pass" ? "pass" : "review";
+        return `<article class="card ${item.category} ${statusClass}">
+          <div class="thumb"><img src="${src}" alt="${item.name}"></div>
+          <div class="body">
+            <div class="card-top">
+              <div class="name">${item.name}</div>
+              <div class="status ${statusClass}">${prettyStatus(item.status)}</div>
+            </div>
+            <div class="meta">
+              <span class="chip">${item.category}</span>
+              <span class="chip">${item.width}x${item.height}</span>
+              <span class="chip">${itemBiome(item)}</span>
+            </div>
+            <div class="issues ${issues ? "" : "clean"}">${issues || "No blocking issues reported."}</div>
+            <div class="decision">
+              <label for="decision-${id}">Decision</label>
+              <select id="decision-${id}" data-id="${id}" aria-label="Decision for ${item.name}">
+                ${["approved", "pending", "needs_edit", "rejected"].map(x => `<option value="${x}" ${x === decision ? "selected" : ""}>${prettyDecision(x)}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+      grid.querySelectorAll("select[data-id]").forEach(select => {
+        select.addEventListener("change", () => {
+          decisions.set(select.dataset.id, select.value);
+          setCounters(items);
+          setSummary(filtered, items);
+        });
+      });
+    }
+
+    function readJson(file, cb) {
+      const reader = new FileReader();
+      reader.onload = () => cb(JSON.parse(reader.result));
+      reader.readAsText(file);
+    }
+
+    reportFile.addEventListener("change", () => {
+      if (!reportFile.files.length) return;
+      readJson(reportFile.files[0], json => {
+        report = json;
+        decisions.clear();
+        for (const item of report.items || []) decisions.set(relId(item), defaultDecision(item));
+        render();
+      });
+    });
+
+    decisionFile.addEventListener("change", () => {
+      if (!decisionFile.files.length) return;
+      readJson(decisionFile.files[0], json => {
+        decisions.clear();
+        for (const item of json.decisions || []) decisions.set(item.id, item.decision);
+        render();
+      });
+    });
+
+    categoryFilter.addEventListener("change", render);
+    statusFilter.addEventListener("change", render);
+    document.getElementById("downloadDecisions").addEventListener("click", () => {
+      if (!report) return;
+      const payload = {
+        pack_name: report.pack_name,
+        generated_utc: new Date().toISOString(),
+        decisions: (report.items || []).map(item => {
+          const id = relId(item);
+          const decision = decisions.get(id) || defaultDecision(item);
+          return {
+            id,
+            name: item.name,
+            category: item.category,
+            biome: itemBiome(item),
+            source_path: item.path.replaceAll("\\", "/"),
+            destination_path: destinationPath(item),
+            review_status: item.status,
+            decision,
+            approval_blocked: (item.issues || []).length > 0,
+            training_capture: decision === "approved",
+            notes: "",
+            issues: item.issues || []
+          };
+        })
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "review_decisions.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  </script>
+</body>
+</html>

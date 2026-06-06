@@ -1,0 +1,15 @@
+﻿{
+    "pack_name":  "CodexBiomeStarter",
+    "ready_for_training":  true,
+    "record_count":  34,
+    "approved_count":  34,
+    "rejected_count":  0,
+    "needs_edit_count":  2,
+    "includes_rejected_examples":  false,
+    "dataset_root":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Datasets\\lit_iso\\review_packs\\CodexBiomeStarter",
+    "metadata_jsonl":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Datasets\\lit_iso\\review_packs\\CodexBiomeStarter\\metadata.jsonl",
+    "notes":  [
+                  "DatasetRoot is repo-local by default and is refused when outside ProjectRoot.",
+                  "Approved records are blocked if review_report.json still lists QA issues."
+              ]
+}

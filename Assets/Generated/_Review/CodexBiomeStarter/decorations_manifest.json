@@ -1,0 +1,123 @@
+﻿{
+    "pack_name":  "Codex Biome Starter Decorations",
+    "created_utc":  "2026-06-05T22:35:37.9384295Z",
+    "source_style_anchors":  [
+                                 "Assets/Resources/Decorations/tree.png",
+                                 "Assets/Resources/Decorations/bush.png",
+                                 "Assets/Resources/Decorations/rock.png"
+                             ],
+    "unity_import_recommendation":  {
+                                        "sprite_mode":  "Single",
+                                        "pixels_per_unit":  32,
+                                        "filter_mode":  "Point",
+                                        "compression":  "None",
+                                        "mipmaps":  false,
+                                        "pivot":  "bottom-center"
+                                    },
+    "notes_for_claude":  [
+                             "Props are separate from terrain tiles and should be placed by decoration/resource rules.",
+                             "Trees and bushes are occluders; use existing transparency fade logic when actors are behind them.",
+                             "Rocks are obstacle/resource candidates depending on biome rule setup."
+                         ],
+    "files":  [
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_oak_tree",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_oak_tree.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\tree.png",
+                      "role":  "tree_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_deep_oak_tree",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_deep_oak_tree.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\tree.png",
+                      "role":  "tree_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_bush",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_bush.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\bush.png",
+                      "role":  "bush_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_moss_bush",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_moss_bush.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\bush.png",
+                      "role":  "bush_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_rock",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_rock.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\rock.png",
+                      "role":  "rock_obstacle_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_tree",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_tree.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\tree.png",
+                      "role":  "tree_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_small_tree",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_small_tree.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\tree.png",
+                      "role":  "tree_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_bush",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_bush.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\bush.png",
+                      "role":  "bush_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_dry_bush",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_dry_bush.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\bush.png",
+                      "role":  "bush_occluder_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_rock",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_rock.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\rock.png",
+                      "role":  "rock_obstacle_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  },
+                  {
+                      "biome":  "Shared",
+                      "name":  "shared_gray_rock",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Shared\\shared_gray_rock.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Decorations\\rock.png",
+                      "role":  "rock_obstacle_128x128",
+                      "anchor":  "bottom-center",
+                      "suggested_sorting":  "obstacle/decoration; fade when actor is behind"
+                  }
+              ]
+}

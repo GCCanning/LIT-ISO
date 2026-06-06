@@ -1,0 +1,599 @@
+﻿{
+    "pack_name":  "CodexBiomeStarter",
+    "generated_utc":  "2026-06-05T23:18:10.2075013Z",
+    "decision_contract":  {
+                              "allowed_decisions":  [
+                                                        "pending",
+                                                        "approved",
+                                                        "rejected",
+                                                        "needs_edit"
+                                                    ],
+                              "approval_destination":  "Assets/Generated/Tiles and Assets/Generated/Props only",
+                              "unity_note":  "Approval copies use fresh .meta GUIDs so review assets can remain in the project."
+                          },
+    "summary":  {
+                    "total":  36,
+                    "approved":  34,
+                    "pending":  0,
+                    "rejected":  0,
+                    "needs_edit":  2
+                },
+    "decisions":  [
+                      {
+                          "id":  "Forest/forest_dark_underbrush.png",
+                          "name":  "forest_dark_underbrush.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_dark_underbrush.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_dark_underbrush.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_grass_base.png",
+                          "name":  "forest_grass_base.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_grass_base.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_grass_base.png",
+                          "review_status":  "review",
+                          "decision":  "needs_edit",
+                          "approval_blocked":  true,
+                          "training_capture":  false,
+                          "notes":  "",
+                          "issues":  [
+                                         "ppu_not_32"
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_grass_to_dirt_diag.png",
+                          "name":  "forest_grass_to_dirt_diag.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_grass_to_dirt_diag.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_grass_to_dirt_diag.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_grass_to_leaf_cross.png",
+                          "name":  "forest_grass_to_leaf_cross.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_grass_to_leaf_cross.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_grass_to_leaf_cross.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_grass_to_mud_south.png",
+                          "name":  "forest_grass_to_mud_south.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_grass_to_mud_south.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_grass_to_mud_south.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_grass_tufts.png",
+                          "name":  "forest_grass_tufts.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_grass_tufts.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_grass_tufts.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_leaf_litter.png",
+                          "name":  "forest_leaf_litter.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_leaf_litter.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_leaf_litter.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_moss_grass.png",
+                          "name":  "forest_moss_grass.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_moss_grass.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_moss_grass.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_mud_path.png",
+                          "name":  "forest_mud_path.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_mud_path.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_mud_path.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_rich_dirt.png",
+                          "name":  "forest_rich_dirt.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_rich_dirt.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_rich_dirt.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_stone_path.png",
+                          "name":  "forest_stone_path.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_stone_path.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_stone_path.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Forest/forest_water_edge.png",
+                          "name":  "forest_water_edge.png",
+                          "category":  "terrain",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Forest/forest_water_edge.png",
+                          "destination_path":  "Assets/Generated/Tiles/Forest/forest_water_edge.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_bare_dirt.png",
+                          "name":  "plains_bare_dirt.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_bare_dirt.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_bare_dirt.png",
+                          "review_status":  "review",
+                          "decision":  "needs_edit",
+                          "approval_blocked":  true,
+                          "training_capture":  false,
+                          "notes":  "",
+                          "issues":  [
+                                         "ppu_not_32"
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_dry_grass.png",
+                          "name":  "plains_dry_grass.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_dry_grass.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_dry_grass.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_flower_grass.png",
+                          "name":  "plains_flower_grass.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_flower_grass.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_flower_grass.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_grass_base.png",
+                          "name":  "plains_grass_base.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_grass_base.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_grass_base.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_grass_to_dirt_south.png",
+                          "name":  "plains_grass_to_dirt_south.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_grass_to_dirt_south.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_grass_to_dirt_south.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_grass_to_dry_cross.png",
+                          "name":  "plains_grass_to_dry_cross.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_grass_to_dry_cross.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_grass_to_dry_cross.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_grass_to_path_diag.png",
+                          "name":  "plains_grass_to_path_diag.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_grass_to_path_diag.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_grass_to_path_diag.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_grass_tufts.png",
+                          "name":  "plains_grass_tufts.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_grass_tufts.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_grass_tufts.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_packed_path.png",
+                          "name":  "plains_packed_path.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_packed_path.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_packed_path.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_pale_stone_path.png",
+                          "name":  "plains_pale_stone_path.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_pale_stone_path.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_pale_stone_path.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Plains/plains_water_edge.png",
+                          "name":  "plains_water_edge.png",
+                          "category":  "terrain",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Plains/plains_water_edge.png",
+                          "destination_path":  "Assets/Generated/Tiles/Plains/plains_water_edge.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Shared/shared_mud_dark.png",
+                          "name":  "shared_mud_dark.png",
+                          "category":  "terrain",
+                          "biome":  "Shared",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Shared/shared_mud_dark.png",
+                          "destination_path":  "Assets/Generated/Tiles/Shared/shared_mud_dark.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Shared/shared_soil_dark.png",
+                          "name":  "shared_soil_dark.png",
+                          "category":  "terrain",
+                          "biome":  "Shared",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Shared/shared_soil_dark.png",
+                          "destination_path":  "Assets/Generated/Tiles/Shared/shared_soil_dark.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Forest/forest_bush.png",
+                          "name":  "forest_bush.png",
+                          "category":  "decoration",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Forest/forest_bush.png",
+                          "destination_path":  "Assets/Generated/Props/Forest/forest_bush.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Forest/forest_deep_oak_tree.png",
+                          "name":  "forest_deep_oak_tree.png",
+                          "category":  "decoration",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Forest/forest_deep_oak_tree.png",
+                          "destination_path":  "Assets/Generated/Props/Forest/forest_deep_oak_tree.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Forest/forest_moss_bush.png",
+                          "name":  "forest_moss_bush.png",
+                          "category":  "decoration",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Forest/forest_moss_bush.png",
+                          "destination_path":  "Assets/Generated/Props/Forest/forest_moss_bush.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Forest/forest_oak_tree.png",
+                          "name":  "forest_oak_tree.png",
+                          "category":  "decoration",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Forest/forest_oak_tree.png",
+                          "destination_path":  "Assets/Generated/Props/Forest/forest_oak_tree.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Forest/forest_rock.png",
+                          "name":  "forest_rock.png",
+                          "category":  "decoration",
+                          "biome":  "Forest",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Forest/forest_rock.png",
+                          "destination_path":  "Assets/Generated/Props/Forest/forest_rock.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Plains/plains_bush.png",
+                          "name":  "plains_bush.png",
+                          "category":  "decoration",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Plains/plains_bush.png",
+                          "destination_path":  "Assets/Generated/Props/Plains/plains_bush.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Plains/plains_dry_bush.png",
+                          "name":  "plains_dry_bush.png",
+                          "category":  "decoration",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Plains/plains_dry_bush.png",
+                          "destination_path":  "Assets/Generated/Props/Plains/plains_dry_bush.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Plains/plains_rock.png",
+                          "name":  "plains_rock.png",
+                          "category":  "decoration",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Plains/plains_rock.png",
+                          "destination_path":  "Assets/Generated/Props/Plains/plains_rock.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Plains/plains_small_tree.png",
+                          "name":  "plains_small_tree.png",
+                          "category":  "decoration",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Plains/plains_small_tree.png",
+                          "destination_path":  "Assets/Generated/Props/Plains/plains_small_tree.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Plains/plains_tree.png",
+                          "name":  "plains_tree.png",
+                          "category":  "decoration",
+                          "biome":  "Plains",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Plains/plains_tree.png",
+                          "destination_path":  "Assets/Generated/Props/Plains/plains_tree.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      },
+                      {
+                          "id":  "Decorations/Shared/shared_gray_rock.png",
+                          "name":  "shared_gray_rock.png",
+                          "category":  "decoration",
+                          "biome":  "Shared",
+                          "source_path":  "Assets/Generated/_Review/CodexBiomeStarter/Decorations/Shared/shared_gray_rock.png",
+                          "destination_path":  "Assets/Generated/Props/Shared/shared_gray_rock.png",
+                          "review_status":  "pass",
+                          "decision":  "approved",
+                          "approval_blocked":  false,
+                          "training_capture":  true,
+                          "notes":  "",
+                          "issues":  [
+
+                                     ]
+                      }
+                  ]
+}

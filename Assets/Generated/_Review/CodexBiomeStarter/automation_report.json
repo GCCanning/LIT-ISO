@@ -1,0 +1,17 @@
+{
+  "assetName": "CodexBiomeStarter",
+  "assetMode": "character",
+  "success": false,
+  "promotionReady": true,
+  "productionPreset": "",
+  "loraName": "",
+  "loraCheckpoint": "",
+  "loraStrength": 0,
+  "acceptedFrameCount": 0,
+  "rejectedFrameCount": 0,
+  "qaWarnCount": 0,
+  "qaFailCount": 0,
+  "generatedAt": "2026-06-05T21:11:04.6576069Z",
+  "generated": ["Assets/Generated/_Review/CodexBiomeStarter/Automation"],
+  "errors": []
+}
