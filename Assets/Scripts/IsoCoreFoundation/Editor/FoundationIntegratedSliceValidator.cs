@@ -175,6 +175,18 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Player != null && boot.WorldController != null && boot.Placement != null &&
                 boot.Farming != null && boot.MobSpawner != null && boot.DayNight != null &&
                 boot.Crafting != null && boot.Hud != null);
+            add("FoundationBootstrap exposes LitRPG progression handles",
+                boot.Progression != null && boot.Stats != null &&
+                boot.Stats.Health01 >= 0f && boot.Stats.Health01 <= 1f &&
+                boot.Stats.Mana01 >= 0f && boot.Stats.Mana01 <= 1f &&
+                boot.Stats.Xp01 >= 0f && boot.Stats.Xp01 <= 1f &&
+                boot.Stats.Level >= 1 &&
+                !string.IsNullOrWhiteSpace(boot.Stats.Class) &&
+                !string.IsNullOrWhiteSpace(boot.Stats.Title),
+                boot.Stats != null ? $"{boot.Stats.Class}/{boot.Stats.Title} L{boot.Stats.Level}" : "missing stats");
+            add("FoundationContent includes LitRPG bible seed content",
+                boot.Content.Callings.Count >= 7 && boot.Content.Skills.Count >= 12 && boot.Content.Quests.Count >= 5,
+                $"Callings:{boot.Content.Callings.Count} Skills:{boot.Content.Skills.Count} Quests:{boot.Content.Quests.Count}");
 
             var spawner = go.GetComponentInChildren<MobSpawner>();
             bool spawned = TryForceMobSpawn(spawner);
@@ -194,7 +206,8 @@ namespace IsoCore.Foundation.EditorTools
                 headlessGo.GetComponent<PlayerInteraction>() != null);
             add("FoundationBootstrap exposes UI binding handles without IMGUI HUD",
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
-                headlessBoot.Content != null && headlessBoot.World != null);
+                headlessBoot.Content != null && headlessBoot.World != null &&
+                headlessBoot.Progression != null && headlessBoot.Stats != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
             FoundationBootstrap.ClearLaunchOptions();

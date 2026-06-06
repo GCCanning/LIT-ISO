@@ -23,6 +23,7 @@
 | Tools/scripts | Claude | claude/scripts-and-tools | MERGED | PowerShell helpers, Plans/ |
 | HUD live stats binding | Claude | claude/hud-live-stats | MERGED | FoundationHudAdapter wired to PlayerHealth/Mana/XPSystem events |
 | Options screen with real volume controls | Claude | claude/options-screen | WIP | mirrors PauseMenu sliders (master/sfx/music via PlayerPrefs) |
+| LitRPG Foundation systems | Codex | codex/litrpg-foundation-systems | REVIEW | Foundation Callings/Skills/Quests + Progression/Stats runtime handle from system bible |
 | Commit remaining working-tree drift | Claude | claude/working-tree-cleanup | TODO | modified metas, BiomeDefinition_Plains, Packages, ProjectSettings |
 | Real save/load (FoundationSaveData) cross-lane | Codex+Claude | - | TODO | Codex: serialize world state; Claude: wire Continue in menu. Agree file format first |
 | Milestone A1 terrain-top art (original) | Codex | - | TODO | grass/dirt/sand/snow tops, PPU 16 |

@@ -38,6 +38,8 @@ namespace IsoCore.Foundation
         public MobSpawner MobSpawner { get; private set; }
         public DayNightSystem DayNight { get; private set; }
         public CraftingSystem Crafting { get; private set; }
+        public FoundationProgression Progression { get; private set; }
+        public FoundationPlayerStats Stats => Progression?.Stats;
         public FoundationHUD Hud { get; private set; }
 
         Camera _cam;
@@ -88,6 +90,7 @@ namespace IsoCore.Foundation
             ApplyLaunchOptions();
 
             Content = FoundationContent.BuildDefault();
+            Progression = new FoundationProgression(Content);
             var sampler = new IsoTerrainSampler(config, Content);
             World = new IsoWorld(sampler, Content, config.chunkSize);
 
@@ -179,6 +182,7 @@ namespace IsoCore.Foundation
             Debug.Log($"[FoundationBootstrap] Ready. Blocks:{Content.Blocks.Count} Items:{Content.Items.Count} " +
                       $"Placeables:{Content.Placeables.Count} Recipes:{Content.Recipes.Count} " +
                       $"Nodes:{Content.Nodes.Count} Mobs:{Content.Mobs.Count} Biomes:{Content.Biomes.Count} " +
+                      $"Callings:{Content.Callings.Count} Skills:{Content.Skills.Count} Quests:{Content.Quests.Count} " +
                       $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty}");
         }
 

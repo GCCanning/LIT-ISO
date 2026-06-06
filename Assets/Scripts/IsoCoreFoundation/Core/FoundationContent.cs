@@ -18,6 +18,9 @@ namespace IsoCore.Foundation
         public readonly ResourceNodeDatabase Nodes = new();
         public readonly MobDatabase Mobs = new();
         public readonly CropDatabase Crops = new();
+        public readonly FoundationCallingDatabase Callings = new();
+        public readonly FoundationSkillDatabase Skills = new();
+        public readonly FoundationQuestDatabase Quests = new();
 
         static T New<T>(string id) where T : FoundationDefinition
         {
@@ -284,6 +287,138 @@ namespace IsoCore.Foundation
                 new[] { In("wood", 2), In("copper_bar", 3) }, new[] { Out("copper_axe", 1) });
             Recipe("craft_copper_pickaxe", StationType.Workbench,
                 new[] { In("wood", 2), In("copper_bar", 3) }, new[] { Out("copper_pickaxe", 1) });
+
+            // ---- LitRPG progression: skills, Callings, starter quests ----
+            FoundationSkillDefinition Skill(string id, string name, FoundationProgressionActivity activity,
+                FoundationSkillNodeKind kind, string description, params string[] unlocks)
+            {
+                var s = New<FoundationSkillDefinition>(id);
+                s.displayName = name;
+                s.activity = activity;
+                s.primaryNodeKind = kind;
+                s.description = description;
+                s.unlocks = unlocks;
+                c.Skills.Add(s);
+                return s;
+            }
+
+            Skill("foraging", "Foraging", FoundationProgressionActivity.Harvest, FoundationSkillNodeKind.Insight,
+                "Read herbs, mushrooms, berries, fibers, and wild nodes.", "rare sprouts", "preserve recipes", "node reading");
+            Skill("woodcraft", "Woodcraft", FoundationProgressionActivity.Harvest, FoundationSkillNodeKind.Yield,
+                "Shape wood into bridges, furniture, grove care, and warm structures.", "timber tiers", "bridges", "grove care");
+            Skill("mining", "Mining", FoundationProgressionActivity.Harvest, FoundationSkillNodeKind.Yield,
+                "Break stone, ore, crystal, and clay with better precision.", "reinforced tools", "cellar rooms", "furnace chains");
+            Skill("farming", "Farming", FoundationProgressionActivity.Farm, FoundationSkillNodeKind.Harmony,
+                "Care for soil, seeds, crop rotation, and living fields.", "crop traits", "seed memory", "greenhouses");
+            Skill("cooking", "Cooking", FoundationProgressionActivity.Craft, FoundationSkillNodeKind.Ease,
+                "Turn food into buffs, comfort, visitor favorites, and festival meals.", "buff meals", "comfort feasts", "NPC favorites");
+            Skill("crafting", "Crafting", FoundationProgressionActivity.Craft, FoundationSkillNodeKind.Utility,
+                "Create tools, components, clothing, and repair kits.", "quality grades", "mod slots", "repair kits");
+            Skill("building", "Building", FoundationProgressionActivity.Build, FoundationSkillNodeKind.Expression,
+                "Place floors, walls, paths, utilities, civic structures, and decor.", "room types", "civic structures", "defense layouts");
+            Skill("exploration", "Exploration", FoundationProgressionActivity.Explore, FoundationSkillNodeKind.Insight,
+                "Map routes, climb ridges, read landmarks, and find hidden resources.", "shortcuts", "landmarks", "hidden resources");
+            Skill("creaturecraft", "Creaturecraft", FoundationProgressionActivity.Creature, FoundationSkillNodeKind.Harmony,
+                "Calm, lure, tame, relocate, and convert dens.", "calming", "lures", "den conversion");
+            Skill("warding", "Warding", FoundationProgressionActivity.Combat, FoundationSkillNodeKind.Utility,
+                "Use lights, traps, patrol posts, and wards to shape threat.", "non-lethal defenses", "threat shaping", "patrol posts");
+            Skill("trade", "Trade", FoundationProgressionActivity.Trade, FoundationSkillNodeKind.Ease,
+                "Handle requests, vendors, caravans, and special orders.", "better prices", "visitor schedules", "special orders");
+            Skill("lorekeeping", "Lorekeeping", FoundationProgressionActivity.Lore, FoundationSkillNodeKind.Insight,
+                "Journal relics, plaques, dialogue, and hidden recipe clues.", "memory pages", "shrine upgrades", "ancient recipes");
+
+            FoundationCallingDefinition Calling(string id, string name, string title, string description,
+                string capstone, FoundationStatBonus[] bonuses, string[] branches, params string[] starterSkills)
+            {
+                var calling = New<FoundationCallingDefinition>(id);
+                calling.displayName = name;
+                calling.startingTitle = title;
+                calling.description = description;
+                calling.capstone = capstone;
+                calling.statBonuses = bonuses;
+                calling.branchIds = branches;
+                calling.starterSkillIds = starterSkills;
+                c.Callings.Add(calling);
+                return calling;
+            }
+
+            FoundationStatBonus Bonus(FoundationStatType stat, int amount) => new FoundationStatBonus(stat, amount);
+
+            Calling("hearthwarden", "Hearthwarden", "Keeper of First Fire",
+                "Keeper of home, food, safe nights, rest, and settlement morale.",
+                "Day Feast: one meal sets a whole-day theme for the settlement.",
+                new[] { Bonus(FoundationStatType.VIT, 2), Bonus(FoundationStatType.LUCK, 1) },
+                new[] { "cook", "caretaker", "festival_host" }, "cooking", "building", "trade");
+            Calling("greenhand", "Greenhand", "Sprout-Tender",
+                "Farmer, grower, soil reader, and animal friend.",
+                "Remembering Fields: fields mutate crops based on care history.",
+                new[] { Bonus(FoundationStatType.VIT, 1), Bonus(FoundationStatType.DEX, 1), Bonus(FoundationStatType.LUCK, 1) },
+                new[] { "cropkeeper", "beastfriend", "orchard_sage" }, "farming", "foraging", "creaturecraft");
+            Calling("stonewright", "Stonewright", "Road-Hand",
+                "Builder, mason, path-maker, and civic structure planner.",
+                "Civic Landmark: build one regional structure that permanently changes services.",
+                new[] { Bonus(FoundationStatType.STR, 2), Bonus(FoundationStatType.DEF, 1) },
+                new[] { "mason", "roadmaker", "hall_builder" }, "building", "mining", "warding");
+            Calling("threadsmith", "Threadsmith", "Bench-Adept",
+                "Crafter, tailor, tool tuner, and workstation chain specialist.",
+                "Storied Masterwork: a crafted item gains a name, history, and evolving trait.",
+                new[] { Bonus(FoundationStatType.DEX, 2), Bonus(FoundationStatType.INT, 1) },
+                new[] { "toolwright", "weaver", "relic_tinker" }, "crafting", "woodcraft", "lorekeeping");
+            Calling("pathlighter", "Pathlighter", "Lantern Scout",
+                "Explorer, mapper, ruin-reader, route opener, and shrine finder.",
+                "Safe Route: discovered paths become fast travel and safer NPC travel lines.",
+                new[] { Bonus(FoundationStatType.DEX, 1), Bonus(FoundationStatType.INT, 1), Bonus(FoundationStatType.LUCK, 1) },
+                new[] { "scout", "cartographer", "ruin_guide" }, "exploration", "lorekeeping", "warding");
+            Calling("bramblebound", "Bramblebound", "Wildspeaker",
+                "Herbalist, denkeeper, creature calmer, and gentle wild-magic survivor.",
+                "Den Accord: pacified mob dens become resource biomes instead of hazards.",
+                new[] { Bonus(FoundationStatType.INT, 2), Bonus(FoundationStatType.LUCK, 1) },
+                new[] { "herbalist", "denkeeper", "wildspeaker" }, "creaturecraft", "foraging", "farming");
+            Calling("lanternblade", "Lanternblade", "First Patrol",
+                "Protector, patrol fighter, shieldhand, and gloom-clearing defender.",
+                "Patrol Legend: patrol routes reduce threat and unlock heroic town events.",
+                new[] { Bonus(FoundationStatType.STR, 1), Bonus(FoundationStatType.DEF, 2) },
+                new[] { "patroller", "shieldhand", "gloombreaker" }, "warding", "exploration", "mining");
+
+            FoundationQuestDefinition Quest(string id, string name, FoundationQuestType type, string act,
+                string description, FoundationQuestObjective[] objectives, FoundationQuestReward[] rewards)
+            {
+                var q = New<FoundationQuestDefinition>(id);
+                q.displayName = name;
+                q.type = type;
+                q.act = act;
+                q.description = description;
+                q.objectives = objectives;
+                q.rewards = rewards;
+                c.Quests.Add(q);
+                return q;
+            }
+
+            FoundationQuestObjective Obj(string id, string text, int required = 1) =>
+                new FoundationQuestObjective(id, text, required);
+            FoundationQuestReward Reward(FoundationRewardType type, string id, int amount = 1) =>
+                new FoundationQuestReward(type, id, amount);
+
+            Quest("first_flame_first_field", "First Flame, First Field", FoundationQuestType.Hearth, "Act 1: First Fire",
+                "Make the first camp feel like a place that might remember you.",
+                new[] { Obj("gather_wood", "Gather wood", 5), Obj("craft_workbench", "Craft a workbench"), Obj("till_soil", "Till your first soil") },
+                new[] { Reward(FoundationRewardType.Xp, "character", 40), Reward(FoundationRewardType.Recipe, "craft_campfire") });
+            Quest("a_roof_before_rain", "A Roof Before Rain", FoundationQuestType.Civic, "Act 1: First Fire",
+                "Prepare a real shelter before the first hard weather rolls through Mosswake.",
+                new[] { Obj("place_floor", "Place wood floor tiles", 4), Obj("place_lantern", "Place a lantern"), Obj("store_food", "Store any food item", 3) },
+                new[] { Reward(FoundationRewardType.Xp, "character", 60), Reward(FoundationRewardType.Pattern, "hearthplank_flooring") });
+            Quest("thread_twig_and_tin", "Thread, Twig, and Tin", FoundationQuestType.Craft, "Act 1: First Fire",
+                "Learn the first loop of gathering, refining, and improving a tool.",
+                new[] { Obj("gather_fiber", "Gather fiber", 3), Obj("mine_stone", "Mine stone", 5), Obj("craft_tool", "Craft any tool") },
+                new[] { Reward(FoundationRewardType.Xp, "character", 60), Reward(FoundationRewardType.TraitSeed, "sturdy") });
+            Quest("fixing_the_south_path", "Fixing the South Path", FoundationQuestType.Path, "Act 2: Green Roads",
+                "Reopen the old path so visitors can find the homestead without crossing brambles.",
+                new[] { Obj("craft_path", "Craft stone path pieces", 4), Obj("place_path", "Place path pieces", 4), Obj("clear_node", "Clear one blocking resource node") },
+                new[] { Reward(FoundationRewardType.Xp, "character", 80), Reward(FoundationRewardType.RegionShift, "mosswake_path_safe") });
+            Quest("the_rootcellar_below", "The Rootcellar Below", FoundationQuestType.Exploration, "Act 2: Green Roads",
+                "Find the first underground room and bring back proof that the old systems are still humming.",
+                new[] { Obj("enter_cellar", "Enter the Rootcellar"), Obj("recover_relic", "Recover a Memory Amber"), Obj("return_home", "Return home safely") },
+                new[] { Reward(FoundationRewardType.Xp, "character", 100), Reward(FoundationRewardType.MemoryPage, "old_lamps_01") });
 
             return c;
         }
