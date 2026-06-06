@@ -33,33 +33,45 @@ namespace IsoCore.Foundation.EditorTools
 
         public static void Run()
         {
+            RunInternal(true);
+        }
+
+        public static void RunNoReport()
+        {
+            RunInternal(false);
+        }
+
+        static void RunInternal(bool writeReport)
+        {
             var checks = new List<Check>();
             AddCheck add = (name, pass, detail) =>
                 checks.Add(new Check { name = name, pass = pass, detail = detail });
 
             try
             {
-                RunChecks(add);
+                RunChecks(add, writeReport);
             }
             catch (Exception ex)
             {
                 add("Validator completed without exception", false, ex.ToString());
             }
 
-            WriteReport(checks);
+            if (writeReport)
+                WriteReport(checks);
 
             int failed = 0;
             foreach (var check in checks)
                 if (!check.pass) failed++;
 
-            string summary = $"[FoundationIntegratedSliceValidator] {checks.Count - failed}/{checks.Count} checks passed. Report: {ReportPath}";
+            string reportDetail = writeReport ? $" Report: {ReportPath}" : " Report writing skipped.";
+            string summary = $"[FoundationIntegratedSliceValidator] {checks.Count - failed}/{checks.Count} checks passed.{reportDetail}";
             if (failed > 0)
                 throw new Exception(summary);
 
             Debug.Log(summary);
         }
 
-        static void RunChecks(AddCheck add)
+        static void RunChecks(AddCheck add, bool writeReports)
         {
             FoundationBootstrap.ClearLaunchOptions();
 
@@ -69,7 +81,7 @@ namespace IsoCore.Foundation.EditorTools
             ValidateLaunchSeedPropagation(add);
             ValidateWorldContracts(add);
 
-            string foundationSummary = FoundationValidator.Validate(false);
+            string foundationSummary = FoundationValidator.Validate(false, writeReports);
             add("Foundation editor validator passes", foundationSummary.Contains("ALL PASS"), foundationSummary);
         }
 

@@ -44,7 +44,7 @@ namespace IsoCore.Foundation
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
         public FoundationHUD Hud { get; private set; }
-        public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName);
+        public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName, config != null ? config.seed : 1337);
 
         Camera _cam;
         Transform _playerT;
@@ -269,6 +269,12 @@ namespace IsoCore.Foundation
                     return false;
                 }
 
+                if (config != null && data.seed != 0 && data.seed != config.seed)
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Refusing to load save seed {data.seed} into active world seed {config.seed}. Call ConfigureLaunch with the save seed before loading the scene.");
+                    return false;
+                }
+
                 ApplySaveData(data);
                 Debug.Log($"[FoundationBootstrap] Loaded Foundation world from {path}");
                 return true;
@@ -317,8 +323,6 @@ namespace IsoCore.Foundation
 
             ActiveWorldName = NormalizeWorldName(data.worldName);
             ActiveDifficulty = Mathf.Clamp(data.difficulty, 0, 2);
-            if (config != null && data.seed != 0 && data.seed != config.seed)
-                Debug.LogWarning("[FoundationBootstrap] Loaded save seed differs from the active world seed. Call ConfigureLaunch with the save seed before loading the scene for exact terrain.");
 
             if (Progression != null && data.progression != null)
                 Progression.RestoreState(data.progression);
@@ -340,6 +344,17 @@ namespace IsoCore.Foundation
         public static string DefaultSavePathForWorld(string worldName)
         {
             return Path.Combine(Application.persistentDataPath, SanitizePathPart(NormalizeWorldName(worldName)), "save.json");
+        }
+
+        public static string DefaultSavePathForWorld(string worldName, string seed)
+        {
+            return DefaultSavePathForWorld(worldName, SeedStringToInt(seed));
+        }
+
+        public static string DefaultSavePathForWorld(string worldName, int seed)
+        {
+            string folder = SanitizePathPart($"{NormalizeWorldName(worldName)}_{seed}");
+            return Path.Combine(Application.persistentDataPath, folder, "save.json");
         }
 
         static string SanitizePathPart(string value)

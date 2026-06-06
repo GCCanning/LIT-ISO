@@ -11,13 +11,13 @@ namespace LitIso.UI.InGame
     /// </summary>
     public sealed class FoundationCraftingAdapter : ICraftingViewModel, IDisposable
     {
-        readonly CraftingSystem _crafting;
+        readonly IsoCore.Foundation.CraftingSystem _crafting;
         readonly Inventory _inv;
         readonly FoundationContent _content;
 
         public event Action Changed;
 
-        public FoundationCraftingAdapter(CraftingSystem crafting, Inventory inv, FoundationContent content)
+        public FoundationCraftingAdapter(IsoCore.Foundation.CraftingSystem crafting, Inventory inv, FoundationContent content)
         {
             _crafting = crafting;
             _inv      = inv;

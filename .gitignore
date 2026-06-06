@@ -48,3 +48,10 @@ __pycache__/
 
 # Unity AI generated audio cache (UUID working folders)
 /GeneratedAssets/
+
+# Asset Forge local machine config and queued generation handoffs
+/Tools/AssetForge/asset_forge.local.json
+/Assets/Generated/_Review/_Requests/
+/Assets/Generated/_Review/_Requests.meta
+/Assets/Generated/_Datasets/
+/Assets/Generated/_Datasets.meta

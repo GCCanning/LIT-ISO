@@ -20,6 +20,7 @@ namespace IsoCore.Foundation
 
         public IReadOnlyList<T> All => _ordered;
         public int Count => _ordered.Count;
+        public T this[int index] => _ordered[index];
 
         public void Add(T def)
         {
