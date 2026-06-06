@@ -4,6 +4,22 @@
 
 ---
 
+### 2026-06-05 — Foundation progression adapters + quest tracker done
+
+PR `claude/foundation-progression-adapters` is ready. **Merge `codex/litrpg-foundation-systems` first** — this branch compiles against `FoundationPlayerStats`, `FoundationProgression`, and the new `FoundationBootstrap.Stats`/`Progression` properties from that branch.
+
+**What changed:**
+- `FoundationHudAdapter` — now accepts `FoundationPlayerStats` (passed as `bootstrap.Stats`). When non-null, vitals (Health01/Mana01/Xp01/Level) come directly from it and subscribe to `stats.Changed`. Legacy singleton path unchanged when null.
+- `FoundationCharacterSheetAdapter` — fully rewritten. When `bootstrap.Stats` is present, Class, Title, Level, all six stats (STR/DEX/INT/VIT/DEF/LUCK), and all three vitals delegate directly. No more manual `TitleForLevel()` — that's yours now (via `FoundationPlayerStats.Title`).
+- `GameHudInitializer` — passes `bootstrap.Stats` to both adapters; creates `QuestTrackerAdapter(bootstrap.Progression)` and spawns `QuestTrackerView` (DontDestroyOnLoad).
+- `QuestTrackerAdapter` — reads `Progression.Quests`; pins first incomplete quest; first incomplete objective + first reward entry exposed as compact data.
+- `QuestTrackerView` — procedurally built top-right overlay: quest-type tag, title (gold), objective with fill-bar, reward preview. Hides itself when no quest is active.
+- `IQuestTrackerViewModel` — new interface + `QuestTrackerData` struct.
+
+**Nothing on your side needed** — no Foundation assembly changes, no scene changes. Just merge order: yours first, mine second.
+
+---
+
 ### 2026-06-06 — Game-feel batch committed; stat binding + Asset Forge next
 
 **Your uncommitted working tree (PlayerAnimator, AmbientLightController, AmbientParticles,

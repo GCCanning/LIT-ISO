@@ -5,60 +5,78 @@ using UnityEngine;
 namespace LitIso.UI.InGame
 {
     /// <summary>
-    /// Maps Codex's runtime Foundation systems (Inventory + Hotbar + Content) onto the
-    /// View's <see cref="IGameHudModel"/> so the uGUI HUD renders live data.
+    /// Maps Codex's runtime Foundation systems onto <see cref="IGameHudModel"/>
+    /// so the uGUI HUD renders live data.
     ///
-    /// Lives in Assembly-CSharp: the Foundation assembly is forbidden from referencing
-    /// us, so the binding flows our way — we adapt Foundation, never the other way.
+    /// Vitals (HP/MP/XP/Level) have two paths:
+    ///   Preferred — <see cref="FoundationPlayerStats"/> (<c>FoundationBootstrap.Stats</c>)
+    ///               available after <c>codex/litrpg-foundation-systems</c> merges.
+    ///   Fallback  — Assembly-CSharp <c>PlayerHealth</c>/<c>PlayerMana</c>/<c>XPSystem</c>
+    ///               singletons for scenes without the full Foundation runtime.
     ///
-    /// Vitals (HP/MP/XP/Level) are now wired to PlayerHealth, PlayerMana, and XPSystem
-    /// singletons (all in Assembly-CSharp). The adapter subscribes to their events and
-    /// raises Changed so the HUD refreshes in real time.
+    /// Inventory/Hotbar slots always come from Foundation Inventory + Hotbar.
     ///
-    /// Hunger01 stays in the contract for the (deferred) survival scope; the View hides
-    /// the hunger bar by default — see <c>GameUIController.showHungerBar</c>.
+    /// Lives in Assembly-CSharp. Foundation assembly never references us.
     /// </summary>
     public sealed class FoundationHudAdapter : IGameHudModel, IDisposable
     {
         readonly Inventory _inv;
         readonly Hotbar _hotbar;
         readonly FoundationContent _content;
+        readonly FoundationPlayerStats _stats; // null → use legacy singletons
 
         public event Action Changed;
 
-        public FoundationHudAdapter(Inventory inv, Hotbar hotbar, FoundationContent content)
+        public FoundationHudAdapter(Inventory inv, Hotbar hotbar, FoundationContent content,
+                                    FoundationPlayerStats stats = null)
         {
-            _inv = inv;
-            _hotbar = hotbar;
+            _inv     = inv;
+            _hotbar  = hotbar;
             _content = content;
+            _stats   = stats;
 
             ItemIconResolver.Bind(content);
 
-            if (_inv != null)    _inv.OnChanged += OnChanged;
+            if (_inv    != null) _inv.OnChanged            += OnChanged;
             if (_hotbar != null) _hotbar.OnSelectionChanged += OnChanged;
 
-            // Subscribe to live stat sources so the HUD refreshes on every change.
-            if (PlayerHealth.Instance != null) PlayerHealth.Instance.OnHealthChanged += OnVitalsChanged;
-            if (PlayerMana.Instance   != null) PlayerMana.Instance.OnManaChanged     += OnVitalsChanged;
-            PlayerStats.OnStatsChanged += OnChanged;
-            XPSystem.OnXPGained       += OnXpGained;
-            XPSystem.OnLevelUp        += OnLevelUp;
+            if (_stats != null)
+            {
+                // Preferred: one event covers all vitals.
+                _stats.Changed += OnChanged;
+            }
+            else
+            {
+                // Legacy subscriptions used when Foundation progression isn't present.
+                if (PlayerHealth.Instance != null) PlayerHealth.Instance.OnHealthChanged += OnVitalsChanged;
+                if (PlayerMana.Instance   != null) PlayerMana.Instance.OnManaChanged     += OnVitalsChanged;
+                PlayerStats.OnStatsChanged += OnChanged;
+                XPSystem.OnXPGained       += OnXpGained;
+                XPSystem.OnLevelUp        += OnLevelUp;
+            }
         }
 
         public void Dispose()
         {
-            if (_inv != null)    _inv.OnChanged -= OnChanged;
+            if (_inv    != null) _inv.OnChanged            -= OnChanged;
             if (_hotbar != null) _hotbar.OnSelectionChanged -= OnChanged;
 
-            if (PlayerHealth.Instance != null) PlayerHealth.Instance.OnHealthChanged -= OnVitalsChanged;
-            if (PlayerMana.Instance   != null) PlayerMana.Instance.OnManaChanged     -= OnVitalsChanged;
-            PlayerStats.OnStatsChanged -= OnChanged;
-            XPSystem.OnXPGained       -= OnXpGained;
-            XPSystem.OnLevelUp        -= OnLevelUp;
+            if (_stats != null)
+            {
+                _stats.Changed -= OnChanged;
+            }
+            else
+            {
+                if (PlayerHealth.Instance != null) PlayerHealth.Instance.OnHealthChanged -= OnVitalsChanged;
+                if (PlayerMana.Instance   != null) PlayerMana.Instance.OnManaChanged     -= OnVitalsChanged;
+                PlayerStats.OnStatsChanged -= OnChanged;
+                XPSystem.OnXPGained       -= OnXpGained;
+                XPSystem.OnLevelUp        -= OnLevelUp;
+            }
         }
 
-        void OnChanged()                        => Changed?.Invoke();
-        void OnVitalsChanged(int _a, int _b)    => Changed?.Invoke();
+        void OnChanged()                         => Changed?.Invoke();
+        void OnVitalsChanged(int _a, int _b)     => Changed?.Invoke();
         void OnXpGained(int _gained, int _total) => Changed?.Invoke();
         void OnLevelUp(int _newLevel)            => Changed?.Invoke();
 
@@ -95,6 +113,7 @@ namespace LitIso.UI.InGame
         {
             get
             {
+                if (_stats != null) return _stats.Health01;
                 var ph = PlayerHealth.Instance;
                 if (ph == null || ph.maxHealth <= 0) return 1f;
                 return Mathf.Clamp01((float)ph.CurrentHealth / ph.maxHealth);
@@ -105,6 +124,7 @@ namespace LitIso.UI.InGame
         {
             get
             {
+                if (_stats != null) return _stats.Mana01;
                 var pm = PlayerMana.Instance;
                 if (pm == null || pm.MaxMana <= 0) return 1f;
                 return Mathf.Clamp01((float)pm.CurrentMana / pm.MaxMana);
@@ -117,6 +137,7 @@ namespace LitIso.UI.InGame
         {
             get
             {
+                if (_stats != null) return _stats.Xp01;
                 var xp = XPSystem.Instance;
                 if (xp == null) return 0f;
                 int needed = xp.XPNeededForNextLevel;
@@ -125,6 +146,13 @@ namespace LitIso.UI.InGame
             }
         }
 
-        public int Level => XPSystem.Instance != null ? XPSystem.Instance.CurrentLevel : 1;
+        public int Level
+        {
+            get
+            {
+                if (_stats != null) return _stats.Level;
+                return XPSystem.Instance != null ? XPSystem.Instance.CurrentLevel : 1;
+            }
+        }
     }
 }

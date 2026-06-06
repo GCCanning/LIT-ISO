@@ -250,7 +250,6 @@ Pause safely:
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\pause_litiso_training.ps1 -OutputName litiso_tile_prop_v1
 ```
 
-<<<<<<< Updated upstream
 Resume from the latest checkpoint:
 
 ```powershell
