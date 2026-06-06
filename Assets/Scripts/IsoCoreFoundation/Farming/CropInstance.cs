@@ -10,6 +10,7 @@ namespace IsoCore.Foundation
         public int Wx { get; private set; }
         public int Wy { get; private set; }
         public int Stage => _stage;
+        public float StageTimer => _timer;
         public bool Mature => _stage >= Def.stages - 1;
 
         IsoWorld _world;
@@ -17,11 +18,12 @@ namespace IsoCore.Foundation
         int _stage;
         float _timer;
 
-        public void Init(CropDefinition def, IsoWorld world, int wx, int wy, int stage = 0)
+        public void Init(CropDefinition def, IsoWorld world, int wx, int wy, int stage = 0, float stageTimer = 0f)
         {
             Def = def; _world = world; Wx = wx; Wy = wy;
             _sr = GetComponent<SpriteRenderer>();
             _stage = Mathf.Clamp(stage, 0, Mathf.Max(0, def.stages - 1));
+            _timer = Mathf.Max(0f, stageTimer);
             Render();
         }
 

@@ -61,6 +61,11 @@ namespace IsoCore.Foundation
             var def = PickMob(biome);
             if (def == null) return;
 
+            SpawnMob(def, ground);
+        }
+
+        void SpawnMob(MobDefinition def, Vector2 ground)
+        {
             var go = new GameObject($"Mob_{def.id}");
             go.transform.SetParent(_mobParent, false);
             var mob = go.AddComponent<Mob>();
@@ -121,6 +126,52 @@ namespace IsoCore.Foundation
             mob.Defeated -= HandleMobDefeated;
             mob.Calmed -= HandleMobCalmed;
             MobCalmed?.Invoke(mob.Def);
+        }
+
+        public FoundationSavedMob[] SnapshotMobs()
+        {
+            _mobs.RemoveAll(m => !m);
+            var result = new FoundationSavedMob[_mobs.Count];
+            for (int i = 0; i < _mobs.Count; i++)
+            {
+                var mob = _mobs[i];
+                result[i] = new FoundationSavedMob
+                {
+                    mobId = mob.Def != null ? mob.Def.id : "",
+                    groundX = mob.Ground.x,
+                    groundY = mob.Ground.y,
+                };
+            }
+            return result;
+        }
+
+        public void RestoreMobs(FoundationSavedMob[] mobs)
+        {
+            ClearMobs();
+            if (mobs == null || _content == null || _world == null) return;
+
+            foreach (var saved in mobs)
+            {
+                var def = _content.Mobs.Get(saved.mobId);
+                if (def == null) continue;
+                var ground = new Vector2(saved.groundX, saved.groundY);
+                var c = IsoGrid.WorldToCell(new Vector3(ground.x, ground.y, 0f));
+                if (!_world.IsWalkable(c.x, c.y)) continue;
+                SpawnMob(def, ground);
+            }
+        }
+
+        void ClearMobs()
+        {
+            foreach (var mob in _mobs)
+            {
+                if (!mob) continue;
+                mob.Defeated -= HandleMobDefeated;
+                mob.Calmed -= HandleMobCalmed;
+                if (Application.isPlaying) Destroy(mob.gameObject);
+                else DestroyImmediate(mob.gameObject);
+            }
+            _mobs.Clear();
         }
     }
 }

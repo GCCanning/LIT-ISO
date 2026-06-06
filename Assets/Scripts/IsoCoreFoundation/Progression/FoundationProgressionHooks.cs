@@ -128,6 +128,8 @@ namespace IsoCore.Foundation
                 Advance(RoofQuest, "place_floor");
             else if (item.id == "lantern_item")
                 Advance(RoofQuest, "place_lantern");
+            else if (item.id == "chest_item")
+                Advance(RoofQuest, "place_chest");
             else if (item.id == "stone_path_item")
                 Advance(PathQuest, "place_path");
         }

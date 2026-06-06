@@ -86,6 +86,57 @@ namespace IsoCore.Foundation
             return true;
         }
 
+        public FoundationSavedCrop[] SnapshotCrops()
+        {
+            var result = new List<FoundationSavedCrop>();
+            foreach (var kv in _crops)
+            {
+                var crop = kv.Value;
+                if (!crop || crop.Def == null) continue;
+                result.Add(new FoundationSavedCrop
+                {
+                    cropId = crop.Def.id,
+                    x = crop.Wx,
+                    y = crop.Wy,
+                    stage = crop.Stage,
+                    stageTimer = crop.StageTimer,
+                });
+            }
+            return result.ToArray();
+        }
+
+        public void RestoreCrops(FoundationSavedCrop[] crops)
+        {
+            ClearCrops();
+            if (crops == null || _world == null || _content == null) return;
+
+            foreach (var saved in crops)
+            {
+                var def = _content.Crops.Get(saved.cropId);
+                if (def == null) continue;
+                var key = Key(saved.x, saved.y);
+                if (_crops.ContainsKey(key)) continue;
+
+                var go = new GameObject($"Crop_{def.id}_{saved.x}_{saved.y}");
+                go.transform.SetParent(_parent, false);
+                var ci = go.AddComponent<CropInstance>();
+                ci.Init(def, _world, saved.x, saved.y, saved.stage, saved.stageTimer);
+                _crops[key] = ci;
+            }
+        }
+
+        void ClearCrops()
+        {
+            foreach (var kv in _crops)
+            {
+                var crop = kv.Value;
+                if (!crop) continue;
+                if (Application.isPlaying) Destroy(crop.gameObject);
+                else DestroyImmediate(crop.gameObject);
+            }
+            _crops.Clear();
+        }
+
         /// <summary>Harvest the nearest mature crop within range. Returns true on success.</summary>
         public bool TryHarvestCrop(Vector3 pos, float range, out bool blockedFull)
         {

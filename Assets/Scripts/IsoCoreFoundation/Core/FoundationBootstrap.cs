@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -43,6 +44,7 @@ namespace IsoCore.Foundation
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
         public FoundationHUD Hud { get; private set; }
+        public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName);
 
         Camera _cam;
         Transform _playerT;
@@ -222,6 +224,140 @@ namespace IsoCore.Foundation
                 Debug.LogWarning($"[FoundationBootstrap] Unknown launch Calling '{requested}', keeping {Progression.CurrentCalling?.id ?? "default"}.");
 
             ActiveCallingId = Progression.CurrentCalling?.id ?? "greenhand";
+        }
+
+        public bool Save(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                path = DefaultSavePath;
+
+            try
+            {
+                var data = CaptureSaveData();
+                string dir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(dir))
+                    Directory.CreateDirectory(dir);
+
+                File.WriteAllText(path, JsonUtility.ToJson(data, true));
+                Debug.Log($"[FoundationBootstrap] Saved Foundation world to {path}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[FoundationBootstrap] Save failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool Load(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                path = DefaultSavePath;
+
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Save file not found: {path}");
+                    return false;
+                }
+
+                var data = JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path));
+                if (data == null || data.version <= 0)
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Save file is invalid or unsupported: {path}");
+                    return false;
+                }
+
+                ApplySaveData(data);
+                Debug.Log($"[FoundationBootstrap] Loaded Foundation world from {path}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[FoundationBootstrap] Load failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        FoundationSaveData CaptureSaveData()
+        {
+            var cell = Player != null ? Player.CurrentCell : Vector2Int.zero;
+            var ground = Player != null ? Player.Ground : Vector2.zero;
+            return new FoundationSaveData
+            {
+                version = FoundationSaveData.CurrentVersion,
+                savedUtc = DateTime.UtcNow.ToString("o"),
+                worldName = ActiveWorldName,
+                seed = config != null ? config.seed : 1337,
+                difficulty = ActiveDifficulty,
+                callingId = ActiveCallingId,
+                player = new FoundationSavedPlayer
+                {
+                    cellX = cell.x,
+                    cellY = cell.y,
+                    groundX = ground.x,
+                    groundY = ground.y,
+                },
+                inventorySlots = Inventory != null ? Inventory.SnapshotSlots() : Array.Empty<ItemStack>(),
+                hotbarSelected = Hotbar != null ? Hotbar.Selected : 0,
+                progression = Progression != null ? Progression.CaptureState() : null,
+                modifiedCells = World != null ? World.SnapshotModifiedCells() : Array.Empty<FoundationSavedCell>(),
+                placedObjects = Placement != null ? Placement.SnapshotPlaceables() : Array.Empty<FoundationSavedPlaceable>(),
+                crops = Farming != null ? Farming.SnapshotCrops() : Array.Empty<FoundationSavedCrop>(),
+                dayNightTime = DayNight != null ? DayNight.time : 0.30f,
+                mobs = MobSpawner != null ? MobSpawner.SnapshotMobs() : Array.Empty<FoundationSavedMob>(),
+                regionShifts = Progression != null ? ToArray(Progression.RegionShifts) : Array.Empty<string>(),
+            };
+        }
+
+        void ApplySaveData(FoundationSaveData data)
+        {
+            if (data == null) return;
+
+            ActiveWorldName = NormalizeWorldName(data.worldName);
+            ActiveDifficulty = Mathf.Clamp(data.difficulty, 0, 2);
+            if (config != null && data.seed != 0 && data.seed != config.seed)
+                Debug.LogWarning("[FoundationBootstrap] Loaded save seed differs from the active world seed. Call ConfigureLaunch with the save seed before loading the scene for exact terrain.");
+
+            if (Progression != null && data.progression != null)
+                Progression.RestoreState(data.progression);
+            ActiveCallingId = Progression?.CurrentCallingId ?? (string.IsNullOrWhiteSpace(data.callingId) ? "greenhand" : data.callingId);
+
+            Inventory?.RestoreSlots(data.inventorySlots);
+            if (Hotbar != null) Hotbar.Select(data.hotbarSelected);
+
+            World?.RestoreModifiedCells(data.modifiedCells);
+            Placement?.RestorePlaceables(data.placedObjects);
+            Farming?.RestoreCrops(data.crops);
+            DayNight?.SetTime(data.dayNightTime);
+            MobSpawner?.RestoreMobs(data.mobs);
+
+            if (Player != null)
+                Player.SetGround(new Vector2(data.player.groundX, data.player.groundY));
+        }
+
+        public static string DefaultSavePathForWorld(string worldName)
+        {
+            return Path.Combine(Application.persistentDataPath, SanitizePathPart(NormalizeWorldName(worldName)), "save.json");
+        }
+
+        static string SanitizePathPart(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return "world";
+            foreach (char c in Path.GetInvalidFileNameChars())
+                value = value.Replace(c, '_');
+            value = value.Trim();
+            return string.IsNullOrWhiteSpace(value) ? "world" : value;
+        }
+
+        static string[] ToArray(System.Collections.Generic.IReadOnlyList<string> values)
+        {
+            if (values == null || values.Count == 0) return Array.Empty<string>();
+            var result = new string[values.Count];
+            for (int i = 0; i < values.Count; i++)
+                result[i] = values[i];
+            return result;
         }
 
         void SetupCamera()

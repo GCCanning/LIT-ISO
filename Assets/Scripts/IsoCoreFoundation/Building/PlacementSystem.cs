@@ -188,6 +188,56 @@ namespace IsoCore.Foundation
             _placeables.Add(inst);
         }
 
+        public FoundationSavedPlaceable[] SnapshotPlaceables()
+        {
+            var result = new List<FoundationSavedPlaceable>();
+            foreach (var p in _placeables)
+            {
+                if (!p || p.Def == null) continue;
+                result.Add(new FoundationSavedPlaceable
+                {
+                    placeableId = p.Def.id,
+                    x = p.Wx,
+                    y = p.Wy,
+                });
+            }
+            return result.ToArray();
+        }
+
+        public void RestorePlaceables(FoundationSavedPlaceable[] placeables)
+        {
+            ClearPlaceables();
+            if (placeables == null || _world == null || _content == null) return;
+
+            foreach (var saved in placeables)
+            {
+                var def = _content.Placeables.Get(saved.placeableId);
+                if (def == null) continue;
+
+                var cell = _world.GetCell(saved.x, saved.y);
+                if (!cell.HasOccupant)
+                {
+                    if (!_world.TryPlaceOccupant(saved.x, saved.y, def.id, def.blocksMovement))
+                        continue;
+                }
+                else if (cell.OccupantId != def.id)
+                    continue;
+
+                SpawnPlaceable(def, saved.x, saved.y);
+            }
+        }
+
+        void ClearPlaceables()
+        {
+            foreach (var p in _placeables)
+            {
+                if (!p) continue;
+                if (Application.isPlaying) Destroy(p.gameObject);
+                else DestroyImmediate(p.gameObject);
+            }
+            _placeables.Clear();
+        }
+
         public PlaceableInstance NearestInteractable(Vector3 pos, float range)
         {
             PlaceableInstance best = null;

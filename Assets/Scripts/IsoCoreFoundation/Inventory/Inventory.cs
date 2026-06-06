@@ -23,6 +23,33 @@ namespace IsoCore.Foundation
 
         public ItemStack GetSlot(int i) => (i >= 0 && i < _slots.Length) ? _slots[i] : default;
 
+        public ItemStack[] SnapshotSlots()
+        {
+            var copy = new ItemStack[_slots.Length];
+            Array.Copy(_slots, copy, _slots.Length);
+            return copy;
+        }
+
+        public void RestoreSlots(ItemStack[] slots)
+        {
+            for (int i = 0; i < _slots.Length; i++)
+                _slots[i] = default;
+
+            if (slots != null)
+            {
+                int n = Mathf.Min(_slots.Length, slots.Length);
+                for (int i = 0; i < n; i++)
+                {
+                    var stack = slots[i];
+                    if (stack.IsEmpty) continue;
+                    if (_content.Items.Get(stack.itemId) == null) continue;
+                    _slots[i] = new ItemStack(stack.itemId, Mathf.Min(stack.count, MaxStack(stack.itemId)));
+                }
+            }
+
+            OnChanged?.Invoke();
+        }
+
         int MaxStack(string itemId)
         {
             var def = _content.Items.Get(itemId);

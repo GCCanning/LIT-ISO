@@ -106,6 +106,21 @@ namespace IsoCore.Foundation
         }
     }
 
+    [Serializable]
+    public struct FoundationRewardUnlock
+    {
+        public FoundationRewardType type;
+        public string id;
+        public int amount;
+
+        public FoundationRewardUnlock(FoundationRewardType type, string id, int amount = 1)
+        {
+            this.type = type;
+            this.id = id;
+            this.amount = amount;
+        }
+    }
+
     /// <summary>Implemented by world objects the player can interact with (E key).</summary>
     public interface IInteractable
     {

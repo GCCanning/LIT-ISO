@@ -200,6 +200,8 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Progression.IsQuestActive("thread_twig_and_tin") &&
                 boot.Progression.IsQuestActive("fixing_the_south_path"));
 
+            ValidateBootstrapSaveLoad(add, boot, expected);
+
             var spawner = go.GetComponentInChildren<MobSpawner>();
             bool spawned = TryForceMobSpawn(spawner);
             add("MobSpawner can spawn at least one mob", spawned,
@@ -236,6 +238,94 @@ namespace IsoCore.Foundation.EditorTools
                 trySpawn.Invoke(spawner, null);
 
             return spawner.Count > 0;
+        }
+
+        static void ValidateBootstrapSaveLoad(AddCheck add, FoundationBootstrap boot, int expectedSeed)
+        {
+            if (boot == null || boot.World == null || boot.Inventory == null || boot.Progression == null)
+            {
+                add("Foundation save/load test has runtime handles", false, "bootstrap incomplete");
+                return;
+            }
+
+            string path = Path.GetFullPath(Path.Combine("Temp", "FoundationSaveLoadValidation.json"));
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                if (File.Exists(path)) File.Delete(path);
+
+                boot.Inventory.Add("copper_bar", 3);
+                boot.Hotbar.Select(2);
+                boot.DayNight.SetTime(0.66f);
+                boot.Player.SetCell(2, -3);
+                boot.Progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 2);
+
+                var blockCell = FindBuildableCell(boot.World);
+                var cropCell = FindBuildableCell(boot.World, blockCell);
+                var chestCell = FindBuildableCell(boot.World, blockCell, cropCell);
+                bool blockPlaced = blockCell != InvalidCell &&
+                    boot.World.TryPlaceBlock(blockCell.x, blockCell.y, boot.Content.Blocks.Get("stone_block"));
+                bool tilled = cropCell != InvalidCell && boot.World.TryTill(cropCell.x, cropCell.y);
+                if (cropCell != InvalidCell)
+                    boot.Farming.RestoreCrops(new[]
+                    {
+                        new FoundationSavedCrop { cropId = "carrot_crop", x = cropCell.x, y = cropCell.y, stage = 1, stageTimer = 2.5f }
+                    });
+                if (chestCell != InvalidCell)
+                    boot.Placement.RestorePlaceables(new[]
+                    {
+                        new FoundationSavedPlaceable { placeableId = "chest", x = chestCell.x, y = chestCell.y }
+                    });
+
+                bool saved = boot.Save(path);
+
+                FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, expectedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
+                var loadedGo = new GameObject("FoundationBootstrap_SaveLoadValidation");
+                var loaded = loadedGo.AddComponent<FoundationBootstrap>();
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(loaded, null);
+
+                bool loadedOk = loaded.Load(path);
+                var loadedCrops = loaded.Farming.SnapshotCrops();
+
+                add("FoundationBootstrap.Save writes a save file",
+                    saved && File.Exists(path),
+                    path);
+                add("FoundationBootstrap.Load applies save data",
+                    loadedOk &&
+                    loaded.Inventory.Count("copper_bar") == 3 &&
+                    loaded.Hotbar.Selected == 2 &&
+                    Mathf.Abs(loaded.DayNight.time - 0.66f) < 0.01f,
+                    loadedOk ? $"hotbar {loaded.Hotbar.Selected}, copper {loaded.Inventory.Count("copper_bar")}, time {loaded.DayNight.time:0.00}" : "load failed");
+                add("Save/load preserves modified solid block collision",
+                    blockPlaced &&
+                    loaded.World.IsBlocked(blockCell.x, blockCell.y) &&
+                    loaded.World.GetCell(blockCell.x, blockCell.y).SurfaceBlockId == "stone_block",
+                    blockCell.ToString());
+                add("Save/load preserves placed objects",
+                    chestCell != InvalidCell &&
+                    loaded.World.GetCell(chestCell.x, chestCell.y).OccupantId == "chest" &&
+                    loaded.World.IsBlocked(chestCell.x, chestCell.y),
+                    chestCell.ToString());
+                add("Save/load preserves crops",
+                    tilled && loadedCrops.Length == 1 && loadedCrops[0].cropId == "carrot_crop" && loadedCrops[0].stage == 1,
+                    loadedCrops.Length > 0 ? $"{loadedCrops[0].cropId} stage {loadedCrops[0].stage}" : "no crops");
+                add("Save/load preserves quest progress",
+                    loaded.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood") == 2,
+                    loaded.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood").ToString());
+                add("Save/load preserves player cell",
+                    loaded.Player.CurrentCell == new Vector2Int(2, -3),
+                    loaded.Player.CurrentCell.ToString());
+
+                UnityEngine.Object.DestroyImmediate(loadedGo);
+            }
+            finally
+            {
+                if (File.Exists(path)) File.Delete(path);
+                FoundationBootstrap.ClearLaunchOptions();
+            }
         }
 
         static void ValidateWorldContracts(AddCheck add)
