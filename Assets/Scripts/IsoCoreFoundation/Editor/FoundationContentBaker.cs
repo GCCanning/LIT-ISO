@@ -18,7 +18,7 @@ namespace IsoCore.Foundation.EditorTools
             if (AssetDatabase.IsValidFolder(Root)) AssetDatabase.DeleteAsset(Root);
             EnsureFolder("Assets", "IsoCoreFoundation");
             EnsureFolder("Assets/IsoCoreFoundation", "GeneratedContent");
-            foreach (var sub in new[] { "Blocks", "BlockGroups", "Biomes", "Items", "Placeables", "Nodes", "Mobs", "Recipes", "Crops" })
+            foreach (var sub in new[] { "Blocks", "BlockGroups", "Biomes", "Items", "Placeables", "Nodes", "Mobs", "Recipes", "Crops", "Callings", "Skills", "Quests" })
                 EnsureFolder(Root, sub);
 
             var c = FoundationContent.BuildDefault();
@@ -33,12 +33,16 @@ namespace IsoCore.Foundation.EditorTools
             foreach (var m in c.Mobs.All) Create(m, $"{Root}/Mobs/{m.id}.asset");
             foreach (var r in c.Recipes.All) Create(r, $"{Root}/Recipes/{r.id}.asset");
             foreach (var cr in c.Crops.All) Create(cr, $"{Root}/Crops/{cr.id}.asset");
+            foreach (var calling in c.Callings.All) Create(calling, $"{Root}/Callings/{calling.id}.asset");
+            foreach (var skill in c.Skills.All) Create(skill, $"{Root}/Skills/{skill.id}.asset");
+            foreach (var quest in c.Quests.All) Create(quest, $"{Root}/Quests/{quest.id}.asset");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
             int total = c.Blocks.Count + c.BlockGroups.Count + c.Biomes.Count + c.Items.Count +
-                        c.Placeables.Count + c.Nodes.Count + c.Mobs.Count + c.Recipes.Count + c.Crops.Count;
+                        c.Placeables.Count + c.Nodes.Count + c.Mobs.Count + c.Recipes.Count + c.Crops.Count +
+                        c.Callings.Count + c.Skills.Count + c.Quests.Count;
             string log = $"[ISO-Core] Baked {total} content assets to {Root} (authoring convenience; runtime builds in code).";
             if (showDialog) EditorUtility.DisplayDialog("ISO-Core Foundation — Bake Content", log, "OK");
             Debug.Log(log);

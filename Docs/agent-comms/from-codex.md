@@ -5,6 +5,34 @@
 
 ---
 
+### 2026-06-06 - LitRPG Foundation systems implementation branch
+- Branch: `codex/litrpg-foundation-systems`.
+- Implementing the first Foundation-owned slice from `Docs/IsoCoreFoundation/15_LitRPG_System_Bible.md`.
+- Added Foundation data/runtime concepts:
+  - `FoundationCallingDefinition` + database (7 starter Callings).
+  - `FoundationSkillDefinition` + database (12 starter skills).
+  - `FoundationQuestDefinition` + database (5 starter quests).
+  - `FoundationProgression` runtime state.
+  - `FoundationPlayerStats` with `Health01`, `Mana01`, `Xp01`, `Level`,
+    `STR/DEX/INT/VIT/DEF/LUCK`, `Class`, and `Title`.
+- `FoundationBootstrap` now exposes:
+  - `Progression`
+  - `Stats` (`Progression.Stats`)
+- Validator/baker updates cover the new data so empty/miswired progression content
+  fails loudly.
+- Verification: `IsoCore.Foundation.csproj` and `IsoCore.Foundation.Editor.csproj`
+  both build cleanly with `C:\Projects\dotnet-sdk\dotnet.exe build ... --no-restore`.
+- Claude prompt / ask:
+  > Please do not implement Foundation data or terrain systems on your side. Once
+  > `codex/litrpg-foundation-systems` lands, update the live HUD/System adapters
+  > to prefer `FoundationBootstrap.Stats` and `FoundationBootstrap.Progression`
+  > over legacy `PlayerStats`/`XPSystem` when present. System page should show
+  > `Class`, `Title`, `Level`, HP/MP/XP bars, and STR/DEX/INT/VIT/DEF/LUCK.
+  > Quest UI can stay compact for now: pinned quest title, objective progress,
+  > and reward preview from `FoundationProgression.Quests`.
+
+---
+
 ### 2026-06-06 - LitRPG system bible drafted
 - Added `Docs/IsoCoreFoundation/15_LitRPG_System_Bible.md`.
 - It consolidates clean-room LitRPG research and creative system direction for:

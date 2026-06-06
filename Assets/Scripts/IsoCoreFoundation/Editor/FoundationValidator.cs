@@ -33,6 +33,9 @@ namespace IsoCore.Foundation.EditorTools
             Add("Harvestable resource nodes", c.Nodes.Count >= 1, $"{c.Nodes.Count} node types");
             Add("Mob database", c.Mobs.Count >= 1, $"{c.Mobs.Count} mobs");
             Add("Crop database", c.Crops.Count >= 1, $"{c.Crops.Count} crops");
+            Add("LitRPG Calling database", c.Callings.Count >= 7, $"{c.Callings.Count} callings");
+            Add("LitRPG Skill database", c.Skills.Count >= 12, $"{c.Skills.Count} skills");
+            Add("LitRPG Quest database", c.Quests.Count >= 5, $"{c.Quests.Count} quests");
 
             // ---- Block groups have variants ----
             bool groupsOk = true; string groupDetail = "";
@@ -113,6 +116,28 @@ namespace IsoCore.Foundation.EditorTools
                 if (!c.Items.Has(s.itemId)) { starterOk = false; starterDetail += s.itemId + " "; }
             Add("Starter inventory items valid", starterOk, starterOk ? "all resolve" : starterDetail);
 
+            bool callingOk = true; string callingDetail = "";
+            foreach (var calling in c.Callings.All)
+            {
+                if (calling.starterSkillIds == null || calling.starterSkillIds.Length == 0)
+                { callingOk = false; callingDetail += $"{calling.id}:no_skills "; continue; }
+
+                foreach (var skillId in calling.starterSkillIds)
+                    if (!c.Skills.Has(skillId))
+                    { callingOk = false; callingDetail += $"{calling.id}->{skillId} "; }
+            }
+            Add("Calling starter skill references valid", callingOk, callingOk ? "all resolve" : callingDetail);
+
+            bool questOk = true; string questDetail = "";
+            foreach (var quest in c.Quests.All)
+            {
+                if (quest.objectives == null || quest.objectives.Length == 0)
+                { questOk = false; questDetail += $"{quest.id}:no_objectives "; }
+                if (quest.rewards == null || quest.rewards.Length == 0)
+                { questOk = false; questDetail += $"{quest.id}:no_rewards "; }
+            }
+            Add("Quest definitions have objectives and rewards", questOk, questOk ? "all populated" : questDetail);
+
             // ---- Scene / bootstrap / camera ----
             string fullScene = Path.Combine(FoundationPaths.ProjectRoot, FoundationPaths.ScenePath);
             bool sceneExists = File.Exists(fullScene);
@@ -176,6 +201,7 @@ namespace IsoCore.Foundation.EditorTools
             sb.AppendLine($"- Blocks: {c.Blocks.Count}, Block groups: {c.BlockGroups.Count}");
             sb.AppendLine($"- Biomes: {c.Biomes.Count}, Items: {c.Items.Count}, Placeables: {c.Placeables.Count}");
             sb.AppendLine($"- Recipes: {c.Recipes.Count}, Resource nodes: {c.Nodes.Count}, Mobs: {c.Mobs.Count}, Crops: {c.Crops.Count}");
+            sb.AppendLine($"- Callings: {c.Callings.Count}, Skills: {c.Skills.Count}, Quests: {c.Quests.Count}");
             sb.AppendLine();
             sb.AppendLine("## Manual play-mode checklist");
             sb.AppendLine();
