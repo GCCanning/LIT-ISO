@@ -1,0 +1,17 @@
+﻿{
+    "outputName":  "litiso_tile_prop_v1",
+    "loraName":  "litiso_tile_prop_v1_final.safetensors",
+    "syncManifest":  "C:\\Projects\\ComfyUI\\models\\loras\\litiso_tile_prop_v1.sync.json",
+    "outputDir":  "C:\\Projects\\Pixel Pipeline\\generated\\litiso_tile_prop_v1_latest_synced_eval",
+    "dryRun":  true,
+    "command":  [
+                    "C:\\Projects\\LoRA-Training\\.venv\\Scripts\\python.exe",
+                    "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\LoRA\\eval_litiso_tile_prop_v1_comfy.py",
+                    "--comfy-url",
+                    "http://127.0.0.1:8188",
+                    "--out-dir",
+                    "C:\\Projects\\Pixel Pipeline\\generated\\litiso_tile_prop_v1_latest_synced_eval",
+                    "--lora",
+                    "litiso_tile_prop_v1_final.safetensors"
+                ]
+}

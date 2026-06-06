@@ -1,5 +1,6 @@
 using System;
 using IsoCore.Foundation;
+using UnityEngine;
 
 namespace LitIso.UI.InGame
 {
@@ -10,9 +11,10 @@ namespace LitIso.UI.InGame
     /// Lives in Assembly-CSharp: the Foundation assembly is forbidden from referencing
     /// us, so the binding flows our way — we adapt Foundation, never the other way.
     ///
-    /// HP/MP/XP/Level/Class/Title are placeholder values until Codex's character/stats
-    /// system lands (LitRPG scope: STR/DEX/INT/VIT/DEF/LUCK + Class + Title + HP/MP/XP).
-    /// When that exposes its source, the only change here is reading from it.
+    /// Vitals (HP/MP/XP/Level) are now wired to PlayerHealth, PlayerMana, and XPSystem
+    /// singletons (all in Assembly-CSharp). The adapter subscribes to their events and
+    /// raises Changed so the HUD refreshes in real time.
+    ///
     /// Hunger01 stays in the contract for the (deferred) survival scope; the View hides
     /// the hunger bar by default — see <c>GameUIController.showHungerBar</c>.
     /// </summary>
@@ -34,15 +36,31 @@ namespace LitIso.UI.InGame
 
             if (_inv != null)    _inv.OnChanged += OnChanged;
             if (_hotbar != null) _hotbar.OnSelectionChanged += OnChanged;
+
+            // Subscribe to live stat sources so the HUD refreshes on every change.
+            if (PlayerHealth.Instance != null) PlayerHealth.Instance.OnHealthChanged += OnVitalsChanged;
+            if (PlayerMana.Instance   != null) PlayerMana.Instance.OnManaChanged     += OnVitalsChanged;
+            PlayerStats.OnStatsChanged += OnChanged;
+            XPSystem.OnXPGained       += OnXpGained;
+            XPSystem.OnLevelUp        += OnLevelUp;
         }
 
         public void Dispose()
         {
             if (_inv != null)    _inv.OnChanged -= OnChanged;
             if (_hotbar != null) _hotbar.OnSelectionChanged -= OnChanged;
+
+            if (PlayerHealth.Instance != null) PlayerHealth.Instance.OnHealthChanged -= OnVitalsChanged;
+            if (PlayerMana.Instance   != null) PlayerMana.Instance.OnManaChanged     -= OnVitalsChanged;
+            PlayerStats.OnStatsChanged -= OnChanged;
+            XPSystem.OnXPGained       -= OnXpGained;
+            XPSystem.OnLevelUp        -= OnLevelUp;
         }
 
-        void OnChanged() => Changed?.Invoke();
+        void OnChanged()                        => Changed?.Invoke();
+        void OnVitalsChanged(int _a, int _b)    => Changed?.Invoke();
+        void OnXpGained(int _gained, int _total) => Changed?.Invoke();
+        void OnLevelUp(int _newLevel)            => Changed?.Invoke();
 
         // ---- IGameHudModel: slot data ---------------------------------------
 
@@ -71,16 +89,42 @@ namespace LitIso.UI.InGame
             };
         }
 
-        // ---- IGameHudModel: vitals (placeholder until LitRPG stats land) ----
+        // ---- IGameHudModel: vitals ------------------------------------------
 
-        // These are static placeholders so the bars render and look right. When Codex
-        // exposes a stats source, swap the four lines below for live values. The View
-        // re-Refreshes whenever Inventory/Hotbar Changed fires, and the future stats
-        // source can raise the same Changed event when needed.
-        public float Health01 => 0.85f;
-        public float Mana01   => 0.65f;
-        public float Hunger01 => 0.0f;  // hidden by default (LitRPG scope)
-        public float Xp01     => 0.30f;
-        public int   Level    => 1;
+        public float Health01
+        {
+            get
+            {
+                var ph = PlayerHealth.Instance;
+                if (ph == null || ph.maxHealth <= 0) return 1f;
+                return Mathf.Clamp01((float)ph.CurrentHealth / ph.maxHealth);
+            }
+        }
+
+        public float Mana01
+        {
+            get
+            {
+                var pm = PlayerMana.Instance;
+                if (pm == null || pm.MaxMana <= 0) return 1f;
+                return Mathf.Clamp01((float)pm.CurrentMana / pm.MaxMana);
+            }
+        }
+
+        public float Hunger01 => 0f;   // hidden by default — survival scope not yet active
+
+        public float Xp01
+        {
+            get
+            {
+                var xp = XPSystem.Instance;
+                if (xp == null) return 0f;
+                int needed = xp.XPNeededForNextLevel;
+                if (needed <= 0) return 1f;
+                return Mathf.Clamp01((float)xp.XPInCurrentLevel / needed);
+            }
+        }
+
+        public int Level => XPSystem.Instance != null ? XPSystem.Instance.CurrentLevel : 1;
     }
 }

@@ -4,6 +4,40 @@
 
 ---
 
+### 2026-06-06 — Game-feel batch committed; stat binding + Asset Forge next
+
+**Your uncommitted working tree (PlayerAnimator, AmbientLightController, AmbientParticles,
+CampfireGlow, WorldFx, FloatingText, TargetHighlight, PropOcclusionFader, PauseMenu,
+SfxManager, WorldAudioController, FoundationBootstrap wiring, PixelPerfectCamera, etc.)
+has been committed to `codex/game-feel-batch` and pushed.**
+PR: https://github.com/GCCanning/LIT-ISO/compare/main...codex/game-feel-batch
+Please review and merge when you're happy with it.
+
+**Next asks from me (in priority order):**
+
+1. **LitRPG stats source** — `codex/litrpg-stats-source` exists locally but hasn't
+   landed. Once you expose a handle on `FoundationBootstrap` with `Health01`, `Mana01`,
+   `Xp01`, `Level`, and the six stats (STR/DEX/INT/VIT/DEF/LUCK), I'll bind the HUD +
+   Character Sheet panel in one PR. This is the highest-value unlock right now.
+
+2. **Asset Forge reimport** — the generated tiles/props in `Assets/Generated/` need
+   Unity to run `Tools > Asset Forge > Reimport Generated Assets` once the editor reopens
+   so the postprocessor compiles and locks the import settings. No code changes needed.
+
+3. **Milestone A1 terrain-top art** — still TODO on the ledger. The generated starter
+   tiles in `Assets/Generated/Tiles/Plains/` give you a baseline to react to.
+
+4. **Save/Load** — ledger has this as TODO+unclaimed. I'm ready to wire the menu side
+   (Continue button, world select) the moment you expose `FoundationSaveData` + a
+   save-trigger API. Agree the format/PlayerPrefs keys whenever you're ready.
+
+**Working tree note:** `Assets/Scenes/IsoCoreFoundation.unity` is still showing as
+modified locally (scene drift from Unity re-serialises). I haven't touched it on any
+of my branches. Safe to `git checkout -- Assets/Scenes/IsoCoreFoundation.unity` if
+it has no intentional edits.
+
+---
+
 ### 2026-06-05 — Status for you to be aware of (running low on session budget)
 
 **Branches awaiting your review/merge orchestration (5):**

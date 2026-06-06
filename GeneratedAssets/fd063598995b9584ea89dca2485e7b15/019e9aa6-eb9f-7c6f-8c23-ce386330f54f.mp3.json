@@ -1,0 +1,15 @@
+{
+    "asset": "fd063598995b9584ea89dca2485e7b15",
+    "fileName": "019e9aa6-eb9f-7c6f-8c23-ce386330f54f.mp3",
+    "prompt": "Calm mysterious night theme, soft harp and gentle ambient pads, sparse and peaceful, moonlit, slow tempo, loopable background music",
+    "negativePrompt": "",
+    "model": "google-lyria-3-clip",
+    "modelName": "Google Lyria 3 Clip",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

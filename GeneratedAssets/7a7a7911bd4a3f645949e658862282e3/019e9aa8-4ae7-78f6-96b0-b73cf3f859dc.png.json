@@ -1,0 +1,28 @@
+{
+    "asset": "7a7a7911bd4a3f645949e658862282e3",
+    "fileName": "019e9aa8-4ae7-78f6-96b0-b73cf3f859dc.png",
+    "prompt": "16-bit pixel art game inventory icon: a folded brown animal hide pelt, single centered object, bold clean dark outline, vibrant colors, simple flat shading, plain solid light gray background, no text",
+    "negativePrompt": "",
+    "model": "gemini-3.1-flash",
+    "modelName": "Gemini 3.1 Nano Banana 2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

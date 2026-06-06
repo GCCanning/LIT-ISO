@@ -24,8 +24,14 @@
 | Harden world-save (sanitize names, surface failures) | Claude | claude/menu-save-hardening | REVIEW | metadata-save robustness; PR ready |
 | In-game UI: left HUD + camera-scale + settings + back nav | Codex | - | TODO | spec: `Docs/ingame-ui-spec.md` (FoundationHUD) |
 | Real save/load (FoundationSaveData) cross-lane | Codex+Claude | - | TODO | Codex: serialize state + save trigger; Claude: menu Load/Continue. Agree file format + PlayerPrefs keys |
+| Asset Forge pack review/approval gate | Codex | - | REVIEW | Fail-closed approval, dashboard, strict QA, dataset capture, and experimental LoRA complete; Unity reimport blocked until open editor closes or runs `Tools > Asset Forge > Reimport Generated Assets` |
+| Game-feel batch (animation/audio/FX/pause/ambient) | Codex | codex/game-feel-batch | REVIEW | PlayerAnimator, AmbientLightController, AmbientParticles, CampfireGlow, WorldFx, PauseMenu, SfxManager, WorldAudioController, PixelPerfectCamera; committed by Claude on behalf of Unity AI |
+| LitRPG stats source | Codex | codex/litrpg-stats-source | WIP | Expose Health01/Mana01/Xp01/Level + STR/DEX/INT/VIT/DEF/LUCK on FoundationBootstrap |
+| Bind LitRPG stats to HUD + Character Sheet | Claude | - | TODO | Waiting on Codex stats source; 4-line swap in FoundationHudAdapter + Character Sheet panel wiring |
+| Save/Load system | Codex+Claude | - | TODO | Codex: FoundationSaveData serialize + save trigger; Claude: Continue/Load menu wiring |
 
 ## Up next (unclaimed)
 - A2 terrain block faces (original art).
 - Save/load `FoundationSaveData`.
 - Survival-scope decision (energy/temperature in or out).
+- Orphaned Claude UI .meta files (Assets/Scripts/UI/InGame/*.meta) — needs separate claude/ branch + PR.

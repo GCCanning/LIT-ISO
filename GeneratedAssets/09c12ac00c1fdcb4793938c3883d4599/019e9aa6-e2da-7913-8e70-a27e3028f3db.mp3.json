@@ -1,0 +1,15 @@
+{
+    "asset": "09c12ac00c1fdcb4793938c3883d4599",
+    "fileName": "019e9aa6-e2da-7913-8e70-a27e3028f3db.mp3",
+    "prompt": "Calm cozy fantasy exploration theme for a daytime medieval village, gentle acoustic guitar and light strings, warm major key, relaxing, wholesome, loopable background music",
+    "negativePrompt": "",
+    "model": "google-lyria-3-clip",
+    "modelName": "Google Lyria 3 Clip",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}
