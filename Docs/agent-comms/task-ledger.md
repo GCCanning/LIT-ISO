@@ -24,11 +24,11 @@
 | HUD live stats binding | Claude | claude/hud-live-stats | MERGED | FoundationHudAdapter wired to PlayerHealth/Mana/XPSystem events |
 | Options screen with real volume controls | Claude | claude/options-screen | MERGED | mirrors PauseMenu sliders (master/sfx/music via PlayerPrefs) |
 | Live adapters (CharacterSheet, Crafting, Continue btn) | Claude | claude/live-adapters | MERGED | FoundationCharacterSheetAdapter, FoundationCraftingAdapter, GameHudInitializer |
-| LitRPG Foundation systems | Codex | codex/litrpg-foundation-systems | REVIEW | Foundation Callings/Skills/Quests + Progression/Stats runtime handle from system bible |
+| LitRPG Foundation systems | Codex | codex/litrpg-foundation-systems | MERGED | PR #19; Foundation Callings/Skills/Quests + Progression/Stats runtime handle |
 | Foundation progression adapters + quest tracker | Claude | claude/foundation-progression-adapters | WIP | prefer FoundationBootstrap.Stats/Progression; QuestTrackerView overlay; merge after Codex branch lands |
 | Commit remaining working-tree drift | Claude | claude/working-tree-cleanup | TODO | modified metas, BiomeDefinition_Plains, Packages, ProjectSettings |
 | Real save/load (FoundationSaveData) cross-lane | Codex+Claude | - | TODO | Codex: serialize world state; Claude: wire Continue in menu. Agree file format first |
 | Milestone A1 terrain-top art (original) | Codex | - | TODO | grass/dirt/sand/snow tops, PPU 16 |
 | Asset Forge Unity reimport | Codex | - | TODO | Tools > Asset Forge > Reimport Generated Assets (needs Unity open) |
-| AI Toolkit folder decision | Both | - | TODO | commit (LFS) or .gitignore the Unity AI plugin |
-| GeneratedAssets UUID folders decision | Both | - | TODO | 22 UUID folders of AI-generated WAV; commit or ignore |
+| AI Toolkit folder decision | Codex | codex/local-tooling-ignore-cleanup | REVIEW | decision: local-only tool; remove tracked metas, keep `.gitignore` |
+| GeneratedAssets UUID folders decision | Codex | codex/local-tooling-ignore-cleanup | REVIEW | decision: local-only AI cache; remove tracked UUID assets, keep `.gitignore` |
