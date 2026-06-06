@@ -27,6 +27,7 @@ namespace IsoCore.Foundation
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
         public int ActiveDifficulty { get; private set; } = 1;
+        public string ActiveCallingId { get; private set; } = "greenhand";
         public FoundationContent Content { get; private set; }
         public IsoWorld World { get; private set; }
         public Inventory Inventory { get; private set; }
@@ -39,6 +40,7 @@ namespace IsoCore.Foundation
         public DayNightSystem DayNight { get; private set; }
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
+        public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
         public FoundationHUD Hud { get; private set; }
 
@@ -49,12 +51,13 @@ namespace IsoCore.Foundation
         /// Call before loading IsoCoreFoundation.unity to hand menu/world settings into
         /// the isolated Foundation scene without coupling it to the legacy WorldManager.
         /// </summary>
-        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1)
+        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null)
         {
             s_LaunchOptions = new LaunchOptions(
                 NormalizeWorldName(worldName),
                 SeedStringToInt(seed),
-                Mathf.Clamp(difficulty, 0, 2));
+                Mathf.Clamp(difficulty, 0, 2),
+                NormalizeCallingId(callingId));
             s_HasLaunchOptions = true;
         }
 
@@ -91,6 +94,7 @@ namespace IsoCore.Foundation
 
             Content = FoundationContent.BuildDefault();
             Progression = new FoundationProgression(Content);
+            ApplyLaunchCalling();
             var sampler = new IsoTerrainSampler(config, Content);
             World = new IsoWorld(sampler, Content, config.chunkSize);
 
@@ -177,13 +181,18 @@ namespace IsoCore.Foundation
             var interaction = gameObject.AddComponent<PlayerInteraction>();
             interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud);
 
+            // LitRPG progression hooks. Gameplay systems emit success events; this component
+            // converts them into activity XP and starter quest progress.
+            ProgressionHooks = gameObject.AddComponent<FoundationProgressionHooks>();
+            ProgressionHooks.Init(Progression, interaction, Crafting, Placement, Farming, MobSpawner);
+
             Ready?.Invoke(this);
 
             Debug.Log($"[FoundationBootstrap] Ready. Blocks:{Content.Blocks.Count} Items:{Content.Items.Count} " +
                       $"Placeables:{Content.Placeables.Count} Recipes:{Content.Recipes.Count} " +
                       $"Nodes:{Content.Nodes.Count} Mobs:{Content.Mobs.Count} Biomes:{Content.Biomes.Count} " +
                       $"Callings:{Content.Callings.Count} Skills:{Content.Skills.Count} Quests:{Content.Quests.Count} " +
-                      $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty}");
+                      $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty} Calling:{ActiveCallingId}");
         }
 
         void ApplyLaunchOptions()
@@ -193,6 +202,7 @@ namespace IsoCore.Foundation
 
             ActiveWorldName = DefaultWorldName;
             ActiveDifficulty = 1;
+            ActiveCallingId = "greenhand";
 
             if (!s_HasLaunchOptions)
                 return;
@@ -200,6 +210,18 @@ namespace IsoCore.Foundation
             ActiveWorldName = s_LaunchOptions.worldName;
             ActiveDifficulty = s_LaunchOptions.difficulty;
             config.seed = s_LaunchOptions.seed;
+        }
+
+        void ApplyLaunchCalling()
+        {
+            if (Progression == null)
+                return;
+
+            string requested = s_HasLaunchOptions ? s_LaunchOptions.callingId : null;
+            if (!string.IsNullOrWhiteSpace(requested) && !Progression.SelectCalling(requested))
+                Debug.LogWarning($"[FoundationBootstrap] Unknown launch Calling '{requested}', keeping {Progression.CurrentCalling?.id ?? "default"}.");
+
+            ActiveCallingId = Progression.CurrentCalling?.id ?? "greenhand";
         }
 
         void SetupCamera()
@@ -272,18 +294,25 @@ namespace IsoCore.Foundation
             public readonly string worldName;
             public readonly int seed;
             public readonly int difficulty;
+            public readonly string callingId;
 
-            public LaunchOptions(string worldName, int seed, int difficulty)
+            public LaunchOptions(string worldName, int seed, int difficulty, string callingId)
             {
                 this.worldName = worldName;
                 this.seed = seed;
                 this.difficulty = difficulty;
+                this.callingId = callingId;
             }
         }
 
         static string NormalizeWorldName(string worldName)
         {
             return string.IsNullOrWhiteSpace(worldName) ? DefaultWorldName : worldName.Trim();
+        }
+
+        static string NormalizeCallingId(string callingId)
+        {
+            return string.IsNullOrWhiteSpace(callingId) ? null : callingId.Trim();
         }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -18,6 +20,8 @@ namespace IsoCore.Foundation
         PlacementSystem _placement;
         FarmingSystem _farming;
         FoundationHUD _hud;
+
+        public event Action<ResourceNodeDefinition, IReadOnlyList<ItemStack>> ResourceHarvested;
 
         public void Init(IsoFoundationPlayer player, IsoWorldController controller, FoundationContent content,
             FoundationConfig cfg, Inventory inv, Hotbar hotbar, PlacementSystem placement,
@@ -105,12 +109,14 @@ namespace IsoCore.Foundation
                     _hud?.Flash($"Needs a {node.Def.requiredTool}");
                     return;
                 }
-                bool depleted = node.Harvest(_inv, tool, tier, out bool full);
+                var granted = new List<ItemStack>();
+                bool depleted = node.Harvest(_inv, tool, tier, out bool full, granted);
                 if (full)
                 {
                     _hud?.Flash("Inventory full!");
                     return;
                 }
+                if (depleted) ResourceHarvested?.Invoke(node.Def, granted);
                 if (_hud == null) return;
                 _hud.Flash(depleted ? $"Harvested {node.Def.Display}" : $"Hitting {node.Def.Display}...");
             }

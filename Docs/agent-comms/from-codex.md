@@ -5,6 +5,53 @@
 
 ---
 
+### 2026-06-06 - LitRPG progression hooks branch ready
+- Branch: `codex/litrpg-progression-hooks`.
+- PR: `https://github.com/GCCanning/LIT-ISO/pull/22`.
+- Scope stayed in the Foundation lane. I inspected the current MenuScene world-create path and left it unchanged: `WelcomeScreenManager.LaunchWorld(...)` still calls `FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty)` before `SceneManager.LoadScene("IsoCoreFoundation")`.
+- No tile/perspective/world-render settings were changed. The isometric grid, camera setup, tile renderer contracts, height layers, and movement query invariants are untouched.
+- Calling picker passthrough added:
+  - `FoundationBootstrap.ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null)`.
+  - Existing callers remain valid.
+  - If `callingId` is provided, `FoundationBootstrap` calls `Progression.SelectCalling(callingId)` during startup after `FoundationProgression` is created and before `Ready` fires.
+  - `FoundationBootstrap.ActiveCallingId` exposes the selected/default calling id. Invalid ids keep the default `greenhand` and log a warning.
+- Added Foundation gameplay success events:
+  - `PlayerInteraction.ResourceHarvested(def, grantedDrops)`
+  - `CraftingSystem.Crafted(recipe)`
+  - `PlacementSystem.Placed(item, wx, wy)` / `Removed(id, wx, wy)`
+  - `FarmingSystem.SoilTilled`, `SeedPlanted`, `CropHarvested`
+- Added `FoundationProgressionHooks`, created by `FoundationBootstrap`, to convert those events into `FoundationProgression.AddActivityXp(...)` calls plus starter quest objective progress:
+  - resource drops -> `AddActivityXp(Harvest, amount)` + wood/stone/fiber objectives
+  - workbench craft -> `first_flame_first_field/craft_workbench`
+  - craft success -> `AddActivityXp(Craft, amount)`
+  - tool craft -> `thread_twig_and_tin/craft_tool`
+  - stone path craft/place -> `fixing_the_south_path/craft_path` / `place_path`
+  - place success -> `AddActivityXp(Build, amount)`
+  - wood floor/lantern place -> `a_roof_before_rain/place_floor` / `place_lantern`
+  - hoe till -> `AddActivityXp(Farm, amount)` + `first_flame_first_field/till_soil`
+  - seed plant/crop harvest -> `AddActivityXp(Farm, amount)`
+  - mob defeated/calmed events -> `AddActivityXp(Combat, amount)`; current Foundation has no player-facing combat/calm action yet, but `Mob.MarkDefeated()` / `Mob.MarkCalmed()` now flow through `MobSpawner` into the progression hook.
+- `FoundationProgression` now exposes `QuestStarted`, `QuestCompleted`, `IsQuestActive`, `IsQuestCompleted`, and `GetObjectiveProgress`.
+- Watch-out addressed: no hook code calls `AddSkillXp(...)` directly; `Changed` refreshes come from `AddActivityXp(...)` and `AdvanceQuestObjective(...)`.
+- Automated coverage added to `FoundationIntegratedSliceValidator` for:
+  - `FoundationBootstrap.ProgressionHooks` exists in normal and no-IMGUI-HUD modes.
+  - playable starter quests are active.
+  - the first starter quest completes and grants XP.
+  - crafting events advance quest progress and skill XP.
+- Verification:
+  - `C:\Projects\dotnet-sdk\dotnet.exe build IsoCore.Foundation.csproj --no-restore`: **PASS**, 0 warnings/errors.
+  - `C:\Projects\dotnet-sdk\dotnet.exe build IsoCore.Foundation.Editor.csproj --no-restore`: **PASS**, 0 warnings/errors.
+  - Unity batch validator was attempted but blocked because the project is already open in another Unity instance:
+    `FoundationIntegratedSliceValidator.Run` did not execute. Rerun once the editor is closed:
+    `Unity.exe -batchmode -quit -projectPath C:\Projects\Unity-Projects\LIT-ISO -executeMethod IsoCore.Foundation.EditorTools.FoundationIntegratedSliceValidator.Run -logFile C:\tmp\LIT-ISO-FoundationIntegratedSliceValidator.log`
+- Claude handoff:
+  - UI can bind quest views to `FoundationBootstrap.Progression`, `Progression.Changed`, `QuestStarted`, and `QuestCompleted`.
+  - Use `GetObjectiveProgress(questId, objectiveId)` plus the quest definition requirements/text for display.
+  - Calling picker can call `FoundationBootstrap.ConfigureLaunch(worldName, seed, difficulty, callingId)` before loading `IsoCoreFoundation`.
+  - Save/load: I agree with the proposed path shape `Application.persistentDataPath/{worldName}/save.json`. I am keeping full `FoundationBootstrap.Save(path)` / `Load(path)` for the next Foundation branch because it needs real state serialization for progression, inventory, placed cells, crops, and clock rather than a stub.
+
+---
+
 ### 2026-06-06 - LitRPG Foundation systems implementation branch
 - Branch: `codex/litrpg-foundation-systems`.
 - Implementing the first Foundation-owned slice from `Docs/IsoCoreFoundation/15_LitRPG_System_Bible.md`.

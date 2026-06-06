@@ -128,7 +128,7 @@ namespace IsoCore.Foundation.EditorTools
             add("String seed hash is deterministic", expected == expectedAgain, $"{TestSeed} -> {expected}");
 
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            FoundationBootstrap.ConfigureLaunch(TestWorldName, TestSeed, 2);
+            FoundationBootstrap.ConfigureLaunch(TestWorldName, TestSeed, 2, "stonewright");
 
             var go = new GameObject("FoundationBootstrap_IntegratedValidation");
             var boot = go.AddComponent<FoundationBootstrap>();
@@ -155,6 +155,12 @@ namespace IsoCore.Foundation.EditorTools
             add("ConfigureLaunch difficulty applied",
                 boot.ActiveDifficulty == 2,
                 boot.ActiveDifficulty.ToString());
+            add("ConfigureLaunch Calling applied before Ready",
+                boot.ActiveCallingId == "stonewright" &&
+                boot.Progression != null &&
+                boot.Progression.CurrentCalling != null &&
+                boot.Progression.CurrentCalling.id == "stonewright",
+                boot.ActiveCallingId);
 
             add("Foundation runtime graph creates Player", go.transform.Find("Player") != null);
             add("Foundation runtime graph creates WorldController", go.transform.Find("WorldController") != null);
@@ -177,6 +183,7 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Crafting != null && boot.Hud != null);
             add("FoundationBootstrap exposes LitRPG progression handles",
                 boot.Progression != null && boot.Stats != null &&
+                boot.ProgressionHooks != null &&
                 boot.Stats.Health01 >= 0f && boot.Stats.Health01 <= 1f &&
                 boot.Stats.Mana01 >= 0f && boot.Stats.Mana01 <= 1f &&
                 boot.Stats.Xp01 >= 0f && boot.Stats.Xp01 <= 1f &&
@@ -187,6 +194,11 @@ namespace IsoCore.Foundation.EditorTools
             add("FoundationContent includes LitRPG bible seed content",
                 boot.Content.Callings.Count >= 7 && boot.Content.Skills.Count >= 12 && boot.Content.Quests.Count >= 5,
                 $"Callings:{boot.Content.Callings.Count} Skills:{boot.Content.Skills.Count} Quests:{boot.Content.Quests.Count}");
+            add("FoundationProgressionHooks starts playable starter quests",
+                boot.Progression.IsQuestActive("first_flame_first_field") &&
+                boot.Progression.IsQuestActive("a_roof_before_rain") &&
+                boot.Progression.IsQuestActive("thread_twig_and_tin") &&
+                boot.Progression.IsQuestActive("fixing_the_south_path"));
 
             var spawner = go.GetComponentInChildren<MobSpawner>();
             bool spawned = TryForceMobSpawn(spawner);
@@ -207,7 +219,8 @@ namespace IsoCore.Foundation.EditorTools
             add("FoundationBootstrap exposes UI binding handles without IMGUI HUD",
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
                 headlessBoot.Content != null && headlessBoot.World != null &&
-                headlessBoot.Progression != null && headlessBoot.Stats != null);
+                headlessBoot.Progression != null && headlessBoot.Stats != null &&
+                headlessBoot.ProgressionHooks != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
             FoundationBootstrap.ClearLaunchOptions();
@@ -269,6 +282,7 @@ namespace IsoCore.Foundation.EditorTools
             ValidateHarvest(add, content, world);
             ValidateCrafting(add, content);
             ValidateFarmingData(add, content);
+            ValidateProgressionContracts(add, content);
         }
 
         static readonly Vector2Int InvalidCell = new(int.MinValue, int.MinValue);
@@ -348,6 +362,38 @@ namespace IsoCore.Foundation.EditorTools
             var crop = seed != null ? content.Crops.Get(seed.plantCropId) : null;
             add("Seed item resolves to crop definition", seed != null && crop != null, seed != null ? seed.plantCropId : "missing seed");
             add("Crop has harvest outputs", crop != null && crop.harvest != null && crop.harvest.Length > 0);
+        }
+
+        static void ValidateProgressionContracts(AddCheck add, FoundationContent content)
+        {
+            var progression = new FoundationProgression(content);
+            int beforeXp = progression.Stats.Experience;
+            bool wood = progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 5);
+            bool bench = progression.AdvanceQuestObjective("first_flame_first_field", "craft_workbench");
+            bool soil = progression.AdvanceQuestObjective("first_flame_first_field", "till_soil");
+            add("Starter quest completes and grants XP",
+                wood && bench && soil &&
+                progression.IsQuestCompleted("first_flame_first_field") &&
+                progression.Stats.Experience > beforeXp,
+                $"xp {beforeXp}->{progression.Stats.Experience}");
+
+            var inv = new Inventory(12, content);
+            inv.Add("wood", 5);
+            var crafting = new CraftingSystem(content, inv);
+            var hookGo = new GameObject("ProgressionHooks_IntegratedValidation");
+            var hookedProgression = new FoundationProgression(content);
+            var hooks = hookGo.AddComponent<FoundationProgressionHooks>();
+            hooks.Init(hookedProgression, null, crafting, null, null, null);
+
+            bool crafted = crafting.TryCraft(content.Recipes.Get("craft_workbench"));
+            hookedProgression.SkillXp.TryGetValue("crafting", out int craftingXp);
+            add("Crafting event advances quest and skill XP",
+                crafted &&
+                hookedProgression.GetObjectiveProgress("first_flame_first_field", "craft_workbench") >= 1 &&
+                craftingXp > 0,
+                $"crafting xp {craftingXp}");
+
+            UnityEngine.Object.DestroyImmediate(hookGo);
         }
 
         static void WriteReport(List<Check> checks)

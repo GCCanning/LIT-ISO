@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,10 @@ namespace IsoCore.Foundation
         Hotbar _hotbar;
         Camera _cam;
         Transform _parent;
+
+        public event Action<int, int> SoilTilled;
+        public event Action<ItemDefinition, CropDefinition, int, int> SeedPlanted;
+        public event Action<CropDefinition> CropHarvested;
 
         readonly Dictionary<long, CropInstance> _crops = new();
         static long Key(int x, int y) => ((long)(uint)x << 32) | (uint)y;
@@ -50,7 +55,11 @@ namespace IsoCore.Foundation
             var c = CursorCell();
 
             if (def.category == ItemCategory.Tool && def.toolType == ToolType.Hoe)
-                return _world.TryTill(c.x, c.y) ? "Tilled soil" : null;
+            {
+                if (!_world.TryTill(c.x, c.y)) return null;
+                SoilTilled?.Invoke(c.x, c.y);
+                return "Tilled soil";
+            }
 
             if (def.IsSeed)
                 return TryPlant(def, c) ? "Planted" : null;
@@ -73,6 +82,7 @@ namespace IsoCore.Foundation
             var ci = go.AddComponent<CropInstance>();
             ci.Init(crop, _world, c.x, c.y);
             _crops[Key(c.x, c.y)] = ci;
+            SeedPlanted?.Invoke(seed, crop, c.x, c.y);
             return true;
         }
 
@@ -91,6 +101,7 @@ namespace IsoCore.Foundation
             }
             if (best == null) return false;
             if (!best.Harvest(_inv, out blockedFull)) return false;
+            CropHarvested?.Invoke(best.Def);
             _crops.Remove(bestKey);
             Destroy(best.gameObject);
             return true;

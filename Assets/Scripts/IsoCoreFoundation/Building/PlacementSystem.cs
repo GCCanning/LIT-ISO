@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace IsoCore.Foundation
         IsoFoundationPlayer _player;
         Transform _placeParent;
         SpriteRenderer _ghost;
+
+        public event Action<ItemDefinition, int, int> Placed;
+        public event Action<string, int, int> Removed;
 
         readonly List<PlaceableInstance> _placeables = new();
 
@@ -116,7 +120,12 @@ namespace IsoCore.Foundation
             if (def.PlacesBlock)
             {
                 var b = _content.Blocks.Get(def.placeBlockId);
-                if (_world.TryPlaceBlock(c.x, c.y, b)) { _inv.Remove(def.id, 1); return true; }
+                if (_world.TryPlaceBlock(c.x, c.y, b))
+                {
+                    _inv.Remove(def.id, 1);
+                    Placed?.Invoke(def, c.x, c.y);
+                    return true;
+                }
             }
             else if (def.PlacesPlaceable)
             {
@@ -125,6 +134,7 @@ namespace IsoCore.Foundation
                 {
                     _inv.Remove(def.id, 1);
                     SpawnPlaceable(p, c.x, c.y);
+                    Placed?.Invoke(def, c.x, c.y);
                     return true;
                 }
             }
@@ -144,6 +154,7 @@ namespace IsoCore.Foundation
                 if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
                 if (pdef != null && !string.IsNullOrEmpty(pdef.requiredItemId))
                     _inv.Add(pdef.requiredItemId, 1); // refund
+                Removed?.Invoke(pdef != null ? pdef.id : cell.OccupantId, c.x, c.y);
                 return true;
             }
 
@@ -154,6 +165,7 @@ namespace IsoCore.Foundation
                 {
                     string item = FindBlockItem(blockId);
                     if (item != null) _inv.Add(item, 1); // refund the placing item
+                    Removed?.Invoke(blockId, c.x, c.y);
                     return true;
                 }
             }
