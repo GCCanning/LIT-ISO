@@ -385,8 +385,13 @@ public class WelcomeScreenManager : MonoBehaviour
     }
 
     // -------------------------------------------------------------------------
-    // Options (placeholder)
+    // Options
     // -------------------------------------------------------------------------
+
+    // PlayerPrefs keys — kept in sync with PauseMenu.cs
+    const string kMaster = "vol_master";
+    const string kSfx    = "vol_sfx";
+    const string kMusic  = "vol_music";
 
     private void BuildOptions()
     {
@@ -396,18 +401,48 @@ public class WelcomeScreenManager : MonoBehaviour
         RectTransform titleRect = title.rectTransform;
         titleRect.anchorMin = new Vector2(0.5f, 1f);
         titleRect.anchorMax = new Vector2(0.5f, 1f);
-        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.pivot     = new Vector2(0.5f, 1f);
         titleRect.anchoredPosition = new Vector2(0f, -20f);
         titleRect.sizeDelta = new Vector2(panelWidth - 40f, 50f);
 
-        Text placeholder = CreateText("Placeholder", contentPanel, "Options coming soon...", 24, buttonText, TextAnchor.MiddleCenter);
-        RectTransform placeholderRect = placeholder.rectTransform;
-        placeholderRect.anchorMin = new Vector2(0.5f, 0.5f);
-        placeholderRect.anchorMax = new Vector2(0.5f, 0.5f);
-        placeholderRect.pivot = new Vector2(0.5f, 0.5f);
-        placeholderRect.sizeDelta = new Vector2(panelWidth - 40f, 100f);
+        float y      = -90f;
+        float rowGap = buttonHeight + spacing + 28f;
 
-        CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.MainMenu), 0f, -panelHeight + 50f);
+        // Master volume
+        CreateLabel("MasterLabel", contentPanel, "Master Volume", y);
+        y -= 24f;
+        Slider masterSlider = CreateSlider("MasterSlider", contentPanel, y, 0f, 1f,
+            PlayerPrefs.GetFloat(kMaster, 1f));
+        y -= rowGap;
+        masterSlider.onValueChanged.AddListener(v =>
+        {
+            PlayerPrefs.SetFloat(kMaster, v);
+            AudioListener.volume = v;
+        });
+
+        // SFX volume
+        CreateLabel("SfxLabel", contentPanel, "SFX Volume", y);
+        y -= 24f;
+        Slider sfxSlider = CreateSlider("SfxSlider", contentPanel, y, 0f, 1f,
+            PlayerPrefs.GetFloat(kSfx, 1f));
+        y -= rowGap;
+        sfxSlider.onValueChanged.AddListener(v => PlayerPrefs.SetFloat(kSfx, v));
+
+        // Music volume
+        CreateLabel("MusicLabel", contentPanel, "Music Volume", y);
+        y -= 24f;
+        Slider musicSlider = CreateSlider("MusicSlider", contentPanel, y, 0f, 1f,
+            PlayerPrefs.GetFloat(kMusic, 0.6f));
+        musicSlider.onValueChanged.AddListener(v => PlayerPrefs.SetFloat(kMusic, v));
+
+        // Apply master immediately so the player can hear the change
+        AudioListener.volume = PlayerPrefs.GetFloat(kMaster, 1f);
+
+        CreateMenuButton("BackBtn", contentPanel, "Back", () =>
+        {
+            PlayerPrefs.Save();
+            ShowScreen(Screen.MainMenu);
+        }, 0f, -panelHeight + 50f);
     }
 
     // -------------------------------------------------------------------------
