@@ -24,8 +24,9 @@
 | HUD live stats binding | Claude | claude/hud-live-stats | MERGED | FoundationHudAdapter wired to PlayerHealth/Mana/XPSystem events |
 | Options screen with real volume controls | Claude | claude/options-screen | MERGED | mirrors PauseMenu sliders (master/sfx/music via PlayerPrefs) |
 | Live adapters (CharacterSheet, Crafting, Continue btn) | Claude | claude/live-adapters | MERGED | FoundationCharacterSheetAdapter, FoundationCraftingAdapter, GameHudInitializer |
-| LitRPG Foundation systems | Codex | codex/litrpg-foundation-systems | REVIEW | Foundation Callings/Skills/Quests + Progression/Stats runtime handle from system bible |
-| Foundation progression adapters + quest tracker | Claude | claude/foundation-progression-adapters | WIP | prefer FoundationBootstrap.Stats/Progression; QuestTrackerView overlay; merge after Codex branch lands |
+| LitRPG Foundation systems | Codex | codex/litrpg-foundation-systems | MERGED | PR #19; Foundation Callings/Skills/Quests + Progression/Stats runtime handle |
+| Foundation progression adapters + quest tracker | Claude | claude/foundation-progression-adapters | MERGED | PR #20; HUD/CharacterSheet/QuestTrackerView wired to FoundationBootstrap.Stats/Progression |
+| LitRPG progression hooks | Codex | codex/litrpg-progression-hooks | REVIEW | gameplay success events -> AddActivityXp + starter quest objective progress; builds pass; Unity batch blocked by open editor |
 | Commit remaining working-tree drift | Claude | claude/working-tree-cleanup | TODO | modified metas, BiomeDefinition_Plains, Packages, ProjectSettings |
 | Real save/load (FoundationSaveData) cross-lane | Codex+Claude | - | TODO | Codex: serialize world state; Claude: wire Continue in menu. Agree file format first |
 | Milestone A1 terrain-top art (original) | Codex | - | TODO | grass/dirt/sand/snow tops, PPU 16 |

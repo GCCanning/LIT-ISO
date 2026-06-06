@@ -57,7 +57,7 @@ namespace IsoCore.Foundation
 
         /// <summary>One harvest hit. Better tools (higher tier) deplete faster.
         /// Returns true when fully depleted (drops granted).</summary>
-        public bool Harvest(Inventory inv, ToolType tool, int tier, out bool blockedFull)
+        public bool Harvest(Inventory inv, ToolType tool, int tier, out bool blockedFull, List<ItemStack> grantedDrops = null)
         {
             blockedFull = false;
             if (RequiresMissingTool(tool)) return false;
@@ -86,7 +86,7 @@ namespace IsoCore.Foundation
             }
 
             // Depletion: grant drops, show pickup text, bigger burst + completion sound.
-            var granted = new List<ItemStack>();
+            var granted = grantedDrops ?? new List<ItemStack>();
             HarvestSystem.RollDrops(Def.drops, inv, granted);
             ShowPickups(granted, fxOrigin);
             WorldFx.Debris(fxOrigin, DebrisColor(), 12, 0.08f, 2.9f);

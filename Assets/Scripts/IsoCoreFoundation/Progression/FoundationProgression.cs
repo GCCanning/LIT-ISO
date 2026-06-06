@@ -14,6 +14,8 @@ namespace IsoCore.Foundation
         readonly Dictionary<string, FoundationQuestState> _quests = new();
 
         public event Action Changed;
+        public event Action<FoundationQuestDefinition> QuestStarted;
+        public event Action<FoundationQuestDefinition> QuestCompleted;
 
         public FoundationPlayerStats Stats { get; } = new();
         public FoundationCallingDefinition CurrentCalling { get; private set; }
@@ -72,8 +74,24 @@ namespace IsoCore.Foundation
             if (quest == null || _quests.ContainsKey(questId)) return false;
 
             _quests[questId] = new FoundationQuestState(quest);
+            QuestStarted?.Invoke(quest);
             Changed?.Invoke();
             return true;
+        }
+
+        public bool IsQuestActive(string questId) =>
+            !string.IsNullOrWhiteSpace(questId) && _quests.ContainsKey(questId);
+
+        public bool IsQuestCompleted(string questId) =>
+            !string.IsNullOrWhiteSpace(questId)
+            && _quests.TryGetValue(questId, out var state)
+            && state.Completed;
+
+        public int GetObjectiveProgress(string questId, string objectiveId)
+        {
+            if (string.IsNullOrWhiteSpace(objectiveId)) return 0;
+            if (!_quests.TryGetValue(questId, out var state)) return 0;
+            return state.ObjectiveProgress.TryGetValue(objectiveId, out int value) ? value : 0;
         }
 
         public bool AdvanceQuestObjective(string questId, string objectiveId, int amount = 1)
@@ -83,7 +101,10 @@ namespace IsoCore.Foundation
             if (changed)
             {
                 if (state.Completed)
+                {
                     GrantRewards(state.Definition);
+                    QuestCompleted?.Invoke(state.Definition);
+                }
                 Changed?.Invoke();
             }
             return changed;

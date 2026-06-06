@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,9 @@ namespace IsoCore.Foundation
 
         readonly List<Mob> _mobs = new();
         float _timer;
+
+        public event Action<MobDefinition> MobDefeated;
+        public event Action<MobDefinition> MobCalmed;
 
         public int Count => _mobs.Count;
 
@@ -46,8 +50,8 @@ namespace IsoCore.Foundation
             if (_mobs.Count >= _cfg.mobCap) return;
 
             Vector2 origin = _player.Ground; // height-0 plane (WorldToCell assumes this)
-            float ang = Random.value * Mathf.PI * 2f;
-            float dist = Random.Range(_cfg.mobSpawnRadius * 0.5f, _cfg.mobSpawnRadius);
+            float ang = UnityEngine.Random.value * Mathf.PI * 2f;
+            float dist = UnityEngine.Random.Range(_cfg.mobSpawnRadius * 0.5f, _cfg.mobSpawnRadius);
             Vector2 ground = origin + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * dist;
 
             var c = IsoGrid.WorldToCell(new Vector3(ground.x, ground.y, 0f));
@@ -61,6 +65,8 @@ namespace IsoCore.Foundation
             go.transform.SetParent(_mobParent, false);
             var mob = go.AddComponent<Mob>();
             mob.Init(def, _world, ground);
+            mob.Defeated += HandleMobDefeated;
+            mob.Calmed += HandleMobCalmed;
             _mobs.Add(mob);
         }
 
@@ -71,7 +77,7 @@ namespace IsoCore.Foundation
             foreach (var m in biome.mobs) if (m.mob != null) total += Mathf.Max(0f, m.weight);
             if (total <= 0f) return null;
 
-            float roll = Random.value * total;
+            float roll = UnityEngine.Random.value * total;
             foreach (var m in biome.mobs)
             {
                 float w = m.mob != null ? Mathf.Max(0f, m.weight) : 0f;
@@ -92,10 +98,29 @@ namespace IsoCore.Foundation
                 if (!m) { _mobs.RemoveAt(i); continue; }
                 if ((m.Ground - p).sqrMagnitude > r2) // planar distance on the height-0 plane
                 {
+                    m.Defeated -= HandleMobDefeated;
+                    m.Calmed -= HandleMobCalmed;
                     Destroy(m.gameObject);
                     _mobs.RemoveAt(i);
                 }
             }
+        }
+
+        void HandleMobDefeated(Mob mob)
+        {
+            if (mob == null) return;
+            mob.Defeated -= HandleMobDefeated;
+            mob.Calmed -= HandleMobCalmed;
+            _mobs.Remove(mob);
+            MobDefeated?.Invoke(mob.Def);
+        }
+
+        void HandleMobCalmed(Mob mob)
+        {
+            if (mob == null) return;
+            mob.Defeated -= HandleMobDefeated;
+            mob.Calmed -= HandleMobCalmed;
+            MobCalmed?.Invoke(mob.Def);
         }
     }
 }
