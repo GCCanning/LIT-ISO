@@ -10,6 +10,7 @@ namespace IsoCore.Foundation
 
         /// <summary>Set by the bootstrap: is a station of this type within reach?</summary>
         public Func<StationType, bool> StationAvailable;
+        public event Action<RecipeDefinition> Crafted;
 
         public CraftingSystem(FoundationContent content, Inventory inv)
         {
@@ -44,6 +45,7 @@ namespace IsoCore.Foundation
             if (r.outputs != null)
                 foreach (var o in r.outputs) _inv.Add(o.itemId, o.count);
             SfxManager.Play("craft");
+            Crafted?.Invoke(r);
             return true;
         }
     }

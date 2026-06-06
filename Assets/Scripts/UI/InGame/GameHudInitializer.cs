@@ -6,29 +6,32 @@ namespace LitIso.UI.InGame
     /// <summary>
     /// Auto-wires the uGUI HUD when the Foundation runtime is ready.
     ///
-    /// Subscribes to <see cref="FoundationBootstrap.Ready"/> once per app lifetime
-    /// (cleared on scene reloads via the BeforeSceneLoad hook). When Ready fires:
-    ///   1. Build a <see cref="FoundationHudAdapter"/> over the bootstrap's
-    ///      Inventory/Hotbar/Content.
-    ///   2. Spawn a <see cref="GameUIController"/> GameObject under
-    ///      DontDestroyOnLoad and call Init(adapter).
-    ///   3. Disable the temporary IMGUI HUD (if Codex didn't already set
-    ///      createImguiHud=false on the scene's bootstrap component) so the two HUDs
-    ///      don't overlap.
+    /// Subscribes to <see cref="FoundationBootstrap.Ready"/> once per app lifetime.
+    /// When Ready fires:
+    ///   1. Build a <see cref="FoundationHudAdapter"/> — passes <c>bootstrap.Stats</c>
+    ///      so vitals prefer Foundation over legacy singletons.
+    ///   2. Spawn / re-init a <see cref="GameUIController"/> under DontDestroyOnLoad.
+    ///   3. Spawn / re-init a <see cref="GamePanelsController"/> and bind:
+    ///        - InventoryPanel  → <see cref="FoundationInventoryAdapter"/>
+    ///        - CharacterPanel  → <see cref="FoundationCharacterSheetAdapter"/> (bootstrap.Stats)
+    ///        - CraftingPanel   → <see cref="FoundationCraftingAdapter"/>
+    ///   4. Spawn / re-init a <see cref="QuestTrackerView"/> and bind:
+    ///        - <see cref="QuestTrackerAdapter"/> (bootstrap.Progression)
+    ///   5. Disable the IMGUI HUD if present.
     ///
     /// No scene wiring needed — drop this file in and it works.
     /// </summary>
     public static class GameHudInitializer
     {
-        static FoundationHudAdapter _adapter;
-        static GameUIController _hud;
-        static GamePanelsController _panels;
+        static FoundationHudAdapter      _adapter;
+        static GameUIController          _hud;
+        static GamePanelsController      _panels;
+        static QuestTrackerAdapter       _questAdapter;
+        static QuestTrackerView          _questView;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Hook()
         {
-            // Defensive: BeforeSceneLoad fires once per domain reload, so re-subscribe
-            // safely. (Static event handlers can outlive scene reloads in Editor.)
             FoundationBootstrap.Ready -= OnFoundationReady;
             FoundationBootstrap.Ready += OnFoundationReady;
         }
@@ -37,11 +40,15 @@ namespace LitIso.UI.InGame
         {
             if (bootstrap == null) return;
 
-            // Dispose any prior adapter (scene reload, etc.) before re-binding.
-            _adapter?.Dispose();
-            _adapter = new FoundationHudAdapter(bootstrap.Inventory, bootstrap.Hotbar, bootstrap.Content);
+            // bootstrap.Stats → FoundationPlayerStats (may be null pre-merge of
+            // codex/litrpg-foundation-systems; adapters fall back to legacy singletons).
+            var stats       = bootstrap.Stats;
+            var progression = bootstrap.Progression;
 
-            // Spawn the View if missing, else re-Init it against the new adapter.
+            // ---- HUD (vitals + hotbar slots) --------------------------------
+            _adapter?.Dispose();
+            _adapter = new FoundationHudAdapter(bootstrap.Inventory, bootstrap.Hotbar, bootstrap.Content, stats);
+
             if (_hud == null)
             {
                 var go = new GameObject("[uGUI HUD]");
@@ -50,28 +57,33 @@ namespace LitIso.UI.InGame
             }
             _hud.Init(_adapter);
 
-            // Spawn the in-game panels controller (Inventory / Crafting / Character
-            // Sheet) alongside the HUD. Defaults to placeholder models; adapters can
-            // bind via BindInventory/BindCrafting/BindCharacter once data sources land.
+            // ---- Panels (Inventory / Crafting / Character Sheet) ------------
             if (_panels == null)
             {
                 var pgo = new GameObject("[uGUI Panels]");
                 Object.DontDestroyOnLoad(pgo);
                 _panels = pgo.AddComponent<GamePanelsController>();
             }
-            // The inventory adapter shares the HUD's data plumbing, so panels stay in
-            // sync with the hotbar without a second subscription.
+
             _panels.BindInventory(new FoundationInventoryAdapter(bootstrap.Inventory, bootstrap.Content));
-
-            // Character sheet — live PlayerStats / PlayerHealth / PlayerMana / XPSystem.
-            _panels.BindCharacter(new FoundationCharacterSheetAdapter());
-
-            // Crafting panel — live Foundation CraftingSystem.
+            _panels.BindCharacter(new FoundationCharacterSheetAdapter(stats));
             _panels.BindCrafting(new FoundationCraftingAdapter(bootstrap.Crafting, bootstrap.Inventory, bootstrap.Content));
 
-            // Disable the temporary IMGUI HUD so the two don't overlap. The scene's
-            // FoundationBootstrap.createImguiHud field also lets Codex preset this to
-            // false on the prefab — but disabling at runtime is safe either way.
+            // ---- Quest tracker overlay --------------------------------------
+            _questAdapter?.Dispose();
+            _questAdapter = progression != null ? new QuestTrackerAdapter(progression) : null;
+
+            if (_questView == null)
+            {
+                var qgo = new GameObject("[uGUI QuestTracker]");
+                Object.DontDestroyOnLoad(qgo);
+                _questView = qgo.AddComponent<QuestTrackerView>();
+            }
+
+            if (_questAdapter != null)
+                _questView.Init(_questAdapter);
+
+            // ---- Disable IMGUI HUD -----------------------------------------
             if (bootstrap.Hud != null) bootstrap.Hud.enabled = false;
         }
     }

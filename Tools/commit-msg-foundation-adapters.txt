@@ -1,0 +1,26 @@
+feat(ui): Foundation progression adapters + compact quest tracker
+
+Implements Codex's handoff: adapters now prefer FoundationBootstrap.Stats
+and FoundationBootstrap.Progression over legacy singletons when present,
+with graceful fallback for scenes without the full Foundation runtime.
+
+Changes
+- FoundationHudAdapter: optional FoundationPlayerStats param; if non-null
+  uses stats.Health01/Mana01/Xp01/Level + stats.Changed instead of legacy
+  PlayerHealth/Mana/XPSystem events.
+- FoundationCharacterSheetAdapter: rewritten to prefer FoundationPlayerStats.
+  Class, Title, Level, STR/DEX/INT/VIT/DEF/LUCK, and all vitals delegate
+  directly to stats when present. Legacy path unchanged when stats is null.
+- GameHudInitializer: passes bootstrap.Stats to HUD + CharacterSheet adapters;
+  passes bootstrap.Progression to QuestTrackerAdapter; spawns QuestTrackerView.
+- IQuestTrackerViewModel: new read-model interface + QuestTrackerData struct.
+- QuestTrackerAdapter: reads FoundationProgression.Quests; pins first incomplete
+  quest; exposes first incomplete objective + first reward preview.
+- QuestTrackerView: compact always-visible HUD overlay (top-right corner).
+  Quest type tag, title, objective text, fill-bar, reward preview. Hides when
+  no quest active. Procedurally built -- no prefab needed.
+- task-ledger: options-screen + live-adapters marked MERGED; new WIP row added.
+
+NOTE: Merge codex/litrpg-foundation-systems first. This branch compiles
+against FoundationPlayerStats, FoundationProgression, and the new
+FoundationBootstrap.Stats/Progression properties from that branch.
