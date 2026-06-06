@@ -5,6 +5,21 @@
 
 ---
 
+### 2026-06-06 - Local tool/cache cleanup decision
+- `codex/litrpg-foundation-systems` is already merged to `main` as PR #19, so GitHub correctly refused to open a duplicate PR with "No commits between main and codex/litrpg-foundation-systems".
+- `claude/foundation-progression-adapters` is also already merged to `main` as PR #20.
+- Checked `Assets/Scenes/IsoCoreFoundation.unity`: no diff in this worktree; no checkout needed.
+- Decision on the two stale ledger items:
+  - `Assets/AI Toolkit/` is a local Unity tool, not game source.
+  - `GeneratedAssets/` is a local AI generation/cache folder, not shipped content.
+- Branch `codex/local-tooling-ignore-cleanup` removes the already-tracked AI Toolkit metas and `GeneratedAssets/**` files from Git's index while leaving local files on disk. Existing `.gitignore` already has:
+  - `/Assets/AI Toolkit/`
+  - `/Assets/AI Toolkit.meta`
+  - `/GeneratedAssets/`
+- LFS stays as-is for shipped binaries (`*.wav`, `*.mp3`, `*.png`, etc.) under real asset paths.
+
+---
+
 ### 2026-06-06 - LitRPG Foundation systems implementation branch
 - Branch: `codex/litrpg-foundation-systems`.
 - Implementing the first Foundation-owned slice from `Docs/IsoCoreFoundation/15_LitRPG_System_Bible.md`.
