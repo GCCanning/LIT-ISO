@@ -122,7 +122,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\create_asse
 
 This creates a deterministic fake Asset Forge character export so the Unity-side promotion validator can be tested without spending GPU time.
 
-<<<<<<< Updated upstream
 ## Build And Approve A Review Pack
 
 The stable wrapper around the current biome starter generator is:
@@ -189,78 +188,25 @@ powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\test_strict
 This writes `strict_asset_quality_report.json` beside the scanned folder and flags issues like blank alpha, opaque corners/backgrounds, wrong terrain size, and likely prop base plates.
 
 Use `-FailOnReview` in automation to make the scan exit nonzero unless all scanned PNGs are export-ready:
-=======
-## Tile And Prop Review Pack Flow
-
-The local tile/prop review tools expect a pack like:
-
-```text
-Assets\Generated\_Review\<PackName>\review_report.json
-Assets\Generated\_Review\<PackName>\review_decisions.json
-```
-
-Run strict image QA:
->>>>>>> Stashed changes
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\test_strict_asset_quality.ps1 -InputPath Assets\Generated\_Review\CodexBiomeStarter -FailOnReview
 ```
 
-<<<<<<< Updated upstream
 ## Local Review Dashboard
 
 For reliable image previews, serve the dashboard from the project root:
-=======
-Build/reuse a review pack and optionally approve passing items:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\build_review_pack.ps1 -PackName CodexBiomeStarter -ApprovePassing -ReplaceExisting
-```
-
-Approve manually edited decisions:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\approve_review_pack.ps1 -PackName CodexBiomeStarter -ReplaceExisting
-```
-
-Remove generated handoff PNGs that are not approved by the current decisions file only when you intend cleanup:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\approve_review_pack.ps1 -PackName CodexBiomeStarter -ReplaceExisting -PruneUnapproved
-```
-
-Validate generated tile/prop handoff folders without deleting anything:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\validate_tile_prop_handoff.ps1 -PackName CodexBiomeStarter
-```
-
-Capture approved examples into a repo-local dataset:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\capture_dataset_from_review.ps1 -PackName CodexBiomeStarter
-```
-
-## Local Review Dashboard
-
-Serve the dashboard from the project root:
->>>>>>> Stashed changes
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\serve_dashboard.ps1 -Port 4191
 ```
 
-<<<<<<< Updated upstream
 Then open:
-=======
-Open:
->>>>>>> Stashed changes
 
 ```text
 http://127.0.0.1:4191/Tools/AssetForge/Dashboard/index.html
 ```
 
-<<<<<<< Updated upstream
 You can also open the static file directly, but some browsers restrict local image loading:
 
 ```text
@@ -287,27 +233,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\start_resumable_l
 ```
 
 Check progress:
-=======
-Load `review_report.json` and `review_decisions.json`, edit decisions, then download the updated decisions file.
-
-## Tile/Prop LoRA Controls
-
-Check training status:
->>>>>>> Stashed changes
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\status_litiso_training.ps1 -OutputName litiso_tile_prop_v1
 ```
 
-<<<<<<< Updated upstream
 For machine-readable status:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\status_litiso_training.ps1 -OutputName litiso_tile_prop_v1 -Json
 ```
 
-=======
->>>>>>> Stashed changes
 Pause safely:
 
 ```powershell
@@ -324,30 +260,19 @@ powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\start_resumable_l
 The current trainer watches `C:\Projects\LoRA-Training\control\<OutputName>\pause.request`, writes `status.json`, and saves checkpoints under `C:\Projects\LoRA-Training\outputs\<OutputName>`.
 
 Sync the latest checkpoint to ComfyUI when a run is ready for evaluation:
-=======
-Sync latest checkpoint to ComfyUI:
->>>>>>> Stashed changes
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\sync_lora_to_comfyui.ps1 -OutputName litiso_tile_prop_v1
 ```
 
-<<<<<<< Updated upstream
 Plan or run evaluation for the latest synced LoRA:
-=======
-Plan latest synced evaluation:
->>>>>>> Stashed changes
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\eval_latest_synced_lora.ps1 -OutputName litiso_tile_prop_v1 -DryRun
 ```
 
-<<<<<<< Updated upstream
 The first completed tile/prop LoRA is experimental, not production default. See:
 
 ```text
 Docs\IsoCoreFoundation\13_AssetForge_Self_Review.md
 ```
-=======
-Current note: `litiso_tile_prop_v1` is an experimental proof that local training works, not the production default style model.
->>>>>>> Stashed changes

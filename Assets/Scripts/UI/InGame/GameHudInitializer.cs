@@ -63,6 +63,12 @@ namespace LitIso.UI.InGame
             // sync with the hotbar without a second subscription.
             _panels.BindInventory(new FoundationInventoryAdapter(bootstrap.Inventory, bootstrap.Content));
 
+            // Character sheet — live PlayerStats / PlayerHealth / PlayerMana / XPSystem.
+            _panels.BindCharacter(new FoundationCharacterSheetAdapter());
+
+            // Crafting panel — live Foundation CraftingSystem.
+            _panels.BindCrafting(new FoundationCraftingAdapter(bootstrap.Crafting, bootstrap.Inventory, bootstrap.Content));
+
             // Disable the temporary IMGUI HUD so the two don't overlap. The scene's
             // FoundationBootstrap.createImguiHud field also lets Codex preset this to
             // false on the prefab — but disabling at runtime is safe either way.

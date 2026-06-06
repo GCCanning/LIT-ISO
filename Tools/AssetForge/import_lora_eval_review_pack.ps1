@@ -24,6 +24,21 @@ function ConvertTo-RepoPath([string]$Path) {
     return (Get-RelativePath $ProjectRoot $Path).Replace("\", "/")
 }
 
+function Assert-ChildPath {
+    param(
+        [string]$ParentPath,
+        [string]$ChildPath,
+        [string]$Description
+    )
+
+    $parentFull = [IO.Path]::GetFullPath($ParentPath).TrimEnd("\", "/")
+    $childFull = [IO.Path]::GetFullPath($ChildPath).TrimEnd("\", "/")
+    $prefix = $parentFull + [IO.Path]::DirectorySeparatorChar
+    if (-not ($childFull.Equals($parentFull, [StringComparison]::OrdinalIgnoreCase) -or $childFull.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase))) {
+        throw "$Description must stay inside $parentFull. Resolved path: $childFull"
+    }
+}
+
 function Get-SafeName([string]$Name) {
     $safe = $Name -replace "[^A-Za-z0-9_.-]", "_"
     $safe = $safe.Trim("._")
@@ -34,6 +49,9 @@ function Get-SafeName([string]$Name) {
 function Get-InferredCategory([IO.FileInfo]$File) {
     if ($Category -ne "auto") { return $Category }
     $haystack = ($File.FullName + " " + $File.BaseName).ToLowerInvariant().Replace("\", "/")
+    if ($haystack -match "terrain|terrains|tile|tiles|ground|floor|dirt|sand|snow|plains|forest|grass|path|water|coast|beach|swamp|mountain|cave") {
+        return "terrain"
+    }
     if ($haystack -match "prop|props|decor|decoration|decorations|tree|bush|rock|stump|flower|grassclump|log|crate|barrel|fence") {
         return "decoration"
     }
@@ -133,18 +151,48 @@ $($cards -join "`n")
     Set-Content -Path $GalleryPath -Value $html -Encoding UTF8
 }
 
-$rootFull = [IO.Path]::GetFullPath((Resolve-Path $ProjectRoot).Path)
-$inputResolved = Resolve-Path $InputPath
-$inputItem = Get-Item $inputResolved
-if (-not $inputItem.PSIsContainer) { throw "InputPath must be a folder of PNG outputs: $InputPath" }
+function Convert-StrictQaPathToId([string]$QaPath, [string]$ReviewFullPath) {
+    $normalized = $QaPath.Replace("\", "/")
+    $reviewNormalized = $ReviewFullPath.Replace("\", "/").TrimEnd("/")
+    $projectNormalized = $rootFull.Replace("\", "/").TrimEnd("/")
+    $packPrefix = "Assets/Generated/_Review/$PackName/"
 
-$reviewRoot = Join-Path $ProjectRoot "Assets\Generated\_Review\$PackName"
+    if ($normalized.StartsWith($reviewNormalized + "/", [StringComparison]::OrdinalIgnoreCase)) {
+        return $normalized.Substring($reviewNormalized.Length + 1)
+    }
+    if ($normalized.StartsWith($projectNormalized + "/", [StringComparison]::OrdinalIgnoreCase)) {
+        $normalized = $normalized.Substring($projectNormalized.Length + 1)
+    }
+    if ($normalized.StartsWith($packPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+        return $normalized.Substring($packPrefix.Length)
+    }
+
+    return $null
+}
+
+$rootFull = [IO.Path]::GetFullPath((Resolve-Path $ProjectRoot).Path)
+$safePackName = Get-SafeName $PackName
+if ($safePackName -ne $PackName) {
+    throw "PackName must contain only letters, numbers, underscore, dot, or dash, and cannot start/end with dot or underscore. Got '$PackName'; safe form would be '$safePackName'."
+}
+
+$inputResolved = Resolve-Path -LiteralPath $InputPath -ErrorAction SilentlyContinue
+if (-not $inputResolved) {
+    throw "InputPath does not exist: $InputPath. Provide a folder containing LoRA eval PNG outputs."
+}
+$inputItem = Get-Item $inputResolved
+if (-not $inputItem.PSIsContainer) { throw "InputPath must be a folder of LoRA eval PNG outputs, not a file: $($inputItem.FullName)" }
+
+$reviewParent = Join-Path $ProjectRoot "Assets\Generated\_Review"
+$reviewRoot = Join-Path $reviewParent $PackName
+$reviewFull = [IO.Path]::GetFullPath($reviewRoot)
+Assert-ChildPath -ParentPath $reviewParent -ChildPath $reviewFull -Description "Review pack root"
+Assert-ChildPath -ParentPath (Join-Path $ProjectRoot "Assets\Generated\_Review\$PackName") -ChildPath $reviewFull -Description "Review pack delete target"
 if ((Test-Path $reviewRoot) -and $ReplaceExisting) {
     Remove-Item -LiteralPath $reviewRoot -Recurse -Force
 }
 New-Item -ItemType Directory -Force $reviewRoot | Out-Null
 
-$reviewFull = [IO.Path]::GetFullPath($reviewRoot)
 if (-not $reviewFull.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)) {
     throw "Review pack root must stay inside repo: $reviewFull"
 }
@@ -152,7 +200,7 @@ if (-not $reviewFull.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase
 $sourceFiles = @(Get-ChildItem -Path $inputItem.FullName -Recurse -Filter *.png -File | Where-Object {
     $_.FullName.Replace("\", "/") -notmatch "/_Preview/" -and $_.Name -notmatch "contact_sheet"
 } | Sort-Object FullName)
-if ($sourceFiles.Count -eq 0) { throw "No PNG files found under $($inputItem.FullName)" }
+if ($sourceFiles.Count -eq 0) { throw "No PNG files found under $($inputItem.FullName). Add PNG outputs or choose a different InputPath; _Preview folders and contact sheets are ignored." }
 
 $items = New-Object System.Collections.Generic.List[object]
 $index = 0
@@ -206,12 +254,18 @@ if ($strictRan -and (Test-Path $strictReportPath)) {
     $strict = Get-Content -Raw $strictReportPath | ConvertFrom-Json
     $strictById = @{}
     foreach ($qa in @($strict.items)) {
-        $qaPath = ([string]$qa.path).Replace("\", "/")
-        $qaId = $qaPath -replace "^$([Regex]::Escape($reviewFull.Replace('\','/')))/", ""
-        $strictById[$qaId] = $qa
+        $qaId = Convert-StrictQaPathToId ([string]$qa.path) $reviewFull
+        if ($qaId) {
+            $strictById[$qaId] = $qa
+        }
     }
     foreach ($item in $items) {
-        if (-not $strictById.ContainsKey($item.id)) { continue }
+        if (-not $strictById.ContainsKey($item.id)) {
+            $item.status = "qa_unmatched"
+            $item.warnings = @(@($item.warnings) + "strict_qa_missing")
+            $item.default_decision = "needs_edit"
+            continue
+        }
         $qa = $strictById[$item.id]
         $item.status = $qa.status
         $item.issues = @($qa.issues)

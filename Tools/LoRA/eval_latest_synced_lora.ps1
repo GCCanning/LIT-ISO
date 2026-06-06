@@ -36,6 +36,7 @@ if ([string]::IsNullOrWhiteSpace($OutputDir)) {
 }
 
 $summary = [ordered]@{
+    schemaVersion = 2
     outputName = $OutputName
     loraName = $loraName
     syncManifest = $manifestPath
@@ -43,6 +44,17 @@ $summary = [ordered]@{
     outputDir = $OutputDir
     dryRun = [bool]$DryRun
     startedAt = (Get-Date).ToString("o")
+    productionGuidance = "Live ComfyUI evaluation requires the next implementation step: add a verified runner contract with checkpoint/LoRA presence checks, workflow-node compatibility checks, output image validation, and artifact import handoff. Use -DryRun for manifest/prompt validation without ComfyUI/network."
+    promptCategories = [ordered]@{
+        terrain = [ordered]@{
+            description = "Walkable isometric top tiles for tilemap surfaces."
+            presets = @("forest_grass_tile", "plains_dirt_tile")
+        }
+        props = [ordered]@{
+            description = "Separate bottom-anchored decoration or blocker sprites."
+            presets = @("forest_oak_prop", "plains_bush_prop", "shared_rock_prop")
+        }
+    }
 }
 
 if ($OutputName -like "*sprixen_frame*") {
@@ -104,7 +116,7 @@ $summaryPath = Join-Path $ProjectRoot "Tools\LoRA\$OutputName.latest_synced_eval
 $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $summaryPath -Encoding UTF8
 
 if ($exitCode -ne 0) {
-    throw "Evaluator failed with exit code $exitCode. Summary: $summaryPath"
+    throw "Evaluator failed with exit code $exitCode. Summary: $summaryPath. Next implementation required: add production runner checks for ComfyUI availability, checkpoint/LoRA installation, workflow compatibility, output validation, and Asset Forge/artifact handoff before treating live output as shippable. Use -DryRun to validate planning without ComfyUI/network."
 }
 
 [ordered]@{

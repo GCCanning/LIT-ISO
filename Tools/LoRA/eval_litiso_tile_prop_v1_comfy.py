@@ -5,6 +5,7 @@ import json
 import argparse
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import URLError
 from urllib.parse import urlencode
@@ -29,11 +30,22 @@ NEGATIVE = (
     "isometric diorama, building, tree on terrain tile, prop baked into tile, cropped, cut off"
 )
 
-PROMPTS = [
+PRODUCTION_GUIDANCE = (
+    "Live ComfyUI evaluation requires the next implementation step: add a verified ComfyUI "
+    "runner contract for this LoRA, including checkpoint/LoRA presence checks, workflow-node "
+    "compatibility checks, output image validation, and artifact import handoff. Until that is "
+    "implemented, run this evaluator with --dry-run for manifest/prompt validation or start "
+    "ComfyUI locally with the configured checkpoint and LoRA installed."
+)
+
+PROMPT_PRESETS = [
     {
         "name": "forest_grass_tile",
         "seed": 50101,
-        "mode": "terrain",
+        "category": "terrain",
+        "subcategory": "forest",
+        "asset_kind": "tile_top",
+        "review_focus": ["transparent_background", "diamond_32x32_readability", "no_baked_props"],
         "prompt": (
             "LIT-ISO isometric terrain tile, forest biome, single 32x32 diamond grass top tile only, "
             "no trees, no rocks, no flowers, no props, transparent background, clean pixel art, "
@@ -43,7 +55,10 @@ PROMPTS = [
     {
         "name": "plains_dirt_tile",
         "seed": 50102,
-        "mode": "terrain",
+        "category": "terrain",
+        "subcategory": "plains",
+        "asset_kind": "tile_top",
+        "review_focus": ["transparent_background", "diamond_32x32_readability", "clean_walkable_surface"],
         "prompt": (
             "LIT-ISO isometric terrain tile, plains biome, single 32x32 diamond packed dirt top tile only, "
             "no props, no grass clumps, no trees, transparent background, clean pixel art, dark outline, "
@@ -53,7 +68,10 @@ PROMPTS = [
     {
         "name": "forest_oak_prop",
         "seed": 50103,
-        "mode": "prop",
+        "category": "props",
+        "subcategory": "forest",
+        "asset_kind": "tree",
+        "review_focus": ["transparent_background", "bottom_center_anchor", "no_ground_tile"],
         "prompt": (
             "LIT-ISO pixel prop, forest biome oak tree, single separate decoration sprite only, "
             "bottom-center anchored, transparent background, no ground tile, no base plate, clean pixel art, "
@@ -63,7 +81,10 @@ PROMPTS = [
     {
         "name": "plains_bush_prop",
         "seed": 50104,
-        "mode": "prop",
+        "category": "props",
+        "subcategory": "plains",
+        "asset_kind": "foliage",
+        "review_focus": ["transparent_background", "bottom_center_anchor", "compact_silhouette"],
         "prompt": (
             "LIT-ISO pixel prop, plains biome low bush, single separate decoration sprite only, "
             "bottom-center anchored, transparent background, no ground tile, no base plate, clean pixel art, "
@@ -73,7 +94,10 @@ PROMPTS = [
     {
         "name": "shared_rock_prop",
         "seed": 50105,
-        "mode": "prop",
+        "category": "props",
+        "subcategory": "shared",
+        "asset_kind": "obstacle",
+        "review_focus": ["transparent_background", "bottom_center_anchor", "readable_obstacle_shape"],
         "prompt": (
             "LIT-ISO pixel prop, gray rock obstacle, single separate decoration sprite only, "
             "bottom-center anchored, transparent background, no ground tile, no base plate, clean pixel art, "
@@ -81,6 +105,18 @@ PROMPTS = [
         ),
     },
 ]
+
+PROMPTS = PROMPT_PRESETS
+PROMPT_CATEGORIES = {
+    "terrain": {
+        "description": "Walkable isometric top tiles. Review as tilemap surfaces, not decorative sprites.",
+        "presets": [item["name"] for item in PROMPT_PRESETS if item["category"] == "terrain"],
+    },
+    "props": {
+        "description": "Separate bottom-anchored sprites. Review as placeable decorations or blockers.",
+        "presets": [item["name"] for item in PROMPT_PRESETS if item["category"] == "props"],
+    },
+}
 
 
 def request_json(path: str, payload: dict | None = None, timeout: int = 30) -> dict:
@@ -132,6 +168,47 @@ def workflow(item: dict) -> dict:
         },
         "7": {"class_type": "VAEDecode", "inputs": {"samples": ["6", 0], "vae": ["1", 2]}},
         "8": {"class_type": "SaveImage", "inputs": {"filename_prefix": f"litiso_tile_prop_v1/{item['name']}", "images": ["7", 0]}},
+    }
+
+
+def now_utc() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def manifest_base(status: str) -> dict:
+    return {
+        "schema_version": 2,
+        "status": status,
+        "created_at": now_utc(),
+        "evaluator": "eval_litiso_tile_prop_v1_comfy.py",
+        "requires_network": False if status == "dry-run" else "local ComfyUI only",
+        "production_guidance": PRODUCTION_GUIDANCE,
+        "settings": {
+            "lora": LORA,
+            "checkpoint": CHECKPOINT,
+            "lora_strength": LORA_STRENGTH,
+            "steps": STEPS,
+            "cfg": CFG,
+            "sampler": SAMPLER,
+            "scheduler": SCHEDULER,
+            "comfy_url": COMFY_URL,
+            "out_dir": str(OUT_DIR),
+        },
+        "prompt_categories": PROMPT_CATEGORIES,
+    }
+
+
+def failure_details(exc: BaseException) -> dict:
+    return {
+        "error": str(exc),
+        "guidance": PRODUCTION_GUIDANCE,
+        "next_steps": [
+            "Use --dry-run to validate manifest and prompt preset output without ComfyUI.",
+            "Start ComfyUI locally at --comfy-url and confirm /system_stats responds.",
+            "Install the configured checkpoint under ComfyUI/models/checkpoints.",
+            "Sync the LoRA into ComfyUI/models/loras before running live evaluation.",
+            "Implement the production runner checks before treating live output as shippable.",
+        ],
     }
 
 
@@ -189,16 +266,8 @@ def main() -> int:
     dry_run = configure_from_args()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     if dry_run:
-        manifest = {
-            "status": "dry-run",
-            "lora": LORA,
-            "checkpoint": CHECKPOINT,
-            "lora_strength": LORA_STRENGTH,
-            "steps": STEPS,
-            "cfg": CFG,
-            "comfy_url": COMFY_URL,
-            "results": [{**item, "status": "dry-run"} for item in PROMPTS],
-        }
+        manifest = manifest_base("dry-run")
+        manifest["results"] = [{**item, "status": "dry-run"} for item in PROMPTS]
         (OUT_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         print(OUT_DIR / "manifest.json")
         return 0
@@ -210,18 +279,11 @@ def main() -> int:
             paths = submit_and_fetch(item)
             results.append({**item, "status": "ok", "outputs": [str(p) for p in paths]})
         except (URLError, TimeoutError, RuntimeError) as exc:
-            results.append({**item, "status": "error", "error": str(exc)})
+            results.append({**item, "status": "error", **failure_details(exc)})
             print(f"ERROR {item['name']}: {exc}")
-    manifest = {
-        "status": "complete" if all(r["status"] == "ok" for r in results) else "failed",
-        "lora": LORA,
-        "checkpoint": CHECKPOINT,
-        "lora_strength": LORA_STRENGTH,
-        "steps": STEPS,
-        "cfg": CFG,
-        "comfy_url": COMFY_URL,
-        "results": results,
-    }
+            print(f"GUIDANCE: {PRODUCTION_GUIDANCE}")
+    manifest = manifest_base("complete" if all(r["status"] == "ok" for r in results) else "failed")
+    manifest["results"] = results
     (OUT_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(OUT_DIR / "manifest.json")
     return 0 if all(r["status"] == "ok" for r in results) else 1

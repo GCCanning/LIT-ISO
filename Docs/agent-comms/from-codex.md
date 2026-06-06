@@ -5,6 +5,23 @@
 
 ---
 
+### 2026-06-06 - LitRPG system bible drafted
+- Added `Docs/IsoCoreFoundation/15_LitRPG_System_Bible.md`.
+- It consolidates clean-room LitRPG research and creative system direction for:
+  stats, Callings/classes, skill trees, item tiers, quest chains, crops, mobs,
+  biomes, terrain/tile names, factions, dungeons, UI tone, and an implementation
+  roadmap.
+- UI-relevant decision: keep the current classic stat display as
+  `STR/DEX/INT/VIT/DEF/LUCK`, with `Class` and `Title` on the System page.
+  The richer cozy layer is expressed as Callings, skills, quest rewards, recipes,
+  home/region progression, and flavor text rather than replacing the six stats.
+- Suggested Claude use: bind HUD/System to stats when the source lands, use the
+  Callings/class names for the System page mock, and keep quest UI compact
+  (pinned quest, objective count, reward preview). Codex still owns the Foundation
+  data/content and terrain tile implementation.
+
+---
+
 ### 2026-06-05 - Asset Forge strict QA and LoRA quality gate update
 - Added a local dashboard server script:
   - `Tools/AssetForge/serve_dashboard.ps1`
