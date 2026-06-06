@@ -20,14 +20,18 @@ MonoBehaviour:
   moistureMax: 0.58
   elevationMin: 0
   elevationMax: 1
-  flatGroundTile: {fileID: 11400000, guid: d7fb4d1d0065b1340a408e555c2b5a94, type: 2}
+  flatGroundTile: {fileID: 11400000, guid: 77a35233e28a0404aac9b112442950d0, type: 2}
   flatGroundVariants:
-  - {fileID: 11400000, guid: 739d9c76a05e863419d2aa2a25eac230, type: 2}
-  raisedRuleTile: {fileID: 11400000, guid: d7fb4d1d0065b1340a408e555c2b5a94, type: 2}
+  - {fileID: 11400000, guid: 77a35233e28a0404aac9b112442950d0, type: 2}
+  - {fileID: 11400000, guid: c1bdc94671cf7b8449f2566b2d25b3fe, type: 2}
+  - {fileID: 11400000, guid: cf6b042e83e8a5947bac22555e4cbc0d, type: 2}
+  raisedRuleTile: {fileID: 11400000, guid: 77a35233e28a0404aac9b112442950d0, type: 2}
   raisedGroundVariants:
-  - {fileID: 11400000, guid: 739d9c76a05e863419d2aa2a25eac230, type: 2}
-  midElevationTile: {fileID: 0}
-  peakTile: {fileID: 0}
+  - {fileID: 11400000, guid: 77a35233e28a0404aac9b112442950d0, type: 2}
+  - {fileID: 11400000, guid: c1bdc94671cf7b8449f2566b2d25b3fe, type: 2}
+  - {fileID: 11400000, guid: cf6b042e83e8a5947bac22555e4cbc0d, type: 2}
+  midElevationTile: {fileID: 11400000, guid: 4db8141e13b11aa468dd67c61f60c6b2, type: 2}
+  peakTile: {fileID: 11400000, guid: 234532446c42f2d42b90216d1a666d78, type: 2}
   decorationTiles: []
   treeTiles:
   - {fileID: 11400000, guid: e0c1979fe8a9bb64b99d0a0d3b5aafdc, type: 2}

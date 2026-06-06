@@ -1,0 +1,15 @@
+{
+    "asset": "8ce5638131463b94cbc5e4005f9dfa50",
+    "fileName": "019e9aa6-c9ff-7431-bf8a-17aa0af5bcd6.wav",
+    "prompt": "Calm nighttime ambience, gentle crickets and soft wind, peaceful, seamless loop",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

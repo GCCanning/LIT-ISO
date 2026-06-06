@@ -1,10 +1,10 @@
 ﻿{
-    "generatedAt":  "2026-06-03T07:39:25.9615567-07:00",
+    "generatedAt":  "2026-06-05T20:20:16.2536766-07:00",
     "generatedRoot":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated",
-    "scannedManifests":  2,
-    "skipped":  1,
-    "total":  1,
-    "ready":  1,
+    "scannedManifests":  9,
+    "skipped":  2,
+    "total":  7,
+    "ready":  7,
     "blocked":  0,
     "skippedEntries":  [
                            {
@@ -12,6 +12,12 @@
                                "reason":  "not an Asset Forge Unity export manifest",
                                "source":  "freepixel.art",
                                "trigger":  "litiso_style"
+                           },
+                           {
+                               "manifestPath":  ".\\Assets\\Generated\\_Review\\CodexBiomeStarter\\manifest.json",
+                               "reason":  "not an Asset Forge Unity export manifest",
+                               "source":  "",
+                               "trigger":  ""
                            }
                        ],
     "entries":  [
@@ -30,7 +36,115 @@
 
                                    ],
                         "warnings":  [
-                                         "Unity automation_report.json has not been generated"
+
+                                     ]
+                    },
+                    {
+                        "assetName":  "UnityExportSmoke4D",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\Review\\AssetForgeSmoke\\UnityExportSmoke4D_20260604_035233\\manifest.json",
+                        "loraName":  "",
+                        "loraCheckpoint":  "",
+                        "acceptedFrameCount":  1,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+
+                                     ]
+                    },
+                    {
+                        "assetName":  "UnityExportLiveSmoke4D",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportLiveSmoke4D_20260604_035855\\manifest.json",
+                        "loraName":  "",
+                        "loraCheckpoint":  "",
+                        "acceptedFrameCount":  8,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+
+                                     ]
+                    },
+                    {
+                        "assetName":  "UnityExportLiveWalk",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportLiveWalk_20260604_152312\\manifest.json",
+                        "loraName":  "PixelArtRedmond-Lite64.safetensors",
+                        "loraCheckpoint":  "DreamShaper_8_pruned.safetensors",
+                        "acceptedFrameCount":  32,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+
+                                     ]
+                    },
+                    {
+                        "assetName":  "UnityExportProvenanceSmoke4D",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportProvenanceSmoke4D_20260604_040224\\manifest.json",
+                        "loraName":  "PixelArtRedmond-Lite64.safetensors",
+                        "loraCheckpoint":  "DreamShaper_8_pruned.safetensors",
+                        "acceptedFrameCount":  8,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+
+                                     ]
+                    },
+                    {
+                        "assetName":  "UnityExportSmoke4D",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportSmoke4D_20260604_035519\\manifest.json",
+                        "loraName":  "",
+                        "loraCheckpoint":  "",
+                        "acceptedFrameCount":  8,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+
+                                     ]
+                    },
+                    {
+                        "assetName":  "UnityExportSmokeWalk",
+                        "assetMode":  "character",
+                        "manifestPath":  ".\\Assets\\Generated\\_Review\\AssetForgeSmoke\\UnityExportSmokeWalk_20260604_152022\\manifest.json",
+                        "loraName":  "PixelArtRedmond-Lite64.safetensors",
+                        "loraCheckpoint":  "DreamShaper_8_pruned.safetensors",
+                        "acceptedFrameCount":  32,
+                        "rejectedFrameCount":  0,
+                        "qaWarnCount":  0,
+                        "qaFailCount":  0,
+                        "promotionReady":  true,
+                        "issues":  [
+
+                                   ],
+                        "warnings":  [
+
                                      ]
                     }
                 ]

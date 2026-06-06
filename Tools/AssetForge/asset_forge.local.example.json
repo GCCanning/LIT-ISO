@@ -1,0 +1,69 @@
+{
+  "schema": "lit-iso.asset-forge.local.v1",
+  "notes": [
+    "Copy to asset_forge.local.json for machine-local use.",
+    "Keep asset_forge.local.json uncommitted if it contains personal absolute paths.",
+    "This file documents expected local roots only; current worker-owned scripts may not read it yet."
+  ],
+  "comfyui": {
+    "url": "http://127.0.0.1:8188",
+    "root": "C:/Projects/ComfyUI",
+    "output_root": "C:/Projects/ComfyUI/output"
+  },
+  "lora": {
+    "training_root": "C:/Projects/LIT-ISO-LoRA",
+    "comfyui_lora_root": "C:/Projects/ComfyUI/models/loras",
+    "default_tile_prop_output_name": "litiso_tile_prop_v1",
+    "planned_terrain_output_name": "litiso_terrain_v1",
+    "planned_prop_output_name": "litiso_props_v1"
+  },
+  "pixel_pipeline": {
+    "output_root": "Assets/Generated/_Review",
+    "dataset_root": "Assets/Generated/_Datasets",
+    "handoff_root": "Assets/Generated",
+    "default_pack_name": "CodexBiomeStarter",
+    "default_export_name": "CodexBiomeStarter"
+  },
+  "provenance": {
+    "project": "LIT-ISO",
+    "source": "LIT-ISO Asset Forge",
+    "clean_room_required": true,
+    "reference_policy": "Use ISO-CORE/ISO-Tile only for system shape and scale; do not copy pixels, audio, names, or content.",
+    "required_manifest_files": [
+      "review_report.json",
+      "review_decisions.json"
+    ],
+    "recommended_fields": [
+      "pack_name",
+      "asset_id",
+      "category",
+      "prompt",
+      "negative_prompt",
+      "workflow",
+      "model",
+      "lora",
+      "seed",
+      "generated_utc",
+      "qa_status",
+      "review_decision",
+      "approved_by",
+      "approved_utc"
+    ]
+  },
+  "readiness": {
+    "promotion_ready_requires": [
+      "strict QA pass",
+      "explicit approved decision",
+      "clean-room provenance",
+      "no rejected frames",
+      "valid Unity import metadata",
+      "handoff validation pass"
+    ],
+    "training_ready_requires": [
+      "approved examples only",
+      "dataset_readiness_summary.json",
+      "category-specific dataset split",
+      "no mixed terrain/prop labels"
+    ]
+  }
+}

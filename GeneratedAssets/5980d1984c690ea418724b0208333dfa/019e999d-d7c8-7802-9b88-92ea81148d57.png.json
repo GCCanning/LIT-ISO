@@ -1,0 +1,38 @@
+{
+    "asset": "5980d1984c690ea418724b0208333dfa",
+    "fileName": "019e999d-d7c8-7802-9b88-92ea81148d57.png",
+    "prompt": "A single isometric ground tile in pixel-art style, matching the colors and shading of the provided reference grass tile. IMPORTANT: use a classic 2:1 isometric angle — the diamond-shaped grass top face must be exactly twice as wide as it is tall (a flat, shallow, low-camera-angle look), NOT a tall steep diamond. Green grass on the top diamond surface with a short band of brown dirt/earth on the front-lower sides beneath the grass, like a thin terrain block. Centered single tile, transparent background, no drop shadow, crisp pixel edges, limited color palette.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "f89eb47c9a6dafc43951208861b7776a",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

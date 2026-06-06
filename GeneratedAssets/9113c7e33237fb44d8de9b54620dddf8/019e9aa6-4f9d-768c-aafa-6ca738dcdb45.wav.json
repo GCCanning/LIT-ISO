@@ -1,0 +1,15 @@
+{
+    "asset": "9113c7e33237fb44d8de9b54620dddf8",
+    "fileName": "019e9aa6-4f9d-768c-aafa-6ca738dcdb45.wav",
+    "prompt": "A single soft footstep on grass and dirt, short and dry, subtle, no music",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 1.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

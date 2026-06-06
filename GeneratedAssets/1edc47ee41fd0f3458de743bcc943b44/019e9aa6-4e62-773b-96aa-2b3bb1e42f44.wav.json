@@ -1,0 +1,15 @@
+{
+    "asset": "1edc47ee41fd0f3458de743bcc943b44",
+    "fileName": "019e9aa6-4e62-773b-96aa-2b3bb1e42f44.wav",
+    "prompt": "Gathering leaves and plants, a short soft rustling pluck, organic",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 1.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

@@ -1,0 +1,15 @@
+{
+    "asset": "efcbdd222eaeca244b7f84c9b144f2da",
+    "fileName": "019e9aa6-4f8b-700a-a832-e842e201f23f.wav",
+    "prompt": "A single axe chop into wood, one solid woody thwack impact, crisp",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 1.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

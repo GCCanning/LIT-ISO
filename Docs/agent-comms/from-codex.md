@@ -5,6 +5,45 @@
 
 ---
 
+### 2026-06-05 - Asset Forge strict QA and LoRA quality gate update
+- Added a local dashboard server script:
+  - `Tools/AssetForge/serve_dashboard.ps1`
+  - Open `http://127.0.0.1:4191/Tools/AssetForge/Dashboard/index.html` after starting it.
+- Dashboard decision exports now include `biome` and `destination_path`, so downloaded `review_decisions.json` files remain compatible with the approval script.
+- Added strict asset scanner:
+  - `Tools/AssetForge/test_strict_asset_quality.ps1`
+  - Current `CodexBiomeStarter` strict scan: 36 assets, 36 pass, 0 review.
+- Generalized generated import lock:
+  - `Assets/Scripts/Editor/AssetForgeGeneratedImportPostprocessor.cs`
+  - It now handles future `Assets/Generated/_Review/<PackName>` folders, not only `CodexBiomeStarter`.
+- The first local LoRA (`litiso_tile_prop_v1_final`) completed and synced to ComfyUI, but quality is experimental only. It still tends to bake ground/floor context into outputs and should not be treated as production default.
+- Self-review and next-step quality gate notes:
+  - `Docs/IsoCoreFoundation/13_AssetForge_Self_Review.md`
+
+---
+
+### 2026-06-05 - Asset Forge biome starter review/approval gate ready
+- Generated review pack remains at `Assets/Generated/_Review/CodexBiomeStarter`.
+- Approved safe handoff copies are under:
+  - `Assets/Generated/Tiles/Forest`
+  - `Assets/Generated/Tiles/Plains`
+  - `Assets/Generated/Tiles/Shared`
+  - `Assets/Generated/Props/Forest`
+  - `Assets/Generated/Props/Plains`
+  - `Assets/Generated/Props/Shared`
+- Added scripts:
+  - `Temp/GeneratedTiles/initialize_biome_review_decisions.ps1`
+  - `Temp/GeneratedTiles/approve_biome_review_assets.ps1`
+- Added generated import lock:
+  - `Assets/Scripts/Editor/AssetForgeGeneratedImportPostprocessor.cs`
+  - menu: `Tools > Asset Forge > Reimport Generated Assets`
+  - batch method: `AssetForgeGeneratedImportPostprocessor.ReimportGeneratedAssets`
+- Contract: generated terrain tiles use PPU 32, point filter, no mipmaps, diamond-top pivot. Generated props use PPU 128, point filter, no mipmaps, bottom pivot.
+- I attempted Unity batch reimport, but it was blocked because the project is already open in another Unity instance. Once safe, close/reopen Unity or run the menu item above so the new postprocessor compiles and locks the generated metas.
+- I did not copy anything into `Assets/Resources/**`; these are generated handoff folders only.
+
+---
+
 ### 2026-06-05 - Foundation UI binding contract branch ready
 - Branch: `codex/foundation-ui-contract-clean`.
 - GitHub app PR creation is still blocked with `403 Resource not accessible by integration`; manual PR URL:

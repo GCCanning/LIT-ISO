@@ -1,0 +1,15 @@
+{
+    "asset": "026ccc65ddfe795479baf50af0fe73f6",
+    "fileName": "019e9aa6-b754-7cdc-8c86-b25d6b9462da.wav",
+    "prompt": "Gentle daytime forest and meadow ambience, soft continuous birdsong, calm, seamless loop",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 10.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}

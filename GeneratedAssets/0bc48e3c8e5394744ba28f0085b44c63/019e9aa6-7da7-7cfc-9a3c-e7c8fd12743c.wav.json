@@ -1,0 +1,15 @@
+{
+    "asset": "0bc48e3c8e5394744ba28f0085b44c63",
+    "fileName": "019e9aa6-7da7-7cfc-9a3c-e7c8fd12743c.wav",
+    "prompt": "A short pleasant item pickup blip, bright retro video game collect sound",
+    "negativePrompt": "",
+    "model": "elevenlabs-sound-effects-v2",
+    "modelName": "ElevenLabs Sound Effects V2",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "duration": 1.0,
+    "autoTrim": false,
+    "hasReference": false,
+    "voice": ""
+}
