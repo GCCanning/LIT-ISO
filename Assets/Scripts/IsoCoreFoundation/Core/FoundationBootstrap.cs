@@ -96,6 +96,9 @@ namespace IsoCore.Foundation
             playerGo.transform.SetParent(transform, false);
             Player = playerGo.AddComponent<IsoFoundationPlayer>();
             Player.Init(World, config);
+            // Render the knight sheet over the placeholder box (added after Init so it owns
+            // the SpriteRenderer): directional facing + walk animation.
+            playerGo.AddComponent<PlayerAnimator>();
             _playerT = playerGo.transform;
 
             // World streaming controller.
@@ -138,6 +141,27 @@ namespace IsoCore.Foundation
 
             // Day/night clock.
             DayNight = gameObject.AddComponent<DayNightSystem>();
+
+            // World-wide day/night tint (ground + props + player) via the global ambient.
+            var ambient = gameObject.AddComponent<AmbientLightController>();
+            ambient.dayNight = DayNight;
+
+            // Atmospheric motes: pollen by day, fireflies by night, following the camera.
+            var particlesGo = new GameObject("AmbientParticles", typeof(ParticleSystem));
+            particlesGo.transform.SetParent(transform, false);
+            var particles = particlesGo.AddComponent<AmbientParticles>();
+            particles.dayNight = DayNight;
+            particles.cam = _cam;
+
+            // Audio: ensure a listener, prime the SFX pool, and start the day/night music bed.
+            if (UnityEngine.Object.FindFirstObjectByType<AudioListener>() == null && _cam != null)
+                _cam.gameObject.AddComponent<AudioListener>();
+            SfxManager.Ensure();
+            var worldAudio = gameObject.AddComponent<WorldAudioController>();
+            worldAudio.dayNight = DayNight;
+
+            // Pause / settings overlay (Esc) with volume sliders + control hints.
+            gameObject.AddComponent<PauseMenu>();
 
             // HUD.
             if (createImguiHud)
@@ -188,14 +212,54 @@ namespace IsoCore.Foundation
             _cam.clearFlags = CameraClearFlags.SolidColor; // else a runtime-made camera clears to skybox
             _cam.backgroundColor = new Color(0.10f, 0.12f, 0.16f);
             _cam.transform.position = new Vector3(0, 0, -10);
+
+            if (config != null && config.pixelPerfect)
+                SetupPixelPerfect();
         }
+
+        // Pixel Perfect Camera (Built-in standalone, com.unity.2d.pixel-perfect). Keeps
+        // the 32px ground tiles crisp and free of shimmer as the camera follows the
+        // player. assetsPPU matches the tile art (32). Reference resolution 640x360
+        // (16:9) gives a view close to the previous ortho size while snapping render to
+        // the pixel grid. stretchFill fills the window instead of hard black bars.
+        void SetupPixelPerfect()
+        {
+            const int assetsPPU = 32;
+            const int refX = 640, refY = 360;
+
+            var pp = _cam.GetComponent<UnityEngine.U2D.PixelPerfectCamera>()
+                  ?? _cam.gameObject.AddComponent<UnityEngine.U2D.PixelPerfectCamera>();
+
+            _cam.orthographicSize = (refY / 2f) / assetsPPU; // 5.625
+            _cam.allowHDR = false;
+            _cam.allowMSAA = false;
+            _cam.allowDynamicResolution = false;
+            QualitySettings.antiAliasing = 0;
+            QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+
+            pp.assetsPPU = assetsPPU;
+            pp.refResolutionX = refX;
+            pp.refResolutionY = refY;
+            pp.pixelSnapping = true;   // snap sprites to the pixel grid at render time
+            pp.upscaleRT = false;      // keep post/UI compatible
+            pp.cropFrameX = true;
+            pp.cropFrameY = true;
+            pp.stretchFill = true;     // fill the window (both crop flags + stretchFill)
+        }
+
+        Vector3 _camVel;
+        [SerializeField] float cameraFollowSmoothTime = 0.15f;
 
         void LateUpdate()
         {
             if (_cam != null && _playerT != null)
             {
                 var p = _playerT.position;
-                _cam.transform.position = new Vector3(p.x, p.y, -10f);
+                var target = new Vector3(p.x, p.y, -10f);
+                // Damped follow — feels smoother than a hard snap. The Pixel Perfect Camera
+                // still snaps the rendered image to the pixel grid, so this stays crisp.
+                _cam.transform.position = Vector3.SmoothDamp(
+                    _cam.transform.position, target, ref _camVel, cameraFollowSmoothTime);
             }
         }
 

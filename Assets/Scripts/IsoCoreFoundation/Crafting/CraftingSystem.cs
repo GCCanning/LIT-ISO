@@ -43,6 +43,7 @@ namespace IsoCore.Foundation
             foreach (var i in r.inputs) _inv.Remove(i.itemId, i.count);
             if (r.outputs != null)
                 foreach (var o in r.outputs) _inv.Add(o.itemId, o.count);
+            SfxManager.Play("craft");
             return true;
         }
     }

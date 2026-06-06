@@ -49,6 +49,67 @@ namespace IsoCore.Foundation
         {
             var cell = new IsoCell();
 
+            // Grass prototype world: one uniform walkable surface block everywhere,
+            // no water and no resource nodes, with optional Perlin rolling hills. The
+            // spawn clearing stays perfectly flat so the player starts on safe ground.
+            if (_cfg.flatWorld)
+            {
+                int gHeight = 0;
+                if (_cfg.flatWorldMaxHeight > 0)
+                {
+                    int gClearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
+                    if (gClearing > _cfg.spawnClearingRadius)
+                    {
+                        // Distance past the clearing edge, used to ramp hills up smoothly
+                        // over a few cells instead of a wall right at the clearing border.
+                        float edgeFade = Mathf.Clamp01((gClearing - _cfg.spawnClearingRadius) / 4f);
+                        float hn = Perlin(wx, wy, _cfg.flatWorldHeightFrequency, 5, 6);
+                        int ceiling = Mathf.Min(_cfg.flatWorldMaxHeight, 7); // sort-order ceiling
+                        gHeight = Mathf.Clamp(
+                            Mathf.RoundToInt(hn * ceiling * edgeFade), 0, ceiling);
+                    }
+                }
+
+                var meadow = (_meadowIndex >= 0 && _meadowIndex < _biomes.Count)
+                    ? _biomes[_meadowIndex] : null;
+
+                // Surface block: scatter the meadow grass variants for variety, or use
+                // the single configured block when variants are disabled.
+                string surfaceId = string.IsNullOrEmpty(_cfg.flatSurfaceBlockId)
+                    ? "grass_1" : _cfg.flatSurfaceBlockId;
+                if (_cfg.flatWorldUseVariants && meadow != null && meadow.surfaceGroup != null)
+                {
+                    var b = meadow.surfaceGroup.GetVariant(
+                        Mathf.RoundToInt(Hash01(wx, wy, 7) * 1024));
+                    if (b != null) surfaceId = b.id;
+                }
+
+                cell.Height = (byte)gHeight;
+                cell.BiomeIndex = (byte)_meadowIndex;
+                cell.SurfaceBlockId = surfaceId;
+                cell.Water = false;
+
+                // Place decorations in proper procedural GROUPS (forest groves, rock
+                // outcrops, light bush ground-cover) outside the flat spawn clearing — not
+                // uniform random scatter. Reuses the meadow biome's node table for stats.
+                if (_cfg.flatWorldDecorations && meadow != null && meadow.nodes != null)
+                {
+                    int dClearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
+                    if (dClearing > _cfg.spawnClearingRadius)
+                    {
+                        var picked = PickClusteredDecoration(wx, wy, meadow,
+                            Mathf.Clamp01(_cfg.flatWorldDecorationDensity));
+                        if (picked.node != null)
+                        {
+                            cell.NodeId = picked.node.id;
+                            cell.NodeBlocks = picked.node.blocksMovement;
+                        }
+                    }
+                }
+
+                return cell;
+            }
+
             int clearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
             bool inClearing = clearing <= _cfg.spawnClearingRadius;
 
@@ -101,6 +162,87 @@ namespace IsoCore.Foundation
             }
 
             return cell;
+        }
+
+        /// <summary>
+        /// Chooses a decoration for a cell using noise-driven GROUPING rather than uniform
+        /// random scatter:
+        ///   • Trees cluster into forest groves (low-frequency noise) — dense in the middle,
+        ///     thinning toward the grove edges.
+        ///   • Bushes are a light, even ground-cover scatter on the open ground between groves.
+        ///   • Rocks appear only inside rare coarse-noise clumps (outcrops), never blanketing.
+        /// Returns the chosen node (or default with node == null for an empty cell). Only
+        /// considers nodes that have art in Resources/Decorations so placeholders never spawn.
+        /// </summary>
+        BiomeNodeSpawn PickClusteredDecoration(int wx, int wy, BiomeDefinition biome, float density)
+        {
+            // 1. Trees — forest groves via low-frequency noise. Inside a grove a cell may be
+            //    a regular tree or (for variety) a pine; near grove edges an occasional stump
+            //    suggests old logging.
+            var tree = FindArtNode(biome, "tree");
+            var pine = FindArtNode(biome, "pine");
+            if (tree.node != null || pine.node != null)
+            {
+                float forest = Perlin(wx, wy, _cfg.decoForestFrequency, 21, 22);
+                if (forest > _cfg.decoForestThreshold)
+                {
+                    float depth = Mathf.InverseLerp(_cfg.decoForestThreshold, 1f, forest);
+                    float chance = _cfg.decoTreeDensityInForest * (0.35f + 0.65f * depth) * density;
+                    if (Hash01(wx, wy, 71) < chance)
+                    {
+                        // Pine appears as a minority species; otherwise a normal tree.
+                        bool wantPine = pine.node != null && Hash01(wx, wy, 72) < 0.35f;
+                        if (wantPine) return pine;
+                        if (tree.node != null) return tree;
+                        return pine; // only pine available in this biome
+                    }
+                    // Rare stump on grove ground (thinned-out look).
+                    var stumpN = FindArtNode(biome, "stump");
+                    if (stumpN.node != null && Hash01(wx, wy, 73) < 0.02f * density) return stumpN;
+                    var logN = FindArtNode(biome, "log");
+                    if (logN.node != null && Hash01(wx, wy, 74) < 0.015f * density) return logN;
+                }
+            }
+
+            // 2. Bushes — light, even scatter on open ground.
+            var bush = FindArtNode(biome, "bush");
+            if (bush.node != null && Hash01(wx, wy, 81) < _cfg.decoBushChance * density)
+                return bush;
+
+            // 2b. Flowers — gentle ground-cover patches via mid-frequency noise so they form
+            //     little meadOws rather than uniform speckle.
+            var flower = FindArtNode(biome, "flower");
+            if (flower.node != null)
+            {
+                float patch = Perlin(wx, wy, _cfg.decoForestFrequency * 2.3f, 41, 42);
+                if (patch > 0.5f && Hash01(wx, wy, 82) < 0.10f * density) return flower;
+            }
+
+            // 3. Rocks — rare clumps where a separate coarse noise peaks.
+            var rock = FindArtNode(biome, "rock");
+            if (rock.node != null)
+            {
+                float rockNoise = Perlin(wx, wy, _cfg.decoForestFrequency * 1.7f, 31, 32);
+                if (rockNoise > _cfg.decoRockClusterThreshold &&
+                    Hash01(wx, wy, 91) < _cfg.decoRockChanceInCluster * density)
+                    return rock;
+            }
+
+            return default;
+        }
+
+        /// <summary>Finds a biome node by id, but only if it has art in Resources/Decorations
+        /// (otherwise it would render as an ugly placeholder box). Result is cached by the resolver.</summary>
+        BiomeNodeSpawn FindArtNode(BiomeDefinition biome, string id)
+        {
+            if (biome.nodes == null) return default;
+            foreach (var ns in biome.nodes)
+            {
+                if (ns.node == null || ns.node.id != id) continue;
+                if (DecorationSpriteResolver.Resolve(id) == null) return default;
+                return ns;
+            }
+            return default;
         }
 
         int SelectBiome(float t, float m)

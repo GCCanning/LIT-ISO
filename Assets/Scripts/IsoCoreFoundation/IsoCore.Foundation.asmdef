@@ -1,7 +1,9 @@
 {
     "name": "IsoCore.Foundation",
     "rootNamespace": "IsoCore.Foundation",
-    "references": [],
+    "references": [
+        "Unity.2D.PixelPerfect"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
