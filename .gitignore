@@ -36,3 +36,8 @@ Thumbs.db
 .dotnet/
 TempEvalDryRun/
 TempEvalDryRunFreshOnly/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
