@@ -22,6 +22,7 @@ namespace IsoCore.Foundation
         public FoundationConfig config = new();
         [Tooltip("Inventory slot count.")] public int inventorySlots = 36;
         [Tooltip("Hotbar slot count.")] public int hotbarSlots = 9;
+        [Tooltip("Slot count for placed storage containers such as chests.")] public int storageSlots = 18;
         [Tooltip("Create the temporary IMGUI FoundationHUD. Disable when an external uGUI HUD binds to this bootstrap.")]
         public bool createImguiHud = true;
         public float cameraSize = 6f;
@@ -33,6 +34,7 @@ namespace IsoCore.Foundation
         public IsoWorld World { get; private set; }
         public Inventory Inventory { get; private set; }
         public Hotbar Hotbar { get; private set; }
+        public StorageSystem Storage { get; private set; }
         public IsoFoundationPlayer Player { get; private set; }
         public IsoWorldController WorldController { get; private set; }
         public PlacementSystem Placement { get; private set; }
@@ -119,6 +121,7 @@ namespace IsoCore.Foundation
             // Inventory + hotbar + starter items.
             Inventory = new Inventory(inventorySlots, Content);
             Hotbar = new Hotbar(Inventory, hotbarSlots);
+            Storage = new StorageSystem(Content, storageSlots);
             if (config.starterItems != null)
                 foreach (var s in config.starterItems) Inventory.Add(s.itemId, s.count);
 
@@ -129,7 +132,7 @@ namespace IsoCore.Foundation
 
             // Camera (before placement init — it needs the camera).
             SetupCamera();
-            Placement.Init(World, Content, Inventory, Hotbar, _cam, Player);
+            Placement.Init(World, Content, Inventory, Hotbar, _cam, Player, Storage);
 
             // Crafting (station proximity via placement).
             Crafting = new CraftingSystem(Content, Inventory);
@@ -181,7 +184,7 @@ namespace IsoCore.Foundation
 
             // Input router.
             var interaction = gameObject.AddComponent<PlayerInteraction>();
-            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud);
+            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud, Storage);
 
             // LitRPG progression hooks. Gameplay systems emit success events; this component
             // converts them into activity XP and starter quest progress.
@@ -310,6 +313,7 @@ namespace IsoCore.Foundation
                 progression = Progression != null ? Progression.CaptureState() : null,
                 modifiedCells = World != null ? World.SnapshotModifiedCells() : Array.Empty<FoundationSavedCell>(),
                 placedObjects = Placement != null ? Placement.SnapshotPlaceables() : Array.Empty<FoundationSavedPlaceable>(),
+                storageContainers = Storage != null ? Storage.CaptureState() : Array.Empty<FoundationSavedStorageContainer>(),
                 crops = Farming != null ? Farming.SnapshotCrops() : Array.Empty<FoundationSavedCrop>(),
                 dayNightTime = DayNight != null ? DayNight.time : 0.30f,
                 mobs = MobSpawner != null ? MobSpawner.SnapshotMobs() : Array.Empty<FoundationSavedMob>(),
@@ -333,6 +337,7 @@ namespace IsoCore.Foundation
 
             World?.RestoreModifiedCells(data.modifiedCells);
             Placement?.RestorePlaceables(data.placedObjects);
+            Storage?.RestoreState(data.storageContainers);
             Farming?.RestoreCrops(data.crops);
             DayNight?.SetTime(data.dayNightTime);
             MobSpawner?.RestoreMobs(data.mobs);

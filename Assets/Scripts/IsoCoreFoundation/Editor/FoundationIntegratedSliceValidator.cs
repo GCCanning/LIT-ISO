@@ -266,6 +266,20 @@ namespace IsoCore.Foundation.EditorTools
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 if (File.Exists(path)) File.Delete(path);
 
+                int mismatchedSeed = expectedSeed == int.MaxValue ? expectedSeed - 1 : expectedSeed + 1;
+                string defaultPath = boot.DefaultSavePath;
+                string expectedDefaultPath = FoundationBootstrap.DefaultSavePathForWorld(boot.ActiveWorldName, expectedSeed);
+                string seedlessDefaultPath = FoundationBootstrap.DefaultSavePathForWorld(boot.ActiveWorldName);
+                string otherSeedPath = FoundationBootstrap.DefaultSavePathForWorld(boot.ActiveWorldName, mismatchedSeed);
+                string defaultFolder = Path.GetFileName(Path.GetDirectoryName(defaultPath));
+                add("FoundationBootstrap.DefaultSavePath includes active seed",
+                    string.Equals(defaultPath, expectedDefaultPath, StringComparison.Ordinal) &&
+                    !string.Equals(defaultPath, seedlessDefaultPath, StringComparison.Ordinal) &&
+                    !string.Equals(defaultPath, otherSeedPath, StringComparison.Ordinal) &&
+                    defaultFolder != null &&
+                    defaultFolder.EndsWith($"_{expectedSeed}", StringComparison.Ordinal),
+                    defaultFolder ?? defaultPath);
+
                 boot.Inventory.Add("copper_bar", 3);
                 boot.Hotbar.Select(2);
                 boot.DayNight.SetTime(0.66f);
@@ -284,12 +298,42 @@ namespace IsoCore.Foundation.EditorTools
                         new FoundationSavedCrop { cropId = "carrot_crop", x = cropCell.x, y = cropCell.y, stage = 1, stageTimer = 2.5f }
                     });
                 if (chestCell != InvalidCell)
+                {
                     boot.Placement.RestorePlaceables(new[]
                     {
                         new FoundationSavedPlaceable { placeableId = "chest", x = chestCell.x, y = chestCell.y }
                     });
+                    if (boot.Storage != null && boot.Storage.TryGetContainer(chestCell.x, chestCell.y, out var chest))
+                        chest.Add("carrot", 4);
+                }
 
                 bool saved = boot.Save(path);
+
+                FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, mismatchedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
+                var mismatchGo = new GameObject("FoundationBootstrap_SaveLoadSeedMismatchValidation");
+                var mismatch = mismatchGo.AddComponent<FoundationBootstrap>();
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(mismatch, null);
+
+                int mismatchCopperBefore = mismatch.Inventory != null ? mismatch.Inventory.Count("copper_bar") : -1;
+                bool mismatchLoaded = mismatch.Load(path);
+                int mismatchCopperAfter = mismatch.Inventory != null ? mismatch.Inventory.Count("copper_bar") : -1;
+                int mismatchQuestProgress = mismatch.Progression != null
+                    ? mismatch.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood")
+                    : -1;
+                add("FoundationBootstrap.Load refuses mismatched save seed",
+                    saved &&
+                    !mismatchLoaded &&
+                    mismatch.config != null &&
+                    mismatch.config.seed == mismatchedSeed &&
+                    mismatch.Inventory != null &&
+                    mismatch.Progression != null &&
+                    mismatchCopperAfter == mismatchCopperBefore &&
+                    mismatchQuestProgress == 0,
+                    $"save seed {expectedSeed}, active seed {(mismatch.config != null ? mismatch.config.seed.ToString() : "missing config")}, loaded {mismatchLoaded}");
+                UnityEngine.Object.DestroyImmediate(mismatchGo);
 
                 FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, expectedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
@@ -321,6 +365,15 @@ namespace IsoCore.Foundation.EditorTools
                     loaded.World.GetCell(chestCell.x, chestCell.y).OccupantId == "chest" &&
                     loaded.World.IsBlocked(chestCell.x, chestCell.y),
                     chestCell.ToString());
+                bool loadedChest = chestCell != InvalidCell &&
+                    loaded.Storage != null &&
+                    loaded.Storage.TryGetContainer(chestCell.x, chestCell.y, out var loadedStorage) &&
+                    loadedStorage.Count("carrot") == 4;
+                add("Save/load preserves storage container contents",
+                    loadedChest,
+                    chestCell != InvalidCell && loaded.Storage != null && loaded.Storage.TryGetContainer(chestCell.x, chestCell.y, out var detailStorage)
+                        ? $"carrot {detailStorage.Count("carrot")}"
+                        : "missing storage");
                 add("Save/load preserves crops",
                     tilled && loadedCrops.Length == 1 && loadedCrops[0].cropId == "carrot_crop" && loadedCrops[0].stage == 1,
                     loadedCrops.Length > 0 ? $"{loadedCrops[0].cropId} stage {loadedCrops[0].stage}" : "no crops");
@@ -470,6 +523,12 @@ namespace IsoCore.Foundation.EditorTools
         {
             var progression = new FoundationProgression(content);
             int beforeXp = progression.Stats.Experience;
+            int rewardEvents = 0;
+            progression.RewardUnlocked += reward =>
+            {
+                if (reward.type == FoundationRewardType.Recipe && reward.id == "craft_campfire")
+                    rewardEvents++;
+            };
             bool wood = progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 5);
             bool bench = progression.AdvanceQuestObjective("first_flame_first_field", "craft_workbench");
             bool soil = progression.AdvanceQuestObjective("first_flame_first_field", "till_soil");
@@ -478,6 +537,25 @@ namespace IsoCore.Foundation.EditorTools
                 progression.IsQuestCompleted("first_flame_first_field") &&
                 progression.Stats.Experience > beforeXp,
                 $"xp {beforeXp}->{progression.Stats.Experience}");
+            add("Quest completion emits reward unlock event",
+                rewardEvents == 1 &&
+                progression.HasUnlockedReward(FoundationRewardType.Recipe, "craft_campfire"),
+                $"events {rewardEvents}");
+
+            var read = progression.CaptureReadState();
+            var firstQuestRead = progression.CaptureQuestReadState("first_flame_first_field");
+            add("Progression read state exposes Calling, skills, quests, and rewards",
+                read.calling.hasCalling &&
+                read.skills != null && read.skills.Length >= content.Skills.Count &&
+                read.quests != null && read.quests.Length >= 1 &&
+                read.unlockedRewards != null && read.unlockedRewards.Length >= 1,
+                $"skills {read.skills?.Length ?? 0}, quests {read.quests?.Length ?? 0}, rewards {read.unlockedRewards?.Length ?? 0}");
+            add("Quest read state exposes objective progress",
+                firstQuestRead.completed &&
+                firstQuestRead.objectives != null &&
+                firstQuestRead.objectives.Length == content.Quests.Get("first_flame_first_field").objectives.Length &&
+                firstQuestRead.progress01 >= 0.99f,
+                firstQuestRead.progress01.ToString("0.00"));
 
             var inv = new Inventory(12, content);
             inv.Add("wood", 5);

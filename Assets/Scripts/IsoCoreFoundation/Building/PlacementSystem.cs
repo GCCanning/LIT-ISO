@@ -15,6 +15,7 @@ namespace IsoCore.Foundation
         FoundationContent _content;
         Inventory _inv;
         Hotbar _hotbar;
+        StorageSystem _storage;
         Camera _cam;
         IsoFoundationPlayer _player;
         Transform _placeParent;
@@ -26,9 +27,10 @@ namespace IsoCore.Foundation
         readonly List<PlaceableInstance> _placeables = new();
 
         public void Init(IsoWorld world, FoundationContent content, Inventory inv, Hotbar hotbar,
-            Camera cam, IsoFoundationPlayer player)
+            Camera cam, IsoFoundationPlayer player, StorageSystem storage = null)
         {
             _world = world; _content = content; _inv = inv; _hotbar = hotbar; _cam = cam; _player = player;
+            _storage = storage;
 
             _placeParent = new GameObject("Placeables").transform;
             _placeParent.SetParent(transform, false);
@@ -141,14 +143,24 @@ namespace IsoCore.Foundation
             return false;
         }
 
-        public bool TryRemoveAtCursor()
+        public bool TryRemoveAtCursor() => TryRemoveAtCursor(out _);
+
+        public bool TryRemoveAtCursor(out string blockedMessage)
         {
+            blockedMessage = null;
             var c = CursorCell();
             var cell = _world.GetCell(c.x, c.y);
 
             if (cell.HasOccupant)
             {
                 var pdef = _content.Placeables.Get(cell.OccupantId);
+                if (pdef != null && pdef.interaction == InteractionKind.Container &&
+                    _storage != null && !_storage.RemoveContainer(c.x, c.y))
+                {
+                    blockedMessage = $"{pdef.Display} is not empty";
+                    return false;
+                }
+
                 var inst = _placeables.Find(p => p && p.Wx == c.x && p.Wy == c.y);
                 _world.ClearOccupant(c.x, c.y);
                 if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
@@ -186,6 +198,7 @@ namespace IsoCore.Foundation
             var inst = go.AddComponent<PlaceableInstance>();
             inst.Init(def, _world, wx, wy);
             _placeables.Add(inst);
+            _storage?.EnsureContainer(def, wx, wy);
         }
 
         public FoundationSavedPlaceable[] SnapshotPlaceables()
@@ -232,6 +245,7 @@ namespace IsoCore.Foundation
             foreach (var p in _placeables)
             {
                 if (!p) continue;
+                _storage?.RemoveContainer(p.Wx, p.Wy, false);
                 if (Application.isPlaying) Destroy(p.gameObject);
                 else DestroyImmediate(p.gameObject);
             }
