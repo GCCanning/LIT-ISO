@@ -1,0 +1,228 @@
+﻿{
+    "pack_name":  "Codex Biome Starter Tiles",
+    "created_utc":  "2026-06-05T21:08:57.5445322Z",
+    "source_style_anchors":  [
+                                 "Assets/Resources/Tiles/grass_1.png",
+                                 "Assets/Resources/Tiles/grass_2.png",
+                                 "Assets/Resources/Tiles/grass_3.png",
+                                 "Assets/Resources/Tiles/dirt.png",
+                                 "Assets/Resources/Tiles/soil.png",
+                                 "Assets/Resources/Tiles/stone_path.png",
+                                 "Assets/Resources/Tiles/water.png"
+                             ],
+    "unity_import_recommendation":  {
+                                        "sprite_mode":  "Single",
+                                        "pixels_per_unit":  32,
+                                        "filter_mode":  "Point",
+                                        "compression":  "None",
+                                        "mipmaps":  false,
+                                        "pivot":  "center or existing project tile pivot"
+                                    },
+    "notes_for_claude":  [
+                             "Review-only import-visible pack. Copy approved PNGs into Assets/Resources/Tiles or wire them into the canonical tile registry.",
+                             "Do not mix decoration props into terrain tiles. Trees, bushes, rocks, logs, grass clumps, and stumps should remain separate anchored prop sprites.",
+                             "These are 32x32 transparent PNG terrain-top tiles matching the current Resources/Tiles scale and outline language."
+                         ],
+    "files":  [
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_grass_base",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_base.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_1.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "forest_grass"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_grass_tufts",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_tufts.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_2.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "forest_grass"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_moss_grass",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_moss_grass.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_1.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "forest_moss"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_dark_underbrush",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_dark_underbrush.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_3.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "forest_dark"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_leaf_litter",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_leaf_litter.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\dirt.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "forest_leaf"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_rich_dirt",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_rich_dirt.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\dirt.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "rich_dirt"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_mud_path",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_mud_path.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\soil.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "mud"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_stone_path",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_stone_path.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\stone_path.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "pale_stone"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_water_edge",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_water_edge.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\water.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "water_forest"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_grass_to_dirt_diag",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_to_dirt_diag.png",
+                      "source":  "blend",
+                      "role":  "terrain_transition_32x32",
+                      "palette":  "forest_grass+rich_dirt"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_grass_to_mud_south",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_to_mud_south.png",
+                      "source":  "blend",
+                      "role":  "terrain_transition_32x32",
+                      "palette":  "forest_grass+mud"
+                  },
+                  {
+                      "biome":  "Forest",
+                      "name":  "forest_grass_to_leaf_cross",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_to_leaf_cross.png",
+                      "source":  "blend",
+                      "role":  "terrain_transition_32x32",
+                      "palette":  "forest_grass+forest_leaf"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_grass_base",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_base.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_1.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "plains_grass"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_grass_tufts",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_tufts.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_2.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "plains_grass"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_dry_grass",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_dry_grass.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_1.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "plains_dry"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_flower_grass",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_flower_grass.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\grass_3.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "plains_flower"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_bare_dirt",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_bare_dirt.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\dirt.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "plains_path"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_packed_path",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_packed_path.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\soil.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "plains_path"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_pale_stone_path",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_pale_stone_path.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\stone_path.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "pale_stone"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_water_edge",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_water_edge.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\water.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "water_forest"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_grass_to_path_diag",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_to_path_diag.png",
+                      "source":  "blend",
+                      "role":  "terrain_transition_32x32",
+                      "palette":  "plains_grass+plains_path"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_grass_to_dirt_south",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_to_dirt_south.png",
+                      "source":  "blend",
+                      "role":  "terrain_transition_32x32",
+                      "palette":  "plains_grass+plains_path"
+                  },
+                  {
+                      "biome":  "Plains",
+                      "name":  "plains_grass_to_dry_cross",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_to_dry_cross.png",
+                      "source":  "blend",
+                      "role":  "terrain_transition_32x32",
+                      "palette":  "plains_grass+plains_dry"
+                  },
+                  {
+                      "biome":  "Shared",
+                      "name":  "shared_soil_dark",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Shared\\shared_soil_dark.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\soil.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "rich_dirt"
+                  },
+                  {
+                      "biome":  "Shared",
+                      "name":  "shared_mud_dark",
+                      "path":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Generated\\_Review\\CodexBiomeStarter\\Shared\\shared_mud_dark.png",
+                      "source":  "C:\\Projects\\Unity-Projects\\LIT-ISO\\Assets\\Resources\\Tiles\\soil.png",
+                      "role":  "terrain_top_32x32",
+                      "palette":  "mud"
+                  }
+              ]
+}

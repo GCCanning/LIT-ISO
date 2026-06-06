@@ -1,0 +1,700 @@
+﻿{
+    "pack_name":  "CodexBiomeStarter",
+    "generated_utc":  "2026-06-05T23:00:38.5448450Z",
+    "terrain_count":  25,
+    "decoration_count":  11,
+    "preview_count":  6,
+    "pass_count":  34,
+    "review_count":  2,
+    "quality_contract":  {
+                             "terrain":  "32x32 transparent PNG, PPU 32, Point filter, no mipmaps, terrain-only, no baked props",
+                             "decoration":  "128x128 transparent PNG, PPU 128, Point filter, no mipmaps, bottom-center anchored, separate from terrain",
+                             "handoff":  "Review in contact sheets, approve into Assets/Generated/Tiles and Assets/Generated/Props before Claude wires canonical project locations"
+                         },
+    "items":  [
+                  {
+                      "name":  "forest_dark_underbrush.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_dark_underbrush.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  593,
+                      "bbox":  [
+                                   0,
+                                   6,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_grass_base.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_base.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "review",
+                      "issues":  [
+                                     "ppu_not_32"
+                                 ]
+                  },
+                  {
+                      "name":  "forest_grass_to_dirt_diag.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_to_dirt_diag.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  637,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_grass_to_leaf_cross.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_to_leaf_cross.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_grass_to_mud_south.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_to_mud_south.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_grass_tufts.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_grass_tufts.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  668,
+                      "bbox":  [
+                                   0,
+                                   3,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_leaf_litter.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_leaf_litter.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_moss_grass.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_moss_grass.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_mud_path.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_mud_path.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_rich_dirt.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_rich_dirt.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_stone_path.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_stone_path.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  574,
+                      "bbox":  [
+                                   0,
+                                   7,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_water_edge.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Forest\\forest_water_edge.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  288,
+                      "bbox":  [
+                                   0,
+                                   16,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_bare_dirt.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_bare_dirt.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "review",
+                      "issues":  [
+                                     "ppu_not_32"
+                                 ]
+                  },
+                  {
+                      "name":  "plains_dry_grass.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_dry_grass.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_flower_grass.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_flower_grass.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  593,
+                      "bbox":  [
+                                   0,
+                                   6,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_grass_base.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_base.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_grass_to_dirt_south.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_to_dirt_south.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  637,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_grass_to_dry_cross.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_to_dry_cross.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_grass_to_path_diag.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_to_path_diag.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  636,
+                      "bbox":  [
+                                   0,
+                                   4,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_grass_tufts.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_grass_tufts.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  668,
+                      "bbox":  [
+                                   0,
+                                   3,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_packed_path.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_packed_path.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_pale_stone_path.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_pale_stone_path.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  574,
+                      "bbox":  [
+                                   0,
+                                   7,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_water_edge.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Plains\\plains_water_edge.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  288,
+                      "bbox":  [
+                                   0,
+                                   16,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "shared_mud_dark.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Shared\\shared_mud_dark.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "shared_soil_dark.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Shared\\shared_soil_dark.png",
+                      "category":  "terrain",
+                      "width":  32,
+                      "height":  32,
+                      "opaque_pixels":  544,
+                      "bbox":  [
+                                   0,
+                                   8,
+                                   31,
+                                   31
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_bush.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_bush.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9804,
+                      "bbox":  [
+                                   0,
+                                   16,
+                                   127,
+                                   110
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_deep_oak_tree.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_deep_oak_tree.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9222,
+                      "bbox":  [
+                                   8,
+                                   0,
+                                   119,
+                                   127
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_moss_bush.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_moss_bush.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9804,
+                      "bbox":  [
+                                   0,
+                                   16,
+                                   127,
+                                   110
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_oak_tree.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_oak_tree.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9222,
+                      "bbox":  [
+                                   8,
+                                   0,
+                                   119,
+                                   127
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "forest_rock.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Forest\\forest_rock.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  11204,
+                      "bbox":  [
+                                   0,
+                                   9,
+                                   127,
+                                   118
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_bush.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_bush.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9804,
+                      "bbox":  [
+                                   0,
+                                   16,
+                                   127,
+                                   110
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_dry_bush.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_dry_bush.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9804,
+                      "bbox":  [
+                                   0,
+                                   16,
+                                   127,
+                                   110
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_rock.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_rock.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  11204,
+                      "bbox":  [
+                                   0,
+                                   9,
+                                   127,
+                                   118
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_small_tree.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_small_tree.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9222,
+                      "bbox":  [
+                                   8,
+                                   0,
+                                   119,
+                                   127
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "plains_tree.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Plains\\plains_tree.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  9222,
+                      "bbox":  [
+                                   8,
+                                   0,
+                                   119,
+                                   127
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "shared_gray_rock.png",
+                      "path":  "Assets\\Generated\\_Review\\CodexBiomeStarter\\Decorations\\Shared\\shared_gray_rock.png",
+                      "category":  "decoration",
+                      "width":  128,
+                      "height":  128,
+                      "opaque_pixels":  11204,
+                      "bbox":  [
+                                   0,
+                                   9,
+                                   127,
+                                   118
+                               ],
+                      "has_meta":  true,
+                      "status":  "pass",
+                      "issues":  [
+
+                                 ]
+                  }
+              ]
+}
