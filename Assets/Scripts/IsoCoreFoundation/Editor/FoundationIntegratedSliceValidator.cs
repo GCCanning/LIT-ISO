@@ -261,10 +261,12 @@ namespace IsoCore.Foundation.EditorTools
             }
 
             string path = Path.GetFullPath(Path.Combine("Temp", "FoundationSaveLoadValidation.json"));
+            string sparsePath = Path.GetFullPath(Path.Combine("Temp", "FoundationSparseSaveValidation.json"));
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 if (File.Exists(path)) File.Delete(path);
+                if (File.Exists(sparsePath)) File.Delete(sparsePath);
 
                 int mismatchedSeed = expectedSeed == int.MaxValue ? expectedSeed - 1 : expectedSeed + 1;
                 string defaultPath = boot.DefaultSavePath;
@@ -397,6 +399,28 @@ namespace IsoCore.Foundation.EditorTools
                     loaded.Player.CurrentCell == new Vector2Int(2, -3),
                     loaded.Player.CurrentCell.ToString());
 
+                FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, expectedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
+                var sparseGo = new GameObject("FoundationBootstrap_SparseSaveValidation");
+                var sparse = sparseGo.AddComponent<FoundationBootstrap>();
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(sparse, null);
+
+                bool sparseSaved = sparse.Save(sparsePath);
+                bool sparseLoaded = loaded.Load(sparsePath);
+                bool staleBlockCleared = blockCell != InvalidCell &&
+                    !loaded.World.GetCell(blockCell.x, blockCell.y).SolidBlock &&
+                    loaded.World.IsWalkable(blockCell.x, blockCell.y);
+                bool staleChestCleared = chestCell != InvalidCell &&
+                    !loaded.World.GetCell(chestCell.x, chestCell.y).HasOccupant &&
+                    (loaded.Storage == null || !loaded.Storage.TryGetContainer(chestCell.x, chestCell.y, out _));
+                bool staleCropCleared = loaded.Farming.SnapshotCrops().Length == 0;
+                add("FoundationBootstrap.Load clears stale same-session world state",
+                    sparseSaved && sparseLoaded && staleBlockCleared && staleChestCleared && staleCropCleared,
+                    $"block {staleBlockCleared}, chest {staleChestCleared}, crops {staleCropCleared}");
+                UnityEngine.Object.DestroyImmediate(sparseGo);
+
                 string futurePath = Path.GetFullPath(Path.Combine("Temp", "FoundationFutureSaveValidation.json"));
                 var futureData = new FoundationSaveData
                 {
@@ -424,6 +448,7 @@ namespace IsoCore.Foundation.EditorTools
             finally
             {
                 if (File.Exists(path)) File.Delete(path);
+                if (File.Exists(sparsePath)) File.Delete(sparsePath);
                 string futurePath = Path.GetFullPath(Path.Combine("Temp", "FoundationFutureSaveValidation.json"));
                 if (File.Exists(futurePath)) File.Delete(futurePath);
                 FoundationBootstrap.ClearLaunchOptions();

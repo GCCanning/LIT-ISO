@@ -217,6 +217,22 @@ namespace IsoCore.Foundation
             return result.ToArray();
         }
 
+        public bool HasContainerPlaceable(int wx, int wy, string placeableId)
+        {
+            var def = _content?.Placeables.Get(placeableId);
+            if (def == null || def.interaction != InteractionKind.Container)
+                return false;
+
+            foreach (var p in _placeables)
+            {
+                if (!p || p.Def == null) continue;
+                if (p.Wx == wx && p.Wy == wy && p.Def.id == def.id &&
+                    p.Def.interaction == InteractionKind.Container)
+                    return true;
+            }
+            return false;
+        }
+
         public void RestorePlaceables(FoundationSavedPlaceable[] placeables)
         {
             ClearPlaceables();

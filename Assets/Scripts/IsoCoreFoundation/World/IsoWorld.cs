@@ -224,6 +224,29 @@ namespace IsoCore.Foundation
             }
         }
 
+        public int ResetModifiedCells()
+        {
+            int reset = 0;
+            foreach (var chunk in _chunks.Values)
+            {
+                int baseX = chunk.Cx * _chunkSize;
+                int baseY = chunk.Cy * _chunkSize;
+                for (int ly = 0; ly < _chunkSize; ly++)
+                for (int lx = 0; lx < _chunkSize; lx++)
+                {
+                    int idx = chunk.Index(lx, ly);
+                    if (!chunk.Cells[idx].Modified) continue;
+
+                    int wx = baseX + lx;
+                    int wy = baseY + ly;
+                    chunk.Cells[idx] = _sampler.Sample(wx, wy);
+                    reset++;
+                    OnCellChanged?.Invoke(wx, wy);
+                }
+            }
+            return reset;
+        }
+
         static FoundationSavedCell ToSavedCell(int wx, int wy, IsoCell cell)
         {
             return new FoundationSavedCell

@@ -113,7 +113,8 @@ namespace IsoCore.Foundation
             return saved;
         }
 
-        public void RestoreState(FoundationSavedStorageContainer[] saved)
+        public void RestoreState(FoundationSavedStorageContainer[] saved,
+            Func<FoundationSavedStorageContainer, bool> canRestore = null)
         {
             if (saved == null)
                 return;
@@ -121,6 +122,9 @@ namespace IsoCore.Foundation
             Clear();
             foreach (var entry in saved)
             {
+                if (canRestore != null && !canRestore(entry))
+                    continue;
+
                 int slotCount = entry.slotCount > 0
                     ? entry.slotCount
                     : entry.slots != null && entry.slots.Length > 0

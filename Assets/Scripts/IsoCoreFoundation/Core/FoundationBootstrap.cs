@@ -335,9 +335,11 @@ namespace IsoCore.Foundation
             Inventory?.RestoreSlots(data.inventorySlots);
             if (Hotbar != null) Hotbar.Select(data.hotbarSelected);
 
+            World?.ResetModifiedCells();
             World?.RestoreModifiedCells(data.modifiedCells);
             Placement?.RestorePlaceables(data.placedObjects);
-            Storage?.RestoreState(data.storageContainers);
+            Storage?.RestoreState(data.storageContainers, entry =>
+                Placement != null && Placement.HasContainerPlaceable(entry.x, entry.y, entry.placeableId));
             Farming?.RestoreCrops(data.crops);
             DayNight?.SetTime(data.dayNightTime);
             MobSpawner?.RestoreMobs(data.mobs);
