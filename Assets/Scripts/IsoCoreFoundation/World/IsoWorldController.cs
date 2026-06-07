@@ -177,6 +177,12 @@ namespace IsoCore.Foundation
             return best;
         }
 
+        public ResourceNode NodeAtCell(int wx, int wy)
+        {
+            _nodes.TryGetValue(Key(wx, wy), out var node);
+            return node;
+        }
+
         void HandleCellChanged(int wx, int wy)
         {
             _renderer.RefreshCell(World, wx, wy);

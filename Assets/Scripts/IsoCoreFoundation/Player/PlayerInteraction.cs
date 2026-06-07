@@ -6,7 +6,7 @@ namespace IsoCore.Foundation
 {
     /// <summary>
     /// Routes player input to the gameplay systems:
-    /// 1-9 / scroll = hotbar, E = interact/harvest, LMB = place, RMB = remove,
+    /// 1-9 / scroll = hotbar, LMB = primary use/place/break, RMB = context options,
     /// I = inventory, C = crafting.
     /// </summary>
     public class PlayerInteraction : MonoBehaviour
@@ -21,16 +21,19 @@ namespace IsoCore.Foundation
         FarmingSystem _farming;
         FoundationHUD _hud;
         StorageSystem _storage;
+        Camera _cam;
+        FoundationInteractionOverlay _overlay;
 
         public event Action<ResourceNodeDefinition, IReadOnlyList<ItemStack>> ResourceHarvested;
 
         public void Init(IsoFoundationPlayer player, IsoWorldController controller, FoundationContent content,
             FoundationConfig cfg, Inventory inv, Hotbar hotbar, PlacementSystem placement,
-            FarmingSystem farming, FoundationHUD hud, StorageSystem storage = null)
+            FarmingSystem farming, FoundationHUD hud, StorageSystem storage = null,
+            Camera cam = null, FoundationInteractionOverlay overlay = null)
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
             _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming; _hud = hud;
-            _storage = storage;
+            _storage = storage; _cam = cam; _overlay = overlay;
 
             var hi = new GameObject("TargetHighlight");
             hi.transform.SetParent(transform, false);
@@ -48,16 +51,22 @@ namespace IsoCore.Foundation
 
             if (Input.GetKeyDown(KeyCode.I)) _hud?.ToggleInventory();
             if (Input.GetKeyDown(KeyCode.C)) _hud?.ToggleCrafting(StationType.Hand);
-            if (Input.GetKeyDown(KeyCode.E)) Interact();
-            if (Input.GetMouseButtonDown(0)) TryPlace();
-            if (Input.GetMouseButtonDown(1)) TryRemove();
+            if (Input.GetKeyDown(KeyCode.E)) HandleSecondaryClick();
+            if (Input.GetMouseButtonDown(0)) HandlePrimaryClick();
+            if (Input.GetMouseButtonDown(1)) HandleSecondaryClick();
         }
 
         void UpdateHighlight()
         {
             if (_highlight == null) return;
-            var node = _controller.NearestNode(_player.transform.position, _cfg.interactRange);
-            _highlight.SetTarget(node != null, node != null ? node.transform.position : Vector3.zero);
+            var c = CursorCell();
+            var node = _controller.NodeAtCell(c.x, c.y);
+            var placeable = _placement.PlaceableAtCell(c.x, c.y);
+            bool showNode = node != null && InRange(node.transform.position);
+            bool showPlaceable = !showNode && placeable != null && InRange(placeable.transform.position);
+            Vector3 pos = showNode ? node.transform.position :
+                showPlaceable ? placeable.transform.position : Vector3.zero;
+            _highlight.SetTarget(showNode || showPlaceable, pos);
         }
 
         void HandleHotbar()
@@ -79,68 +88,186 @@ namespace IsoCore.Foundation
             return (ToolType.None, 0);
         }
 
-        void Interact()
+        Vector2Int CursorCell()
         {
-            Vector3 pos = _player.transform.position;
-            float range = _cfg.interactRange;
+            var cam = _cam != null ? _cam : Camera.main;
+            if (cam == null || _controller?.World == null)
+                return _player.CurrentCell;
 
-            // Prefer a nearby crafting station.
-            var inter = _placement.NearestInteractable(pos, range);
-            if (inter != null && inter.Def.interaction == InteractionKind.CraftingStation)
-            {
-                _hud?.ToggleCrafting(inter.Def.stationType);
-                return;
-            }
-            if (inter != null && inter.Def.interaction == InteractionKind.Container)
-            {
-                if (_storage != null && _storage.TryOpenContainer(inter, out var container))
-                    _hud?.Flash($"{inter.Def.Display}: {container.UsedSlots}/{container.SlotCount} slots");
-                else
-                    _hud?.Flash($"Opened {inter.Def.Display}");
-                return;
-            }
-
-            // Harvest a mature crop if one is in range.
-            if (_farming.TryHarvestCrop(pos, range, out bool cropFull)) { _hud?.Flash("Harvested crop"); return; }
-            if (cropFull) { _hud?.Flash("Inventory full!"); return; }
-
-            // Otherwise harvest the nearest resource node.
-            var node = _controller.NearestNode(pos, range);
-            if (node != null)
-            {
-                var (tool, tier) = SelectedToolInfo();
-                if (node.RequiresMissingTool(tool))
-                {
-                    _hud?.Flash($"Needs a {node.Def.requiredTool}");
-                    return;
-                }
-                var granted = new List<ItemStack>();
-                bool depleted = node.Harvest(_inv, tool, tier, out bool full, granted);
-                if (full)
-                {
-                    _hud?.Flash("Inventory full!");
-                    return;
-                }
-                if (depleted) ResourceHarvested?.Invoke(node.Def, granted);
-                if (_hud == null) return;
-                _hud.Flash(depleted ? $"Harvested {node.Def.Display}" : $"Hitting {node.Def.Display}...");
-            }
-            else _hud?.Flash("Nothing to interact with");
+            var wp = cam.ScreenToWorldPoint(Input.mousePosition);
+            wp.z = 0f;
+            var c = IsoGrid.WorldToCell(wp);
+            int h = _controller.World.GetHeight(c.x, c.y);
+            if (h != 0)
+                c = IsoGrid.WorldToCell(new Vector3(wp.x, wp.y - h * IsoGrid.HeightStep, 0f));
+            return c;
         }
 
-        void TryPlace()
+        bool PointerOverUI() =>
+            (_hud != null && _hud.PointerOverUI) ||
+            (_overlay != null && _overlay.PointerOverUI);
+
+        bool InRange(Vector3 target) =>
+            ((Vector2)(target - _player.transform.position)).sqrMagnitude <=
+            _cfg.interactRange * _cfg.interactRange;
+
+        bool SelectedIsPlacementAction()
         {
-            if (_hud != null && _hud.PointerOverUI) return;
-            string farmMsg = _farming.TryUseSelected(); // hoe tills / seed plants
-            if (farmMsg != null) { _hud?.Flash(farmMsg); return; }
-            if (_placement.TryPlaceSelected()) { _hud?.Flash("Placed"); SfxManager.Play("place", 0.8f); }
+            var stack = _hotbar.SelectedStack;
+            if (stack.IsEmpty) return false;
+            var def = _content.Items.Get(stack.itemId);
+            return def != null &&
+                (def.IsPlaceable || def.IsSeed ||
+                 (def.category == ItemCategory.Tool && def.toolType == ToolType.Hoe));
         }
 
-        void TryRemove()
+        void HandlePrimaryClick()
         {
-            if (_hud != null && _hud.PointerOverUI) return;
-            if (_placement.TryRemoveAtCursor(out string blockedMessage)) _hud?.Flash("Removed");
-            else if (!string.IsNullOrEmpty(blockedMessage)) _hud?.Flash(blockedMessage);
+            if (PointerOverUI()) return;
+            _overlay?.CloseContextMenu();
+
+            if (SelectedIsPlacementAction())
+            {
+                string farmMsg = _farming.TryUseSelected();
+                if (farmMsg != null) { Flash(farmMsg); return; }
+                if (_placement.TryPlaceSelected()) { Flash("Placed"); SfxManager.Play("place", 0.8f); return; }
+            }
+
+            var c = CursorCell();
+            if (_farming.TryHarvestCropAtCell(c.x, c.y, out bool cropFull))
+            {
+                Flash("Harvested crop");
+                return;
+            }
+            if (cropFull) { Flash("Inventory full!"); return; }
+
+            var node = _controller.NodeAtCell(c.x, c.y);
+            if (node != null && InRange(node.transform.position))
+            {
+                HarvestNode(node);
+                return;
+            }
+
+            if (!SelectedIsPlacementAction())
+            {
+                string farmMsg = _farming.TryUseSelected();
+                if (farmMsg != null) { Flash(farmMsg); return; }
+                if (_placement.TryPlaceSelected()) { Flash("Placed"); SfxManager.Play("place", 0.8f); return; }
+            }
+
+            Flash("Nothing to use");
+        }
+
+        void HandleSecondaryClick()
+        {
+            if (PointerOverUI()) return;
+
+            var c = CursorCell();
+            var placeable = _placement.PlaceableAtCell(c.x, c.y);
+            if (placeable != null && InRange(placeable.transform.position))
+            {
+                OpenPlaceableContext(placeable);
+                return;
+            }
+
+            var node = _controller.NodeAtCell(c.x, c.y);
+            if (node != null && InRange(node.transform.position))
+            {
+                _overlay?.OpenContextMenu(node.Def.Display, Input.mousePosition,
+                    new[]
+                    {
+                        new FoundationContextAction("break", $"Break {node.Def.Display}", () => HarvestNode(node))
+                    });
+                return;
+            }
+
+            if (_controller.World.GetCell(c.x, c.y).SolidBlock)
+            {
+                _overlay?.OpenContextMenu("Block", Input.mousePosition,
+                    new[]
+                    {
+                        new FoundationContextAction("remove", "Remove block", () => RemoveAt(c.x, c.y))
+                    });
+                return;
+            }
+
+            Flash("No options here");
+        }
+
+        void HarvestNode(ResourceNode node)
+        {
+            if (node == null) return;
+            var (tool, tier) = SelectedToolInfo();
+            if (node.RequiresMissingTool(tool))
+            {
+                Flash($"Needs a {node.Def.requiredTool}");
+                return;
+            }
+
+            var granted = new List<ItemStack>();
+            bool depleted = node.Harvest(_inv, tool, tier, out bool full, granted);
+            if (full)
+            {
+                Flash("Inventory full!");
+                return;
+            }
+
+            if (depleted) ResourceHarvested?.Invoke(node.Def, granted);
+            Flash(depleted ? $"Harvested {node.Def.Display}" : $"Breaking {node.Def.Display}...");
+        }
+
+        void OpenPlaceableContext(PlaceableInstance placeable)
+        {
+            var actions = new List<FoundationContextAction>();
+            var def = placeable.Def;
+
+            if (def.interaction == InteractionKind.CraftingStation)
+                actions.Add(new FoundationContextAction("use", $"Use {def.Display}",
+                    () => _hud?.ToggleCrafting(def.stationType)));
+            else if (def.interaction == InteractionKind.Container)
+                actions.Add(new FoundationContextAction("open", $"Open {def.Display}",
+                    () => OpenContainer(placeable)));
+            else if (def.interaction == InteractionKind.Entrance)
+            {
+                bool hasDestination = !string.IsNullOrWhiteSpace(def.destinationId);
+                string label = string.IsNullOrWhiteSpace(def.entranceLabel) ? "Enter" : def.entranceLabel;
+                string destination = string.IsNullOrWhiteSpace(def.destinationDisplayName)
+                    ? def.Display
+                    : def.destinationDisplayName;
+                actions.Add(new FoundationContextAction("enter", $"{label} {destination}",
+                    () => Flash($"Entering {destination}..."), hasDestination, "not connected yet"));
+            }
+            else
+            {
+                actions.Add(new FoundationContextAction("inspect", $"Inspect {def.Display}",
+                    () => Flash(def.Display)));
+            }
+
+            actions.Add(new FoundationContextAction("remove", $"Remove {def.Display}",
+                () => RemoveAt(placeable.Wx, placeable.Wy)));
+
+            _overlay?.OpenContextMenu(def.Display, Input.mousePosition, actions.ToArray());
+        }
+
+        void OpenContainer(PlaceableInstance placeable)
+        {
+            if (_storage != null && _storage.TryOpenContainer(placeable, out var container))
+                Flash($"{placeable.Def.Display}: {container.UsedSlots}/{container.SlotCount} slots");
+            else
+                Flash($"Opened {placeable.Def.Display}");
+        }
+
+        void RemoveAt(int wx, int wy)
+        {
+            if (_placement.TryRemoveAtCell(wx, wy, out string blockedMessage)) Flash("Removed");
+            else if (!string.IsNullOrEmpty(blockedMessage)) Flash(blockedMessage);
+            else Flash("Nothing to remove");
+        }
+
+        void Flash(string message)
+        {
+            if (_overlay != null) _overlay.Flash(message);
+            else _hud?.Flash(message);
         }
     }
 }

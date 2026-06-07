@@ -21,6 +21,9 @@ namespace IsoCore.Foundation
         [Header("Interaction")]
         public InteractionKind interaction = InteractionKind.Decoration;
         public StationType stationType = StationType.None;
+        public string entranceLabel = "Enter";
+        public string destinationId;
+        public string destinationDisplayName;
 
         [Header("Light (campfire / lantern)")]
         [Tooltip("When true, spawns a warm additive glow that fades in at night and flickers.")]

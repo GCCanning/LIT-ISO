@@ -147,41 +147,8 @@ namespace IsoCore.Foundation
 
         public bool TryRemoveAtCursor(out string blockedMessage)
         {
-            blockedMessage = null;
             var c = CursorCell();
-            var cell = _world.GetCell(c.x, c.y);
-
-            if (cell.HasOccupant)
-            {
-                var pdef = _content.Placeables.Get(cell.OccupantId);
-                if (pdef != null && pdef.interaction == InteractionKind.Container &&
-                    _storage != null && !_storage.RemoveContainer(c.x, c.y))
-                {
-                    blockedMessage = $"{pdef.Display} is not empty";
-                    return false;
-                }
-
-                var inst = _placeables.Find(p => p && p.Wx == c.x && p.Wy == c.y);
-                _world.ClearOccupant(c.x, c.y);
-                if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
-                if (pdef != null && !string.IsNullOrEmpty(pdef.requiredItemId))
-                    _inv.Add(pdef.requiredItemId, 1); // refund
-                Removed?.Invoke(pdef != null ? pdef.id : cell.OccupantId, c.x, c.y);
-                return true;
-            }
-
-            if (cell.SolidBlock)
-            {
-                string blockId = cell.SurfaceBlockId;
-                if (_world.RemoveSolidBlock(c.x, c.y))
-                {
-                    string item = FindBlockItem(blockId);
-                    if (item != null) _inv.Add(item, 1); // refund the placing item
-                    Removed?.Invoke(blockId, c.x, c.y);
-                    return true;
-                }
-            }
-            return false;
+            return TryRemoveAtCell(c.x, c.y, out blockedMessage);
         }
 
         string FindBlockItem(string blockId)
@@ -279,6 +246,53 @@ namespace IsoCore.Foundation
                 if (d <= bd) { bd = d; best = p; }
             }
             return best;
+        }
+
+        public PlaceableInstance PlaceableAtCell(int wx, int wy)
+        {
+            foreach (var p in _placeables)
+                if (p && p.Wx == wx && p.Wy == wy)
+                    return p;
+            return null;
+        }
+
+        public bool TryRemoveAtCell(int wx, int wy, out string blockedMessage)
+        {
+            blockedMessage = null;
+            var cell = _world.GetCell(wx, wy);
+
+            if (cell.HasOccupant)
+            {
+                var pdef = _content.Placeables.Get(cell.OccupantId);
+                if (pdef != null && pdef.interaction == InteractionKind.Container &&
+                    _storage != null && !_storage.RemoveContainer(wx, wy))
+                {
+                    blockedMessage = $"{pdef.Display} is not empty";
+                    return false;
+                }
+
+                var inst = _placeables.Find(p => p && p.Wx == wx && p.Wy == wy);
+                _world.ClearOccupant(wx, wy);
+                if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
+                if (pdef != null && !string.IsNullOrEmpty(pdef.requiredItemId))
+                    _inv.Add(pdef.requiredItemId, 1);
+                Removed?.Invoke(pdef != null ? pdef.id : cell.OccupantId, wx, wy);
+                return true;
+            }
+
+            if (cell.SolidBlock)
+            {
+                string blockId = cell.SurfaceBlockId;
+                if (_world.RemoveSolidBlock(wx, wy))
+                {
+                    string item = FindBlockItem(blockId);
+                    if (item != null) _inv.Add(item, 1);
+                    Removed?.Invoke(blockId, wx, wy);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool IsStationInRange(Vector3 pos, float range, StationType st)

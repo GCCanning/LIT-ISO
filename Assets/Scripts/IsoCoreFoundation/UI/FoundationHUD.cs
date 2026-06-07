@@ -79,7 +79,7 @@ namespace IsoCore.Foundation
 
             // Banner + controls.
             GUI.Label(new Rect(20, 10, 900, 24),
-                $"{Banner}   |   WASD move · 1-9/scroll select · E interact/harvest · LMB place/till/plant · RMB remove · I inv · C craft");
+                $"{Banner}   |   WASD move · 1-9/scroll select · LMB use/place/break · RMB options/remove · I inv · C craft");
             if (_player != null && _world != null)
             {
                 var c = _player.CurrentCell;

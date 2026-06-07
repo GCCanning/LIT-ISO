@@ -13,7 +13,7 @@ namespace IsoCore.Foundation
 
     public enum StationType { None, Hand, Workbench, Furnace, CookingPot }
 
-    public enum InteractionKind { None, CraftingStation, Container, Decoration }
+    public enum InteractionKind { None, CraftingStation, Container, Decoration, Entrance }
 
     public enum MobBehavior { Passive, Skittish, Hostile }
 
@@ -121,7 +121,7 @@ namespace IsoCore.Foundation
         }
     }
 
-    /// <summary>Implemented by world objects the player can interact with (E key).</summary>
+    /// <summary>Implemented by world objects the player can interact with.</summary>
     public interface IInteractable
     {
         string Prompt { get; }

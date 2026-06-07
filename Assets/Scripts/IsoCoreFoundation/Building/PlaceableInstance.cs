@@ -32,8 +32,9 @@ namespace IsoCore.Foundation
 
         public string Prompt => Def.interaction switch
         {
-            InteractionKind.CraftingStation => $"[E] Use {Def.Display}",
-            InteractionKind.Container => $"[E] Open {Def.Display}",
+            InteractionKind.CraftingStation => $"Right-click {Def.Display}",
+            InteractionKind.Container => $"Right-click {Def.Display}",
+            InteractionKind.Entrance => $"Right-click {Def.Display}",
             _ => Def.Display
         };
 

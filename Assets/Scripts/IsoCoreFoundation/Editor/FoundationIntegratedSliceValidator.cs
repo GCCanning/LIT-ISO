@@ -193,6 +193,9 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Player != null && boot.WorldController != null && boot.Placement != null &&
                 boot.Farming != null && boot.MobSpawner != null && boot.DayNight != null &&
                 boot.Crafting != null && boot.Hud != null);
+            add("FoundationBootstrap exposes mouse interaction overlay and tutorial handles",
+                boot.InteractionOverlay != null && boot.TutorialNotifier != null &&
+                boot.TutorialNotifier.CurrentStep >= 0);
             add("FoundationBootstrap exposes LitRPG progression handles",
                 boot.Progression != null && boot.Stats != null &&
                 boot.ProgressionHooks != null &&
@@ -234,7 +237,8 @@ namespace IsoCore.Foundation.EditorTools
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
                 headlessBoot.Content != null && headlessBoot.World != null &&
                 headlessBoot.Progression != null && headlessBoot.Stats != null &&
-                headlessBoot.ProgressionHooks != null);
+                headlessBoot.ProgressionHooks != null &&
+                headlessBoot.InteractionOverlay != null && headlessBoot.TutorialNotifier != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
             FoundationBootstrap.ClearLaunchOptions();

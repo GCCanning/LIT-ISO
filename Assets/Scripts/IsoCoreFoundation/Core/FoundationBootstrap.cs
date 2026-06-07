@@ -44,6 +44,8 @@ namespace IsoCore.Foundation
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
+        public FoundationInteractionOverlay InteractionOverlay { get; private set; }
+        public FoundationTutorialNotifier TutorialNotifier { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
         public FoundationHUD Hud { get; private set; }
         public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName, config != null ? config.seed : 1337);
@@ -175,6 +177,11 @@ namespace IsoCore.Foundation
             // Pause / settings overlay (Esc) with volume sliders + control hints.
             gameObject.AddComponent<PauseMenu>();
 
+            // Lightweight Foundation overlay for right-click world options and tutorial
+            // notifications. Kept separate from the temporary IMGUI HUD so uGUI can
+            // replace either surface independently later.
+            InteractionOverlay = gameObject.AddComponent<FoundationInteractionOverlay>();
+
             // HUD.
             if (createImguiHud)
             {
@@ -184,12 +191,16 @@ namespace IsoCore.Foundation
 
             // Input router.
             var interaction = gameObject.AddComponent<PlayerInteraction>();
-            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud, Storage);
+            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
+                Hud, Storage, _cam, InteractionOverlay);
 
             // LitRPG progression hooks. Gameplay systems emit success events; this component
             // converts them into activity XP and starter quest progress.
             ProgressionHooks = gameObject.AddComponent<FoundationProgressionHooks>();
             ProgressionHooks.Init(Progression, interaction, Crafting, Placement, Farming, MobSpawner);
+
+            TutorialNotifier = gameObject.AddComponent<FoundationTutorialNotifier>();
+            TutorialNotifier.Init(InteractionOverlay, Progression, Hotbar, interaction, Crafting, Placement, Farming);
 
             Ready?.Invoke(this);
 

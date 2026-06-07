@@ -13,8 +13,14 @@ namespace IsoCore.Foundation
         public int Wy { get; private set; }
 
         IsoWorld _world;
+        WorldProgressBar _progressBar;
+        int _maxHits;
         int _remainingHits;
         bool _shaking;
+
+        public int MaxHits => _maxHits;
+        public int RemainingHits => _remainingHits;
+        public float BreakProgress01 => _maxHits <= 0 ? 1f : 1f - _remainingHits / (float)_maxHits;
 
         // Down-screen nudge (world units) that seats a prop into the front-centre of its
         // tile instead of on the tile's widest line (the 4-tile meeting points).
@@ -23,7 +29,8 @@ namespace IsoCore.Foundation
         public void Init(ResourceNodeDefinition def, IsoWorld world, int wx, int wy)
         {
             Def = def; _world = world; Wx = wx; Wy = wy;
-            _remainingHits = Mathf.Max(1, def.hitsToHarvest);
+            _maxHits = Mathf.Max(1, def.hitsToHarvest);
+            _remainingHits = _maxHits;
 
             int height = world.GetHeight(wx, wy);
             // Seat the prop slightly forward (down-screen) of the exact cell centre. The
@@ -49,6 +56,12 @@ namespace IsoCore.Foundation
                 sr.sprite = PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
             }
             sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, height, IsoGrid.LayerProp);
+
+            var barGo = new GameObject("BreakProgress");
+            barGo.transform.SetParent(transform, false);
+            barGo.transform.localPosition = new Vector3(0f, def.heightUnits + 0.16f, 0f);
+            _progressBar = barGo.AddComponent<WorldProgressBar>();
+            _progressBar.Build(sr.sortingOrder + 2);
         }
 
         /// <summary>True when this node needs a tool the player isn't holding.</summary>
@@ -73,6 +86,7 @@ namespace IsoCore.Foundation
             }
 
             _remainingHits -= power;
+            _progressBar?.Show(BreakProgress01);
 
             // Per-hit juice: a directional chip burst, sound, and a quick shake.
             Vector3 fxOrigin = transform.position + Vector3.up * (Def.heightUnits * 0.5f);

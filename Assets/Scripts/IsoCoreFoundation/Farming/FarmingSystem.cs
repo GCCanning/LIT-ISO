@@ -158,6 +158,22 @@ namespace IsoCore.Foundation
             return true;
         }
 
+        public bool TryHarvestCropAtCell(int wx, int wy, out bool blockedFull)
+        {
+            blockedFull = false;
+            long key = Key(wx, wy);
+            if (!_crops.TryGetValue(key, out var crop) || !crop || !crop.Mature)
+                return false;
+
+            if (!crop.Harvest(_inv, out blockedFull))
+                return false;
+
+            CropHarvested?.Invoke(crop.Def);
+            _crops.Remove(key);
+            Destroy(crop.gameObject);
+            return true;
+        }
+
         /// <summary>True if a mature crop is within range (for the interact prompt ordering).</summary>
         public bool HasMatureCropNear(Vector3 pos, float range)
         {
