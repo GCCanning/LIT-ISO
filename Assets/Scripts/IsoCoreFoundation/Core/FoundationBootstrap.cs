@@ -38,6 +38,7 @@ namespace IsoCore.Foundation
         public IsoFoundationPlayer Player { get; private set; }
         public IsoWorldController WorldController { get; private set; }
         public PlacementSystem Placement { get; private set; }
+        public FoundationInstanceSystem Instances { get; private set; }
         public FarmingSystem Farming { get; private set; }
         public MobSpawner MobSpawner { get; private set; }
         public DayNightSystem DayNight { get; private set; }
@@ -219,6 +220,9 @@ namespace IsoCore.Foundation
             // replace either surface independently later.
             InteractionOverlay = gameObject.AddComponent<FoundationInteractionOverlay>();
 
+            Instances = new FoundationInstanceSystem();
+            Instances.Init(World, Player, Content, InteractionOverlay);
+
             // HUD.
             if (createImguiHud)
             {
@@ -229,7 +233,7 @@ namespace IsoCore.Foundation
             // Input router.
             var interaction = gameObject.AddComponent<PlayerInteraction>();
             interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
-                Hud, Storage, _cam, InteractionOverlay);
+                Hud, Storage, _cam, InteractionOverlay, Instances);
 
             // LitRPG progression hooks. Gameplay systems emit success events; this component
             // converts them into activity XP and starter quest progress.
@@ -374,6 +378,7 @@ namespace IsoCore.Foundation
                 placedObjects = Placement != null ? Placement.SnapshotPlaceables() : Array.Empty<FoundationSavedPlaceable>(),
                 storageContainers = Storage != null ? Storage.CaptureState() : Array.Empty<FoundationSavedStorageContainer>(),
                 crops = Farming != null ? Farming.SnapshotCrops() : Array.Empty<FoundationSavedCrop>(),
+                instance = Instances != null ? Instances.CaptureState() : default,
                 dayNightTime = DayNight != null ? DayNight.time : 0.30f,
                 mobs = MobSpawner != null ? MobSpawner.SnapshotMobs() : Array.Empty<FoundationSavedMob>(),
                 regionShifts = Progression != null ? ToArray(Progression.RegionShifts) : Array.Empty<string>(),
@@ -400,6 +405,7 @@ namespace IsoCore.Foundation
             Storage?.RestoreState(data.storageContainers, entry =>
                 Placement != null && Placement.HasContainerPlaceable(entry.x, entry.y, entry.placeableId));
             Farming?.RestoreCrops(data.crops);
+            Instances?.RestoreState(data.instance);
             DayNight?.SetTime(data.dayNightTime);
             MobSpawner?.RestoreMobs(data.mobs);
 

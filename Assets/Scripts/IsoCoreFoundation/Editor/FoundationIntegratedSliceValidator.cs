@@ -191,6 +191,7 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Inventory.SlotCount == boot.inventorySlots && boot.Hotbar.Size == boot.hotbarSlots);
             add("FoundationBootstrap exposes gameplay system handles",
                 boot.Player != null && boot.WorldController != null && boot.Placement != null &&
+                boot.Instances != null &&
                 boot.Farming != null && boot.MobSpawner != null && boot.DayNight != null &&
                 boot.Crafting != null && boot.Hud != null);
             add("FoundationBootstrap exposes mouse interaction overlay and tutorial handles",
@@ -238,7 +239,7 @@ namespace IsoCore.Foundation.EditorTools
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
                 headlessBoot.Content != null && headlessBoot.World != null &&
                 headlessBoot.Progression != null && headlessBoot.Stats != null &&
-                headlessBoot.ProgressionHooks != null &&
+                headlessBoot.ProgressionHooks != null && headlessBoot.Instances != null &&
                 headlessBoot.InteractionOverlay != null && headlessBoot.TutorialNotifier != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
@@ -293,6 +294,8 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Player.SetCell(2, -3);
                 boot.Progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 2);
                 boot.Progression.RecordEvidence("harvest_wood", 2, "validator_tree");
+                boot.Progression.SetTrialDay(6);
+                boot.Progression.AdvanceTrialDay();
 
                 var blockCell = FindBuildableCell(boot.World);
                 var cropCell = FindBuildableCell(boot.World, blockCell);
@@ -315,6 +318,13 @@ namespace IsoCore.Foundation.EditorTools
                         chest.Add("carrot", 4);
                 }
 
+                var tavern = boot.Content.Placeables.Get("tavern_door");
+                Vector2 exteriorGround = boot.Player.Ground;
+                bool enteredInstance = tavern != null &&
+                    boot.Instances != null &&
+                    boot.Instances.Enter(tavern, boot.Player.CurrentCell);
+                Vector2Int instanceCell = boot.Player.CurrentCell;
+
                 bool saved = boot.Save(path);
                 bool metadataOk = FoundationBootstrap.TryReadSaveMetadata(path, out var metadata, out string metadataError);
 
@@ -331,6 +341,8 @@ namespace IsoCore.Foundation.EditorTools
                         b.Progression != null &&
                         b.Inventory.Count("copper_bar") == 3 &&
                         b.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood") == 2 &&
+                        b.Instances != null &&
+                        b.Instances.IsInsideInstance &&
                         b.ActiveWorldName == boot.ActiveWorldName &&
                         b.config != null &&
                         b.config.seed == expectedSeed;
@@ -439,11 +451,28 @@ namespace IsoCore.Foundation.EditorTools
                     loaded.Progression.GetXpChannelValue("woodcraft") >= 6 &&
                     loaded.Progression.GetTitleProgress("first_night_survivor") >= 2 &&
                     loaded.Progression.GetAffinityScore("root") >= 2 &&
-                    loaded.Progression.SystemFeed.Messages.Count >= 1,
-                    $"gather {loaded.Progression.GetTrialScore(TrialEvidenceCategory.Gathering)}, messages {loaded.Progression.SystemFeed.Messages.Count}");
+                    loaded.Progression.SystemFeed.Messages.Count >= 1 &&
+                    loaded.Progression.EvidenceLog.Count >= 1 &&
+                    loaded.Progression.EvidenceLog[0].eventId == "harvest_wood" &&
+                    loaded.Progression.EvidenceLog[0].sourceId == "validator_tree" &&
+                    loaded.Progression.TrialCompleted &&
+                    loaded.Progression.TrialDay == 7,
+                    $"gather {loaded.Progression.GetTrialScore(TrialEvidenceCategory.Gathering)}, log {loaded.Progression.EvidenceLog.Count}, day {loaded.Progression.TrialDay}");
                 add("Save/load preserves player cell",
-                    loaded.Player.CurrentCell == new Vector2Int(2, -3),
+                    enteredInstance && loaded.Player.CurrentCell == instanceCell,
                     loaded.Player.CurrentCell.ToString());
+                bool loadedInstance = loaded.Instances != null &&
+                    loaded.Instances.IsInsideInstance &&
+                    loaded.Instances.ActiveInstanceId == "tavern_common_room";
+                add("Save/load preserves active building instance",
+                    loadedInstance,
+                    loaded.Instances != null ? loaded.Instances.ActiveInstanceId : "missing instance system");
+                bool exitedInstance = loadedInstance && loaded.Instances.Exit();
+                add("Building instance exit returns to exterior",
+                    exitedInstance &&
+                    !loaded.Instances.IsInsideInstance &&
+                    Vector2.Distance(loaded.Player.Ground, exteriorGround) < 0.01f,
+                    exitedInstance ? loaded.Player.CurrentCell.ToString() : "exit failed");
 
                 FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, expectedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
@@ -758,6 +787,15 @@ namespace IsoCore.Foundation.EditorTools
                 trialProgression.HasTitle("first_night_survivor") &&
                 trialProgression.GetAffinityScore("root") >= 5 &&
                 trialRead.trial.totalScore > 0 &&
+                trialRead.trial.evidenceLog != null &&
+                trialRead.trial.evidenceLog.Length == 1 &&
+                trialRead.trial.evidenceLog[0].sequence == 1 &&
+                trialRead.trial.evidenceLog[0].eventId == "harvest_wood" &&
+                trialRead.trial.evidenceLog[0].amount == 5 &&
+                trialRead.trial.evidenceLog[0].scoreDeltas != null &&
+                trialRead.trial.evidenceLog[0].scoreDeltas.Length > 0 &&
+                trialRead.trial.trialDay == 1 &&
+                trialRead.trial.trialDurationDays == 7 &&
                 trialRead.systemMessages != null && trialRead.systemMessages.Length >= 1,
                 $"score {trialProgression.TotalTrialScore}, title events {titleEvents}, affinity events {affinityEvents}");
             bool affinityAwakened = trialProgression.RecordEvidence("craft_campfire", 2, "validator_campfire");
@@ -766,6 +804,18 @@ namespace IsoCore.Foundation.EditorTools
                 affinityEvents >= 1 &&
                 trialProgression.GetAffinityScore("hearth") >= 11,
                 $"hearth {trialProgression.GetAffinityScore("hearth")}, events {affinityEvents}");
+            bool completedTrial = trialProgression.SetTrialDay(7);
+            var completedRead = trialProgression.CaptureReadState();
+            add("Seven-day trial completion snapshots grade and offers",
+                completedTrial &&
+                completedRead.trial.completed &&
+                completedRead.trial.trialDay == 7 &&
+                completedRead.trial.gradeSnapshot == trialProgression.GradeForecast &&
+                completedRead.trial.classOffers != null && completedRead.trial.classOffers.Length > 0 &&
+                completedRead.trial.professionOffers != null && completedRead.trial.professionOffers.Length > 0 &&
+                !string.IsNullOrWhiteSpace(completedRead.trial.selectedClassId) &&
+                !string.IsNullOrWhiteSpace(completedRead.trial.selectedProfessionId),
+                $"grade {completedRead.trial.gradeSnapshot}, class {completedRead.trial.selectedClassId}, profession {completedRead.trial.selectedProfessionId}");
 
             var inv = new Inventory(12, content);
             inv.Add("wood", 5);

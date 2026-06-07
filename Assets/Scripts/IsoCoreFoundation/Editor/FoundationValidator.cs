@@ -94,6 +94,22 @@ namespace IsoCore.Foundation.EditorTools
                 { placeReqOk = false; placeReqDetail += $"{p.id}->{p.requiredItemId} "; }
             Add("Placeable required-item references valid", placeReqOk, placeReqOk ? "all resolve" : placeReqDetail);
 
+            bool entranceOk = true; string entranceDetail = "";
+            int entranceCount = 0;
+            foreach (var p in c.Placeables.All)
+            {
+                if (p.interaction != InteractionKind.Entrance) continue;
+                entranceCount++;
+                if (string.IsNullOrWhiteSpace(p.destinationId))
+                {
+                    entranceOk = false;
+                    entranceDetail += $"{p.id}:missing_destination ";
+                }
+            }
+            Add("Entrance placeables have destinations",
+                entranceOk && entranceCount >= 1,
+                entranceOk ? $"{entranceCount} entrances" : entranceDetail);
+
             // ---- Seed / crop references ----
             bool seedOk = true; string seedDetail = "";
             foreach (var it in c.Items.All)

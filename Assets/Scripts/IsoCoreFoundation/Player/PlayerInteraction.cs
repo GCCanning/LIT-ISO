@@ -23,6 +23,7 @@ namespace IsoCore.Foundation
         StorageSystem _storage;
         Camera _cam;
         FoundationInteractionOverlay _overlay;
+        FoundationInstanceSystem _instances;
 
         public event Action<ResourceNodeDefinition, IReadOnlyList<ItemStack>> ResourceHarvested;
         public event Action<StationType> CraftingRequested;
@@ -32,11 +33,12 @@ namespace IsoCore.Foundation
         public void Init(IsoFoundationPlayer player, IsoWorldController controller, FoundationContent content,
             FoundationConfig cfg, Inventory inv, Hotbar hotbar, PlacementSystem placement,
             FarmingSystem farming, FoundationHUD hud, StorageSystem storage = null,
-            Camera cam = null, FoundationInteractionOverlay overlay = null)
+            Camera cam = null, FoundationInteractionOverlay overlay = null,
+            FoundationInstanceSystem instances = null)
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
             _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming; _hud = hud;
-            _storage = storage; _cam = cam; _overlay = overlay;
+            _storage = storage; _cam = cam; _overlay = overlay; _instances = instances;
 
             var hi = new GameObject("TargetHighlight");
             hi.transform.SetParent(transform, false);
@@ -54,7 +56,6 @@ namespace IsoCore.Foundation
 
             if (Input.GetKeyDown(KeyCode.I)) _hud?.ToggleInventory();
             if (Input.GetKeyDown(KeyCode.C)) _hud?.ToggleCrafting(StationType.Hand);
-            if (Input.GetKeyDown(KeyCode.E)) HandleSecondaryClick();
             if (Input.GetMouseButtonDown(0)) HandlePrimaryClick();
             if (Input.GetMouseButtonDown(1)) HandleSecondaryClick();
         }
@@ -196,6 +197,21 @@ namespace IsoCore.Foundation
                 return;
             }
 
+            if (_instances != null && _instances.IsInsideInstance)
+            {
+                _overlay?.OpenContextMenu(_instances.ActiveDisplayName, Input.mousePosition,
+                    new[]
+                    {
+                        new FoundationContextAction("exit", $"Exit {_instances.ActiveDisplayName}",
+                            () =>
+                            {
+                                ContextActionUsed?.Invoke("exit_instance", _instances.ActiveInstanceId);
+                                if (!_instances.Exit()) Flash("No exit found");
+                            })
+                    });
+                return;
+            }
+
             Flash("No options here");
         }
 
@@ -280,6 +296,9 @@ namespace IsoCore.Foundation
         void RequestEntrance(PlaceableDefinition def, string destination)
         {
             ContextActionUsed?.Invoke("enter", def.id);
+            var c = CursorCell();
+            if (_instances != null && _instances.Enter(def, c))
+                return;
             Flash($"Entering {destination}...");
         }
 

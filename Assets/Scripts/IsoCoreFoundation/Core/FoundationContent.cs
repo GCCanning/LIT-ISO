@@ -148,6 +148,8 @@ namespace IsoCore.Foundation
             PlaceItem("lantern_item", new Color(0.95f, 0.85f, 0.40f), "lantern");
             PlaceItem("furnace_item", new Color(0.45f, 0.42f, 0.45f), "furnace");
             PlaceItem("campfire_item", new Color(0.90f, 0.42f, 0.18f), "campfire");
+            PlaceItem("tavern_door_item", new Color(0.58f, 0.34f, 0.18f), "tavern_door");
+            PlaceItem("rootcellar_portal_item", new Color(0.40f, 0.75f, 0.85f), "rootcellar_portal");
 
             // ---- Placeables ----
             PlaceableDefinition Placeable(string id, Color col, bool blocks, InteractionKind kind,
@@ -174,6 +176,16 @@ namespace IsoCore.Foundation
             campfire.emitsLight = true;
             campfire.lightColor = new Color(1f, 0.62f, 0.28f);
             campfire.lightRadius = 3.0f;
+            var tavernDoor = Placeable("tavern_door", new Color(0.58f, 0.34f, 0.18f), true,
+                InteractionKind.Entrance, StationType.None, "tavern_door_item", 1.2f);
+            tavernDoor.entranceLabel = "Enter";
+            tavernDoor.destinationId = "tavern_common_room";
+            tavernDoor.destinationDisplayName = "Tavern";
+            var rootcellarPortal = Placeable("rootcellar_portal", new Color(0.40f, 0.75f, 0.85f), false,
+                InteractionKind.Entrance, StationType.None, "rootcellar_portal_item", 1.1f);
+            rootcellarPortal.entranceLabel = "Enter";
+            rootcellarPortal.destinationId = "rootcellar_starter";
+            rootcellarPortal.destinationDisplayName = "Mosswake Rootcellar";
 
             // ---- Resource nodes ----
             ResourceNodeDefinition Node(string id, Color col, ToolType tool, bool mandatory, int hits, float h, ItemDrop[] drops)
@@ -274,6 +286,10 @@ namespace IsoCore.Foundation
                 new[] { In("wood", 5) }, new[] { Out("workbench_item", 1) });
             Recipe("craft_campfire", StationType.Hand,
                 new[] { In("wood", 5), In("stone", 3) }, new[] { Out("campfire_item", 1) });
+            Recipe("craft_tavern_door", StationType.Hand,
+                new[] { In("wood", 8), In("stone", 2) }, new[] { Out("tavern_door_item", 1) });
+            Recipe("craft_rootcellar_portal", StationType.Workbench,
+                new[] { In("stone", 6), In("fiber", 4) }, new[] { Out("rootcellar_portal_item", 1) });
             Recipe("craft_wood_axe", StationType.Hand,
                 new[] { In("wood", 3), In("fiber", 2) }, new[] { Out("wood_axe", 1) });
             Recipe("craft_wood_pickaxe", StationType.Workbench,

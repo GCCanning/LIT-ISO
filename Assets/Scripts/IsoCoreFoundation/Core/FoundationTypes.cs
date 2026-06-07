@@ -180,6 +180,38 @@ namespace IsoCore.Foundation
     }
 
     [Serializable]
+    public struct FoundationTrialEvidenceEntry
+    {
+        public int sequence;
+        public string eventId;
+        public int amount;
+        public string sourceId;
+        public FoundationKeyValueInt[] scoreDeltas;
+        public FoundationKeyValueInt[] xpDeltas;
+        public FoundationKeyValueInt[] titleDeltas;
+        public FoundationKeyValueInt[] affinityDeltas;
+        public int totalScoreAfter;
+        public FoundationGrade gradeAfter;
+    }
+
+    [Serializable]
+    public struct FoundationTrialOffer
+    {
+        public string id;
+        public string displayName;
+        public int score;
+        public bool selected;
+
+        public FoundationTrialOffer(string id, string displayName, int score, bool selected = false)
+        {
+            this.id = id;
+            this.displayName = displayName;
+            this.score = score;
+            this.selected = selected;
+        }
+    }
+
+    [Serializable]
     public struct FoundationXpGrant
     {
         public FoundationXpChannel channel;

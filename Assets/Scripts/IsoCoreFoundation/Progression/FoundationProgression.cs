@@ -21,8 +21,12 @@ namespace IsoCore.Foundation
         readonly Dictionary<string, int> _titleProgress = new();
         readonly Dictionary<string, int> _affinityScores = new();
         readonly List<string> _acquiredTitles = new();
+        readonly List<FoundationTrialEvidenceEntry> _evidenceLog = new();
+        FoundationTrialLifecycleSaveData _trialLifecycle = CreateDefaultTrialLifecycle();
+        int _nextEvidenceSequence = 1;
         int _callingXp;
         string _selectedBranchId;
+        const int SevenDayTrialDuration = 7;
         const int XpPerProgressionLevel = 100;
 
         public event Action Changed;
@@ -52,6 +56,12 @@ namespace IsoCore.Foundation
         public IReadOnlyDictionary<string, int> TitleProgress => _titleProgress;
         public IReadOnlyDictionary<string, int> AffinityScores => _affinityScores;
         public IReadOnlyList<string> AcquiredTitles => _acquiredTitles;
+        public IReadOnlyList<FoundationTrialEvidenceEntry> EvidenceLog => _evidenceLog;
+        public int TrialDay => _trialLifecycle != null ? Math.Max(1, _trialLifecycle.trialDay) : 1;
+        public int TrialDurationDays => _trialLifecycle != null ? Math.Max(1, _trialLifecycle.trialDurationDays) : SevenDayTrialDuration;
+        public bool TrialCompleted => _trialLifecycle != null && _trialLifecycle.completed;
+        public string SelectedClassId => _trialLifecycle != null ? _trialLifecycle.selectedClassId ?? "" : "";
+        public string SelectedProfessionId => _trialLifecycle != null ? _trialLifecycle.selectedProfessionId ?? "" : "";
         public string CurrentCallingId => CurrentCalling != null ? CurrentCalling.id : "";
         public int CallingXp => _callingXp;
         public int CallingLevel => LevelForXp(_callingXp);
@@ -250,6 +260,10 @@ namespace IsoCore.Foundation
             if (evidence == null) return false;
 
             var beforeGrade = GradeForecast;
+            var scoreBefore = CopyTrialScores();
+            var xpBefore = CopyIntDictionary(_xpChannels);
+            var titleBefore = CopyIntDictionary(_titleProgress);
+            var affinityBefore = CopyIntDictionary(_affinityScores);
             ApplyEvidenceWeights(evidence.evidenceWeights, amount);
             ApplyXpGrants(evidence.xpGrants, amount);
             ApplyTitleProgress(evidence.titleProgress, amount);
@@ -258,9 +272,65 @@ namespace IsoCore.Foundation
             if (!string.IsNullOrWhiteSpace(evidence.message))
                 SystemFeed.Queue(evidence.messageChannel, evidence.message, string.IsNullOrWhiteSpace(sourceId) ? evidence.id : sourceId, 1);
 
+            _evidenceLog.Add(new FoundationTrialEvidenceEntry
+            {
+                sequence = _nextEvidenceSequence++,
+                eventId = evidence.id,
+                amount = amount,
+                sourceId = string.IsNullOrWhiteSpace(sourceId) ? evidence.id : sourceId,
+                scoreDeltas = CaptureTrialScoreDeltas(scoreBefore),
+                xpDeltas = CaptureDeltas(xpBefore, _xpChannels),
+                titleDeltas = CaptureDeltas(titleBefore, _titleProgress),
+                affinityDeltas = CaptureDeltas(affinityBefore, _affinityScores),
+                totalScoreAfter = TotalTrialScore,
+                gradeAfter = GradeForecast,
+            });
+
             TrialEvidenceAdded?.Invoke(evidence, amount);
             if (GradeForecast != beforeGrade)
                 GradeForecastChanged?.Invoke(GradeForecast);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool SetTrialDay(int day)
+        {
+            EnsureTrialLifecycle();
+            int next = Math.Max(1, Math.Min(TrialDurationDays, day));
+            if (_trialLifecycle.trialDay == next) return false;
+
+            _trialLifecycle.trialDay = next;
+            if (_trialLifecycle.trialDay >= TrialDurationDays)
+                CompleteTrial();
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool AdvanceTrialDay(int days = 1)
+        {
+            if (days <= 0 || TrialCompleted) return false;
+            return SetTrialDay(TrialDay + days);
+        }
+
+        public bool CompleteTrial(string selectedClassId = "", string selectedProfessionId = "")
+        {
+            EnsureTrialLifecycle();
+            if (_trialLifecycle.completed &&
+                (string.IsNullOrWhiteSpace(selectedClassId) || string.Equals(_trialLifecycle.selectedClassId, selectedClassId, StringComparison.Ordinal)) &&
+                (string.IsNullOrWhiteSpace(selectedProfessionId) || string.Equals(_trialLifecycle.selectedProfessionId, selectedProfessionId, StringComparison.Ordinal)))
+                return false;
+
+            _trialLifecycle.trialDay = Math.Max(_trialLifecycle.trialDay, TrialDurationDays);
+            _trialLifecycle.trialDurationDays = TrialDurationDays;
+            _trialLifecycle.completed = true;
+            _trialLifecycle.gradeSnapshot = GradeForecast;
+            _trialLifecycle.classOffers = BuildClassOffers(selectedClassId);
+            _trialLifecycle.professionOffers = BuildProfessionOffers(selectedProfessionId);
+            _trialLifecycle.selectedClassId = SelectOfferId(_trialLifecycle.classOffers, selectedClassId);
+            _trialLifecycle.selectedProfessionId = SelectOfferId(_trialLifecycle.professionOffers, selectedProfessionId);
+            MarkSelectedOffers(_trialLifecycle.classOffers, _trialLifecycle.selectedClassId);
+            MarkSelectedOffers(_trialLifecycle.professionOffers, _trialLifecycle.selectedProfessionId);
+
             Changed?.Invoke();
             return true;
         }
@@ -418,6 +488,8 @@ namespace IsoCore.Foundation
                 activeBuffs = _activeBuffs.ToArray(),
                 regionShifts = _regionShifts.ToArray(),
                 trialScores = CaptureTrialScores(),
+                trialLifecycle = CaptureTrialLifecycle(),
+                evidenceLog = _evidenceLog.ToArray(),
                 xpChannels = CaptureKeyValueArray(_xpChannels),
                 titleProgress = CaptureKeyValueArray(_titleProgress),
                 affinityScores = CaptureKeyValueArray(_affinityScores),
@@ -441,6 +513,9 @@ namespace IsoCore.Foundation
             _titleProgress.Clear();
             _affinityScores.Clear();
             _acquiredTitles.Clear();
+            _evidenceLog.Clear();
+            _trialLifecycle = CreateDefaultTrialLifecycle();
+            _nextEvidenceSequence = 1;
             SystemFeed.RestoreState(null);
 
             if (!SelectCalling(string.IsNullOrWhiteSpace(state.currentCallingId) ? "greenhand" : state.currentCallingId))
@@ -476,6 +551,8 @@ namespace IsoCore.Foundation
             if (state.regionShifts != null)
                 _regionShifts.AddRange(state.regionShifts);
             RestoreTrialScores(state.trialScores);
+            RestoreTrialLifecycle(state.trialLifecycle);
+            RestoreEvidenceLog(state.evidenceLog);
             RestoreKeyValueArray(state.xpChannels, _xpChannels);
             RestoreKeyValueArray(state.titleProgress, _titleProgress);
             RestoreKeyValueArray(state.affinityScores, _affinityScores);
@@ -575,6 +652,176 @@ namespace IsoCore.Foundation
             }
         }
 
+        FoundationTrialLifecycleSaveData CaptureTrialLifecycle()
+        {
+            EnsureTrialLifecycle();
+            return new FoundationTrialLifecycleSaveData
+            {
+                trialDay = TrialDay,
+                trialDurationDays = TrialDurationDays,
+                completed = _trialLifecycle.completed,
+                gradeSnapshot = _trialLifecycle.completed ? _trialLifecycle.gradeSnapshot : GradeForecast,
+                classOffers = CopyOffers(_trialLifecycle.classOffers),
+                professionOffers = CopyOffers(_trialLifecycle.professionOffers),
+                selectedClassId = _trialLifecycle.selectedClassId ?? "",
+                selectedProfessionId = _trialLifecycle.selectedProfessionId ?? "",
+            };
+        }
+
+        void RestoreTrialLifecycle(FoundationTrialLifecycleSaveData state)
+        {
+            _trialLifecycle = state ?? CreateDefaultTrialLifecycle();
+            _trialLifecycle.trialDurationDays = Math.Max(1, _trialLifecycle.trialDurationDays);
+            _trialLifecycle.trialDay = Math.Max(1, Math.Min(_trialLifecycle.trialDurationDays, _trialLifecycle.trialDay));
+            _trialLifecycle.classOffers = CopyOffers(_trialLifecycle.classOffers);
+            _trialLifecycle.professionOffers = CopyOffers(_trialLifecycle.professionOffers);
+            _trialLifecycle.selectedClassId = _trialLifecycle.selectedClassId ?? "";
+            _trialLifecycle.selectedProfessionId = _trialLifecycle.selectedProfessionId ?? "";
+            if (!_trialLifecycle.completed)
+                _trialLifecycle.gradeSnapshot = GradeForecast;
+        }
+
+        void RestoreEvidenceLog(FoundationTrialEvidenceEntry[] entries)
+        {
+            if (entries == null) return;
+            int maxSequence = 0;
+            for (int i = 0; i < entries.Length; i++)
+            {
+                if (entries[i].sequence <= 0) continue;
+                entries[i].scoreDeltas = entries[i].scoreDeltas ?? Array.Empty<FoundationKeyValueInt>();
+                entries[i].xpDeltas = entries[i].xpDeltas ?? Array.Empty<FoundationKeyValueInt>();
+                entries[i].titleDeltas = entries[i].titleDeltas ?? Array.Empty<FoundationKeyValueInt>();
+                entries[i].affinityDeltas = entries[i].affinityDeltas ?? Array.Empty<FoundationKeyValueInt>();
+                _evidenceLog.Add(entries[i]);
+                maxSequence = Math.Max(maxSequence, entries[i].sequence);
+            }
+            _nextEvidenceSequence = Math.Max(1, maxSequence + 1);
+        }
+
+        static FoundationTrialLifecycleSaveData CreateDefaultTrialLifecycle()
+        {
+            return new FoundationTrialLifecycleSaveData
+            {
+                trialDay = 1,
+                trialDurationDays = SevenDayTrialDuration,
+                completed = false,
+                gradeSnapshot = FoundationGrade.F,
+                classOffers = Array.Empty<FoundationTrialOffer>(),
+                professionOffers = Array.Empty<FoundationTrialOffer>(),
+                selectedClassId = "",
+                selectedProfessionId = "",
+            };
+        }
+
+        void EnsureTrialLifecycle()
+        {
+            if (_trialLifecycle == null)
+                _trialLifecycle = CreateDefaultTrialLifecycle();
+            if (_trialLifecycle.trialDurationDays <= 0)
+                _trialLifecycle.trialDurationDays = SevenDayTrialDuration;
+            if (_trialLifecycle.trialDay <= 0)
+                _trialLifecycle.trialDay = 1;
+        }
+
+        FoundationTrialOffer[] BuildClassOffers(string selectedClassId)
+        {
+            var offers = new List<FoundationTrialOffer>();
+            if (_content?.Classes != null)
+            {
+                foreach (var cls in _content.Classes.All)
+                {
+                    if (cls == null || string.IsNullOrWhiteSpace(cls.id)) continue;
+                    int score = ScoreEvidenceWeights(cls.weights);
+                    if (cls.preferredAffinityIds != null)
+                        for (int i = 0; i < cls.preferredAffinityIds.Length; i++)
+                            score += GetAffinityScore(cls.preferredAffinityIds[i]);
+                    offers.Add(new FoundationTrialOffer(cls.id, cls.Display, score,
+                        string.Equals(cls.id, selectedClassId, StringComparison.Ordinal)));
+                }
+            }
+            return TopOffers(offers, 3);
+        }
+
+        FoundationTrialOffer[] BuildProfessionOffers(string selectedProfessionId)
+        {
+            var offers = new List<FoundationTrialOffer>();
+            if (_content?.Professions != null)
+            {
+                foreach (var profession in _content.Professions.All)
+                {
+                    if (profession == null || string.IsNullOrWhiteSpace(profession.id)) continue;
+                    int score = 0;
+                    if (profession.progressionSkillIds != null)
+                        for (int i = 0; i < profession.progressionSkillIds.Length; i++)
+                            score += GetSkillXp(profession.progressionSkillIds[i]);
+                    score += ActivityScore(profession.primaryActivity);
+                    offers.Add(new FoundationTrialOffer(profession.id, profession.Display, score,
+                        string.Equals(profession.id, selectedProfessionId, StringComparison.Ordinal)));
+                }
+            }
+            return TopOffers(offers, 3);
+        }
+
+        int ScoreEvidenceWeights(FoundationEvidenceWeight[] weights)
+        {
+            if (weights == null) return 0;
+            int score = 0;
+            for (int i = 0; i < weights.Length; i++)
+                score += GetTrialScore(weights[i].category) * Math.Max(1, weights[i].amount);
+            return score;
+        }
+
+        int ActivityScore(FoundationProgressionActivity activity)
+        {
+            int score = 0;
+            if (_content?.Skills == null) return score;
+            foreach (var skill in _content.Skills.All)
+                if (skill != null && skill.activity == activity)
+                    score += GetSkillXp(skill.id);
+            return score;
+        }
+
+        static FoundationTrialOffer[] TopOffers(List<FoundationTrialOffer> offers, int max)
+        {
+            if (offers == null || offers.Count == 0) return Array.Empty<FoundationTrialOffer>();
+            offers.Sort((a, b) =>
+            {
+                int score = b.score.CompareTo(a.score);
+                return score != 0 ? score : string.Compare(a.id, b.id, StringComparison.Ordinal);
+            });
+            int count = Math.Min(Math.Max(1, max), offers.Count);
+            var result = new FoundationTrialOffer[count];
+            for (int i = 0; i < count; i++)
+                result[i] = offers[i];
+            return result;
+        }
+
+        static string SelectOfferId(FoundationTrialOffer[] offers, string requested)
+        {
+            if (offers == null || offers.Length == 0) return "";
+            if (!string.IsNullOrWhiteSpace(requested))
+                for (int i = 0; i < offers.Length; i++)
+                    if (string.Equals(offers[i].id, requested, StringComparison.Ordinal))
+                        return requested;
+            return offers[0].id ?? "";
+        }
+
+        static void MarkSelectedOffers(FoundationTrialOffer[] offers, string selectedId)
+        {
+            if (offers == null) return;
+            for (int i = 0; i < offers.Length; i++)
+                offers[i].selected = !string.IsNullOrWhiteSpace(selectedId) &&
+                    string.Equals(offers[i].id, selectedId, StringComparison.Ordinal);
+        }
+
+        static FoundationTrialOffer[] CopyOffers(FoundationTrialOffer[] offers)
+        {
+            if (offers == null || offers.Length == 0) return Array.Empty<FoundationTrialOffer>();
+            var copy = new FoundationTrialOffer[offers.Length];
+            Array.Copy(offers, copy, offers.Length);
+            return copy;
+        }
+
         FoundationKeyValueInt[] CaptureTrialScores()
         {
             var values = new List<FoundationKeyValueInt>();
@@ -589,6 +836,48 @@ namespace IsoCore.Foundation
             foreach (var kv in source)
                 values.Add(new FoundationKeyValueInt(kv.Key, kv.Value));
             return values.ToArray();
+        }
+
+        Dictionary<TrialEvidenceCategory, int> CopyTrialScores()
+        {
+            var copy = new Dictionary<TrialEvidenceCategory, int>();
+            foreach (var kv in _trialScores)
+                copy[kv.Key] = kv.Value;
+            return copy;
+        }
+
+        static Dictionary<string, int> CopyIntDictionary(Dictionary<string, int> source)
+        {
+            var copy = new Dictionary<string, int>();
+            foreach (var kv in source)
+                copy[kv.Key] = kv.Value;
+            return copy;
+        }
+
+        FoundationKeyValueInt[] CaptureTrialScoreDeltas(Dictionary<TrialEvidenceCategory, int> before)
+        {
+            var deltas = new List<FoundationKeyValueInt>();
+            foreach (var kv in _trialScores)
+            {
+                before.TryGetValue(kv.Key, out int previous);
+                int delta = kv.Value - previous;
+                if (delta > 0)
+                    deltas.Add(new FoundationKeyValueInt(kv.Key.ToString(), delta));
+            }
+            return deltas.ToArray();
+        }
+
+        static FoundationKeyValueInt[] CaptureDeltas(Dictionary<string, int> before, Dictionary<string, int> after)
+        {
+            var deltas = new List<FoundationKeyValueInt>();
+            foreach (var kv in after)
+            {
+                before.TryGetValue(kv.Key, out int previous);
+                int delta = kv.Value - previous;
+                if (delta > 0)
+                    deltas.Add(new FoundationKeyValueInt(kv.Key, delta));
+            }
+            return deltas.ToArray();
         }
 
         void RestoreTrialScores(FoundationKeyValueInt[] values)
@@ -609,11 +898,21 @@ namespace IsoCore.Foundation
 
         FoundationTrialReadState CaptureTrialReadState()
         {
+            var lifecycle = CaptureTrialLifecycle();
             return new FoundationTrialReadState
             {
+                trialDay = lifecycle.trialDay,
+                trialDurationDays = lifecycle.trialDurationDays,
+                completed = lifecycle.completed,
                 totalScore = TotalTrialScore,
                 gradeForecast = GradeForecast,
+                gradeSnapshot = lifecycle.gradeSnapshot,
                 categories = CaptureTrialScores(),
+                evidenceLog = _evidenceLog.ToArray(),
+                classOffers = lifecycle.classOffers,
+                professionOffers = lifecycle.professionOffers,
+                selectedClassId = lifecycle.selectedClassId,
+                selectedProfessionId = lifecycle.selectedProfessionId,
             };
         }
 
@@ -855,9 +1154,18 @@ namespace IsoCore.Foundation
     [Serializable]
     public struct FoundationTrialReadState
     {
+        public int trialDay;
+        public int trialDurationDays;
+        public bool completed;
         public int totalScore;
         public FoundationGrade gradeForecast;
+        public FoundationGrade gradeSnapshot;
         public FoundationKeyValueInt[] categories;
+        public FoundationTrialEvidenceEntry[] evidenceLog;
+        public FoundationTrialOffer[] classOffers;
+        public FoundationTrialOffer[] professionOffers;
+        public string selectedClassId;
+        public string selectedProfessionId;
     }
 
     [Serializable]

@@ -9,7 +9,7 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 4;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -25,6 +25,7 @@ namespace IsoCore.Foundation
         public FoundationSavedPlaceable[] placedObjects;
         public FoundationSavedStorageContainer[] storageContainers;
         public FoundationSavedCrop[] crops;
+        public FoundationSavedInstance instance;
         public float dayNightTime;
         public FoundationSavedMob[] mobs;
         public string[] regionShifts;
@@ -133,6 +134,20 @@ namespace IsoCore.Foundation
     }
 
     [Serializable]
+    public struct FoundationSavedInstance
+    {
+        public bool active;
+        public string instanceId;
+        public string displayName;
+        public int originX;
+        public int originY;
+        public int returnCellX;
+        public int returnCellY;
+        public float returnGroundX;
+        public float returnGroundY;
+    }
+
+    [Serializable]
     public struct FoundationSavedMob
     {
         public string mobId;
@@ -167,6 +182,8 @@ namespace IsoCore.Foundation
         public string[] activeBuffs;
         public string[] regionShifts;
         public FoundationKeyValueInt[] trialScores;
+        public FoundationTrialLifecycleSaveData trialLifecycle;
+        public FoundationTrialEvidenceEntry[] evidenceLog;
         public FoundationKeyValueInt[] xpChannels;
         public FoundationKeyValueInt[] titleProgress;
         public FoundationKeyValueInt[] affinityScores;
@@ -200,5 +217,18 @@ namespace IsoCore.Foundation
         public string questId;
         public bool completed;
         public FoundationKeyValueInt[] objectives;
+    }
+
+    [Serializable]
+    public class FoundationTrialLifecycleSaveData
+    {
+        public int trialDay = 1;
+        public int trialDurationDays = 7;
+        public bool completed;
+        public FoundationGrade gradeSnapshot;
+        public FoundationTrialOffer[] classOffers;
+        public FoundationTrialOffer[] professionOffers;
+        public string selectedClassId;
+        public string selectedProfessionId;
     }
 }
