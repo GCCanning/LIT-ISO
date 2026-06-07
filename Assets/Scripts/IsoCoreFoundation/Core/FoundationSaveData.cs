@@ -9,7 +9,7 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 4;
+        public const int CurrentVersion = 5;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -21,6 +21,7 @@ namespace IsoCore.Foundation
         public ItemStack[] inventorySlots;
         public int hotbarSelected;
         public FoundationProgressionSaveData progression;
+        public FoundationQoLSaveData qol;
         public FoundationSavedCell[] modifiedCells;
         public FoundationSavedPlaceable[] placedObjects;
         public FoundationSavedStorageContainer[] storageContainers;

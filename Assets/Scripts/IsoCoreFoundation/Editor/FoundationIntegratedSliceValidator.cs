@@ -207,6 +207,16 @@ namespace IsoCore.Foundation.EditorTools
                 !string.IsNullOrWhiteSpace(boot.Stats.Class) &&
                 !string.IsNullOrWhiteSpace(boot.Stats.Title),
                 boot.Stats != null ? $"{boot.Stats.Class}/{boot.Stats.Title} L{boot.Stats.Level}" : "missing stats");
+            var qolRead = boot.QoL?.CaptureReadState();
+            add("FoundationBootstrap exposes QoL data spine handles",
+                boot.QoL != null &&
+                qolRead != null &&
+                qolRead.feedSettings != null &&
+                qolRead.feedSettings.channels != null &&
+                qolRead.feedSettings.channels.Length >= 10 &&
+                qolRead.inventory != null &&
+                qolRead.accessibility.hudScale >= 0.75f,
+                qolRead?.feedSettings?.channels != null ? $"channels {qolRead.feedSettings.channels.Length}" : "missing QoL");
             add("FoundationContent includes LitRPG bible seed content",
                 boot.Content.Callings.Count >= 7 && boot.Content.Skills.Count >= 12 && boot.Content.Quests.Count >= 5 &&
                 boot.Content.EvidenceEvents.Count >= 8 && boot.Content.Titles.Count >= 6 && boot.Content.Affinities.Count >= 7,
@@ -240,7 +250,8 @@ namespace IsoCore.Foundation.EditorTools
                 headlessBoot.Content != null && headlessBoot.World != null &&
                 headlessBoot.Progression != null && headlessBoot.Stats != null &&
                 headlessBoot.ProgressionHooks != null && headlessBoot.Instances != null &&
-                headlessBoot.InteractionOverlay != null && headlessBoot.TutorialNotifier != null);
+                headlessBoot.InteractionOverlay != null && headlessBoot.TutorialNotifier != null &&
+                headlessBoot.QoL != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
             FoundationBootstrap.ClearLaunchOptions();
@@ -296,6 +307,10 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Progression.RecordEvidence("harvest_wood", 2, "validator_tree");
                 boot.Progression.SetTrialDay(6);
                 boot.Progression.AdvanceTrialDay();
+                boot.QoL.SetFeedChannelVisible(FoundationSystemFeedChannel.TrialEvidence, false);
+                boot.QoL.PinGoal(FoundationPinnedGoalType.Quest, "first_flame_first_field");
+                boot.QoL.SetInventorySlotFlags(0, favorite: true, locked: true);
+                boot.QoL.SetAccessibility(1.25f, 6f, 0.75f, reducedMotion: true, highContrast: true);
 
                 var blockCell = FindBuildableCell(boot.World);
                 var cropCell = FindBuildableCell(boot.World, blockCell);
@@ -327,6 +342,37 @@ namespace IsoCore.Foundation.EditorTools
 
                 bool saved = boot.Save(path);
                 bool metadataOk = FoundationBootstrap.TryReadSaveMetadata(path, out var metadata, out string metadataError);
+                var savedDto = File.Exists(path) ? JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path)) : null;
+                bool dtoQuestProgressOk = false;
+                if (savedDto?.progression?.quests != null)
+                {
+                    for (int i = 0; i < savedDto.progression.quests.Length; i++)
+                    {
+                        var quest = savedDto.progression.quests[i];
+                        if (quest == null || quest.questId != "first_flame_first_field" || quest.objectives == null)
+                            continue;
+                        for (int j = 0; j < quest.objectives.Length; j++)
+                            if (quest.objectives[j].id == "gather_wood" && quest.objectives[j].value == 2)
+                                dtoQuestProgressOk = true;
+                    }
+                }
+                add("Foundation save DTO captures runtime state directly",
+                    savedDto != null &&
+                    savedDto.version == FoundationSaveData.CurrentVersion &&
+                    savedDto.worldName == boot.ActiveWorldName &&
+                    savedDto.seed == expectedSeed &&
+                    savedDto.difficulty == boot.ActiveDifficulty &&
+                    savedDto.callingId == boot.ActiveCallingId &&
+                    savedDto.hotbarSelected == 2 &&
+                    savedDto.progression != null &&
+                    savedDto.progression.currentCallingId == boot.ActiveCallingId &&
+                    savedDto.progression.trialLifecycle != null &&
+                    savedDto.progression.trialLifecycle.completed &&
+                    savedDto.qol != null &&
+                    savedDto.qol.pinnedGoals != null &&
+                    savedDto.qol.pinnedGoals.Length == 1 &&
+                    dtoQuestProgressOk,
+                    savedDto != null ? $"v{savedDto.version}, pins {savedDto.qol?.pinnedGoals?.Length ?? 0}" : "missing DTO");
 
                 FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLoad(path);
@@ -458,6 +504,30 @@ namespace IsoCore.Foundation.EditorTools
                     loaded.Progression.TrialCompleted &&
                     loaded.Progression.TrialDay == 7,
                     $"gather {loaded.Progression.GetTrialScore(TrialEvidenceCategory.Gathering)}, log {loaded.Progression.EvidenceLog.Count}, day {loaded.Progression.TrialDay}");
+                var loadedQoL = loaded.QoL.CaptureReadState();
+                bool trialEvidenceVisible = false;
+                if (loadedQoL.visibleMessages != null)
+                    for (int i = 0; i < loadedQoL.visibleMessages.Length; i++)
+                        if (loadedQoL.visibleMessages[i].channel == FoundationSystemFeedChannel.TrialEvidence)
+                            trialEvidenceVisible = true;
+                add("Save/load preserves QoL data spine",
+                    loadedQoL.feedSettings != null &&
+                    !loaded.QoL.IsFeedChannelVisible(FoundationSystemFeedChannel.TrialEvidence) &&
+                    loadedQoL.pinnedGoals != null &&
+                    loadedQoL.pinnedGoals.Length == 1 &&
+                    loadedQoL.pinnedGoals[0].type == FoundationPinnedGoalType.Quest &&
+                    loadedQoL.pinnedGoals[0].targetId == "first_flame_first_field" &&
+                    loadedQoL.pinnedGoals[0].available &&
+                    loadedQoL.inventory != null &&
+                    loadedQoL.inventory.slots != null &&
+                    loadedQoL.inventory.slots.Length > 0 &&
+                    loadedQoL.inventory.slots[0].favorite &&
+                    loadedQoL.inventory.slots[0].locked &&
+                    Math.Abs(loadedQoL.accessibility.hudScale - 1.25f) < 0.01f &&
+                    loadedQoL.accessibility.reducedMotion &&
+                    loadedQoL.accessibility.highContrast &&
+                    !trialEvidenceVisible,
+                    $"pins {loadedQoL.pinnedGoals?.Length ?? 0}, hud {loadedQoL.accessibility.hudScale:0.00}");
                 add("Save/load preserves player cell",
                     enteredInstance && loaded.Player.CurrentCell == instanceCell,
                     loaded.Player.CurrentCell.ToString());
@@ -755,6 +825,34 @@ namespace IsoCore.Foundation.EditorTools
                 firstQuestRead.objectives.Length == content.Quests.Get("first_flame_first_field").objectives.Length &&
                 firstQuestRead.progress01 >= 0.99f,
                 firstQuestRead.progress01.ToString("0.00"));
+            var pinnedProgression = new FoundationProgression(content);
+            pinnedProgression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 2);
+            var pinnedService = new FoundationQoLService();
+            pinnedService.Init(content, pinnedProgression, new Inventory(6, content));
+            bool pinned = pinnedService.PinGoal(FoundationPinnedGoalType.Quest, "first_flame_first_field");
+            var pinnedRead = pinnedService.CaptureReadState();
+            var pinnedQuest = pinnedRead.pinnedGoals != null && pinnedRead.pinnedGoals.Length > 0
+                ? pinnedRead.pinnedGoals[0]
+                : default;
+            add("QoL pinned quest goal resolves live progress",
+                pinned &&
+                pinnedQuest.available &&
+                pinnedQuest.type == FoundationPinnedGoalType.Quest &&
+                pinnedQuest.targetId == "first_flame_first_field" &&
+                pinnedQuest.progress01 > 0.39f &&
+                pinnedQuest.progress01 < 0.41f &&
+                !pinnedQuest.completed,
+                $"{pinnedQuest.displayName} {pinnedQuest.progress01:0.00}");
+            bool fallbackPinned = pinnedService.PinGoal(FoundationPinnedGoalType.Quest, "missing_quest", 1);
+            var fallbackRead = pinnedService.CaptureReadState();
+            var fallbackGoal = fallbackRead.pinnedGoals != null && fallbackRead.pinnedGoals.Length > 1
+                ? fallbackRead.pinnedGoals[1]
+                : default;
+            add("QoL pinned goal missing content is safe",
+                fallbackPinned &&
+                !fallbackGoal.available &&
+                fallbackGoal.detail == "Quest unavailable",
+                fallbackGoal.detail);
 
             var focusedProgression = new FoundationProgression(content);
             focusedProgression.AddActivityXp(FoundationProgressionActivity.Harvest, 10, "woodcraft");

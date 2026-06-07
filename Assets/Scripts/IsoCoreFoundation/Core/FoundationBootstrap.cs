@@ -45,6 +45,7 @@ namespace IsoCore.Foundation
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
+        public FoundationQoLService QoL { get; private set; }
         public FoundationInteractionOverlay InteractionOverlay { get; private set; }
         public FoundationTutorialNotifier TutorialNotifier { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
@@ -243,6 +244,9 @@ namespace IsoCore.Foundation
             TutorialNotifier = gameObject.AddComponent<FoundationTutorialNotifier>();
             TutorialNotifier.Init(InteractionOverlay, Progression, Hotbar, interaction, Crafting, Placement, Farming);
 
+            QoL = new FoundationQoLService();
+            QoL.Init(Content, Progression, Inventory);
+
             ApplyLaunchSave();
 
             Ready?.Invoke(this);
@@ -374,6 +378,7 @@ namespace IsoCore.Foundation
                 inventorySlots = Inventory != null ? Inventory.SnapshotSlots() : Array.Empty<ItemStack>(),
                 hotbarSelected = Hotbar != null ? Hotbar.Selected : 0,
                 progression = Progression != null ? Progression.CaptureState() : null,
+                qol = QoL != null ? QoL.CaptureState() : null,
                 modifiedCells = World != null ? World.SnapshotModifiedCells() : Array.Empty<FoundationSavedCell>(),
                 placedObjects = Placement != null ? Placement.SnapshotPlaceables() : Array.Empty<FoundationSavedPlaceable>(),
                 storageContainers = Storage != null ? Storage.CaptureState() : Array.Empty<FoundationSavedStorageContainer>(),
@@ -398,6 +403,7 @@ namespace IsoCore.Foundation
 
             Inventory?.RestoreSlots(data.inventorySlots);
             if (Hotbar != null) Hotbar.Select(data.hotbarSelected);
+            QoL?.RestoreState(data.qol);
 
             World?.ResetModifiedCells();
             World?.RestoreModifiedCells(data.modifiedCells);
