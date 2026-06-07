@@ -25,6 +25,9 @@ namespace IsoCore.Foundation
         public event Action<string, int, int> Removed;
 
         readonly List<PlaceableInstance> _placeables = new();
+        readonly Dictionary<long, PlaceableInstance> _placeablesByCell = new();
+        readonly Dictionary<string, string> _blockItemByBlockId = new();
+        static long Key(int x, int y) => ((long)(uint)x << 32) | (uint)y;
 
         public void Init(IsoWorld world, FoundationContent content, Inventory inv, Hotbar hotbar,
             Camera cam, IsoFoundationPlayer player, StorageSystem storage = null)
@@ -39,6 +42,17 @@ namespace IsoCore.Foundation
             ghostGo.transform.SetParent(transform, false);
             _ghost = ghostGo.AddComponent<SpriteRenderer>();
             _ghost.enabled = false;
+
+            _blockItemByBlockId.Clear();
+            if (_content != null)
+            {
+                foreach (var it in _content.Items.All)
+                {
+                    if (it != null && it.PlacesBlock && !string.IsNullOrEmpty(it.placeBlockId) &&
+                        !_blockItemByBlockId.ContainsKey(it.placeBlockId))
+                        _blockItemByBlockId.Add(it.placeBlockId, it.id);
+                }
+            }
         }
 
         Vector2Int CursorCell()
@@ -153,9 +167,10 @@ namespace IsoCore.Foundation
 
         string FindBlockItem(string blockId)
         {
-            foreach (var it in _content.Items.All)
-                if (it.PlacesBlock && it.placeBlockId == blockId) return it.id;
-            return null;
+            return !string.IsNullOrEmpty(blockId) &&
+                _blockItemByBlockId.TryGetValue(blockId, out var itemId)
+                    ? itemId
+                    : null;
         }
 
         void SpawnPlaceable(PlaceableDefinition def, int wx, int wy)
@@ -165,6 +180,7 @@ namespace IsoCore.Foundation
             var inst = go.AddComponent<PlaceableInstance>();
             inst.Init(def, _world, wx, wy);
             _placeables.Add(inst);
+            _placeablesByCell[Key(wx, wy)] = inst;
             _storage?.EnsureContainer(def, wx, wy);
         }
 
@@ -190,14 +206,11 @@ namespace IsoCore.Foundation
             if (def == null || def.interaction != InteractionKind.Container)
                 return false;
 
-            foreach (var p in _placeables)
-            {
-                if (!p || p.Def == null) continue;
-                if (p.Wx == wx && p.Wy == wy && p.Def.id == def.id &&
-                    p.Def.interaction == InteractionKind.Container)
-                    return true;
-            }
-            return false;
+            return _placeablesByCell.TryGetValue(Key(wx, wy), out var p) &&
+                p &&
+                p.Def != null &&
+                p.Def.id == def.id &&
+                p.Def.interaction == InteractionKind.Container;
         }
 
         public void RestorePlaceables(FoundationSavedPlaceable[] placeables)
@@ -233,6 +246,7 @@ namespace IsoCore.Foundation
                 else DestroyImmediate(p.gameObject);
             }
             _placeables.Clear();
+            _placeablesByCell.Clear();
         }
 
         public PlaceableInstance NearestInteractable(Vector3 pos, float range)
@@ -250,10 +264,7 @@ namespace IsoCore.Foundation
 
         public PlaceableInstance PlaceableAtCell(int wx, int wy)
         {
-            foreach (var p in _placeables)
-                if (p && p.Wx == wx && p.Wy == wy)
-                    return p;
-            return null;
+            return _placeablesByCell.TryGetValue(Key(wx, wy), out var p) && p ? p : null;
         }
 
         public bool TryRemoveAtCell(int wx, int wy, out string blockedMessage)
@@ -279,8 +290,10 @@ namespace IsoCore.Foundation
                     return false;
                 }
 
-                var inst = _placeables.Find(p => p && p.Wx == wx && p.Wy == wy);
+                var key = Key(wx, wy);
+                _placeablesByCell.TryGetValue(key, out var inst);
                 _world.ClearOccupant(wx, wy);
+                _placeablesByCell.Remove(key);
                 if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
                 if (!string.IsNullOrEmpty(refundItem))
                     _inv.Add(refundItem, 1);

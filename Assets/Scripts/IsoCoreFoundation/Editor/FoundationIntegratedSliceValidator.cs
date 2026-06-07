@@ -319,6 +319,39 @@ namespace IsoCore.Foundation.EditorTools
                 bool metadataOk = FoundationBootstrap.TryReadSaveMetadata(path, out var metadata, out string metadataError);
 
                 FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLoad(path);
+                var autoLoadGo = new GameObject("FoundationBootstrap_AutoLoadValidation");
+                var autoLoad = autoLoadGo.AddComponent<FoundationBootstrap>();
+                bool readySawLoadedSave = false;
+                void OnAutoLoadReady(FoundationBootstrap b)
+                {
+                    if (b != autoLoad) return;
+                    readySawLoadedSave =
+                        b.Inventory != null &&
+                        b.Progression != null &&
+                        b.Inventory.Count("copper_bar") == 3 &&
+                        b.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood") == 2 &&
+                        b.ActiveWorldName == boot.ActiveWorldName &&
+                        b.config != null &&
+                        b.config.seed == expectedSeed;
+                }
+                FoundationBootstrap.Ready += OnAutoLoadReady;
+                try
+                {
+                    typeof(FoundationBootstrap)
+                        .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                        ?.Invoke(autoLoad, null);
+                }
+                finally
+                {
+                    FoundationBootstrap.Ready -= OnAutoLoadReady;
+                }
+                add("FoundationBootstrap.ConfigureLoad applies save before Ready",
+                    saved && readySawLoadedSave,
+                    $"copper {autoLoad.Inventory?.Count("copper_bar") ?? -1}, seed {(autoLoad.config != null ? autoLoad.config.seed.ToString() : "missing")}");
+                UnityEngine.Object.DestroyImmediate(autoLoadGo);
+
+                FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, mismatchedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
                 var mismatchGo = new GameObject("FoundationBootstrap_SaveLoadSeedMismatchValidation");
                 var mismatch = mismatchGo.AddComponent<FoundationBootstrap>();

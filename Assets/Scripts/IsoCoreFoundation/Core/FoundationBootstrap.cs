@@ -63,7 +63,44 @@ namespace IsoCore.Foundation
                 NormalizeWorldName(worldName),
                 SeedStringToInt(seed),
                 Mathf.Clamp(difficulty, 0, 2),
-                NormalizeCallingId(callingId));
+                NormalizeCallingId(callingId),
+                null);
+            s_HasLaunchOptions = true;
+        }
+
+        /// <summary>
+        /// Call before loading IsoCoreFoundation.unity to boot directly from a save.
+        /// The save metadata seeds the world before the runtime graph is built, then the
+        /// full save is applied before Ready fires.
+        /// </summary>
+        public static void ConfigureLoad(string savePath)
+        {
+            if (TryReadSaveMetadata(savePath, out var metadata, out string error))
+            {
+                s_LaunchOptions = new LaunchOptions(
+                    NormalizeWorldName(metadata.worldName),
+                    metadata.seed,
+                    Mathf.Clamp(metadata.difficulty, 0, 2),
+                    NormalizeCallingId(metadata.callingId),
+                    savePath);
+            }
+            else
+            {
+                Debug.LogWarning($"[FoundationBootstrap] ConfigureLoad could not read metadata ({error}). Booting default world, then attempting load.");
+                s_LaunchOptions = new LaunchOptions(DefaultWorldName, 1337, 1, null, savePath);
+            }
+            s_HasLaunchOptions = true;
+        }
+
+        /// <summary>Explicit load handoff when the menu already knows the slot metadata.</summary>
+        public static void ConfigureLoad(string worldName, string seed, int difficulty, string savePath, string callingId = null)
+        {
+            s_LaunchOptions = new LaunchOptions(
+                NormalizeWorldName(worldName),
+                SeedStringToInt(seed),
+                Mathf.Clamp(difficulty, 0, 2),
+                NormalizeCallingId(callingId),
+                savePath);
             s_HasLaunchOptions = true;
         }
 
@@ -202,6 +239,8 @@ namespace IsoCore.Foundation
             TutorialNotifier = gameObject.AddComponent<FoundationTutorialNotifier>();
             TutorialNotifier.Init(InteractionOverlay, Progression, Hotbar, interaction, Crafting, Placement, Farming);
 
+            ApplyLaunchSave();
+
             Ready?.Invoke(this);
 
             Debug.Log($"[FoundationBootstrap] Ready. Blocks:{Content.Blocks.Count} Items:{Content.Items.Count} " +
@@ -240,6 +279,15 @@ namespace IsoCore.Foundation
             ActiveCallingId = Progression.CurrentCalling?.id ?? "greenhand";
         }
 
+        void ApplyLaunchSave()
+        {
+            if (!s_HasLaunchOptions || string.IsNullOrWhiteSpace(s_LaunchOptions.savePath))
+                return;
+
+            if (!Load(s_LaunchOptions.savePath))
+                Debug.LogWarning($"[FoundationBootstrap] Launch save load failed: {s_LaunchOptions.savePath}");
+        }
+
         public bool Save(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
@@ -252,7 +300,7 @@ namespace IsoCore.Foundation
                 if (!string.IsNullOrWhiteSpace(dir))
                     Directory.CreateDirectory(dir);
 
-                File.WriteAllText(path, JsonUtility.ToJson(data, true));
+                AtomicWriteAllText(path, JsonUtility.ToJson(data, true));
                 Debug.Log($"[FoundationBootstrap] Saved Foundation world to {path}");
                 return true;
             }
@@ -440,6 +488,36 @@ namespace IsoCore.Foundation
             return result;
         }
 
+        static void AtomicWriteAllText(string path, string contents)
+        {
+            string dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrWhiteSpace(dir))
+                Directory.CreateDirectory(dir);
+
+            string tmp = path + ".tmp";
+            string bak = path + ".bak";
+            File.WriteAllText(tmp, contents);
+
+            if (File.Exists(path))
+            {
+                try
+                {
+                    File.Replace(tmp, path, bak, true);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Atomic replace failed, falling back to copy: {ex.Message}");
+                    File.Copy(path, bak, true);
+                    File.Copy(tmp, path, true);
+                    File.Delete(tmp);
+                    return;
+                }
+            }
+
+            File.Move(tmp, path);
+        }
+
         void SetupCamera()
         {
             _cam = Camera.main;
@@ -511,13 +589,15 @@ namespace IsoCore.Foundation
             public readonly int seed;
             public readonly int difficulty;
             public readonly string callingId;
+            public readonly string savePath;
 
-            public LaunchOptions(string worldName, int seed, int difficulty, string callingId)
+            public LaunchOptions(string worldName, int seed, int difficulty, string callingId, string savePath)
             {
                 this.worldName = worldName;
                 this.seed = seed;
                 this.difficulty = difficulty;
                 this.callingId = callingId;
+                this.savePath = savePath;
             }
         }
 

@@ -57,11 +57,7 @@ namespace IsoCore.Foundation
             }
             sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, height, IsoGrid.LayerProp);
 
-            var barGo = new GameObject("BreakProgress");
-            barGo.transform.SetParent(transform, false);
-            barGo.transform.localPosition = new Vector3(0f, def.heightUnits + 0.16f, 0f);
-            _progressBar = barGo.AddComponent<WorldProgressBar>();
-            _progressBar.Build(sr.sortingOrder + 2);
+            _progressBar = null;
         }
 
         /// <summary>True when this node needs a tool the player isn't holding.</summary>
@@ -86,7 +82,7 @@ namespace IsoCore.Foundation
             }
 
             _remainingHits -= power;
-            _progressBar?.Show(BreakProgress01);
+            EnsureProgressBar().Show(BreakProgress01);
 
             // Per-hit juice: a directional chip burst, sound, and a quick shake.
             Vector3 fxOrigin = transform.position + Vector3.up * (Def.heightUnits * 0.5f);
@@ -110,6 +106,19 @@ namespace IsoCore.Foundation
         }
 
         // ---- Juice helpers ----
+        WorldProgressBar EnsureProgressBar()
+        {
+            if (_progressBar != null) return _progressBar;
+
+            var sr = GetComponent<SpriteRenderer>();
+            var barGo = new GameObject("BreakProgress");
+            barGo.transform.SetParent(transform, false);
+            barGo.transform.localPosition = new Vector3(0f, Def.heightUnits + 0.16f, 0f);
+            _progressBar = barGo.AddComponent<WorldProgressBar>();
+            _progressBar.Build(sr != null ? sr.sortingOrder + 2 : 2);
+            return _progressBar;
+        }
+
         string HitSfxKey()
         {
             switch (Def.id)

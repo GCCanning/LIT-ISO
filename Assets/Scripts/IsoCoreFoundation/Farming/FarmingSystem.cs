@@ -16,6 +16,9 @@ namespace IsoCore.Foundation
         Hotbar _hotbar;
         Camera _cam;
         Transform _parent;
+        float _cropTickTimer;
+
+        const float CropTickInterval = 0.25f;
 
         public event Action<int, int> SoilTilled;
         public event Action<ItemDefinition, CropDefinition, int, int> SeedPlanted;
@@ -29,6 +32,22 @@ namespace IsoCore.Foundation
             _world = world; _content = content; _inv = inv; _hotbar = hotbar; _cam = cam;
             _parent = new GameObject("Crops").transform;
             _parent.SetParent(transform, false);
+        }
+
+        void Update()
+        {
+            if (_crops.Count == 0) return;
+
+            _cropTickTimer += Time.deltaTime;
+            if (_cropTickTimer < CropTickInterval) return;
+
+            float deltaTime = _cropTickTimer;
+            _cropTickTimer = 0f;
+            foreach (var kv in _crops)
+            {
+                var crop = kv.Value;
+                if (crop) crop.Tick(deltaTime);
+            }
         }
 
         Vector2Int CursorCell()
@@ -135,6 +154,7 @@ namespace IsoCore.Foundation
                 else DestroyImmediate(crop.gameObject);
             }
             _crops.Clear();
+            _cropTickTimer = 0f;
         }
 
         /// <summary>Harvest the nearest mature crop within range. Returns true on success.</summary>

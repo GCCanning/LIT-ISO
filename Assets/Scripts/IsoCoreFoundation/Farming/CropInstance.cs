@@ -27,13 +27,13 @@ namespace IsoCore.Foundation
             Render();
         }
 
-        void Update()
+        public void Tick(float deltaTime)
         {
-            if (_world == null || Mature) return;
-            _timer += Time.deltaTime;
-            if (_timer >= Def.secondsPerStage)
+            if (_world == null || Mature || deltaTime <= 0f) return;
+            _timer += deltaTime;
+            while (_timer >= Def.secondsPerStage && !Mature)
             {
-                _timer = 0f;
+                _timer -= Def.secondsPerStage;
                 _stage = Mathf.Min(_stage + 1, Def.stages - 1);
                 Render();
             }
