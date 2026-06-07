@@ -626,6 +626,17 @@ namespace IsoCore.Foundation.EditorTools
                 firstQuestRead.progress01 >= 0.99f,
                 firstQuestRead.progress01.ToString("0.00"));
 
+            var focusedProgression = new FoundationProgression(content);
+            focusedProgression.AddActivityXp(FoundationProgressionActivity.Harvest, 10, "woodcraft");
+            focusedProgression.AddActivityXp(FoundationProgressionActivity.Creature, 8, "creaturecraft");
+            add("Focused activity XP advances targeted skills only",
+                focusedProgression.GetSkillXp("woodcraft") == 10 &&
+                focusedProgression.GetSkillXp("foraging") == 0 &&
+                focusedProgression.GetSkillXp("mining") == 0 &&
+                focusedProgression.GetSkillXp("creaturecraft") == 8 &&
+                focusedProgression.GetSkillXp("warding") == 0,
+                $"woodcraft {focusedProgression.GetSkillXp("woodcraft")}, creaturecraft {focusedProgression.GetSkillXp("creaturecraft")}");
+
             var inv = new Inventory(12, content);
             inv.Add("wood", 5);
             var crafting = new CraftingSystem(content, inv);

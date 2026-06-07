@@ -77,11 +77,20 @@ namespace IsoCore.Foundation
             int wood = Count(drops, "wood");
             int stone = Count(drops, "stone");
             int fiber = Count(drops, "fiber");
+            int apple = Count(drops, "apple");
             int copper = Count(drops, "copper_ore");
-            int total = wood + stone + fiber + copper;
+            int mining = stone + copper;
+            int foraging = fiber + apple;
+            int total = wood + mining + foraging;
 
             if (total > 0)
-                Award(FoundationProgressionActivity.Harvest, 8 + total * 2);
+            {
+                var skills = new List<string>();
+                if (wood > 0) skills.Add("woodcraft");
+                if (mining > 0) skills.Add("mining");
+                if (foraging > 0) skills.Add("foraging");
+                Award(FoundationProgressionActivity.Harvest, 8 + total * 2, skills.ToArray());
+            }
 
             if (wood > 0)
                 Advance(FirstQuest, "gather_wood", wood);
@@ -99,7 +108,7 @@ namespace IsoCore.Foundation
         {
             if (_progression == null || recipe == null) return;
 
-            Award(FoundationProgressionActivity.Craft, 10);
+            Award(FoundationProgressionActivity.Craft, 10, CraftSkillFor(recipe));
 
             if (recipe.id == "craft_workbench")
                 Advance(FirstQuest, "craft_workbench");
@@ -122,7 +131,7 @@ namespace IsoCore.Foundation
         {
             if (_progression == null || item == null) return;
 
-            Award(FoundationProgressionActivity.Build, 8);
+            Award(FoundationProgressionActivity.Build, 8, "building");
 
             if (item.id == "wood_floor_item")
                 Advance(RoofQuest, "place_floor");
@@ -137,43 +146,59 @@ namespace IsoCore.Foundation
         void HandleRemoved(string id, int wx, int wy)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Build, 2);
+            Award(FoundationProgressionActivity.Build, 2, "building");
         }
 
         void HandleSoilTilled(int wx, int wy)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Farm, 8);
+            Award(FoundationProgressionActivity.Farm, 8, "farming");
             Advance(FirstQuest, "till_soil");
         }
 
         void HandleSeedPlanted(ItemDefinition seed, CropDefinition crop, int wx, int wy)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Farm, 6);
+            Award(FoundationProgressionActivity.Farm, 6, "farming");
         }
 
         void HandleCropHarvested(CropDefinition crop)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Farm, 12);
+            Award(FoundationProgressionActivity.Farm, 12, "farming");
         }
 
         void HandleMobDefeated(MobDefinition mob)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Combat, 12);
+            Award(FoundationProgressionActivity.Combat, 12, "warding");
         }
 
         void HandleMobCalmed(MobDefinition mob)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Combat, 8);
+            Award(FoundationProgressionActivity.Creature, 8, "creaturecraft");
         }
 
-        void Award(FoundationProgressionActivity activity, int amount)
+        string CraftSkillFor(RecipeDefinition recipe)
         {
-            _progression?.AddActivityXp(activity, amount);
+            if (recipe?.outputs != null)
+            {
+                foreach (var output in recipe.outputs)
+                {
+                    if (output.IsEmpty) continue;
+                    var item = _crafting?.Content?.Items.Get(output.itemId);
+                    if (item != null && item.category == ItemCategory.Food)
+                        return "cooking";
+                }
+            }
+
+            return "crafting";
+        }
+
+        void Award(FoundationProgressionActivity activity, int amount, params string[] skillIds)
+        {
+            _progression?.AddActivityXp(activity, amount, skillIds);
         }
 
         void Advance(string questId, string objectiveId, int amount = 1)

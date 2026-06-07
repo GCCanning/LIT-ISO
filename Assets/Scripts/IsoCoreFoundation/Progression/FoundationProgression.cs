@@ -181,16 +181,31 @@ namespace IsoCore.Foundation
             return false;
         }
 
-        public void AddActivityXp(FoundationProgressionActivity activity, int amount)
+        public void AddActivityXp(FoundationProgressionActivity activity, int amount, params string[] skillIds)
         {
             if (amount <= 0 || _content == null) return;
 
             _callingXp += amount;
 
-            foreach (var skill in _content.Skills.All)
+            bool specificSkillAwarded = false;
+            if (skillIds != null)
             {
-                if (skill.activity != activity) continue;
-                AddSkillXpInternal(skill.id, amount);
+                foreach (var skillId in skillIds)
+                {
+                    if (string.IsNullOrWhiteSpace(skillId)) continue;
+                    var skill = _content.Skills.Get(skillId);
+                    if (skill == null || skill.activity != activity) continue;
+                    specificSkillAwarded |= AddSkillXpInternal(skill.id, amount);
+                }
+            }
+
+            if (!specificSkillAwarded)
+            {
+                foreach (var skill in _content.Skills.All)
+                {
+                    if (skill.activity != activity) continue;
+                    AddSkillXpInternal(skill.id, amount);
+                }
             }
 
             Stats.AddExperience(Math.Max(1, amount / 2));
