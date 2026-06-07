@@ -266,7 +266,7 @@ namespace IsoCore.Foundation
                 }
 
                 var data = JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path));
-                if (data == null || data.version <= 0)
+                if (data == null || data.version <= 0 || data.version > FoundationSaveData.CurrentVersion)
                 {
                     Debug.LogWarning($"[FoundationBootstrap] Save file is invalid or unsupported: {path}");
                     return false;
@@ -360,6 +360,53 @@ namespace IsoCore.Foundation
         {
             string folder = SanitizePathPart($"{NormalizeWorldName(worldName)}_{seed}");
             return Path.Combine(Application.persistentDataPath, folder, "save.json");
+        }
+
+        public static bool TryReadSaveMetadata(string path, out FoundationSaveMetadata metadata)
+        {
+            return TryReadSaveMetadata(path, out metadata, out _);
+        }
+
+        public static bool TryReadSaveMetadata(string path, out FoundationSaveMetadata metadata, out string error)
+        {
+            metadata = null;
+            error = "";
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                error = "Save path is empty.";
+                return false;
+            }
+
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    error = $"Save file not found: {path}";
+                    return false;
+                }
+
+                var data = JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path));
+                if (data == null || data.version <= 0)
+                {
+                    error = $"Save file is invalid: {path}";
+                    return false;
+                }
+
+                metadata = data.ToMetadata();
+                if (!metadata.supported)
+                {
+                    error = $"Save version {metadata.version} is newer than supported version {FoundationSaveData.CurrentVersion}.";
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return false;
+            }
         }
 
         static string SanitizePathPart(string value)

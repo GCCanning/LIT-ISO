@@ -28,6 +28,53 @@ namespace IsoCore.Foundation
         public float dayNightTime;
         public FoundationSavedMob[] mobs;
         public string[] regionShifts;
+
+        public FoundationSaveMetadata ToMetadata()
+        {
+            int inventoryCount = 0;
+            if (inventorySlots != null)
+                for (int i = 0; i < inventorySlots.Length; i++)
+                    if (!inventorySlots[i].IsEmpty)
+                        inventoryCount += Math.Max(0, inventorySlots[i].count);
+
+            var stats = progression != null ? progression.stats : null;
+            return new FoundationSaveMetadata
+            {
+                version = version,
+                supported = version > 0 && version <= CurrentVersion,
+                savedUtc = savedUtc,
+                worldName = string.IsNullOrWhiteSpace(worldName) ? "Untitled World" : worldName,
+                seed = seed,
+                difficulty = difficulty,
+                callingId = string.IsNullOrWhiteSpace(callingId) ? progression?.currentCallingId ?? "greenhand" : callingId,
+                level = stats != null ? Math.Max(1, stats.level) : 1,
+                className = stats != null && !string.IsNullOrWhiteSpace(stats.className) ? stats.className : "Wanderer",
+                title = stats != null && !string.IsNullOrWhiteSpace(stats.title) ? stats.title : "Newcomer",
+                inventoryItemCount = inventoryCount,
+                placedObjectCount = placedObjects != null ? placedObjects.Length : 0,
+                storageContainerCount = storageContainers != null ? storageContainers.Length : 0,
+                cropCount = crops != null ? crops.Length : 0,
+            };
+        }
+    }
+
+    [Serializable]
+    public class FoundationSaveMetadata
+    {
+        public int version;
+        public bool supported;
+        public string savedUtc;
+        public string worldName;
+        public int seed;
+        public int difficulty;
+        public string callingId;
+        public int level;
+        public string className;
+        public string title;
+        public int inventoryItemCount;
+        public int placedObjectCount;
+        public int storageContainerCount;
+        public int cropCount;
     }
 
     [Serializable]

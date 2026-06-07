@@ -308,6 +308,7 @@ namespace IsoCore.Foundation.EditorTools
                 }
 
                 bool saved = boot.Save(path);
+                bool metadataOk = FoundationBootstrap.TryReadSaveMetadata(path, out var metadata, out string metadataError);
 
                 FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, mismatchedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
@@ -349,6 +350,18 @@ namespace IsoCore.Foundation.EditorTools
                 add("FoundationBootstrap.Save writes a save file",
                     saved && File.Exists(path),
                     path);
+                add("FoundationBootstrap.TryReadSaveMetadata reads menu-safe save summary",
+                    metadataOk &&
+                    metadata.version == FoundationSaveData.CurrentVersion &&
+                    metadata.supported &&
+                    metadata.worldName == boot.ActiveWorldName &&
+                    metadata.seed == expectedSeed &&
+                    metadata.callingId == boot.ActiveCallingId &&
+                    metadata.inventoryItemCount >= 3 &&
+                    metadata.placedObjectCount == 1 &&
+                    metadata.storageContainerCount == 1 &&
+                    metadata.cropCount == 1,
+                    metadataOk ? $"{metadata.worldName} seed {metadata.seed} level {metadata.level}" : metadataError);
                 add("FoundationBootstrap.Load applies save data",
                     loadedOk &&
                     loaded.Inventory.Count("copper_bar") == 3 &&
@@ -384,11 +397,35 @@ namespace IsoCore.Foundation.EditorTools
                     loaded.Player.CurrentCell == new Vector2Int(2, -3),
                     loaded.Player.CurrentCell.ToString());
 
+                string futurePath = Path.GetFullPath(Path.Combine("Temp", "FoundationFutureSaveValidation.json"));
+                var futureData = new FoundationSaveData
+                {
+                    version = FoundationSaveData.CurrentVersion + 1,
+                    worldName = boot.ActiveWorldName,
+                    seed = expectedSeed,
+                    savedUtc = DateTime.UtcNow.ToString("o"),
+                };
+                File.WriteAllText(futurePath, JsonUtility.ToJson(futureData, true));
+                bool futureMetadataOk = FoundationBootstrap.TryReadSaveMetadata(futurePath, out var futureMetadata, out string futureError);
+                bool futureLoaded = loaded.Load(futurePath);
+                add("Foundation save metadata rejects future save versions",
+                    !futureMetadataOk &&
+                    futureMetadata != null &&
+                    !futureMetadata.supported &&
+                    futureError.Contains("newer"),
+                    futureError);
+                add("FoundationBootstrap.Load rejects future save versions",
+                    !futureLoaded,
+                    $"loaded {futureLoaded}");
+                if (File.Exists(futurePath)) File.Delete(futurePath);
+
                 UnityEngine.Object.DestroyImmediate(loadedGo);
             }
             finally
             {
                 if (File.Exists(path)) File.Delete(path);
+                string futurePath = Path.GetFullPath(Path.Combine("Temp", "FoundationFutureSaveValidation.json"));
+                if (File.Exists(futurePath)) File.Delete(futurePath);
                 FoundationBootstrap.ClearLaunchOptions();
             }
         }
