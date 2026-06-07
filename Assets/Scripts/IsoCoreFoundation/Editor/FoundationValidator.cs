@@ -46,6 +46,18 @@ namespace IsoCore.Foundation.EditorTools
             Add("LitRPG Calling database", c.Callings.Count >= 7, $"{c.Callings.Count} callings");
             Add("LitRPG Skill database", c.Skills.Count >= 12, $"{c.Skills.Count} skills");
             Add("LitRPG Quest database", c.Quests.Count >= 5, $"{c.Quests.Count} quests");
+            Add("LitRPG Trial data spine databases",
+                c.EvidenceEvents.Count >= 8 &&
+                c.XPChannels.Count >= 8 &&
+                c.Titles.Count >= 6 &&
+                c.Affinities.Count >= 7 &&
+                c.Classes.Count >= 8 &&
+                c.Professions.Count >= 8 &&
+                c.Dungeons.Count >= 1 &&
+                c.DungeonResults.Count >= 1 &&
+                c.GuildBoardEntries.Count >= 1 &&
+                c.WorldEvents.Count >= 4,
+                $"Evidence:{c.EvidenceEvents.Count} XP:{c.XPChannels.Count} Titles:{c.Titles.Count} Affinities:{c.Affinities.Count} Classes:{c.Classes.Count} Professions:{c.Professions.Count}");
 
             // ---- Block groups have variants ----
             bool groupsOk = true; string groupDetail = "";
@@ -148,6 +160,51 @@ namespace IsoCore.Foundation.EditorTools
             }
             Add("Quest definitions have objectives and rewards", questOk, questOk ? "all populated" : questDetail);
 
+            bool trialRefsOk = true; string trialRefsDetail = "";
+            foreach (var evidence in c.EvidenceEvents.All)
+            {
+                if (evidence.evidenceWeights == null || evidence.evidenceWeights.Length == 0)
+                { trialRefsOk = false; trialRefsDetail += $"{evidence.id}:no_weights "; }
+                if (evidence.titleProgress != null)
+                    foreach (var title in evidence.titleProgress)
+                        if (!c.Titles.Has(title.titleId))
+                        { trialRefsOk = false; trialRefsDetail += $"{evidence.id}->title:{title.titleId} "; }
+                if (evidence.affinityProgress != null)
+                    foreach (var affinity in evidence.affinityProgress)
+                        if (!c.Affinities.Has(affinity.affinityId))
+                        { trialRefsOk = false; trialRefsDetail += $"{evidence.id}->affinity:{affinity.affinityId} "; }
+                if (evidence.xpGrants != null)
+                    foreach (var xp in evidence.xpGrants)
+                        if (!string.IsNullOrWhiteSpace(xp.id) && !c.XPChannels.Has(xp.id) && !c.Skills.Has(xp.id) && !c.Professions.Has(xp.id))
+                        { trialRefsOk = false; trialRefsDetail += $"{evidence.id}->xp:{xp.id} "; }
+            }
+            foreach (var cls in c.Classes.All)
+                if (cls.weights == null || cls.weights.Length == 0)
+                { trialRefsOk = false; trialRefsDetail += $"{cls.id}:no_class_weights "; }
+            foreach (var profession in c.Professions.All)
+                if (profession.progressionSkillIds == null || profession.progressionSkillIds.Length == 0)
+                { trialRefsOk = false; trialRefsDetail += $"{profession.id}:no_skills "; }
+                else foreach (var skillId in profession.progressionSkillIds)
+                    if (!c.Skills.Has(skillId))
+                    { trialRefsOk = false; trialRefsDetail += $"{profession.id}->{skillId} "; }
+            foreach (var dungeon in c.Dungeons.All)
+            {
+                if (!c.DungeonResults.Has(dungeon.resultId))
+                { trialRefsOk = false; trialRefsDetail += $"{dungeon.id}->result:{dungeon.resultId} "; }
+                if (dungeon.recommendedSupplyItemIds != null)
+                    foreach (var itemId in dungeon.recommendedSupplyItemIds)
+                        if (!c.Items.Has(itemId))
+                        { trialRefsOk = false; trialRefsDetail += $"{dungeon.id}->item:{itemId} "; }
+            }
+            foreach (var entry in c.GuildBoardEntries.All)
+            {
+                if (!string.IsNullOrWhiteSpace(entry.questId) && !c.Quests.Has(entry.questId))
+                { trialRefsOk = false; trialRefsDetail += $"{entry.id}->quest:{entry.questId} "; }
+                if (!string.IsNullOrWhiteSpace(entry.worldEventId) && !c.WorldEvents.Has(entry.worldEventId))
+                { trialRefsOk = false; trialRefsDetail += $"{entry.id}->event:{entry.worldEventId} "; }
+            }
+            Add("Trial data spine references resolve", trialRefsOk, trialRefsOk ? "all resolve" : trialRefsDetail);
+
             // ---- Scene / bootstrap / camera ----
             string fullScene = Path.Combine(FoundationPaths.ProjectRoot, FoundationPaths.ScenePath);
             bool sceneExists = File.Exists(fullScene);
@@ -213,6 +270,8 @@ namespace IsoCore.Foundation.EditorTools
             sb.AppendLine($"- Biomes: {c.Biomes.Count}, Items: {c.Items.Count}, Placeables: {c.Placeables.Count}");
             sb.AppendLine($"- Recipes: {c.Recipes.Count}, Resource nodes: {c.Nodes.Count}, Mobs: {c.Mobs.Count}, Crops: {c.Crops.Count}");
             sb.AppendLine($"- Callings: {c.Callings.Count}, Skills: {c.Skills.Count}, Quests: {c.Quests.Count}");
+            sb.AppendLine($"- Evidence: {c.EvidenceEvents.Count}, XP Channels: {c.XPChannels.Count}, Titles: {c.Titles.Count}, Affinities: {c.Affinities.Count}");
+            sb.AppendLine($"- Classes: {c.Classes.Count}, Professions: {c.Professions.Count}, Dungeons: {c.Dungeons.Count}, Board Entries: {c.GuildBoardEntries.Count}, World Events: {c.WorldEvents.Count}");
             sb.AppendLine();
             sb.AppendLine("## Manual play-mode checklist");
             sb.AppendLine();

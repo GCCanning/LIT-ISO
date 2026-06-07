@@ -9,7 +9,7 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 2;
+        public const int CurrentVersion = 3;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -166,6 +166,12 @@ namespace IsoCore.Foundation
         public string[] recentUnlocks;
         public string[] activeBuffs;
         public string[] regionShifts;
+        public FoundationKeyValueInt[] trialScores;
+        public FoundationKeyValueInt[] xpChannels;
+        public FoundationKeyValueInt[] titleProgress;
+        public FoundationKeyValueInt[] affinityScores;
+        public string[] acquiredTitles;
+        public FoundationSystemMessageEntry[] systemMessages;
     }
 
     [Serializable]

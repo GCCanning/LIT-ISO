@@ -93,13 +93,28 @@ namespace IsoCore.Foundation
             }
 
             if (wood > 0)
+            {
+                Evidence("harvest_wood", wood, node.id);
                 Advance(FirstQuest, "gather_wood", wood);
+            }
 
             if (stone > 0)
+            {
+                Evidence("harvest_stone", stone, node.id);
                 Advance(CraftQuest, "mine_stone", stone);
+            }
 
             if (fiber > 0)
+            {
+                Evidence("harvest_forage", fiber, node.id);
                 Advance(CraftQuest, "gather_fiber", fiber);
+            }
+
+            if (apple > 0)
+                Evidence("harvest_forage", apple, node.id);
+
+            if (copper > 0)
+                Evidence("harvest_stone", copper, node.id);
 
             Advance(PathQuest, "clear_node");
         }
@@ -109,6 +124,7 @@ namespace IsoCore.Foundation
             if (_progression == null || recipe == null) return;
 
             Award(FoundationProgressionActivity.Craft, 10, CraftSkillFor(recipe));
+            Evidence(EvidenceForRecipe(recipe), 1, recipe.id);
 
             if (recipe.id == "craft_workbench")
                 Advance(FirstQuest, "craft_workbench");
@@ -132,6 +148,7 @@ namespace IsoCore.Foundation
             if (_progression == null || item == null) return;
 
             Award(FoundationProgressionActivity.Build, 8, "building");
+            Evidence(EvidenceForPlacedItem(item), 1, item.id);
 
             if (item.id == "wood_floor_item")
                 Advance(RoofQuest, "place_floor");
@@ -153,6 +170,7 @@ namespace IsoCore.Foundation
         {
             if (_progression == null) return;
             Award(FoundationProgressionActivity.Farm, 8, "farming");
+            Evidence("till_soil", 1, "soil");
             Advance(FirstQuest, "till_soil");
         }
 
@@ -160,24 +178,28 @@ namespace IsoCore.Foundation
         {
             if (_progression == null) return;
             Award(FoundationProgressionActivity.Farm, 6, "farming");
+            Evidence("till_soil", 1, seed != null ? seed.id : "seed");
         }
 
         void HandleCropHarvested(CropDefinition crop)
         {
             if (_progression == null) return;
             Award(FoundationProgressionActivity.Farm, 12, "farming");
+            Evidence("crop_harvest", 1, crop != null ? crop.id : "crop");
         }
 
         void HandleMobDefeated(MobDefinition mob)
         {
             if (_progression == null) return;
             Award(FoundationProgressionActivity.Combat, 12, "warding");
+            Evidence("mob_defeated", 1, mob != null ? mob.id : "mob");
         }
 
         void HandleMobCalmed(MobDefinition mob)
         {
             if (_progression == null) return;
             Award(FoundationProgressionActivity.Creature, 8, "creaturecraft");
+            Evidence("mob_calmed", 1, mob != null ? mob.id : "mob");
         }
 
         string CraftSkillFor(RecipeDefinition recipe)
@@ -196,9 +218,29 @@ namespace IsoCore.Foundation
             return "crafting";
         }
 
+        string EvidenceForRecipe(RecipeDefinition recipe)
+        {
+            if (recipe == null) return "craft_workbench";
+            if (recipe.id == "craft_campfire") return "craft_campfire";
+            return "craft_workbench";
+        }
+
+        string EvidenceForPlacedItem(ItemDefinition item)
+        {
+            if (item == null) return "place_path";
+            if (item.id == "stone_path_item") return "place_path";
+            if (item.id == "lantern_item" || item.id == "campfire_item") return "craft_campfire";
+            return "craft_workbench";
+        }
+
         void Award(FoundationProgressionActivity activity, int amount, params string[] skillIds)
         {
             _progression?.AddActivityXp(activity, amount, skillIds);
+        }
+
+        void Evidence(string evidenceId, int amount = 1, string sourceId = "")
+        {
+            _progression?.RecordEvidence(evidenceId, amount, sourceId);
         }
 
         void Advance(string questId, string objectiveId, int amount = 1)

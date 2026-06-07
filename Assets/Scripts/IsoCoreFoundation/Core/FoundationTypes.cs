@@ -29,6 +29,51 @@ namespace IsoCore.Foundation
 
     public enum FoundationProgressionActivity { Harvest, Craft, Build, Farm, Explore, Creature, Combat, Trade, Lore }
 
+    public enum SystemMessageChannel
+    {
+        Notice,
+        Warning,
+        TrialEvidence,
+        LevelUp,
+        SkillUnlock,
+        TitleAcquired,
+        AffinityResonance,
+        QuestUpdate,
+        DungeonAlert,
+        PartyEvent,
+        WorldEvent
+    }
+
+    public enum TrialEvidenceCategory
+    {
+        Combat,
+        Survival,
+        Exploration,
+        Crafting,
+        Gathering,
+        Magic,
+        Social,
+        Building,
+        Trade,
+        Support
+    }
+
+    public enum FoundationXpChannel
+    {
+        Character,
+        Class,
+        Profession,
+        SkillMastery,
+        AdventurerRank,
+        GuildRank,
+        RegionReputation,
+        DungeonClearance
+    }
+
+    public enum FoundationGrade { F, E, D, C, B, A, S }
+
+    public enum FoundationClassRarity { Common, CommonPlus, Uncommon, Rare, Epic, Legendary, Mythic }
+
     // ---- Small serializable data structs ----
 
     [Serializable]
@@ -117,6 +162,60 @@ namespace IsoCore.Foundation
         {
             this.type = type;
             this.id = id;
+            this.amount = amount;
+        }
+    }
+
+    [Serializable]
+    public struct FoundationEvidenceWeight
+    {
+        public TrialEvidenceCategory category;
+        public int amount;
+
+        public FoundationEvidenceWeight(TrialEvidenceCategory category, int amount)
+        {
+            this.category = category;
+            this.amount = amount;
+        }
+    }
+
+    [Serializable]
+    public struct FoundationXpGrant
+    {
+        public FoundationXpChannel channel;
+        public string id;
+        public int amount;
+
+        public FoundationXpGrant(FoundationXpChannel channel, string id, int amount)
+        {
+            this.channel = channel;
+            this.id = id;
+            this.amount = amount;
+        }
+    }
+
+    [Serializable]
+    public struct FoundationTitleProgressGrant
+    {
+        public string titleId;
+        public int amount;
+
+        public FoundationTitleProgressGrant(string titleId, int amount)
+        {
+            this.titleId = titleId;
+            this.amount = amount;
+        }
+    }
+
+    [Serializable]
+    public struct FoundationAffinityGrant
+    {
+        public string affinityId;
+        public int amount;
+
+        public FoundationAffinityGrant(string affinityId, int amount)
+        {
+            this.affinityId = affinityId;
             this.amount = amount;
         }
     }

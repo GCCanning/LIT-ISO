@@ -21,6 +21,18 @@ namespace IsoCore.Foundation
         public readonly FoundationCallingDatabase Callings = new();
         public readonly FoundationSkillDatabase Skills = new();
         public readonly FoundationQuestDatabase Quests = new();
+        public readonly SystemMessageDatabase SystemMessages = new();
+        public readonly EvidenceEventDatabase EvidenceEvents = new();
+        public readonly XPChannelDatabase XPChannels = new();
+        public readonly TitleDatabase Titles = new();
+        public readonly AffinityDatabase Affinities = new();
+        public readonly ClassDatabase Classes = new();
+        public readonly ProfessionDatabase Professions = new();
+        public readonly DungeonDatabase Dungeons = new();
+        public readonly ExpeditionTemplateDatabase Expeditions = new();
+        public readonly DungeonResultDatabase DungeonResults = new();
+        public readonly GuildBoardEntryDatabase GuildBoardEntries = new();
+        public readonly WorldEventDatabase WorldEvents = new();
 
         static T New<T>(string id) where T : FoundationDefinition
         {
@@ -420,6 +432,337 @@ namespace IsoCore.Foundation
                 "Find the first underground room and bring back proof that the old systems are still humming.",
                 new[] { Obj("enter_cellar", "Enter the Rootcellar"), Obj("recover_relic", "Recover a Memory Amber"), Obj("return_home", "Return home safely") },
                 new[] { Reward(FoundationRewardType.Xp, "character", 100), Reward(FoundationRewardType.MemoryPage, "old_lamps_01") });
+
+            // ---- Seven-day trial data spine ----
+            FoundationEvidenceWeight W(TrialEvidenceCategory category, int amount) => new FoundationEvidenceWeight(category, amount);
+            FoundationXpGrant X(FoundationXpChannel channel, string id, int amount) => new FoundationXpGrant(channel, id, amount);
+            FoundationTitleProgressGrant T(string id, int amount) => new FoundationTitleProgressGrant(id, amount);
+            FoundationAffinityGrant A(string id, int amount) => new FoundationAffinityGrant(id, amount);
+
+            SystemMessageDefinition SystemMessage(string id, SystemMessageChannel channel, string text, int priority = 1)
+            {
+                var m = New<SystemMessageDefinition>(id);
+                m.channel = channel;
+                m.text = text;
+                m.priority = priority;
+                c.SystemMessages.Add(m);
+                return m;
+            }
+
+            XPChannelDefinition XpChannel(FoundationXpChannel channel, string id, string name, string description, int xpPerLevel = 100)
+            {
+                var x = New<XPChannelDefinition>(id);
+                x.displayName = name;
+                x.channel = channel;
+                x.description = description;
+                x.xpPerLevel = xpPerLevel;
+                c.XPChannels.Add(x);
+                return x;
+            }
+
+            TitleDefinition Title(string id, string name, int threshold, string effectPolicy, string message, bool mechanical = false, string hiddenClassKey = "")
+            {
+                var t = New<TitleDefinition>(id);
+                t.displayName = name;
+                t.threshold = threshold;
+                t.effectPolicy = effectPolicy;
+                t.unlockMessage = message;
+                t.mechanical = mechanical;
+                t.hiddenClassKey = hiddenClassKey;
+                c.Titles.Add(t);
+                return t;
+            }
+
+            AffinityDefinition Affinity(string id, string name, string family, int awakenThreshold, string description, params string[] rewards)
+            {
+                var a = New<AffinityDefinition>(id);
+                a.displayName = name;
+                a.family = family;
+                a.awakenThreshold = awakenThreshold;
+                a.description = description;
+                a.thresholdRewards = rewards;
+                c.Affinities.Add(a);
+                return a;
+            }
+
+            EvidenceEventDefinition Evidence(string id, string name, string message,
+                FoundationEvidenceWeight[] weights, FoundationXpGrant[] xp,
+                FoundationTitleProgressGrant[] titles, FoundationAffinityGrant[] affinities,
+                SystemMessageChannel channel = SystemMessageChannel.TrialEvidence)
+            {
+                var e = New<EvidenceEventDefinition>(id);
+                e.displayName = name;
+                e.message = message;
+                e.messageChannel = channel;
+                e.evidenceWeights = weights;
+                e.xpGrants = xp;
+                e.titleProgress = titles;
+                e.affinityProgress = affinities;
+                c.EvidenceEvents.Add(e);
+                return e;
+            }
+
+            ClassDefinition Class(string id, string name, FoundationClassRarity rarity, string description,
+                FoundationEvidenceWeight[] weights, params string[] affinityIds)
+            {
+                var cls = New<ClassDefinition>(id);
+                cls.displayName = name;
+                cls.rarity = rarity;
+                cls.description = description;
+                cls.weights = weights;
+                cls.preferredAffinityIds = affinityIds;
+                c.Classes.Add(cls);
+                return cls;
+            }
+
+            ProfessionDefinition Profession(string id, string name, FoundationProgressionActivity activity,
+                string description, params string[] skillIds)
+            {
+                var p = New<ProfessionDefinition>(id);
+                p.displayName = name;
+                p.primaryActivity = activity;
+                p.description = description;
+                p.progressionSkillIds = skillIds;
+                c.Professions.Add(p);
+                return p;
+            }
+
+            DungeonResultDefinition DungeonResult(string id, string name, string dungeonId, string summary,
+                FoundationXpGrant[] xp, FoundationTitleProgressGrant[] titles, FoundationAffinityGrant[] affinities,
+                FoundationQuestReward[] rewards)
+            {
+                var r = New<DungeonResultDefinition>(id);
+                r.displayName = name;
+                r.dungeonId = dungeonId;
+                r.summary = summary;
+                r.xpRewards = xp;
+                r.titleProgress = titles;
+                r.affinityProgress = affinities;
+                r.rewards = rewards;
+                c.DungeonResults.Add(r);
+                return r;
+            }
+
+            DungeonDefinition Dungeon(string id, string name, string family, int threat, int travelHours,
+                string resultId, string description, params string[] supplies)
+            {
+                var d = New<DungeonDefinition>(id);
+                d.displayName = name;
+                d.family = family;
+                d.threatRank = threat;
+                d.travelHours = travelHours;
+                d.resultId = resultId;
+                d.description = description;
+                d.recommendedSupplyItemIds = supplies;
+                c.Dungeons.Add(d);
+                return d;
+            }
+
+            ExpeditionTemplateDefinition Expedition(string id, string name, string dungeonId, int hours, int danger, params string[] supplies)
+            {
+                var e = New<ExpeditionTemplateDefinition>(id);
+                e.displayName = name;
+                e.dungeonId = dungeonId;
+                e.expectedHours = hours;
+                e.danger = danger;
+                e.requiredSupplyItemIds = supplies;
+                c.Expeditions.Add(e);
+                return e;
+            }
+
+            GuildBoardEntryDefinition BoardEntry(string id, string name, string questId, string eventId, int rank, int days, string description)
+            {
+                var b = New<GuildBoardEntryDefinition>(id);
+                b.displayName = name;
+                b.questId = questId;
+                b.worldEventId = eventId;
+                b.rankRequirement = rank;
+                b.expiresAfterDays = days;
+                b.description = description;
+                c.GuildBoardEntries.Add(b);
+                return b;
+            }
+
+            WorldEventDefinition WorldEvent(string id, string name, int severity, string trigger, string consequence, string message)
+            {
+                var e = New<WorldEventDefinition>(id);
+                e.displayName = name;
+                e.severity = severity;
+                e.triggerId = trigger;
+                e.consequenceId = consequence;
+                e.message = message;
+                c.WorldEvents.Add(e);
+                return e;
+            }
+
+            SystemMessage("foreign_soul_detected", SystemMessageChannel.Notice, "Foreign soul detected.", 3);
+            SystemMessage("trial_protocol_started", SystemMessageChannel.Notice, "Trial Protocol initiated: survive, adapt, act.", 3);
+
+            XpChannel(FoundationXpChannel.Character, "character", "Character Level", "Broad survivability from quests, discoveries, and major proof.");
+            XpChannel(FoundationXpChannel.Class, "class", "Class Level", "Future class-aligned action growth after the Obelisk.");
+            XpChannel(FoundationXpChannel.Profession, "profession", "Profession Level", "Production, contracts, station chains, and economic identity.");
+            XpChannel(FoundationXpChannel.SkillMastery, "skill_mastery", "Skill Mastery", "Repeated use of tools, weapons, craft, routes, and rituals.");
+            XpChannel(FoundationXpChannel.AdventurerRank, "adventurer_rank", "Adventurer Rank", "Guild-reviewed delves, bounties, rescues, and reliability.");
+            XpChannel(FoundationXpChannel.GuildRank, "guild_rank", "Guild Rank", "Shared base, civic, and party-scale milestones.");
+            XpChannel(FoundationXpChannel.RegionReputation, "mosswake_reputation", "Mosswake Reputation", "Local trust, permissions, shop standing, and civic help.");
+            XpChannel(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", "Rootcellar Clearance", "Performance records for the first dungeon family.");
+
+            Title("first_night_survivor", "First Night Survivor", 5, "fatigue_resistance_minor",
+                "Title acquired: First Night Survivor.", true, "survivalist");
+            Title("village_shield", "Village Shield", 6, "town_defense_reputation",
+                "Title acquired: Village Shield.", true, "guardian");
+            Title("campfire_captain", "Campfire Captain", 4, "camp_recovery_minor",
+                "Title acquired: Campfire Captain.", true, "hearthkeeper");
+            Title("trail_cook", "Trail Cook", 4, "travel_meal_bonus",
+                "Title acquired: Trail Cook.", true, "cook");
+            Title("goblin_bane", "Goblin-Bane", 5, "goblin_threat_bias",
+                "Title acquired: Goblin-Bane.", true, "warden");
+            Title("returned_for_them", "Returned For Them", 3, "support_leadership_key",
+                "Title acquired: Returned For Them.", true, "oathbearer");
+
+            Affinity("ember", "Ember", "Fire, forging, courage, and camp warmth.", 10,
+                "Warmth, flamecraft, bold combat, and firelit shelter.", "campfire focus", "forge rites");
+            Affinity("tide", "Tide", "Water, healing, fishing, and weather.", 10,
+                "Water work, recovery, fishing, weather survival, and mercy.", "rain reading", "healing springs");
+            Affinity("root", "Root", "Growth, farming, binding, and wild care.", 10,
+                "Plants, soil, forage, animals, and living terrain.", "crop memory", "den accord");
+            Affinity("stone", "Stone", "Defense, mining, construction, and endurance.", 10,
+                "Ore, paths, walls, shields, and hard choices held steady.", "mason signs", "ward anchors");
+            Affinity("gale", "Gale", "Speed, scouting, sailing, and clean routes.", 10,
+                "Travel, mapping, scouting, movement, and road sense.", "route whisper", "storm step");
+            Affinity("glimmer", "Glimmer", "Light, illusion, secrets, and hidden knowledge.", 10,
+                "Lanterns, shrines, lore, stealth, and revealed paths.", "hidden doors", "memory pages");
+            Affinity("hearth", "Hearth", "Food, comfort, camp safety, and morale.", 10,
+                "Meals, shelter, camp order, rest, and safe returns.", "shared supper", "rested camp");
+
+            Evidence("harvest_wood", "Harvest Wood",
+                "Entry recorded: wood gathered. Survival and craft tendencies rise.",
+                new[] { W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Survival, 1), W(TrialEvidenceCategory.Building, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "woodcraft", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("first_night_survivor", 1), T("campfire_captain", 1) },
+                new[] { A("root", 1), A("hearth", 1) });
+            Evidence("harvest_stone", "Mine Stone",
+                "Entry recorded: stone broken. Building and Stone resonance rise.",
+                new[] { W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Building, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "mining", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("village_shield", 1) },
+                new[] { A("stone", 2) });
+            Evidence("harvest_forage", "Gather Forage",
+                "Entry recorded: forage recovered. Survival and Root resonance rise.",
+                new[] { W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "foraging", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("trail_cook", 1) },
+                new[] { A("root", 2), A("hearth", 1) });
+            Evidence("craft_workbench", "Craft Workbench",
+                "Entry recorded: first station made. Crafting identity rises.",
+                new[] { W(TrialEvidenceCategory.Crafting, 3), W(TrialEvidenceCategory.Building, 2) },
+                new[] { X(FoundationXpChannel.SkillMastery, "crafting", 4), X(FoundationXpChannel.Profession, "builder", 2) },
+                new[] { T("campfire_captain", 1) },
+                new[] { A("stone", 1), A("hearth", 1) });
+            Evidence("craft_campfire", "Craft Campfire",
+                "Entry recorded: camp warmth secured. Hearth resonance rises.",
+                new[] { W(TrialEvidenceCategory.Survival, 3), W(TrialEvidenceCategory.Crafting, 1), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "cooking", 2), X(FoundationXpChannel.Character, "character", 2) },
+                new[] { T("first_night_survivor", 2), T("campfire_captain", 2) },
+                new[] { A("ember", 2), A("hearth", 3) });
+            Evidence("place_path", "Place Path",
+                "Entry recorded: route improved. Building and Gale tendencies rise.",
+                new[] { W(TrialEvidenceCategory.Building, 2), W(TrialEvidenceCategory.Exploration, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "building", 3), X(FoundationXpChannel.RegionReputation, "mosswake_reputation", 1) },
+                new[] { T("village_shield", 1) },
+                new[] { A("stone", 1), A("gale", 1) });
+            Evidence("till_soil", "Till Soil",
+                "Entry recorded: soil prepared. Root resonance rises.",
+                new[] { W(TrialEvidenceCategory.Gathering, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "farming", 3), X(FoundationXpChannel.Profession, "farmer", 2) },
+                new[] { T("trail_cook", 1) },
+                new[] { A("root", 3), A("hearth", 1) });
+            Evidence("crop_harvest", "Harvest Crop",
+                "Entry recorded: food brought home. Hearth and Root progress rise.",
+                new[] { W(TrialEvidenceCategory.Survival, 2), W(TrialEvidenceCategory.Gathering, 1), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "farming", 4), X(FoundationXpChannel.Profession, "farmer", 2) },
+                new[] { T("trail_cook", 2), T("campfire_captain", 1) },
+                new[] { A("root", 2), A("hearth", 2) });
+            Evidence("mob_defeated", "Mob Defeated",
+                "Entry recorded: threat resolved by force. Combat evidence rises.",
+                new[] { W(TrialEvidenceCategory.Combat, 3), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "warding", 4), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 2) },
+                new[] { T("village_shield", 1), T("goblin_bane", 1) },
+                new[] { A("ember", 1), A("stone", 1) });
+            Evidence("mob_calmed", "Mob Calmed",
+                "Entry recorded: threat softened without bloodshed. Support and Root evidence rise.",
+                new[] { W(TrialEvidenceCategory.Support, 2), W(TrialEvidenceCategory.Social, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "creaturecraft", 4), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("returned_for_them", 1) },
+                new[] { A("root", 2), A("tide", 1) });
+
+            Class("trailblade", "Trailblade", FoundationClassRarity.Uncommon,
+                "A practical scout-fighter shaped by routes, tools, and first danger.",
+                new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Combat, 2), W(TrialEvidenceCategory.Survival, 2) }, "gale", "stone");
+            Class("iron_warden", "Iron Warden", FoundationClassRarity.Rare,
+                "A defender whose proof is shelter, shields, paths, and pressure held.",
+                new[] { W(TrialEvidenceCategory.Combat, 3), W(TrialEvidenceCategory.Building, 3), W(TrialEvidenceCategory.Survival, 2) }, "stone", "ember");
+            Class("hearthbound_acolyte", "Hearthbound Acolyte", FoundationClassRarity.Rare,
+                "A camp-centered support path built from food, warmth, and safe returns.",
+                new[] { W(TrialEvidenceCategory.Support, 3), W(TrialEvidenceCategory.Survival, 3), W(TrialEvidenceCategory.Crafting, 1) }, "hearth", "ember");
+            Class("stonehand_delver", "Stonehand Delver", FoundationClassRarity.Uncommon,
+                "A miner-builder suited to stone, ore, tunnels, and steady tool work.",
+                new[] { W(TrialEvidenceCategory.Gathering, 3), W(TrialEvidenceCategory.Building, 2), W(TrialEvidenceCategory.Exploration, 1) }, "stone");
+            Class("wildsign_ranger", "Wildsign Ranger", FoundationClassRarity.Rare,
+                "A wilderness reader whose trial favors forage, beasts, and route sense.",
+                new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Survival, 2) }, "root", "gale");
+            Class("ashvein_pyromancer", "Ashvein Pyromancer", FoundationClassRarity.Epic,
+                "A flame path opened by danger, campfire discipline, and Ember resonance.",
+                new[] { W(TrialEvidenceCategory.Magic, 3), W(TrialEvidenceCategory.Combat, 2), W(TrialEvidenceCategory.Survival, 1) }, "ember");
+            Class("wayfarer", "Wayfarer", FoundationClassRarity.CommonPlus,
+                "A reliable traveler shaped by roads, resource sense, and adaptable work.",
+                new[] { W(TrialEvidenceCategory.Exploration, 2), W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Trade, 1) }, "gale", "hearth");
+            Class("oathbearer", "Oathbearer", FoundationClassRarity.Epic,
+                "A support-defender path for players who repeatedly return for others.",
+                new[] { W(TrialEvidenceCategory.Support, 3), W(TrialEvidenceCategory.Social, 2), W(TrialEvidenceCategory.Combat, 2) }, "hearth", "stone");
+
+            Profession("blacksmith", "Blacksmith", FoundationProgressionActivity.Craft,
+                "Smelting, forging, repair, metal tools, and durable gear.", "crafting", "mining");
+            Profession("alchemist", "Alchemist", FoundationProgressionActivity.Craft,
+                "Potions, reagents, refining, and risky recipe discovery.", "foraging", "lorekeeping");
+            Profession("cook", "Cook", FoundationProgressionActivity.Craft,
+                "Meals, expedition food, comfort buffs, and visitor favorites.", "cooking", "trade");
+            Profession("builder", "Builder", FoundationProgressionActivity.Build,
+                "Floors, paths, civic footprints, shelter scoring, and expansion.", "building", "woodcraft");
+            Profession("trader", "Trader", FoundationProgressionActivity.Trade,
+                "Orders, prices, routes, reputation, and economic quests.", "trade", "lorekeeping");
+            Profession("farmer", "Farmer", FoundationProgressionActivity.Farm,
+                "Soil, seed memory, crop traits, and reliable food.", "farming", "foraging");
+            Profession("miner", "Miner", FoundationProgressionActivity.Harvest,
+                "Ore, stone, tunnels, durability, and delver preparation.", "mining", "warding");
+            Profession("fisher", "Fisher", FoundationProgressionActivity.Harvest,
+                "Water routes, fish, weather, and Tide-aligned food work.", "foraging", "cooking");
+
+            DungeonResult("rootcellar_first_return", "Rootcellar First Return", "rootcellar_starter",
+                "Returned with proof from the old food stores beneath Mosswake.",
+                new[] { X(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", 20), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 8) },
+                new[] { T("first_night_survivor", 1), T("returned_for_them", 1) },
+                new[] { A("root", 2), A("glimmer", 1) },
+                new[] { Reward(FoundationRewardType.MemoryPage, "old_lamps_01"), Reward(FoundationRewardType.Xp, "character", 50) });
+            Dungeon("rootcellar_starter", "Mosswake Rootcellar", "Root Cellar", 1, 2, "rootcellar_first_return",
+                "An old cellar where roots, pests, and stale System hums gather under the first fields.",
+                "apple", "carrot", "wood_axe");
+            Expedition("rootcellar_day_two_probe", "Day Two Rootcellar Probe", "rootcellar_starter", 4, 2,
+                "apple", "wood_axe");
+
+            WorldEvent("goblin_raid_chain", "Goblin Raid Chain", 2, "ignored_road_threat", "settlement_pressure",
+                "World event: tracks suggest a raid chain forming beyond the safe road.");
+            WorldEvent("dangerous_mob_sighting", "Dangerous Mob Sighting", 1, "night_noise", "local_warning",
+                "World event: something large crossed the outer meadow after dusk.");
+            WorldEvent("resource_bloom", "Resource Bloom", 1, "rain_after_clear", "rare_nodes",
+                "World event: fresh rain has woken rare sprouts and exposed stone seams.");
+            WorldEvent("rival_npc_party", "Rival NPC Party", 1, "guild_board_day_two", "social_pressure",
+                "World event: another Unwritten party accepted a nearby contract.");
+
+            BoardEntry("board_rootcellar_probe", "Rootcellar Probe", "the_rootcellar_below", "resource_bloom", 0, 3,
+                "Bring back proof from the old cellar before pests chew through the stores.");
+            BoardEntry("board_south_path", "South Path Repair", "fixing_the_south_path", "dangerous_mob_sighting", 0, 4,
+                "Clear and mark the south path so visitors stop losing half a day in brambles.");
 
             return c;
         }

@@ -207,8 +207,9 @@ namespace IsoCore.Foundation.EditorTools
                 !string.IsNullOrWhiteSpace(boot.Stats.Title),
                 boot.Stats != null ? $"{boot.Stats.Class}/{boot.Stats.Title} L{boot.Stats.Level}" : "missing stats");
             add("FoundationContent includes LitRPG bible seed content",
-                boot.Content.Callings.Count >= 7 && boot.Content.Skills.Count >= 12 && boot.Content.Quests.Count >= 5,
-                $"Callings:{boot.Content.Callings.Count} Skills:{boot.Content.Skills.Count} Quests:{boot.Content.Quests.Count}");
+                boot.Content.Callings.Count >= 7 && boot.Content.Skills.Count >= 12 && boot.Content.Quests.Count >= 5 &&
+                boot.Content.EvidenceEvents.Count >= 8 && boot.Content.Titles.Count >= 6 && boot.Content.Affinities.Count >= 7,
+                $"Callings:{boot.Content.Callings.Count} Skills:{boot.Content.Skills.Count} Quests:{boot.Content.Quests.Count} Evidence:{boot.Content.EvidenceEvents.Count}");
             add("FoundationProgressionHooks starts playable starter quests",
                 boot.Progression.IsQuestActive("first_flame_first_field") &&
                 boot.Progression.IsQuestActive("a_roof_before_rain") &&
@@ -291,6 +292,7 @@ namespace IsoCore.Foundation.EditorTools
                 boot.DayNight.SetTime(0.66f);
                 boot.Player.SetCell(2, -3);
                 boot.Progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 2);
+                boot.Progression.RecordEvidence("harvest_wood", 2, "validator_tree");
 
                 var blockCell = FindBuildableCell(boot.World);
                 var cropCell = FindBuildableCell(boot.World, blockCell);
@@ -399,6 +401,13 @@ namespace IsoCore.Foundation.EditorTools
                 add("Save/load preserves quest progress",
                     loaded.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood") == 2,
                     loaded.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood").ToString());
+                add("Save/load preserves trial evidence spine",
+                    loaded.Progression.GetTrialScore(TrialEvidenceCategory.Gathering) >= 4 &&
+                    loaded.Progression.GetXpChannelValue("woodcraft") >= 6 &&
+                    loaded.Progression.GetTitleProgress("first_night_survivor") >= 2 &&
+                    loaded.Progression.GetAffinityScore("root") >= 2 &&
+                    loaded.Progression.SystemFeed.Messages.Count >= 1,
+                    $"gather {loaded.Progression.GetTrialScore(TrialEvidenceCategory.Gathering)}, messages {loaded.Progression.SystemFeed.Messages.Count}");
                 add("Save/load preserves player cell",
                     loaded.Player.CurrentCell == new Vector2Int(2, -3),
                     loaded.Player.CurrentCell.ToString());
@@ -641,6 +650,35 @@ namespace IsoCore.Foundation.EditorTools
                 focusedProgression.GetSkillXp("warding") == 0,
                 $"woodcraft {focusedProgression.GetSkillXp("woodcraft")}, creaturecraft {focusedProgression.GetSkillXp("creaturecraft")}");
 
+            var trialProgression = new FoundationProgression(content);
+            int evidenceEvents = 0;
+            int titleEvents = 0;
+            int affinityEvents = 0;
+            int feedEvents = 0;
+            trialProgression.TrialEvidenceAdded += (_, __) => evidenceEvents++;
+            trialProgression.TitleAcquired += _ => titleEvents++;
+            trialProgression.AffinityAwakened += _ => affinityEvents++;
+            trialProgression.SystemFeed.Queued += _ => feedEvents++;
+            bool evidenceRecorded = trialProgression.RecordEvidence("harvest_wood", 5, "validator_tree");
+            var trialRead = trialProgression.CaptureReadState();
+            add("Trial evidence records Action -> Evidence -> XP/Title/Affinity -> System feed",
+                evidenceRecorded &&
+                evidenceEvents == 1 &&
+                feedEvents >= 1 &&
+                trialProgression.GetTrialScore(TrialEvidenceCategory.Gathering) >= 10 &&
+                trialProgression.GetXpChannelValue("woodcraft") >= 15 &&
+                trialProgression.HasTitle("first_night_survivor") &&
+                trialProgression.GetAffinityScore("root") >= 5 &&
+                trialRead.trial.totalScore > 0 &&
+                trialRead.systemMessages != null && trialRead.systemMessages.Length >= 1,
+                $"score {trialProgression.TotalTrialScore}, title events {titleEvents}, affinity events {affinityEvents}");
+            bool affinityAwakened = trialProgression.RecordEvidence("craft_campfire", 2, "validator_campfire");
+            add("Trial evidence can awaken affinities",
+                affinityAwakened &&
+                affinityEvents >= 1 &&
+                trialProgression.GetAffinityScore("hearth") >= 11,
+                $"hearth {trialProgression.GetAffinityScore("hearth")}, events {affinityEvents}");
+
             var inv = new Inventory(12, content);
             inv.Add("wood", 5);
             var crafting = new CraftingSystem(content, inv);
@@ -656,6 +694,11 @@ namespace IsoCore.Foundation.EditorTools
                 hookedProgression.GetObjectiveProgress("first_flame_first_field", "craft_workbench") >= 1 &&
                 craftingXp > 0,
                 $"crafting xp {craftingXp}");
+            add("Crafting hook records trial evidence and System message",
+                hookedProgression.GetTrialScore(TrialEvidenceCategory.Crafting) >= 3 &&
+                hookedProgression.GetXpChannelValue("crafting") >= 4 &&
+                hookedProgression.SystemFeed.Messages.Count >= 1,
+                $"craft score {hookedProgression.GetTrialScore(TrialEvidenceCategory.Crafting)}, messages {hookedProgression.SystemFeed.Messages.Count}");
 
             UnityEngine.Object.DestroyImmediate(hookGo);
         }

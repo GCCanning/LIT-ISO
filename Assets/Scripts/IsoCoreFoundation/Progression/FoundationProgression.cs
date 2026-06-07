@@ -16,6 +16,11 @@ namespace IsoCore.Foundation
         readonly List<string> _recentUnlocks = new();
         readonly List<string> _activeBuffs = new();
         readonly List<string> _regionShifts = new();
+        readonly Dictionary<TrialEvidenceCategory, int> _trialScores = new();
+        readonly Dictionary<string, int> _xpChannels = new();
+        readonly Dictionary<string, int> _titleProgress = new();
+        readonly Dictionary<string, int> _affinityScores = new();
+        readonly List<string> _acquiredTitles = new();
         int _callingXp;
         string _selectedBranchId;
         const int XpPerProgressionLevel = 100;
@@ -24,8 +29,16 @@ namespace IsoCore.Foundation
         public event Action<FoundationQuestDefinition> QuestStarted;
         public event Action<FoundationQuestDefinition> QuestCompleted;
         public event Action<FoundationRewardUnlock> RewardUnlocked;
+        public event Action<EvidenceEventDefinition, int> TrialEvidenceAdded;
+        public event Action<FoundationGrade> GradeForecastChanged;
+        public event Action<string, int> XpChannelChanged;
+        public event Action<TitleDefinition> TitleAcquired;
+        public event Action<string, int> TitleProgressChanged;
+        public event Action<AffinityDefinition> AffinityAwakened;
+        public event Action<string, int> AffinityChanged;
 
         public FoundationPlayerStats Stats { get; } = new();
+        public SystemMessageFeed SystemFeed { get; } = new();
         public FoundationCallingDefinition CurrentCalling { get; private set; }
 
         public IReadOnlyDictionary<string, int> SkillXp => _skillXp;
@@ -34,12 +47,19 @@ namespace IsoCore.Foundation
         public IReadOnlyList<string> RecentUnlocks => _recentUnlocks;
         public IReadOnlyList<string> ActiveBuffs => _activeBuffs;
         public IReadOnlyList<string> RegionShifts => _regionShifts;
+        public IReadOnlyDictionary<TrialEvidenceCategory, int> TrialScores => _trialScores;
+        public IReadOnlyDictionary<string, int> XPChannels => _xpChannels;
+        public IReadOnlyDictionary<string, int> TitleProgress => _titleProgress;
+        public IReadOnlyDictionary<string, int> AffinityScores => _affinityScores;
+        public IReadOnlyList<string> AcquiredTitles => _acquiredTitles;
         public string CurrentCallingId => CurrentCalling != null ? CurrentCalling.id : "";
         public int CallingXp => _callingXp;
         public int CallingLevel => LevelForXp(_callingXp);
         public float CallingProgress01 => ProgressForXp(_callingXp);
         public string SelectedBranchId => _selectedBranchId;
         public FoundationCallingTier CurrentCallingTier => TierForLevel(CallingLevel);
+        public FoundationGrade GradeForecast => GradeForTotal(TotalTrialScore);
+        public int TotalTrialScore => SumTrialScores();
 
         public FoundationProgressionReadState CaptureReadState()
         {
@@ -52,6 +72,11 @@ namespace IsoCore.Foundation
                 recentUnlocks = CaptureRecentUnlocks(),
                 activeBuffs = CaptureActiveBuffs(),
                 regionShifts = CaptureRegionShifts(),
+                trial = CaptureTrialReadState(),
+                xpChannels = CaptureXpChannelReadStates(),
+                titleProgress = CaptureTitleReadStates(),
+                affinities = CaptureAffinityReadStates(),
+                systemMessages = SystemFeed.CaptureState(),
             };
         }
 
@@ -218,6 +243,52 @@ namespace IsoCore.Foundation
                 Changed?.Invoke();
         }
 
+        public bool RecordEvidence(string evidenceId, int amount = 1, string sourceId = "")
+        {
+            if (string.IsNullOrWhiteSpace(evidenceId) || amount <= 0) return false;
+            var evidence = _content?.EvidenceEvents.Get(evidenceId);
+            if (evidence == null) return false;
+
+            var beforeGrade = GradeForecast;
+            ApplyEvidenceWeights(evidence.evidenceWeights, amount);
+            ApplyXpGrants(evidence.xpGrants, amount);
+            ApplyTitleProgress(evidence.titleProgress, amount);
+            ApplyAffinityProgress(evidence.affinityProgress, amount);
+
+            if (!string.IsNullOrWhiteSpace(evidence.message))
+                SystemFeed.Queue(evidence.messageChannel, evidence.message, string.IsNullOrWhiteSpace(sourceId) ? evidence.id : sourceId, 1);
+
+            TrialEvidenceAdded?.Invoke(evidence, amount);
+            if (GradeForecast != beforeGrade)
+                GradeForecastChanged?.Invoke(GradeForecast);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public int GetTrialScore(TrialEvidenceCategory category) =>
+            _trialScores.TryGetValue(category, out int value) ? value : 0;
+
+        public int GetXpChannelValue(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) return 0;
+            return _xpChannels.TryGetValue(id, out int value) ? value : 0;
+        }
+
+        public int GetTitleProgress(string titleId)
+        {
+            if (string.IsNullOrWhiteSpace(titleId)) return 0;
+            return _titleProgress.TryGetValue(titleId, out int value) ? value : 0;
+        }
+
+        public bool HasTitle(string titleId) =>
+            !string.IsNullOrWhiteSpace(titleId) && _acquiredTitles.Contains(titleId);
+
+        public int GetAffinityScore(string affinityId)
+        {
+            if (string.IsNullOrWhiteSpace(affinityId)) return 0;
+            return _affinityScores.TryGetValue(affinityId, out int value) ? value : 0;
+        }
+
         public int GetSkillXp(string skillId)
         {
             if (string.IsNullOrWhiteSpace(skillId)) return 0;
@@ -346,6 +417,12 @@ namespace IsoCore.Foundation
                 recentUnlocks = _recentUnlocks.ToArray(),
                 activeBuffs = _activeBuffs.ToArray(),
                 regionShifts = _regionShifts.ToArray(),
+                trialScores = CaptureTrialScores(),
+                xpChannels = CaptureKeyValueArray(_xpChannels),
+                titleProgress = CaptureKeyValueArray(_titleProgress),
+                affinityScores = CaptureKeyValueArray(_affinityScores),
+                acquiredTitles = _acquiredTitles.ToArray(),
+                systemMessages = SystemFeed.CaptureState(),
             };
         }
 
@@ -359,6 +436,12 @@ namespace IsoCore.Foundation
             _recentUnlocks.Clear();
             _activeBuffs.Clear();
             _regionShifts.Clear();
+            _trialScores.Clear();
+            _xpChannels.Clear();
+            _titleProgress.Clear();
+            _affinityScores.Clear();
+            _acquiredTitles.Clear();
+            SystemFeed.RestoreState(null);
 
             if (!SelectCalling(string.IsNullOrWhiteSpace(state.currentCallingId) ? "greenhand" : state.currentCallingId))
                 SelectCalling("greenhand");
@@ -392,6 +475,13 @@ namespace IsoCore.Foundation
                 _activeBuffs.AddRange(state.activeBuffs);
             if (state.regionShifts != null)
                 _regionShifts.AddRange(state.regionShifts);
+            RestoreTrialScores(state.trialScores);
+            RestoreKeyValueArray(state.xpChannels, _xpChannels);
+            RestoreKeyValueArray(state.titleProgress, _titleProgress);
+            RestoreKeyValueArray(state.affinityScores, _affinityScores);
+            if (state.acquiredTitles != null)
+                _acquiredTitles.AddRange(state.acquiredTitles);
+            SystemFeed.RestoreState(state.systemMessages);
 
             Stats.RestoreState(state.stats);
             Changed?.Invoke();
@@ -403,6 +493,201 @@ namespace IsoCore.Foundation
             if (!_skillXp.ContainsKey(skillId)) _skillXp[skillId] = 0;
             _skillXp[skillId] += amount;
             return true;
+        }
+
+        void ApplyEvidenceWeights(FoundationEvidenceWeight[] weights, int multiplier)
+        {
+            if (weights == null) return;
+            for (int i = 0; i < weights.Length; i++)
+            {
+                int amount = weights[i].amount * multiplier;
+                if (amount <= 0) continue;
+                if (!_trialScores.ContainsKey(weights[i].category)) _trialScores[weights[i].category] = 0;
+                _trialScores[weights[i].category] += amount;
+            }
+        }
+
+        void ApplyXpGrants(FoundationXpGrant[] grants, int multiplier)
+        {
+            if (grants == null) return;
+            for (int i = 0; i < grants.Length; i++)
+            {
+                string id = string.IsNullOrWhiteSpace(grants[i].id)
+                    ? grants[i].channel.ToString().ToLowerInvariant()
+                    : grants[i].id.Trim();
+                int amount = grants[i].amount * multiplier;
+                if (string.IsNullOrWhiteSpace(id) || amount <= 0) continue;
+                if (!_xpChannels.ContainsKey(id)) _xpChannels[id] = 0;
+                _xpChannels[id] += amount;
+                XpChannelChanged?.Invoke(id, _xpChannels[id]);
+            }
+        }
+
+        void ApplyTitleProgress(FoundationTitleProgressGrant[] grants, int multiplier)
+        {
+            if (grants == null) return;
+            for (int i = 0; i < grants.Length; i++)
+            {
+                string titleId = grants[i].titleId;
+                int amount = grants[i].amount * multiplier;
+                if (string.IsNullOrWhiteSpace(titleId) || amount <= 0) continue;
+                var title = _content?.Titles.Get(titleId);
+                if (title == null) continue;
+
+                if (!_titleProgress.ContainsKey(titleId)) _titleProgress[titleId] = 0;
+                _titleProgress[titleId] = Math.Min(Math.Max(1, title.threshold), _titleProgress[titleId] + amount);
+                TitleProgressChanged?.Invoke(titleId, _titleProgress[titleId]);
+
+                if (_titleProgress[titleId] < Math.Max(1, title.threshold) || _acquiredTitles.Contains(titleId)) continue;
+                _acquiredTitles.Add(titleId);
+                RememberUnlock($"Title: {title.Display}");
+                SystemFeed.Queue(SystemMessageChannel.TitleAcquired,
+                    string.IsNullOrWhiteSpace(title.unlockMessage) ? $"Title acquired: {title.Display}." : title.unlockMessage,
+                    title.id, 2);
+                TitleAcquired?.Invoke(title);
+            }
+        }
+
+        void ApplyAffinityProgress(FoundationAffinityGrant[] grants, int multiplier)
+        {
+            if (grants == null) return;
+            for (int i = 0; i < grants.Length; i++)
+            {
+                string affinityId = grants[i].affinityId;
+                int amount = grants[i].amount * multiplier;
+                if (string.IsNullOrWhiteSpace(affinityId) || amount <= 0) continue;
+                var affinity = _content?.Affinities.Get(affinityId);
+                if (affinity == null) continue;
+
+                int previous = GetAffinityScore(affinityId);
+                if (!_affinityScores.ContainsKey(affinityId)) _affinityScores[affinityId] = 0;
+                _affinityScores[affinityId] += amount;
+                AffinityChanged?.Invoke(affinityId, _affinityScores[affinityId]);
+
+                int threshold = Math.Max(1, affinity.awakenThreshold);
+                if (previous < threshold && _affinityScores[affinityId] >= threshold)
+                {
+                    RememberUnlock($"Affinity: {affinity.Display}");
+                    SystemFeed.Queue(SystemMessageChannel.AffinityResonance,
+                        $"Affinity awakened: {affinity.Display}.", affinity.id, 2);
+                    AffinityAwakened?.Invoke(affinity);
+                }
+            }
+        }
+
+        FoundationKeyValueInt[] CaptureTrialScores()
+        {
+            var values = new List<FoundationKeyValueInt>();
+            foreach (var kv in _trialScores)
+                values.Add(new FoundationKeyValueInt(kv.Key.ToString(), kv.Value));
+            return values.ToArray();
+        }
+
+        static FoundationKeyValueInt[] CaptureKeyValueArray(Dictionary<string, int> source)
+        {
+            var values = new List<FoundationKeyValueInt>();
+            foreach (var kv in source)
+                values.Add(new FoundationKeyValueInt(kv.Key, kv.Value));
+            return values.ToArray();
+        }
+
+        void RestoreTrialScores(FoundationKeyValueInt[] values)
+        {
+            if (values == null) return;
+            for (int i = 0; i < values.Length; i++)
+                if (Enum.TryParse(values[i].id, out TrialEvidenceCategory category))
+                    _trialScores[category] = Math.Max(0, values[i].value);
+        }
+
+        static void RestoreKeyValueArray(FoundationKeyValueInt[] values, Dictionary<string, int> target)
+        {
+            if (values == null) return;
+            for (int i = 0; i < values.Length; i++)
+                if (!string.IsNullOrWhiteSpace(values[i].id))
+                    target[values[i].id] = Math.Max(0, values[i].value);
+        }
+
+        FoundationTrialReadState CaptureTrialReadState()
+        {
+            return new FoundationTrialReadState
+            {
+                totalScore = TotalTrialScore,
+                gradeForecast = GradeForecast,
+                categories = CaptureTrialScores(),
+            };
+        }
+
+        FoundationXpChannelReadState[] CaptureXpChannelReadStates()
+        {
+            var states = new List<FoundationXpChannelReadState>();
+            foreach (var channel in _xpChannels)
+            {
+                var def = _content?.XPChannels.Get(channel.Key);
+                int perLevel = Math.Max(1, def != null ? def.xpPerLevel : XpPerProgressionLevel);
+                int xp = Math.Max(0, channel.Value);
+                states.Add(new FoundationXpChannelReadState
+                {
+                    id = channel.Key,
+                    displayName = def != null ? def.Display : channel.Key,
+                    channel = def != null ? def.channel : FoundationXpChannel.SkillMastery,
+                    xp = xp,
+                    level = xp / perLevel + 1,
+                    progress01 = (xp % perLevel) / (float)perLevel,
+                });
+            }
+            return states.ToArray();
+        }
+
+        FoundationTitleReadState[] CaptureTitleReadStates()
+        {
+            var states = new List<FoundationTitleReadState>();
+            if (_content?.Titles == null) return states.ToArray();
+            foreach (var title in _content.Titles.All)
+            {
+                int threshold = Math.Max(1, title.threshold);
+                int progress = GetTitleProgress(title.id);
+                states.Add(new FoundationTitleReadState
+                {
+                    id = title.id,
+                    displayName = title.Display,
+                    progress = progress,
+                    threshold = threshold,
+                    progress01 = Math.Min(1f, progress / (float)threshold),
+                    acquired = _acquiredTitles.Contains(title.id),
+                    effectPolicy = title.effectPolicy ?? "",
+                });
+            }
+            return states.ToArray();
+        }
+
+        FoundationAffinityReadState[] CaptureAffinityReadStates()
+        {
+            var states = new List<FoundationAffinityReadState>();
+            if (_content?.Affinities == null) return states.ToArray();
+            foreach (var affinity in _content.Affinities.All)
+            {
+                int threshold = Math.Max(1, affinity.awakenThreshold);
+                int score = GetAffinityScore(affinity.id);
+                states.Add(new FoundationAffinityReadState
+                {
+                    id = affinity.id,
+                    displayName = affinity.Display,
+                    score = score,
+                    awakenThreshold = threshold,
+                    progress01 = Math.Min(1f, score / (float)threshold),
+                    awakened = score >= threshold,
+                    family = affinity.family ?? "",
+                });
+            }
+            return states.ToArray();
+        }
+
+        int SumTrialScores()
+        {
+            int total = 0;
+            foreach (var kv in _trialScores)
+                total += Math.Max(0, kv.Value);
+            return total;
         }
 
         void RestoreSelectedBranch(string branchId)
@@ -537,6 +822,17 @@ namespace IsoCore.Foundation
             if (level >= 6) return FoundationCallingTier.Adept;
             return FoundationCallingTier.Novice;
         }
+
+        static FoundationGrade GradeForTotal(int total)
+        {
+            if (total >= 240) return FoundationGrade.S;
+            if (total >= 180) return FoundationGrade.A;
+            if (total >= 130) return FoundationGrade.B;
+            if (total >= 90) return FoundationGrade.C;
+            if (total >= 55) return FoundationGrade.D;
+            if (total >= 25) return FoundationGrade.E;
+            return FoundationGrade.F;
+        }
     }
 
     [Serializable]
@@ -549,6 +845,54 @@ namespace IsoCore.Foundation
         public string[] recentUnlocks;
         public string[] activeBuffs;
         public string[] regionShifts;
+        public FoundationTrialReadState trial;
+        public FoundationXpChannelReadState[] xpChannels;
+        public FoundationTitleReadState[] titleProgress;
+        public FoundationAffinityReadState[] affinities;
+        public FoundationSystemMessageEntry[] systemMessages;
+    }
+
+    [Serializable]
+    public struct FoundationTrialReadState
+    {
+        public int totalScore;
+        public FoundationGrade gradeForecast;
+        public FoundationKeyValueInt[] categories;
+    }
+
+    [Serializable]
+    public struct FoundationXpChannelReadState
+    {
+        public string id;
+        public string displayName;
+        public FoundationXpChannel channel;
+        public int xp;
+        public int level;
+        public float progress01;
+    }
+
+    [Serializable]
+    public struct FoundationTitleReadState
+    {
+        public string id;
+        public string displayName;
+        public int progress;
+        public int threshold;
+        public float progress01;
+        public bool acquired;
+        public string effectPolicy;
+    }
+
+    [Serializable]
+    public struct FoundationAffinityReadState
+    {
+        public string id;
+        public string displayName;
+        public int score;
+        public int awakenThreshold;
+        public float progress01;
+        public bool awakened;
+        public string family;
     }
 
     [Serializable]
