@@ -77,8 +77,8 @@ namespace IsoCore.Foundation
             int power = (Def.requiredTool != ToolType.None && tool == Def.requiredTool)
                 ? Mathf.Max(1, tier) : 1; // right tool tier is faster; hand/other = 1
 
-            // Only the depleting hit grants drops — block it (without losing yield) if the
-            // guaranteed drops can't fit. Considers partial stacks via Inventory.CanFit.
+            // Only the depleting hit grants drops. Block it if the full possible roll
+            // cannot fit; without world-drop entities this avoids silent overflow loss.
             if (_remainingHits - power <= 0 && !DropsCanFit(inv))
             {
                 blockedFull = true;
@@ -178,17 +178,17 @@ namespace IsoCore.Foundation
             if (Def.drops == null) return true;
             int count = 0;
             foreach (var d in Def.drops)
-                if (!string.IsNullOrEmpty(d.itemId) && d.chance >= 1f) count++;
+                if (!string.IsNullOrEmpty(d.itemId)) count++;
             if (count == 0) return true;
 
-            var guaranteed = new ItemStack[count];
+            var possible = new ItemStack[count];
             int i = 0;
             foreach (var d in Def.drops)
             {
-                if (string.IsNullOrEmpty(d.itemId) || d.chance < 1f) continue; // bonus drops may be skipped
-                guaranteed[i++] = new ItemStack(d.itemId, Mathf.Max(1, d.max));
+                if (string.IsNullOrEmpty(d.itemId)) continue;
+                possible[i++] = new ItemStack(d.itemId, Mathf.Max(1, d.max));
             }
-            return inv.CanFitAll(guaranteed);
+            return inv.CanFitAll(possible);
         }
     }
 }

@@ -263,7 +263,15 @@ namespace IsoCore.Foundation
 
             if (cell.HasOccupant)
             {
+                string occupantId = cell.OccupantId;
                 var pdef = _content.Placeables.Get(cell.OccupantId);
+                string refundItem = pdef != null ? pdef.requiredItemId : null;
+                if (!string.IsNullOrEmpty(refundItem) && !_inv.CanFit(refundItem, 1))
+                {
+                    blockedMessage = "Inventory full!";
+                    return false;
+                }
+
                 if (pdef != null && pdef.interaction == InteractionKind.Container &&
                     _storage != null && !_storage.RemoveContainer(wx, wy))
                 {
@@ -274,18 +282,24 @@ namespace IsoCore.Foundation
                 var inst = _placeables.Find(p => p && p.Wx == wx && p.Wy == wy);
                 _world.ClearOccupant(wx, wy);
                 if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
-                if (pdef != null && !string.IsNullOrEmpty(pdef.requiredItemId))
-                    _inv.Add(pdef.requiredItemId, 1);
-                Removed?.Invoke(pdef != null ? pdef.id : cell.OccupantId, wx, wy);
+                if (!string.IsNullOrEmpty(refundItem))
+                    _inv.Add(refundItem, 1);
+                Removed?.Invoke(pdef != null ? pdef.id : occupantId, wx, wy);
                 return true;
             }
 
             if (cell.SolidBlock)
             {
                 string blockId = cell.SurfaceBlockId;
+                string item = FindBlockItem(blockId);
+                if (item != null && !_inv.CanFit(item, 1))
+                {
+                    blockedMessage = "Inventory full!";
+                    return false;
+                }
+
                 if (_world.RemoveSolidBlock(wx, wy))
                 {
-                    string item = FindBlockItem(blockId);
                     if (item != null) _inv.Add(item, 1);
                     Removed?.Invoke(blockId, wx, wy);
                     return true;

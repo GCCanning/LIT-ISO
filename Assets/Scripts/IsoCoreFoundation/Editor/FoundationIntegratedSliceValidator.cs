@@ -500,6 +500,25 @@ namespace IsoCore.Foundation.EditorTools
             add("Placed solid block can be removed without soft-lock",
                 placedBlock && world.RemoveSolidBlock(blockCell.x, blockCell.y) && world.IsWalkable(blockCell.x, blockCell.y));
 
+            Vector2Int fullInventoryBlockCell = FindBuildableCell(world, buildCell, blockCell);
+            bool fullInventoryBlockPlaced = fullInventoryBlockCell != InvalidCell &&
+                world.TryPlaceBlock(fullInventoryBlockCell.x, fullInventoryBlockCell.y, stoneBlock);
+            var fullInvPlacementGo = new GameObject("Placement_FullInventoryValidation");
+            var fullInvPlacement = fullInvPlacementGo.AddComponent<PlacementSystem>();
+            var fullBlockInv = new Inventory(1, content);
+            fullBlockInv.Add("wood", 99);
+            fullInvPlacement.Init(world, content, fullBlockInv, new Hotbar(fullBlockInv, 1), Camera.main, null);
+            string fullBlockMessage = "";
+            bool blockedRefund = fullInventoryBlockPlaced &&
+                !fullInvPlacement.TryRemoveAtCell(fullInventoryBlockCell.x, fullInventoryBlockCell.y, out fullBlockMessage) &&
+                world.GetCell(fullInventoryBlockCell.x, fullInventoryBlockCell.y).SolidBlock;
+            add("Full inventory blocks solid-block removal before refund loss",
+                blockedRefund,
+                fullBlockMessage ?? "");
+            if (fullInventoryBlockPlaced)
+                world.RemoveSolidBlock(fullInventoryBlockCell.x, fullInventoryBlockCell.y);
+            UnityEngine.Object.DestroyImmediate(fullInvPlacementGo);
+
             Vector2Int placeableCell = FindBuildableCell(world, buildCell, blockCell);
             var workbench = content.Placeables.Get("workbench");
             bool placedOccupant = placeableCell != InvalidCell && world.TryPlaceOccupant(placeableCell.x, placeableCell.y, workbench.id, workbench.blocksMovement);
@@ -508,6 +527,30 @@ namespace IsoCore.Foundation.EditorTools
                 placedOccupant && world.IsBlocked(placeableCell.x, placeableCell.y));
             add("Placeable occupancy clears cleanly",
                 placedOccupant && world.ClearOccupant(placeableCell.x, placeableCell.y) && world.IsWalkable(placeableCell.x, placeableCell.y));
+
+            Vector2Int fullInventoryPlaceableCell = FindBuildableCell(world, buildCell, blockCell, placeableCell, fullInventoryBlockCell);
+            bool fullInventoryPlaceablePlaced = fullInventoryPlaceableCell != InvalidCell &&
+                world.TryPlaceOccupant(fullInventoryPlaceableCell.x, fullInventoryPlaceableCell.y, workbench.id, workbench.blocksMovement);
+            var fullInvPlaceableGo = new GameObject("Placement_FullInventoryPlaceableValidation");
+            var fullInvPlaceable = fullInvPlaceableGo.AddComponent<PlacementSystem>();
+            var fullPlaceableInv = new Inventory(1, content);
+            fullPlaceableInv.Add("stone", 99);
+            fullInvPlaceable.Init(world, content, fullPlaceableInv, new Hotbar(fullPlaceableInv, 1), Camera.main, null);
+            if (fullInventoryPlaceablePlaced)
+                fullInvPlaceable.RestorePlaceables(new[]
+                {
+                    new FoundationSavedPlaceable { placeableId = "workbench", x = fullInventoryPlaceableCell.x, y = fullInventoryPlaceableCell.y }
+                });
+            string fullPlaceableMessage = "";
+            bool blockedPlaceableRefund = fullInventoryPlaceablePlaced &&
+                !fullInvPlaceable.TryRemoveAtCell(fullInventoryPlaceableCell.x, fullInventoryPlaceableCell.y, out fullPlaceableMessage) &&
+                world.GetCell(fullInventoryPlaceableCell.x, fullInventoryPlaceableCell.y).OccupantId == "workbench";
+            add("Full inventory blocks placeable removal before refund loss",
+                blockedPlaceableRefund,
+                fullPlaceableMessage ?? "");
+            if (fullInventoryPlaceablePlaced)
+                world.ClearOccupant(fullInventoryPlaceableCell.x, fullInventoryPlaceableCell.y);
+            UnityEngine.Object.DestroyImmediate(fullInvPlaceableGo);
 
             ValidateHarvest(add, content, world);
             ValidateCrafting(add, content);
@@ -568,6 +611,18 @@ namespace IsoCore.Foundation.EditorTools
             add("Harvest clears node occupancy", !world.GetCell(nodeCell.x, nodeCell.y).HasNode);
 
             UnityEngine.Object.DestroyImmediate(go);
+
+            var fullInv = new Inventory(1, content);
+            fullInv.Add("stone", 99);
+            var blockedGo = new GameObject("ResourceNode_FullInventoryValidation");
+            var blockedNode = blockedGo.AddComponent<ResourceNode>();
+            blockedNode.Init(def, world, nodeCell.x, nodeCell.y);
+            int beforeHits = blockedNode.RemainingHits;
+            bool blockedDepleted = blockedNode.Harvest(fullInv, def.requiredTool, 99, out bool blockedHarvestFull);
+            add("Full inventory blocks harvest depletion before drop loss",
+                !blockedDepleted && blockedHarvestFull && blockedNode.RemainingHits == beforeHits,
+                $"blocked {blockedHarvestFull}, hits {beforeHits}->{blockedNode.RemainingHits}");
+            UnityEngine.Object.DestroyImmediate(blockedGo);
         }
 
         static void ValidateCrafting(AddCheck add, FoundationContent content)

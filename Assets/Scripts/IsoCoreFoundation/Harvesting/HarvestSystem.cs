@@ -24,8 +24,10 @@ namespace IsoCore.Foundation
                     int amount = Random.Range(d.min, d.max + 1);
                     if (amount > 0)
                     {
-                        inv.Add(d.itemId, amount);
-                        granted?.Add(new ItemStack(d.itemId, amount));
+                        int leftover = inv.Add(d.itemId, amount);
+                        int added = amount - leftover;
+                        if (added > 0)
+                            granted?.Add(new ItemStack(d.itemId, added));
                     }
                 }
             }
