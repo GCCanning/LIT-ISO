@@ -566,6 +566,13 @@ namespace IsoCore.Foundation.EditorTools
             bool crafted = crafting.TryCraft(recipe);
             add("Hand crafting consumes inputs and creates output", crafted && inv.Count("workbench_item") == 1 && inv.Count("wood") == 3);
 
+            var tightInv = new Inventory(1, content);
+            tightInv.Add("wood", 5);
+            var tightCrafting = new CraftingSystem(content, tightInv);
+            bool tightCrafted = tightCrafting.TryCraft(recipe);
+            add("Crafting output can use a slot freed by recipe inputs",
+                tightCrafted && tightInv.Count("workbench_item") == 1 && tightInv.Count("wood") == 0);
+
             inv.Add("stone", 3);
             crafting.StationAvailable = st => st == StationType.Workbench;
             var stationRecipe = content.Recipes.Get("craft_stone_block");

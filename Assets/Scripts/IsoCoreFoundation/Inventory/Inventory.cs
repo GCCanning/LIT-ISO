@@ -119,8 +119,50 @@ namespace IsoCore.Foundation
         public bool CanFitAll(ItemStack[] stacks)
         {
             if (stacks == null || stacks.Length == 0) return true;
+            return CanFitAllInto(CopySlots(), stacks);
+        }
+
+        /// <summary>Would removing ingredients and then adding outputs fit without overflow?</summary>
+        public bool CanExchange(RecipeIngredient[] remove, ItemStack[] add)
+        {
+            var scratch = CopySlots();
+            if (remove != null)
+            {
+                foreach (var ingredient in remove)
+                {
+                    int remaining = ingredient.count;
+                    if (remaining <= 0) continue;
+
+                    for (int i = 0; i < scratch.Length && remaining > 0; i++)
+                    {
+                        if (scratch[i].itemId != ingredient.itemId)
+                            continue;
+
+                        int take = Mathf.Min(scratch[i].count, remaining);
+                        scratch[i].count -= take;
+                        remaining -= take;
+                        if (scratch[i].count <= 0)
+                            scratch[i] = default;
+                    }
+
+                    if (remaining > 0)
+                        return false;
+                }
+            }
+
+            return CanFitAllInto(scratch, add);
+        }
+
+        ItemStack[] CopySlots()
+        {
             var scratch = new ItemStack[_slots.Length];
             Array.Copy(_slots, scratch, _slots.Length);
+            return scratch;
+        }
+
+        bool CanFitAllInto(ItemStack[] scratch, ItemStack[] stacks)
+        {
+            if (stacks == null || stacks.Length == 0) return true;
 
             foreach (var stack in stacks)
             {

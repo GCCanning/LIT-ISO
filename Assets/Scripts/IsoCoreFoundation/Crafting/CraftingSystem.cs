@@ -29,13 +29,7 @@ namespace IsoCore.Foundation
         {
             if (r == null || r.inputs == null) return false;
             if (!StationOk(r.station)) return false;
-            foreach (var i in r.inputs)
-                if (!_inv.Has(i.itemId, i.count)) return false;
-            // Don't consume inputs if the outputs would overflow the inventory.
-            if (r.outputs != null)
-                foreach (var o in r.outputs)
-                    if (!_inv.CanFit(o.itemId, o.count)) return false;
-            return true;
+            return _inv.CanExchange(r.inputs, r.outputs);
         }
 
         public bool TryCraft(RecipeDefinition r)
