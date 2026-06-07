@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,9 @@ namespace IsoCore.Foundation
 
         readonly List<Mob> _mobs = new();
         float _timer;
+
+        public event Action<MobDefinition> MobDefeated;
+        public event Action<MobDefinition> MobCalmed;
 
         public int Count => _mobs.Count;
 
@@ -46,8 +50,8 @@ namespace IsoCore.Foundation
             if (_mobs.Count >= _cfg.mobCap) return;
 
             Vector2 origin = _player.Ground; // height-0 plane (WorldToCell assumes this)
-            float ang = Random.value * Mathf.PI * 2f;
-            float dist = Random.Range(_cfg.mobSpawnRadius * 0.5f, _cfg.mobSpawnRadius);
+            float ang = UnityEngine.Random.value * Mathf.PI * 2f;
+            float dist = UnityEngine.Random.Range(_cfg.mobSpawnRadius * 0.5f, _cfg.mobSpawnRadius);
             Vector2 ground = origin + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * dist;
 
             var c = IsoGrid.WorldToCell(new Vector3(ground.x, ground.y, 0f));
@@ -57,10 +61,17 @@ namespace IsoCore.Foundation
             var def = PickMob(biome);
             if (def == null) return;
 
+            SpawnMob(def, ground);
+        }
+
+        void SpawnMob(MobDefinition def, Vector2 ground)
+        {
             var go = new GameObject($"Mob_{def.id}");
             go.transform.SetParent(_mobParent, false);
             var mob = go.AddComponent<Mob>();
             mob.Init(def, _world, ground);
+            mob.Defeated += HandleMobDefeated;
+            mob.Calmed += HandleMobCalmed;
             _mobs.Add(mob);
         }
 
@@ -71,7 +82,7 @@ namespace IsoCore.Foundation
             foreach (var m in biome.mobs) if (m.mob != null) total += Mathf.Max(0f, m.weight);
             if (total <= 0f) return null;
 
-            float roll = Random.value * total;
+            float roll = UnityEngine.Random.value * total;
             foreach (var m in biome.mobs)
             {
                 float w = m.mob != null ? Mathf.Max(0f, m.weight) : 0f;
@@ -92,10 +103,75 @@ namespace IsoCore.Foundation
                 if (!m) { _mobs.RemoveAt(i); continue; }
                 if ((m.Ground - p).sqrMagnitude > r2) // planar distance on the height-0 plane
                 {
+                    m.Defeated -= HandleMobDefeated;
+                    m.Calmed -= HandleMobCalmed;
                     Destroy(m.gameObject);
                     _mobs.RemoveAt(i);
                 }
             }
+        }
+
+        void HandleMobDefeated(Mob mob)
+        {
+            if (mob == null) return;
+            mob.Defeated -= HandleMobDefeated;
+            mob.Calmed -= HandleMobCalmed;
+            _mobs.Remove(mob);
+            MobDefeated?.Invoke(mob.Def);
+        }
+
+        void HandleMobCalmed(Mob mob)
+        {
+            if (mob == null) return;
+            mob.Defeated -= HandleMobDefeated;
+            mob.Calmed -= HandleMobCalmed;
+            MobCalmed?.Invoke(mob.Def);
+        }
+
+        public FoundationSavedMob[] SnapshotMobs()
+        {
+            _mobs.RemoveAll(m => !m);
+            var result = new FoundationSavedMob[_mobs.Count];
+            for (int i = 0; i < _mobs.Count; i++)
+            {
+                var mob = _mobs[i];
+                result[i] = new FoundationSavedMob
+                {
+                    mobId = mob.Def != null ? mob.Def.id : "",
+                    groundX = mob.Ground.x,
+                    groundY = mob.Ground.y,
+                };
+            }
+            return result;
+        }
+
+        public void RestoreMobs(FoundationSavedMob[] mobs)
+        {
+            ClearMobs();
+            if (mobs == null || _content == null || _world == null) return;
+
+            foreach (var saved in mobs)
+            {
+                var def = _content.Mobs.Get(saved.mobId);
+                if (def == null) continue;
+                var ground = new Vector2(saved.groundX, saved.groundY);
+                var c = IsoGrid.WorldToCell(new Vector3(ground.x, ground.y, 0f));
+                if (!_world.IsWalkable(c.x, c.y)) continue;
+                SpawnMob(def, ground);
+            }
+        }
+
+        void ClearMobs()
+        {
+            foreach (var mob in _mobs)
+            {
+                if (!mob) continue;
+                mob.Defeated -= HandleMobDefeated;
+                mob.Calmed -= HandleMobCalmed;
+                if (Application.isPlaying) Destroy(mob.gameObject);
+                else DestroyImmediate(mob.gameObject);
+            }
+            _mobs.Clear();
         }
     }
 }

@@ -181,5 +181,90 @@ namespace IsoCore.Foundation
                     if (chunk.Cells[i].Modified) n++;
             return n;
         }
+
+        public FoundationSavedCell[] SnapshotModifiedCells()
+        {
+            var cells = new List<FoundationSavedCell>();
+            foreach (var chunk in _chunks.Values)
+            {
+                int baseX = chunk.Cx * _chunkSize;
+                int baseY = chunk.Cy * _chunkSize;
+                for (int ly = 0; ly < _chunkSize; ly++)
+                for (int lx = 0; lx < _chunkSize; lx++)
+                {
+                    var cell = chunk.Cells[chunk.Index(lx, ly)];
+                    if (!cell.Modified) continue;
+                    cells.Add(ToSavedCell(baseX + lx, baseY + ly, cell));
+                }
+            }
+            return cells.ToArray();
+        }
+
+        public void RestoreModifiedCells(FoundationSavedCell[] cells)
+        {
+            if (cells == null) return;
+            foreach (var saved in cells)
+            {
+                var cell = new IsoCell
+                {
+                    Height = saved.height,
+                    BiomeIndex = saved.biomeIndex,
+                    SurfaceBlockId = saved.surfaceBlockId,
+                    OccupantId = saved.occupantId,
+                    NodeId = saved.nodeId,
+                    SolidBlock = saved.solidBlock,
+                    Water = saved.water,
+                    OccupantBlocks = saved.occupantBlocks,
+                    NodeBlocks = saved.nodeBlocks,
+                    UnderBlockId = saved.underBlockId,
+                    UnderHeight = saved.underHeight,
+                    Modified = true,
+                };
+                Write(saved.x, saved.y, cell);
+            }
+        }
+
+        public int ResetModifiedCells()
+        {
+            int reset = 0;
+            foreach (var chunk in _chunks.Values)
+            {
+                int baseX = chunk.Cx * _chunkSize;
+                int baseY = chunk.Cy * _chunkSize;
+                for (int ly = 0; ly < _chunkSize; ly++)
+                for (int lx = 0; lx < _chunkSize; lx++)
+                {
+                    int idx = chunk.Index(lx, ly);
+                    if (!chunk.Cells[idx].Modified) continue;
+
+                    int wx = baseX + lx;
+                    int wy = baseY + ly;
+                    chunk.Cells[idx] = _sampler.Sample(wx, wy);
+                    reset++;
+                    OnCellChanged?.Invoke(wx, wy);
+                }
+            }
+            return reset;
+        }
+
+        static FoundationSavedCell ToSavedCell(int wx, int wy, IsoCell cell)
+        {
+            return new FoundationSavedCell
+            {
+                x = wx,
+                y = wy,
+                height = cell.Height,
+                biomeIndex = cell.BiomeIndex,
+                surfaceBlockId = cell.SurfaceBlockId,
+                occupantId = cell.OccupantId,
+                nodeId = cell.NodeId,
+                solidBlock = cell.SolidBlock,
+                water = cell.Water,
+                occupantBlocks = cell.OccupantBlocks,
+                nodeBlocks = cell.NodeBlocks,
+                underBlockId = cell.UnderBlockId,
+                underHeight = cell.UnderHeight,
+            };
+        }
     }
 }

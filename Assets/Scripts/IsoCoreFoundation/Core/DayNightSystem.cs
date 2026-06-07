@@ -29,6 +29,11 @@ namespace IsoCore.Foundation
 
         public bool SunUp => time >= 0.25f && time < 0.75f;
 
+        public void SetTime(float value)
+        {
+            time = Mathf.Repeat(value, 1f);
+        }
+
         /// <summary>0..1 progress of the currently-active body across its arc (rise→set).</summary>
         public float BodyProgress =>
             SunUp ? (time - 0.25f) / 0.5f

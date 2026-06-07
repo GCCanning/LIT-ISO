@@ -133,6 +133,52 @@ namespace IsoCore.Foundation
             Changed?.Invoke();
         }
 
+        public FoundationPlayerStatsSaveData CaptureState()
+        {
+            return new FoundationPlayerStatsSaveData
+            {
+                level = Level,
+                experience = Experience,
+                experienceToNextLevel = ExperienceToNextLevel,
+                health = Health,
+                maxHealth = MaxHealth,
+                mana = Mana,
+                maxMana = MaxMana,
+                str = STR,
+                dex = DEX,
+                intelligence = INT,
+                vit = VIT,
+                def = DEF,
+                luck = LUCK,
+                className = Class,
+                title = Title,
+            };
+        }
+
+        public void RestoreState(FoundationPlayerStatsSaveData state)
+        {
+            if (state == null) return;
+
+            Level = Math.Max(1, state.level);
+            Experience = Math.Max(0, state.experience);
+            ExperienceToNextLevel = Math.Max(1, state.experienceToNextLevel);
+            Class = string.IsNullOrWhiteSpace(state.className) ? "Wanderer" : state.className.Trim();
+            Title = string.IsNullOrWhiteSpace(state.title) ? "Newcomer" : state.title.Trim();
+
+            STR = Math.Max(1, state.str);
+            DEX = Math.Max(1, state.dex);
+            INT = Math.Max(1, state.intelligence);
+            VIT = Math.Max(1, state.vit);
+            DEF = Math.Max(0, state.def);
+            LUCK = Math.Max(0, state.luck);
+
+            MaxHealth = Math.Max(1f, state.maxHealth);
+            MaxMana = Math.Max(1f, state.maxMana);
+            Health = Clamp(state.health, 0f, MaxHealth);
+            Mana = Clamp(state.mana, 0f, MaxMana);
+            Changed?.Invoke();
+        }
+
         void AddStat(FoundationStatType stat, int amount)
         {
             if (amount == 0) return;

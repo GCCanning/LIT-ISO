@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -22,7 +23,11 @@ namespace IsoCore.Foundation
         int _frame;
         float _animTimer;
         bool _moving;
+        bool _resolved;
         const float AnimFps = 6f;
+
+        public event Action<Mob> Defeated;
+        public event Action<Mob> Calmed;
 
         public MobDefinition Def => _def;
         public Vector2 Ground => _ground;
@@ -41,6 +46,20 @@ namespace IsoCore.Foundation
 
             PickTarget();
             Place();
+        }
+
+        public void MarkDefeated()
+        {
+            if (_resolved) return;
+            _resolved = true;
+            Defeated?.Invoke(this);
+        }
+
+        public void MarkCalmed()
+        {
+            if (_resolved) return;
+            _resolved = true;
+            Calmed?.Invoke(this);
         }
 
         // Convention map: mob id -> Resources subfolder + frame prefix. Only the slime ships
@@ -105,8 +124,8 @@ namespace IsoCore.Foundation
         void PickTarget()
         {
             _repathTimer = _def.repathSeconds;
-            float ang = Random.value * Mathf.PI * 2f;
-            float r = Random.value * _def.wanderRadius;
+            float ang = UnityEngine.Random.value * Mathf.PI * 2f;
+            float r = UnityEngine.Random.value * _def.wanderRadius;
             _target = _ground + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,17 +15,22 @@ namespace IsoCore.Foundation
         FoundationContent _content;
         Inventory _inv;
         Hotbar _hotbar;
+        StorageSystem _storage;
         Camera _cam;
         IsoFoundationPlayer _player;
         Transform _placeParent;
         SpriteRenderer _ghost;
 
+        public event Action<ItemDefinition, int, int> Placed;
+        public event Action<string, int, int> Removed;
+
         readonly List<PlaceableInstance> _placeables = new();
 
         public void Init(IsoWorld world, FoundationContent content, Inventory inv, Hotbar hotbar,
-            Camera cam, IsoFoundationPlayer player)
+            Camera cam, IsoFoundationPlayer player, StorageSystem storage = null)
         {
             _world = world; _content = content; _inv = inv; _hotbar = hotbar; _cam = cam; _player = player;
+            _storage = storage;
 
             _placeParent = new GameObject("Placeables").transform;
             _placeParent.SetParent(transform, false);
@@ -116,7 +122,12 @@ namespace IsoCore.Foundation
             if (def.PlacesBlock)
             {
                 var b = _content.Blocks.Get(def.placeBlockId);
-                if (_world.TryPlaceBlock(c.x, c.y, b)) { _inv.Remove(def.id, 1); return true; }
+                if (_world.TryPlaceBlock(c.x, c.y, b))
+                {
+                    _inv.Remove(def.id, 1);
+                    Placed?.Invoke(def, c.x, c.y);
+                    return true;
+                }
             }
             else if (def.PlacesPlaceable)
             {
@@ -125,25 +136,37 @@ namespace IsoCore.Foundation
                 {
                     _inv.Remove(def.id, 1);
                     SpawnPlaceable(p, c.x, c.y);
+                    Placed?.Invoke(def, c.x, c.y);
                     return true;
                 }
             }
             return false;
         }
 
-        public bool TryRemoveAtCursor()
+        public bool TryRemoveAtCursor() => TryRemoveAtCursor(out _);
+
+        public bool TryRemoveAtCursor(out string blockedMessage)
         {
+            blockedMessage = null;
             var c = CursorCell();
             var cell = _world.GetCell(c.x, c.y);
 
             if (cell.HasOccupant)
             {
                 var pdef = _content.Placeables.Get(cell.OccupantId);
+                if (pdef != null && pdef.interaction == InteractionKind.Container &&
+                    _storage != null && !_storage.RemoveContainer(c.x, c.y))
+                {
+                    blockedMessage = $"{pdef.Display} is not empty";
+                    return false;
+                }
+
                 var inst = _placeables.Find(p => p && p.Wx == c.x && p.Wy == c.y);
                 _world.ClearOccupant(c.x, c.y);
                 if (inst) { _placeables.Remove(inst); Destroy(inst.gameObject); }
                 if (pdef != null && !string.IsNullOrEmpty(pdef.requiredItemId))
                     _inv.Add(pdef.requiredItemId, 1); // refund
+                Removed?.Invoke(pdef != null ? pdef.id : cell.OccupantId, c.x, c.y);
                 return true;
             }
 
@@ -154,6 +177,7 @@ namespace IsoCore.Foundation
                 {
                     string item = FindBlockItem(blockId);
                     if (item != null) _inv.Add(item, 1); // refund the placing item
+                    Removed?.Invoke(blockId, c.x, c.y);
                     return true;
                 }
             }
@@ -174,6 +198,74 @@ namespace IsoCore.Foundation
             var inst = go.AddComponent<PlaceableInstance>();
             inst.Init(def, _world, wx, wy);
             _placeables.Add(inst);
+            _storage?.EnsureContainer(def, wx, wy);
+        }
+
+        public FoundationSavedPlaceable[] SnapshotPlaceables()
+        {
+            var result = new List<FoundationSavedPlaceable>();
+            foreach (var p in _placeables)
+            {
+                if (!p || p.Def == null) continue;
+                result.Add(new FoundationSavedPlaceable
+                {
+                    placeableId = p.Def.id,
+                    x = p.Wx,
+                    y = p.Wy,
+                });
+            }
+            return result.ToArray();
+        }
+
+        public bool HasContainerPlaceable(int wx, int wy, string placeableId)
+        {
+            var def = _content?.Placeables.Get(placeableId);
+            if (def == null || def.interaction != InteractionKind.Container)
+                return false;
+
+            foreach (var p in _placeables)
+            {
+                if (!p || p.Def == null) continue;
+                if (p.Wx == wx && p.Wy == wy && p.Def.id == def.id &&
+                    p.Def.interaction == InteractionKind.Container)
+                    return true;
+            }
+            return false;
+        }
+
+        public void RestorePlaceables(FoundationSavedPlaceable[] placeables)
+        {
+            ClearPlaceables();
+            if (placeables == null || _world == null || _content == null) return;
+
+            foreach (var saved in placeables)
+            {
+                var def = _content.Placeables.Get(saved.placeableId);
+                if (def == null) continue;
+
+                var cell = _world.GetCell(saved.x, saved.y);
+                if (!cell.HasOccupant)
+                {
+                    if (!_world.TryPlaceOccupant(saved.x, saved.y, def.id, def.blocksMovement))
+                        continue;
+                }
+                else if (cell.OccupantId != def.id)
+                    continue;
+
+                SpawnPlaceable(def, saved.x, saved.y);
+            }
+        }
+
+        void ClearPlaceables()
+        {
+            foreach (var p in _placeables)
+            {
+                if (!p) continue;
+                _storage?.RemoveContainer(p.Wx, p.Wy, false);
+                if (Application.isPlaying) Destroy(p.gameObject);
+                else DestroyImmediate(p.gameObject);
+            }
+            _placeables.Clear();
         }
 
         public PlaceableInstance NearestInteractable(Vector3 pos, float range)

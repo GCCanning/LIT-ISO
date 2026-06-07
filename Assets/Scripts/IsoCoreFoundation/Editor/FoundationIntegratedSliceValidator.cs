@@ -33,33 +33,45 @@ namespace IsoCore.Foundation.EditorTools
 
         public static void Run()
         {
+            RunInternal(true);
+        }
+
+        public static void RunNoReport()
+        {
+            RunInternal(false);
+        }
+
+        static void RunInternal(bool writeReport)
+        {
             var checks = new List<Check>();
             AddCheck add = (name, pass, detail) =>
                 checks.Add(new Check { name = name, pass = pass, detail = detail });
 
             try
             {
-                RunChecks(add);
+                RunChecks(add, writeReport);
             }
             catch (Exception ex)
             {
                 add("Validator completed without exception", false, ex.ToString());
             }
 
-            WriteReport(checks);
+            if (writeReport)
+                WriteReport(checks);
 
             int failed = 0;
             foreach (var check in checks)
                 if (!check.pass) failed++;
 
-            string summary = $"[FoundationIntegratedSliceValidator] {checks.Count - failed}/{checks.Count} checks passed. Report: {ReportPath}";
+            string reportDetail = writeReport ? $" Report: {ReportPath}" : " Report writing skipped.";
+            string summary = $"[FoundationIntegratedSliceValidator] {checks.Count - failed}/{checks.Count} checks passed.{reportDetail}";
             if (failed > 0)
                 throw new Exception(summary);
 
             Debug.Log(summary);
         }
 
-        static void RunChecks(AddCheck add)
+        static void RunChecks(AddCheck add, bool writeReports)
         {
             FoundationBootstrap.ClearLaunchOptions();
 
@@ -69,7 +81,7 @@ namespace IsoCore.Foundation.EditorTools
             ValidateLaunchSeedPropagation(add);
             ValidateWorldContracts(add);
 
-            string foundationSummary = FoundationValidator.Validate(false);
+            string foundationSummary = FoundationValidator.Validate(false, writeReports);
             add("Foundation editor validator passes", foundationSummary.Contains("ALL PASS"), foundationSummary);
         }
 
@@ -128,7 +140,7 @@ namespace IsoCore.Foundation.EditorTools
             add("String seed hash is deterministic", expected == expectedAgain, $"{TestSeed} -> {expected}");
 
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            FoundationBootstrap.ConfigureLaunch(TestWorldName, TestSeed, 2);
+            FoundationBootstrap.ConfigureLaunch(TestWorldName, TestSeed, 2, "stonewright");
 
             var go = new GameObject("FoundationBootstrap_IntegratedValidation");
             var boot = go.AddComponent<FoundationBootstrap>();
@@ -155,6 +167,12 @@ namespace IsoCore.Foundation.EditorTools
             add("ConfigureLaunch difficulty applied",
                 boot.ActiveDifficulty == 2,
                 boot.ActiveDifficulty.ToString());
+            add("ConfigureLaunch Calling applied before Ready",
+                boot.ActiveCallingId == "stonewright" &&
+                boot.Progression != null &&
+                boot.Progression.CurrentCalling != null &&
+                boot.Progression.CurrentCalling.id == "stonewright",
+                boot.ActiveCallingId);
 
             add("Foundation runtime graph creates Player", go.transform.Find("Player") != null);
             add("Foundation runtime graph creates WorldController", go.transform.Find("WorldController") != null);
@@ -177,6 +195,7 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Crafting != null && boot.Hud != null);
             add("FoundationBootstrap exposes LitRPG progression handles",
                 boot.Progression != null && boot.Stats != null &&
+                boot.ProgressionHooks != null &&
                 boot.Stats.Health01 >= 0f && boot.Stats.Health01 <= 1f &&
                 boot.Stats.Mana01 >= 0f && boot.Stats.Mana01 <= 1f &&
                 boot.Stats.Xp01 >= 0f && boot.Stats.Xp01 <= 1f &&
@@ -187,6 +206,13 @@ namespace IsoCore.Foundation.EditorTools
             add("FoundationContent includes LitRPG bible seed content",
                 boot.Content.Callings.Count >= 7 && boot.Content.Skills.Count >= 12 && boot.Content.Quests.Count >= 5,
                 $"Callings:{boot.Content.Callings.Count} Skills:{boot.Content.Skills.Count} Quests:{boot.Content.Quests.Count}");
+            add("FoundationProgressionHooks starts playable starter quests",
+                boot.Progression.IsQuestActive("first_flame_first_field") &&
+                boot.Progression.IsQuestActive("a_roof_before_rain") &&
+                boot.Progression.IsQuestActive("thread_twig_and_tin") &&
+                boot.Progression.IsQuestActive("fixing_the_south_path"));
+
+            ValidateBootstrapSaveLoad(add, boot, expected);
 
             var spawner = go.GetComponentInChildren<MobSpawner>();
             bool spawned = TryForceMobSpawn(spawner);
@@ -207,7 +233,8 @@ namespace IsoCore.Foundation.EditorTools
             add("FoundationBootstrap exposes UI binding handles without IMGUI HUD",
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
                 headlessBoot.Content != null && headlessBoot.World != null &&
-                headlessBoot.Progression != null && headlessBoot.Stats != null);
+                headlessBoot.Progression != null && headlessBoot.Stats != null &&
+                headlessBoot.ProgressionHooks != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
             FoundationBootstrap.ClearLaunchOptions();
@@ -223,6 +250,209 @@ namespace IsoCore.Foundation.EditorTools
                 trySpawn.Invoke(spawner, null);
 
             return spawner.Count > 0;
+        }
+
+        static void ValidateBootstrapSaveLoad(AddCheck add, FoundationBootstrap boot, int expectedSeed)
+        {
+            if (boot == null || boot.World == null || boot.Inventory == null || boot.Progression == null)
+            {
+                add("Foundation save/load test has runtime handles", false, "bootstrap incomplete");
+                return;
+            }
+
+            string path = Path.GetFullPath(Path.Combine("Temp", "FoundationSaveLoadValidation.json"));
+            string sparsePath = Path.GetFullPath(Path.Combine("Temp", "FoundationSparseSaveValidation.json"));
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                if (File.Exists(path)) File.Delete(path);
+                if (File.Exists(sparsePath)) File.Delete(sparsePath);
+
+                int mismatchedSeed = expectedSeed == int.MaxValue ? expectedSeed - 1 : expectedSeed + 1;
+                string defaultPath = boot.DefaultSavePath;
+                string expectedDefaultPath = FoundationBootstrap.DefaultSavePathForWorld(boot.ActiveWorldName, expectedSeed);
+                string seedlessDefaultPath = FoundationBootstrap.DefaultSavePathForWorld(boot.ActiveWorldName);
+                string otherSeedPath = FoundationBootstrap.DefaultSavePathForWorld(boot.ActiveWorldName, mismatchedSeed);
+                string defaultFolder = Path.GetFileName(Path.GetDirectoryName(defaultPath));
+                add("FoundationBootstrap.DefaultSavePath includes active seed",
+                    string.Equals(defaultPath, expectedDefaultPath, StringComparison.Ordinal) &&
+                    !string.Equals(defaultPath, seedlessDefaultPath, StringComparison.Ordinal) &&
+                    !string.Equals(defaultPath, otherSeedPath, StringComparison.Ordinal) &&
+                    defaultFolder != null &&
+                    defaultFolder.EndsWith($"_{expectedSeed}", StringComparison.Ordinal),
+                    defaultFolder ?? defaultPath);
+
+                boot.Inventory.Add("copper_bar", 3);
+                boot.Hotbar.Select(2);
+                boot.DayNight.SetTime(0.66f);
+                boot.Player.SetCell(2, -3);
+                boot.Progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 2);
+
+                var blockCell = FindBuildableCell(boot.World);
+                var cropCell = FindBuildableCell(boot.World, blockCell);
+                var chestCell = FindBuildableCell(boot.World, blockCell, cropCell);
+                bool blockPlaced = blockCell != InvalidCell &&
+                    boot.World.TryPlaceBlock(blockCell.x, blockCell.y, boot.Content.Blocks.Get("stone_block"));
+                bool tilled = cropCell != InvalidCell && boot.World.TryTill(cropCell.x, cropCell.y);
+                if (cropCell != InvalidCell)
+                    boot.Farming.RestoreCrops(new[]
+                    {
+                        new FoundationSavedCrop { cropId = "carrot_crop", x = cropCell.x, y = cropCell.y, stage = 1, stageTimer = 2.5f }
+                    });
+                if (chestCell != InvalidCell)
+                {
+                    boot.Placement.RestorePlaceables(new[]
+                    {
+                        new FoundationSavedPlaceable { placeableId = "chest", x = chestCell.x, y = chestCell.y }
+                    });
+                    if (boot.Storage != null && boot.Storage.TryGetContainer(chestCell.x, chestCell.y, out var chest))
+                        chest.Add("carrot", 4);
+                }
+
+                bool saved = boot.Save(path);
+                bool metadataOk = FoundationBootstrap.TryReadSaveMetadata(path, out var metadata, out string metadataError);
+
+                FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, mismatchedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
+                var mismatchGo = new GameObject("FoundationBootstrap_SaveLoadSeedMismatchValidation");
+                var mismatch = mismatchGo.AddComponent<FoundationBootstrap>();
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(mismatch, null);
+
+                int mismatchCopperBefore = mismatch.Inventory != null ? mismatch.Inventory.Count("copper_bar") : -1;
+                bool mismatchLoaded = mismatch.Load(path);
+                int mismatchCopperAfter = mismatch.Inventory != null ? mismatch.Inventory.Count("copper_bar") : -1;
+                int mismatchQuestProgress = mismatch.Progression != null
+                    ? mismatch.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood")
+                    : -1;
+                add("FoundationBootstrap.Load refuses mismatched save seed",
+                    saved &&
+                    !mismatchLoaded &&
+                    mismatch.config != null &&
+                    mismatch.config.seed == mismatchedSeed &&
+                    mismatch.Inventory != null &&
+                    mismatch.Progression != null &&
+                    mismatchCopperAfter == mismatchCopperBefore &&
+                    mismatchQuestProgress == 0,
+                    $"save seed {expectedSeed}, active seed {(mismatch.config != null ? mismatch.config.seed.ToString() : "missing config")}, loaded {mismatchLoaded}");
+                UnityEngine.Object.DestroyImmediate(mismatchGo);
+
+                FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, expectedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
+                var loadedGo = new GameObject("FoundationBootstrap_SaveLoadValidation");
+                var loaded = loadedGo.AddComponent<FoundationBootstrap>();
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(loaded, null);
+
+                bool loadedOk = loaded.Load(path);
+                var loadedCrops = loaded.Farming.SnapshotCrops();
+
+                add("FoundationBootstrap.Save writes a save file",
+                    saved && File.Exists(path),
+                    path);
+                add("FoundationBootstrap.TryReadSaveMetadata reads menu-safe save summary",
+                    metadataOk &&
+                    metadata.version == FoundationSaveData.CurrentVersion &&
+                    metadata.supported &&
+                    metadata.worldName == boot.ActiveWorldName &&
+                    metadata.seed == expectedSeed &&
+                    metadata.callingId == boot.ActiveCallingId &&
+                    metadata.inventoryItemCount >= 3 &&
+                    metadata.placedObjectCount == 1 &&
+                    metadata.storageContainerCount == 1 &&
+                    metadata.cropCount == 1,
+                    metadataOk ? $"{metadata.worldName} seed {metadata.seed} level {metadata.level}" : metadataError);
+                add("FoundationBootstrap.Load applies save data",
+                    loadedOk &&
+                    loaded.Inventory.Count("copper_bar") == 3 &&
+                    loaded.Hotbar.Selected == 2 &&
+                    Mathf.Abs(loaded.DayNight.time - 0.66f) < 0.01f,
+                    loadedOk ? $"hotbar {loaded.Hotbar.Selected}, copper {loaded.Inventory.Count("copper_bar")}, time {loaded.DayNight.time:0.00}" : "load failed");
+                add("Save/load preserves modified solid block collision",
+                    blockPlaced &&
+                    loaded.World.IsBlocked(blockCell.x, blockCell.y) &&
+                    loaded.World.GetCell(blockCell.x, blockCell.y).SurfaceBlockId == "stone_block",
+                    blockCell.ToString());
+                add("Save/load preserves placed objects",
+                    chestCell != InvalidCell &&
+                    loaded.World.GetCell(chestCell.x, chestCell.y).OccupantId == "chest" &&
+                    loaded.World.IsBlocked(chestCell.x, chestCell.y),
+                    chestCell.ToString());
+                bool loadedChest = chestCell != InvalidCell &&
+                    loaded.Storage != null &&
+                    loaded.Storage.TryGetContainer(chestCell.x, chestCell.y, out var loadedStorage) &&
+                    loadedStorage.Count("carrot") == 4;
+                add("Save/load preserves storage container contents",
+                    loadedChest,
+                    chestCell != InvalidCell && loaded.Storage != null && loaded.Storage.TryGetContainer(chestCell.x, chestCell.y, out var detailStorage)
+                        ? $"carrot {detailStorage.Count("carrot")}"
+                        : "missing storage");
+                add("Save/load preserves crops",
+                    tilled && loadedCrops.Length == 1 && loadedCrops[0].cropId == "carrot_crop" && loadedCrops[0].stage == 1,
+                    loadedCrops.Length > 0 ? $"{loadedCrops[0].cropId} stage {loadedCrops[0].stage}" : "no crops");
+                add("Save/load preserves quest progress",
+                    loaded.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood") == 2,
+                    loaded.Progression.GetObjectiveProgress("first_flame_first_field", "gather_wood").ToString());
+                add("Save/load preserves player cell",
+                    loaded.Player.CurrentCell == new Vector2Int(2, -3),
+                    loaded.Player.CurrentCell.ToString());
+
+                FoundationBootstrap.ClearLaunchOptions();
+                FoundationBootstrap.ConfigureLaunch(boot.ActiveWorldName, expectedSeed.ToString(), boot.ActiveDifficulty, boot.ActiveCallingId);
+                var sparseGo = new GameObject("FoundationBootstrap_SparseSaveValidation");
+                var sparse = sparseGo.AddComponent<FoundationBootstrap>();
+                typeof(FoundationBootstrap)
+                    .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.Invoke(sparse, null);
+
+                bool sparseSaved = sparse.Save(sparsePath);
+                bool sparseLoaded = loaded.Load(sparsePath);
+                bool staleBlockCleared = blockCell != InvalidCell &&
+                    !loaded.World.GetCell(blockCell.x, blockCell.y).SolidBlock &&
+                    loaded.World.IsWalkable(blockCell.x, blockCell.y);
+                bool staleChestCleared = chestCell != InvalidCell &&
+                    !loaded.World.GetCell(chestCell.x, chestCell.y).HasOccupant &&
+                    (loaded.Storage == null || !loaded.Storage.TryGetContainer(chestCell.x, chestCell.y, out _));
+                bool staleCropCleared = loaded.Farming.SnapshotCrops().Length == 0;
+                add("FoundationBootstrap.Load clears stale same-session world state",
+                    sparseSaved && sparseLoaded && staleBlockCleared && staleChestCleared && staleCropCleared,
+                    $"block {staleBlockCleared}, chest {staleChestCleared}, crops {staleCropCleared}");
+                UnityEngine.Object.DestroyImmediate(sparseGo);
+
+                string futurePath = Path.GetFullPath(Path.Combine("Temp", "FoundationFutureSaveValidation.json"));
+                var futureData = new FoundationSaveData
+                {
+                    version = FoundationSaveData.CurrentVersion + 1,
+                    worldName = boot.ActiveWorldName,
+                    seed = expectedSeed,
+                    savedUtc = DateTime.UtcNow.ToString("o"),
+                };
+                File.WriteAllText(futurePath, JsonUtility.ToJson(futureData, true));
+                bool futureMetadataOk = FoundationBootstrap.TryReadSaveMetadata(futurePath, out var futureMetadata, out string futureError);
+                bool futureLoaded = loaded.Load(futurePath);
+                add("Foundation save metadata rejects future save versions",
+                    !futureMetadataOk &&
+                    futureMetadata != null &&
+                    !futureMetadata.supported &&
+                    futureError.Contains("newer"),
+                    futureError);
+                add("FoundationBootstrap.Load rejects future save versions",
+                    !futureLoaded,
+                    $"loaded {futureLoaded}");
+                if (File.Exists(futurePath)) File.Delete(futurePath);
+
+                UnityEngine.Object.DestroyImmediate(loadedGo);
+            }
+            finally
+            {
+                if (File.Exists(path)) File.Delete(path);
+                if (File.Exists(sparsePath)) File.Delete(sparsePath);
+                string futurePath = Path.GetFullPath(Path.Combine("Temp", "FoundationFutureSaveValidation.json"));
+                if (File.Exists(futurePath)) File.Delete(futurePath);
+                FoundationBootstrap.ClearLaunchOptions();
+            }
         }
 
         static void ValidateWorldContracts(AddCheck add)
@@ -269,6 +499,7 @@ namespace IsoCore.Foundation.EditorTools
             ValidateHarvest(add, content, world);
             ValidateCrafting(add, content);
             ValidateFarmingData(add, content);
+            ValidateProgressionContracts(add, content);
         }
 
         static readonly Vector2Int InvalidCell = new(int.MinValue, int.MinValue);
@@ -335,6 +566,13 @@ namespace IsoCore.Foundation.EditorTools
             bool crafted = crafting.TryCraft(recipe);
             add("Hand crafting consumes inputs and creates output", crafted && inv.Count("workbench_item") == 1 && inv.Count("wood") == 3);
 
+            var tightInv = new Inventory(1, content);
+            tightInv.Add("wood", 5);
+            var tightCrafting = new CraftingSystem(content, tightInv);
+            bool tightCrafted = tightCrafting.TryCraft(recipe);
+            add("Crafting output can use a slot freed by recipe inputs",
+                tightCrafted && tightInv.Count("workbench_item") == 1 && tightInv.Count("wood") == 0);
+
             inv.Add("stone", 3);
             crafting.StationAvailable = st => st == StationType.Workbench;
             var stationRecipe = content.Recipes.Get("craft_stone_block");
@@ -348,6 +586,74 @@ namespace IsoCore.Foundation.EditorTools
             var crop = seed != null ? content.Crops.Get(seed.plantCropId) : null;
             add("Seed item resolves to crop definition", seed != null && crop != null, seed != null ? seed.plantCropId : "missing seed");
             add("Crop has harvest outputs", crop != null && crop.harvest != null && crop.harvest.Length > 0);
+        }
+
+        static void ValidateProgressionContracts(AddCheck add, FoundationContent content)
+        {
+            var progression = new FoundationProgression(content);
+            int beforeXp = progression.Stats.Experience;
+            int rewardEvents = 0;
+            progression.RewardUnlocked += reward =>
+            {
+                if (reward.type == FoundationRewardType.Recipe && reward.id == "craft_campfire")
+                    rewardEvents++;
+            };
+            bool wood = progression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 5);
+            bool bench = progression.AdvanceQuestObjective("first_flame_first_field", "craft_workbench");
+            bool soil = progression.AdvanceQuestObjective("first_flame_first_field", "till_soil");
+            add("Starter quest completes and grants XP",
+                wood && bench && soil &&
+                progression.IsQuestCompleted("first_flame_first_field") &&
+                progression.Stats.Experience > beforeXp,
+                $"xp {beforeXp}->{progression.Stats.Experience}");
+            add("Quest completion emits reward unlock event",
+                rewardEvents == 1 &&
+                progression.HasUnlockedReward(FoundationRewardType.Recipe, "craft_campfire"),
+                $"events {rewardEvents}");
+
+            var read = progression.CaptureReadState();
+            var firstQuestRead = progression.CaptureQuestReadState("first_flame_first_field");
+            add("Progression read state exposes Calling, skills, quests, and rewards",
+                read.calling.hasCalling &&
+                read.skills != null && read.skills.Length >= content.Skills.Count &&
+                read.quests != null && read.quests.Length >= 1 &&
+                read.unlockedRewards != null && read.unlockedRewards.Length >= 1,
+                $"skills {read.skills?.Length ?? 0}, quests {read.quests?.Length ?? 0}, rewards {read.unlockedRewards?.Length ?? 0}");
+            add("Quest read state exposes objective progress",
+                firstQuestRead.completed &&
+                firstQuestRead.objectives != null &&
+                firstQuestRead.objectives.Length == content.Quests.Get("first_flame_first_field").objectives.Length &&
+                firstQuestRead.progress01 >= 0.99f,
+                firstQuestRead.progress01.ToString("0.00"));
+
+            var focusedProgression = new FoundationProgression(content);
+            focusedProgression.AddActivityXp(FoundationProgressionActivity.Harvest, 10, "woodcraft");
+            focusedProgression.AddActivityXp(FoundationProgressionActivity.Creature, 8, "creaturecraft");
+            add("Focused activity XP advances targeted skills only",
+                focusedProgression.GetSkillXp("woodcraft") == 10 &&
+                focusedProgression.GetSkillXp("foraging") == 0 &&
+                focusedProgression.GetSkillXp("mining") == 0 &&
+                focusedProgression.GetSkillXp("creaturecraft") == 8 &&
+                focusedProgression.GetSkillXp("warding") == 0,
+                $"woodcraft {focusedProgression.GetSkillXp("woodcraft")}, creaturecraft {focusedProgression.GetSkillXp("creaturecraft")}");
+
+            var inv = new Inventory(12, content);
+            inv.Add("wood", 5);
+            var crafting = new CraftingSystem(content, inv);
+            var hookGo = new GameObject("ProgressionHooks_IntegratedValidation");
+            var hookedProgression = new FoundationProgression(content);
+            var hooks = hookGo.AddComponent<FoundationProgressionHooks>();
+            hooks.Init(hookedProgression, null, crafting, null, null, null);
+
+            bool crafted = crafting.TryCraft(content.Recipes.Get("craft_workbench"));
+            hookedProgression.SkillXp.TryGetValue("crafting", out int craftingXp);
+            add("Crafting event advances quest and skill XP",
+                crafted &&
+                hookedProgression.GetObjectiveProgress("first_flame_first_field", "craft_workbench") >= 1 &&
+                craftingXp > 0,
+                $"crafting xp {craftingXp}");
+
+            UnityEngine.Object.DestroyImmediate(hookGo);
         }
 
         static void WriteReport(List<Check> checks)

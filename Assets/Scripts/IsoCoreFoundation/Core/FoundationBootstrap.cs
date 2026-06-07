@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -21,16 +22,19 @@ namespace IsoCore.Foundation
         public FoundationConfig config = new();
         [Tooltip("Inventory slot count.")] public int inventorySlots = 36;
         [Tooltip("Hotbar slot count.")] public int hotbarSlots = 9;
+        [Tooltip("Slot count for placed storage containers such as chests.")] public int storageSlots = 18;
         [Tooltip("Create the temporary IMGUI FoundationHUD. Disable when an external uGUI HUD binds to this bootstrap.")]
         public bool createImguiHud = true;
         public float cameraSize = 6f;
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
         public int ActiveDifficulty { get; private set; } = 1;
+        public string ActiveCallingId { get; private set; } = "greenhand";
         public FoundationContent Content { get; private set; }
         public IsoWorld World { get; private set; }
         public Inventory Inventory { get; private set; }
         public Hotbar Hotbar { get; private set; }
+        public StorageSystem Storage { get; private set; }
         public IsoFoundationPlayer Player { get; private set; }
         public IsoWorldController WorldController { get; private set; }
         public PlacementSystem Placement { get; private set; }
@@ -39,8 +43,10 @@ namespace IsoCore.Foundation
         public DayNightSystem DayNight { get; private set; }
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
+        public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
         public FoundationHUD Hud { get; private set; }
+        public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName, config != null ? config.seed : 1337);
 
         Camera _cam;
         Transform _playerT;
@@ -49,12 +55,13 @@ namespace IsoCore.Foundation
         /// Call before loading IsoCoreFoundation.unity to hand menu/world settings into
         /// the isolated Foundation scene without coupling it to the legacy WorldManager.
         /// </summary>
-        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1)
+        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null)
         {
             s_LaunchOptions = new LaunchOptions(
                 NormalizeWorldName(worldName),
                 SeedStringToInt(seed),
-                Mathf.Clamp(difficulty, 0, 2));
+                Mathf.Clamp(difficulty, 0, 2),
+                NormalizeCallingId(callingId));
             s_HasLaunchOptions = true;
         }
 
@@ -91,6 +98,7 @@ namespace IsoCore.Foundation
 
             Content = FoundationContent.BuildDefault();
             Progression = new FoundationProgression(Content);
+            ApplyLaunchCalling();
             var sampler = new IsoTerrainSampler(config, Content);
             World = new IsoWorld(sampler, Content, config.chunkSize);
 
@@ -113,6 +121,7 @@ namespace IsoCore.Foundation
             // Inventory + hotbar + starter items.
             Inventory = new Inventory(inventorySlots, Content);
             Hotbar = new Hotbar(Inventory, hotbarSlots);
+            Storage = new StorageSystem(Content, storageSlots);
             if (config.starterItems != null)
                 foreach (var s in config.starterItems) Inventory.Add(s.itemId, s.count);
 
@@ -123,7 +132,7 @@ namespace IsoCore.Foundation
 
             // Camera (before placement init — it needs the camera).
             SetupCamera();
-            Placement.Init(World, Content, Inventory, Hotbar, _cam, Player);
+            Placement.Init(World, Content, Inventory, Hotbar, _cam, Player, Storage);
 
             // Crafting (station proximity via placement).
             Crafting = new CraftingSystem(Content, Inventory);
@@ -175,7 +184,12 @@ namespace IsoCore.Foundation
 
             // Input router.
             var interaction = gameObject.AddComponent<PlayerInteraction>();
-            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud);
+            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming, Hud, Storage);
+
+            // LitRPG progression hooks. Gameplay systems emit success events; this component
+            // converts them into activity XP and starter quest progress.
+            ProgressionHooks = gameObject.AddComponent<FoundationProgressionHooks>();
+            ProgressionHooks.Init(Progression, interaction, Crafting, Placement, Farming, MobSpawner);
 
             Ready?.Invoke(this);
 
@@ -183,7 +197,7 @@ namespace IsoCore.Foundation
                       $"Placeables:{Content.Placeables.Count} Recipes:{Content.Recipes.Count} " +
                       $"Nodes:{Content.Nodes.Count} Mobs:{Content.Mobs.Count} Biomes:{Content.Biomes.Count} " +
                       $"Callings:{Content.Callings.Count} Skills:{Content.Skills.Count} Quests:{Content.Quests.Count} " +
-                      $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty}");
+                      $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty} Calling:{ActiveCallingId}");
         }
 
         void ApplyLaunchOptions()
@@ -193,6 +207,7 @@ namespace IsoCore.Foundation
 
             ActiveWorldName = DefaultWorldName;
             ActiveDifficulty = 1;
+            ActiveCallingId = "greenhand";
 
             if (!s_HasLaunchOptions)
                 return;
@@ -200,6 +215,218 @@ namespace IsoCore.Foundation
             ActiveWorldName = s_LaunchOptions.worldName;
             ActiveDifficulty = s_LaunchOptions.difficulty;
             config.seed = s_LaunchOptions.seed;
+        }
+
+        void ApplyLaunchCalling()
+        {
+            if (Progression == null)
+                return;
+
+            string requested = s_HasLaunchOptions ? s_LaunchOptions.callingId : null;
+            if (!string.IsNullOrWhiteSpace(requested) && !Progression.SelectCalling(requested))
+                Debug.LogWarning($"[FoundationBootstrap] Unknown launch Calling '{requested}', keeping {Progression.CurrentCalling?.id ?? "default"}.");
+
+            ActiveCallingId = Progression.CurrentCalling?.id ?? "greenhand";
+        }
+
+        public bool Save(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                path = DefaultSavePath;
+
+            try
+            {
+                var data = CaptureSaveData();
+                string dir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrWhiteSpace(dir))
+                    Directory.CreateDirectory(dir);
+
+                File.WriteAllText(path, JsonUtility.ToJson(data, true));
+                Debug.Log($"[FoundationBootstrap] Saved Foundation world to {path}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[FoundationBootstrap] Save failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool Load(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                path = DefaultSavePath;
+
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Save file not found: {path}");
+                    return false;
+                }
+
+                var data = JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path));
+                if (data == null || data.version <= 0 || data.version > FoundationSaveData.CurrentVersion)
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Save file is invalid or unsupported: {path}");
+                    return false;
+                }
+
+                if (config != null && data.seed != 0 && data.seed != config.seed)
+                {
+                    Debug.LogWarning($"[FoundationBootstrap] Refusing to load save seed {data.seed} into active world seed {config.seed}. Call ConfigureLaunch with the save seed before loading the scene.");
+                    return false;
+                }
+
+                ApplySaveData(data);
+                Debug.Log($"[FoundationBootstrap] Loaded Foundation world from {path}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[FoundationBootstrap] Load failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        FoundationSaveData CaptureSaveData()
+        {
+            var cell = Player != null ? Player.CurrentCell : Vector2Int.zero;
+            var ground = Player != null ? Player.Ground : Vector2.zero;
+            return new FoundationSaveData
+            {
+                version = FoundationSaveData.CurrentVersion,
+                savedUtc = DateTime.UtcNow.ToString("o"),
+                worldName = ActiveWorldName,
+                seed = config != null ? config.seed : 1337,
+                difficulty = ActiveDifficulty,
+                callingId = ActiveCallingId,
+                player = new FoundationSavedPlayer
+                {
+                    cellX = cell.x,
+                    cellY = cell.y,
+                    groundX = ground.x,
+                    groundY = ground.y,
+                },
+                inventorySlots = Inventory != null ? Inventory.SnapshotSlots() : Array.Empty<ItemStack>(),
+                hotbarSelected = Hotbar != null ? Hotbar.Selected : 0,
+                progression = Progression != null ? Progression.CaptureState() : null,
+                modifiedCells = World != null ? World.SnapshotModifiedCells() : Array.Empty<FoundationSavedCell>(),
+                placedObjects = Placement != null ? Placement.SnapshotPlaceables() : Array.Empty<FoundationSavedPlaceable>(),
+                storageContainers = Storage != null ? Storage.CaptureState() : Array.Empty<FoundationSavedStorageContainer>(),
+                crops = Farming != null ? Farming.SnapshotCrops() : Array.Empty<FoundationSavedCrop>(),
+                dayNightTime = DayNight != null ? DayNight.time : 0.30f,
+                mobs = MobSpawner != null ? MobSpawner.SnapshotMobs() : Array.Empty<FoundationSavedMob>(),
+                regionShifts = Progression != null ? ToArray(Progression.RegionShifts) : Array.Empty<string>(),
+            };
+        }
+
+        void ApplySaveData(FoundationSaveData data)
+        {
+            if (data == null) return;
+
+            ActiveWorldName = NormalizeWorldName(data.worldName);
+            ActiveDifficulty = Mathf.Clamp(data.difficulty, 0, 2);
+
+            if (Progression != null && data.progression != null)
+                Progression.RestoreState(data.progression);
+            ActiveCallingId = Progression?.CurrentCallingId ?? (string.IsNullOrWhiteSpace(data.callingId) ? "greenhand" : data.callingId);
+
+            Inventory?.RestoreSlots(data.inventorySlots);
+            if (Hotbar != null) Hotbar.Select(data.hotbarSelected);
+
+            World?.ResetModifiedCells();
+            World?.RestoreModifiedCells(data.modifiedCells);
+            Placement?.RestorePlaceables(data.placedObjects);
+            Storage?.RestoreState(data.storageContainers, entry =>
+                Placement != null && Placement.HasContainerPlaceable(entry.x, entry.y, entry.placeableId));
+            Farming?.RestoreCrops(data.crops);
+            DayNight?.SetTime(data.dayNightTime);
+            MobSpawner?.RestoreMobs(data.mobs);
+
+            if (Player != null)
+                Player.SetGround(new Vector2(data.player.groundX, data.player.groundY));
+        }
+
+        public static string DefaultSavePathForWorld(string worldName)
+        {
+            return Path.Combine(Application.persistentDataPath, SanitizePathPart(NormalizeWorldName(worldName)), "save.json");
+        }
+
+        public static string DefaultSavePathForWorld(string worldName, string seed)
+        {
+            return DefaultSavePathForWorld(worldName, SeedStringToInt(seed));
+        }
+
+        public static string DefaultSavePathForWorld(string worldName, int seed)
+        {
+            string folder = SanitizePathPart($"{NormalizeWorldName(worldName)}_{seed}");
+            return Path.Combine(Application.persistentDataPath, folder, "save.json");
+        }
+
+        public static bool TryReadSaveMetadata(string path, out FoundationSaveMetadata metadata)
+        {
+            return TryReadSaveMetadata(path, out metadata, out _);
+        }
+
+        public static bool TryReadSaveMetadata(string path, out FoundationSaveMetadata metadata, out string error)
+        {
+            metadata = null;
+            error = "";
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                error = "Save path is empty.";
+                return false;
+            }
+
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    error = $"Save file not found: {path}";
+                    return false;
+                }
+
+                var data = JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path));
+                if (data == null || data.version <= 0)
+                {
+                    error = $"Save file is invalid: {path}";
+                    return false;
+                }
+
+                metadata = data.ToMetadata();
+                if (!metadata.supported)
+                {
+                    error = $"Save version {metadata.version} is newer than supported version {FoundationSaveData.CurrentVersion}.";
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return false;
+            }
+        }
+
+        static string SanitizePathPart(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return "world";
+            foreach (char c in Path.GetInvalidFileNameChars())
+                value = value.Replace(c, '_');
+            value = value.Trim();
+            return string.IsNullOrWhiteSpace(value) ? "world" : value;
+        }
+
+        static string[] ToArray(System.Collections.Generic.IReadOnlyList<string> values)
+        {
+            if (values == null || values.Count == 0) return Array.Empty<string>();
+            var result = new string[values.Count];
+            for (int i = 0; i < values.Count; i++)
+                result[i] = values[i];
+            return result;
         }
 
         void SetupCamera()
@@ -272,18 +499,25 @@ namespace IsoCore.Foundation
             public readonly string worldName;
             public readonly int seed;
             public readonly int difficulty;
+            public readonly string callingId;
 
-            public LaunchOptions(string worldName, int seed, int difficulty)
+            public LaunchOptions(string worldName, int seed, int difficulty, string callingId)
             {
                 this.worldName = worldName;
                 this.seed = seed;
                 this.difficulty = difficulty;
+                this.callingId = callingId;
             }
         }
 
         static string NormalizeWorldName(string worldName)
         {
             return string.IsNullOrWhiteSpace(worldName) ? DefaultWorldName : worldName.Trim();
+        }
+
+        static string NormalizeCallingId(string callingId)
+        {
+            return string.IsNullOrWhiteSpace(callingId) ? null : callingId.Trim();
         }
     }
 }

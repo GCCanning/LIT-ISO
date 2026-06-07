@@ -18,6 +18,16 @@ namespace IsoCore.Foundation.EditorTools
 
         public static string Validate(bool showDialog)
         {
+            return Validate(showDialog, true);
+        }
+
+        public static string ValidateNoReport()
+        {
+            return Validate(false, false);
+        }
+
+        public static string Validate(bool showDialog, bool writeReport)
+        {
             var checks = new List<Check>();
             void Add(string n, bool p, string d = "") => checks.Add(new Check { name = n, pass = p, detail = d });
 
@@ -168,11 +178,12 @@ namespace IsoCore.Foundation.EditorTools
             // ---- Report ----
             int passed = 0; foreach (var ch in checks) if (ch.pass) passed++;
             bool allPass = passed == checks.Count;
-            WriteReport(checks, passed, c);
+            if (writeReport)
+                WriteReport(checks, passed, c);
 
             string summary = $"[ISO-Core] Validation: {passed}/{checks.Count} checks passed " +
                              $"({(allPass ? "ALL PASS" : "see report")}). " +
-                             "Report: Docs/IsoCoreFoundation/06_Validation_Report.md";
+                             (writeReport ? "Report: Docs/IsoCoreFoundation/06_Validation_Report.md" : "Report writing skipped");
             if (showDialog) EditorUtility.DisplayDialog("ISO-Core Foundation - Validation",
                 $"{passed}/{checks.Count} checks passed.\n\n" +
                 (allPass ? "All editor-side checks passed." : "Some checks failed - see 06_Validation_Report.md."), "OK");

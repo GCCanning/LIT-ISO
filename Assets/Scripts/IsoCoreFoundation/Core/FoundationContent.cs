@@ -135,6 +135,7 @@ namespace IsoCore.Foundation
             PlaceItem("chest_item", new Color(0.70f, 0.55f, 0.35f), "chest");
             PlaceItem("lantern_item", new Color(0.95f, 0.85f, 0.40f), "lantern");
             PlaceItem("furnace_item", new Color(0.45f, 0.42f, 0.45f), "furnace");
+            PlaceItem("campfire_item", new Color(0.90f, 0.42f, 0.18f), "campfire");
 
             // ---- Placeables ----
             PlaceableDefinition Placeable(string id, Color col, bool blocks, InteractionKind kind,
@@ -405,7 +406,7 @@ namespace IsoCore.Foundation
                 new[] { Reward(FoundationRewardType.Xp, "character", 40), Reward(FoundationRewardType.Recipe, "craft_campfire") });
             Quest("a_roof_before_rain", "A Roof Before Rain", FoundationQuestType.Civic, "Act 1: First Fire",
                 "Prepare a real shelter before the first hard weather rolls through Mosswake.",
-                new[] { Obj("place_floor", "Place wood floor tiles", 4), Obj("place_lantern", "Place a lantern"), Obj("store_food", "Store any food item", 3) },
+                new[] { Obj("place_floor", "Place wood floor tiles", 4), Obj("place_lantern", "Place a lantern"), Obj("place_chest", "Place a chest") },
                 new[] { Reward(FoundationRewardType.Xp, "character", 60), Reward(FoundationRewardType.Pattern, "hearthplank_flooring") });
             Quest("thread_twig_and_tin", "Thread, Twig, and Tin", FoundationQuestType.Craft, "Act 1: First Fire",
                 "Learn the first loop of gathering, refining, and improving a tool.",

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -18,13 +20,17 @@ namespace IsoCore.Foundation
         PlacementSystem _placement;
         FarmingSystem _farming;
         FoundationHUD _hud;
+        StorageSystem _storage;
+
+        public event Action<ResourceNodeDefinition, IReadOnlyList<ItemStack>> ResourceHarvested;
 
         public void Init(IsoFoundationPlayer player, IsoWorldController controller, FoundationContent content,
             FoundationConfig cfg, Inventory inv, Hotbar hotbar, PlacementSystem placement,
-            FarmingSystem farming, FoundationHUD hud)
+            FarmingSystem farming, FoundationHUD hud, StorageSystem storage = null)
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
             _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming; _hud = hud;
+            _storage = storage;
 
             var hi = new GameObject("TargetHighlight");
             hi.transform.SetParent(transform, false);
@@ -87,7 +93,10 @@ namespace IsoCore.Foundation
             }
             if (inter != null && inter.Def.interaction == InteractionKind.Container)
             {
-                _hud?.Flash($"Opened {inter.Def.Display} (empty)");
+                if (_storage != null && _storage.TryOpenContainer(inter, out var container))
+                    _hud?.Flash($"{inter.Def.Display}: {container.UsedSlots}/{container.SlotCount} slots");
+                else
+                    _hud?.Flash($"Opened {inter.Def.Display}");
                 return;
             }
 
@@ -105,12 +114,14 @@ namespace IsoCore.Foundation
                     _hud?.Flash($"Needs a {node.Def.requiredTool}");
                     return;
                 }
-                bool depleted = node.Harvest(_inv, tool, tier, out bool full);
+                var granted = new List<ItemStack>();
+                bool depleted = node.Harvest(_inv, tool, tier, out bool full, granted);
                 if (full)
                 {
                     _hud?.Flash("Inventory full!");
                     return;
                 }
+                if (depleted) ResourceHarvested?.Invoke(node.Def, granted);
                 if (_hud == null) return;
                 _hud.Flash(depleted ? $"Harvested {node.Def.Display}" : $"Hitting {node.Def.Display}...");
             }
@@ -128,7 +139,8 @@ namespace IsoCore.Foundation
         void TryRemove()
         {
             if (_hud != null && _hud.PointerOverUI) return;
-            if (_placement.TryRemoveAtCursor()) _hud?.Flash("Removed");
+            if (_placement.TryRemoveAtCursor(out string blockedMessage)) _hud?.Flash("Removed");
+            else if (!string.IsNullOrEmpty(blockedMessage)) _hud?.Flash(blockedMessage);
         }
     }
 }
