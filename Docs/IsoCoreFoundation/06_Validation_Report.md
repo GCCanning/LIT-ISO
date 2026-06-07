@@ -44,13 +44,13 @@ Open `Assets/Scenes/IsoCoreFoundation.unity` and press Play, then confirm:
 
 - [ ] Procedural isometric terrain renders around spawn (multiple biome colours visible while walking out).
 - [ ] Player moves with WASD and **cannot** walk through trees/rocks/water (collision).
-- [ ] `E` near a tree/rock harvests it; item appears in the hotbar/inventory (`I`).
+- [ ] `LMB` on a tree/rock/bush breaks it; a durability bar appears and drops enter the hotbar/inventory (`I`).
 - [ ] Select the hoe and `LMB` a walkable cell to till soil; select seeds and `LMB` tilled soil to plant.
-- [ ] Crops grow through visible stages; `E` near a mature crop harvests produce without deleting it when inventory is full.
+- [ ] Crops grow through visible stages; `LMB` on a mature crop harvests produce without deleting it when inventory is full.
 - [ ] Select `workbench` (or stone block) on the hotbar (1-9); a green/red ghost shows at the cursor.
-- [ ] `LMB` places a block / placeable; the item count decrements; `RMB` removes a placeable.
+- [ ] `LMB` places a block / placeable; the item count decrements; `RMB` opens context options for blocks/placeables.
 - [ ] Placed solid block blocks player movement (collision refresh).
-- [ ] `E` next to the placed workbench opens the crafting panel; a recipe crafts and consumes inputs.
+- [ ] `RMB` on a placed workbench offers a crafting action; a recipe crafts and consumes inputs.
 - [ ] At least one mob (deer/slime) wanders nearby and despawns when far away.
 
 > Note: legacy movement uses the classic `Input` axes. Ensure Project Settings > Player >

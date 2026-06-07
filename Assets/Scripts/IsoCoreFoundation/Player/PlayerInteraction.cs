@@ -25,6 +25,9 @@ namespace IsoCore.Foundation
         FoundationInteractionOverlay _overlay;
 
         public event Action<ResourceNodeDefinition, IReadOnlyList<ItemStack>> ResourceHarvested;
+        public event Action<StationType> CraftingRequested;
+        public event Action<StorageContainer> ContainerOpened;
+        public event Action<string, string> ContextActionUsed;
 
         public void Init(IsoFoundationPlayer player, IsoWorldController controller, FoundationContent content,
             FoundationConfig cfg, Inventory inv, Hotbar hotbar, PlacementSystem placement,
@@ -176,7 +179,8 @@ namespace IsoCore.Foundation
                 _overlay?.OpenContextMenu(node.Def.Display, Input.mousePosition,
                     new[]
                     {
-                        new FoundationContextAction("break", $"Break {node.Def.Display}", () => HarvestNode(node))
+                        new FoundationContextAction("break", $"Break {node.Def.Display}",
+                            () => { ContextActionUsed?.Invoke("break", node.Def.id); HarvestNode(node); })
                     });
                 return;
             }
@@ -186,7 +190,8 @@ namespace IsoCore.Foundation
                 _overlay?.OpenContextMenu("Block", Input.mousePosition,
                     new[]
                     {
-                        new FoundationContextAction("remove", "Remove block", () => RemoveAt(c.x, c.y))
+                        new FoundationContextAction("remove", "Remove block",
+                            () => { ContextActionUsed?.Invoke("remove_block", "solid_block"); RemoveAt(c.x, c.y); })
                     });
                 return;
             }
@@ -223,7 +228,7 @@ namespace IsoCore.Foundation
 
             if (def.interaction == InteractionKind.CraftingStation)
                 actions.Add(new FoundationContextAction("use", $"Use {def.Display}",
-                    () => _hud?.ToggleCrafting(def.stationType)));
+                    () => RequestCrafting(def.stationType, def.id)));
             else if (def.interaction == InteractionKind.Container)
                 actions.Add(new FoundationContextAction("open", $"Open {def.Display}",
                     () => OpenContainer(placeable)));
@@ -235,26 +240,47 @@ namespace IsoCore.Foundation
                     ? def.Display
                     : def.destinationDisplayName;
                 actions.Add(new FoundationContextAction("enter", $"{label} {destination}",
-                    () => Flash($"Entering {destination}..."), hasDestination, "not connected yet"));
+                    () => RequestEntrance(def, destination), hasDestination, "not connected yet"));
             }
             else
             {
                 actions.Add(new FoundationContextAction("inspect", $"Inspect {def.Display}",
-                    () => Flash(def.Display)));
+                    () => { ContextActionUsed?.Invoke("inspect", def.id); Flash(def.Display); }));
             }
 
             actions.Add(new FoundationContextAction("remove", $"Remove {def.Display}",
-                () => RemoveAt(placeable.Wx, placeable.Wy)));
+                () => { ContextActionUsed?.Invoke("remove_placeable", def.id); RemoveAt(placeable.Wx, placeable.Wy); }));
 
             _overlay?.OpenContextMenu(def.Display, Input.mousePosition, actions.ToArray());
+        }
+
+        void RequestCrafting(StationType station, string targetId)
+        {
+            ContextActionUsed?.Invoke("craft", targetId);
+            CraftingRequested?.Invoke(station);
+            if (_hud != null) _hud.ToggleCrafting(station);
+            else Flash($"{station} crafting");
         }
 
         void OpenContainer(PlaceableInstance placeable)
         {
             if (_storage != null && _storage.TryOpenContainer(placeable, out var container))
+            {
+                ContextActionUsed?.Invoke("open_container", placeable.Def.id);
+                ContainerOpened?.Invoke(container);
                 Flash($"{placeable.Def.Display}: {container.UsedSlots}/{container.SlotCount} slots");
+            }
             else
+            {
+                ContextActionUsed?.Invoke("open_container", placeable.Def.id);
                 Flash($"Opened {placeable.Def.Display}");
+            }
+        }
+
+        void RequestEntrance(PlaceableDefinition def, string destination)
+        {
+            ContextActionUsed?.Invoke("enter", def.id);
+            Flash($"Entering {destination}...");
         }
 
         void RemoveAt(int wx, int wy)

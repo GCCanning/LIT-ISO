@@ -220,13 +220,13 @@ namespace IsoCore.Foundation.EditorTools
             sb.AppendLine();
             sb.AppendLine("- [ ] Procedural isometric terrain renders around spawn (multiple biome colours visible while walking out).");
             sb.AppendLine("- [ ] Player moves with WASD and **cannot** walk through trees/rocks/water (collision).");
-            sb.AppendLine("- [ ] `E` near a tree/rock harvests it; item appears in the hotbar/inventory (`I`).");
+            sb.AppendLine("- [ ] `LMB` on a tree/rock/bush breaks it; a durability bar appears and drops enter the hotbar/inventory (`I`).");
             sb.AppendLine("- [ ] Select the hoe and `LMB` a walkable cell to till soil; select seeds and `LMB` tilled soil to plant.");
-            sb.AppendLine("- [ ] Crops grow through visible stages; `E` near a mature crop harvests produce without deleting it when inventory is full.");
+            sb.AppendLine("- [ ] Crops grow through visible stages; `LMB` on a mature crop harvests produce without deleting it when inventory is full.");
             sb.AppendLine("- [ ] Select `workbench` (or stone block) on the hotbar (1-9); a green/red ghost shows at the cursor.");
-            sb.AppendLine("- [ ] `LMB` places a block / placeable; the item count decrements; `RMB` removes a placeable.");
+            sb.AppendLine("- [ ] `LMB` places a block / placeable; the item count decrements; `RMB` opens context options for blocks/placeables.");
             sb.AppendLine("- [ ] Placed solid block blocks player movement (collision refresh).");
-            sb.AppendLine("- [ ] `E` next to the placed workbench opens the crafting panel; a recipe crafts and consumes inputs.");
+            sb.AppendLine("- [ ] `RMB` on a placed workbench offers a crafting action; a recipe crafts and consumes inputs.");
             sb.AppendLine("- [ ] At least one mob (deer/slime) wanders nearby and despawns when far away.");
             sb.AppendLine();
             sb.AppendLine("> Note: legacy movement uses the classic `Input` axes. Ensure Project Settings > Player >");

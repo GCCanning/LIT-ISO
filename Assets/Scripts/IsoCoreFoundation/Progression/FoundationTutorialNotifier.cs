@@ -35,7 +35,13 @@ namespace IsoCore.Foundation
             _farming = farming;
 
             if (_hotbar != null) _hotbar.OnSelectionChanged += HandleChanged;
-            if (_interaction != null) _interaction.ResourceHarvested += HandleResourceHarvested;
+            if (_interaction != null)
+            {
+                _interaction.ResourceHarvested += HandleResourceHarvested;
+                _interaction.CraftingRequested += HandleCraftingRequested;
+                _interaction.ContainerOpened += HandleContainerOpened;
+                _interaction.ContextActionUsed += HandleContextActionUsed;
+            }
             if (_crafting != null) _crafting.Crafted += HandleCrafted;
             if (_placement != null) _placement.Placed += HandlePlaced;
             if (_farming != null)
@@ -57,9 +63,30 @@ namespace IsoCore.Foundation
         void OnDestroy() => Unsubscribe();
 
         void HandleChanged() => AdvanceWhileComplete();
-        void HandleResourceHarvested(ResourceNodeDefinition node, System.Collections.Generic.IReadOnlyList<ItemStack> drops) => AdvanceWhileComplete();
+        void HandleResourceHarvested(ResourceNodeDefinition node, System.Collections.Generic.IReadOnlyList<ItemStack> drops)
+        {
+            _earlyGameplayStarted = true;
+            AdvanceWhileComplete();
+        }
+        void HandleCraftingRequested(StationType station)
+        {
+            _earlyGameplayStarted = true;
+            AdvanceWhileComplete();
+        }
+        void HandleContainerOpened(StorageContainer container)
+        {
+            _containerOpened = true;
+            AdvanceWhileComplete();
+        }
+        void HandleContextActionUsed(string actionId, string targetId)
+        {
+            _earlyGameplayStarted = true;
+            if (actionId == "open_container") _containerOpened = true;
+            AdvanceWhileComplete();
+        }
         void HandleCrafted(RecipeDefinition recipe)
         {
+            _earlyGameplayStarted = true;
             if (recipe != null)
             {
                 if (recipe.id == "craft_wood_floor") _floorCrafted = true;
@@ -71,13 +98,19 @@ namespace IsoCore.Foundation
 
         void HandlePlaced(ItemDefinition item, int wx, int wy)
         {
+            _earlyGameplayStarted = true;
             if (item != null && item.id == "workbench_item") _workbenchPlaced = true;
             AdvanceWhileComplete();
         }
 
-        void HandleSoilTilled(int wx, int wy) => AdvanceWhileComplete();
+        void HandleSoilTilled(int wx, int wy)
+        {
+            _earlyGameplayStarted = true;
+            AdvanceWhileComplete();
+        }
         void HandleSeedPlanted(ItemDefinition seed, CropDefinition crop, int wx, int wy)
         {
+            _earlyGameplayStarted = true;
             _seedPlanted = true;
             AdvanceWhileComplete();
         }
@@ -86,6 +119,7 @@ namespace IsoCore.Foundation
         void HandleRewardUnlocked(FoundationRewardUnlock reward) => AdvanceWhileComplete();
         void HandleCropHarvested(CropDefinition crop)
         {
+            _earlyGameplayStarted = true;
             _overlay?.Tutorial("First harvest. The field gives back.", 5f);
             AdvanceWhileComplete();
         }
@@ -103,7 +137,7 @@ namespace IsoCore.Foundation
             switch (step)
             {
                 case 0: return true;
-                case 1: return _hotbar != null && _hotbar.Selected != 0;
+                case 1: return (_hotbar != null && _hotbar.Selected != 0) || _earlyGameplayStarted;
                 case 2: return QuestProgress("fixing_the_south_path", "clear_node") > 0 ||
                                QuestProgress("first_flame_first_field", "gather_wood") > 0;
                 case 3: return QuestProgress("first_flame_first_field", "gather_wood") >= 5;
@@ -114,7 +148,7 @@ namespace IsoCore.Foundation
                 case 8: return _floorCrafted;
                 case 9: return QuestProgress("a_roof_before_rain", "place_floor") >= 4;
                 case 10: return _chestCrafted;
-                case 11: return QuestProgress("a_roof_before_rain", "place_chest") > 0;
+                case 11: return _containerOpened || QuestProgress("a_roof_before_rain", "place_chest") > 0;
                 case 12: return _lanternCrafted;
                 case 13: return QuestProgress("a_roof_before_rain", "place_lantern") > 0;
                 case 14: return QuestProgress("fixing_the_south_path", "craft_path") >= 4;
@@ -128,6 +162,8 @@ namespace IsoCore.Foundation
         bool _chestCrafted;
         bool _lanternCrafted;
         bool _workbenchPlaced;
+        bool _containerOpened;
+        bool _earlyGameplayStarted;
 
         bool HasPlaced(string itemId) => itemId == "workbench_item" && _workbenchPlaced;
 
@@ -168,7 +204,13 @@ namespace IsoCore.Foundation
         void Unsubscribe()
         {
             if (_hotbar != null) _hotbar.OnSelectionChanged -= HandleChanged;
-            if (_interaction != null) _interaction.ResourceHarvested -= HandleResourceHarvested;
+            if (_interaction != null)
+            {
+                _interaction.ResourceHarvested -= HandleResourceHarvested;
+                _interaction.CraftingRequested -= HandleCraftingRequested;
+                _interaction.ContainerOpened -= HandleContainerOpened;
+                _interaction.ContextActionUsed -= HandleContextActionUsed;
+            }
             if (_crafting != null) _crafting.Crafted -= HandleCrafted;
             if (_placement != null) _placement.Placed -= HandlePlaced;
             if (_farming != null)
