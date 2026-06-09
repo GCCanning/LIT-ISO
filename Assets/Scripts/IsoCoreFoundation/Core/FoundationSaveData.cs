@@ -9,11 +9,13 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 8;
+        public const int CurrentVersion = 9;
 
         public int version = CurrentVersion;
         public string savedUtc;
         public string worldName;
+        public string characterName;
+        public int appearancePreset;
         public int seed;
         public int difficulty;
         public string callingId;
@@ -49,6 +51,8 @@ namespace IsoCore.Foundation
                 supported = version > 0 && version <= CurrentVersion,
                 savedUtc = savedUtc,
                 worldName = string.IsNullOrWhiteSpace(worldName) ? "Untitled World" : worldName,
+                characterName = string.IsNullOrWhiteSpace(characterName) ? "Unwritten" : characterName,
+                appearancePreset = Math.Max(0, appearancePreset),
                 seed = seed,
                 difficulty = difficulty,
                 callingId = string.IsNullOrWhiteSpace(callingId) ? progression?.currentCallingId ?? "greenhand" : callingId,
@@ -70,6 +74,8 @@ namespace IsoCore.Foundation
         public bool supported;
         public string savedUtc;
         public string worldName;
+        public string characterName;
+        public int appearancePreset;
         public int seed;
         public int difficulty;
         public string callingId;

@@ -15,7 +15,7 @@ using UnityEngine.UI;
 /// </summary>
 public class WelcomeScreenManager : MonoBehaviour
 {
-    private enum Screen { MainMenu, CreateWorld, CallingSelect, LoadGame, Options }
+    private enum Screen { MainMenu, CreateWorld, CharacterCreate, LoadGame, Options }
 
     [Header("Menu skin (all optional)")]
     [Tooltip("Each slot can be assigned in the inspector OR auto-loaded by filename from " +
@@ -56,6 +56,33 @@ public class WelcomeScreenManager : MonoBehaviour
     private Slider difficultySlider;
     private Text difficultyLabel;
 
+    // Character creation data. The menu owns launch-time identity/presentation;
+    // Foundation owns the actual stats, Calling, progression, and save graph.
+    private InputField characterNameInput;
+    private string characterName = "Unwritten";
+    private int appearancePreset;
+    private readonly Color[] skinPresets =
+    {
+        new Color(0.86f, 0.64f, 0.46f, 1f),
+        new Color(0.72f, 0.46f, 0.31f, 1f),
+        new Color(0.96f, 0.78f, 0.58f, 1f),
+        new Color(0.48f, 0.32f, 0.24f, 1f),
+    };
+    private readonly Color[] hairPresets =
+    {
+        new Color(0.18f, 0.11f, 0.07f, 1f),
+        new Color(0.72f, 0.52f, 0.25f, 1f),
+        new Color(0.50f, 0.17f, 0.11f, 1f),
+        new Color(0.78f, 0.78f, 0.74f, 1f),
+    };
+    private readonly Color[] outfitPresets =
+    {
+        new Color(0.20f, 0.42f, 0.34f, 1f),
+        new Color(0.36f, 0.24f, 0.52f, 1f),
+        new Color(0.42f, 0.19f, 0.16f, 1f),
+        new Color(0.18f, 0.32f, 0.56f, 1f),
+    };
+
     // Load game data
     private List<WorldSaveData> savedWorlds = new List<WorldSaveData>();
     private RectTransform worldListContent;
@@ -75,6 +102,9 @@ public class WelcomeScreenManager : MonoBehaviour
         public string worldName = "Untitled World";
         public string seed = "12345";
         public int difficulty = 2; // 0=easy, 1=normal, 2=hard
+        public string characterName = "Unwritten";
+        public string callingId = "greenhand";
+        public int appearancePreset;
         public long createdTicks;
 
         // createdTicks is the unique key; the name is sanitized so worlds named with
@@ -144,8 +174,8 @@ public class WelcomeScreenManager : MonoBehaviour
             case Screen.CreateWorld:
                 BuildCreateWorld();
                 break;
-            case Screen.CallingSelect:
-                BuildCallingSelect();
+            case Screen.CharacterCreate:
+                BuildCharacterCreate();
                 break;
             case Screen.LoadGame:
                 BuildLoadGame();
@@ -163,6 +193,15 @@ public class WelcomeScreenManager : MonoBehaviour
     private void BuildMainMenu()
     {
         contentPanel = CreateMainPanel("MainMenu");
+        contentPanel.sizeDelta = new Vector2(680f, 680f);
+
+        RectTransform crest = CreatePanel("CrestPlate", contentPanel,
+            new Color(0.10f, 0.08f, 0.05f, 0.88f),
+            new Color(0.86f, 0.64f, 0.24f, 1f));
+        crest.anchorMin = crest.anchorMax = new Vector2(0.5f, 1f);
+        crest.pivot = new Vector2(0.5f, 1f);
+        crest.anchoredPosition = new Vector2(0f, -22f);
+        crest.sizeDelta = new Vector2(560f, 188f);
 
         if (logoImage != null)
         {
@@ -173,9 +212,10 @@ public class WelcomeScreenManager : MonoBehaviour
             logoRect.anchorMin = new Vector2(0.5f, 1f);
             logoRect.anchorMax = new Vector2(0.5f, 1f);
             logoRect.pivot = new Vector2(0.5f, 1f);
-            logoRect.anchoredPosition = new Vector2(0f, -24f);
+            logoRect.anchoredPosition = new Vector2(0f, -34f);
             float aspect = (float)logoImage.rect.width / Mathf.Max(1f, logoImage.rect.height);
-            logoRect.sizeDelta = new Vector2(logoHeight * aspect, logoHeight);
+            float displayHeight = Mathf.Min(logoHeight, 138f);
+            logoRect.sizeDelta = new Vector2(displayHeight * aspect, displayHeight);
 
             Image logo = logoGO.AddComponent<Image>();
             logo.sprite = logoImage;
@@ -190,26 +230,54 @@ public class WelcomeScreenManager : MonoBehaviour
             titleRect.anchorMin = new Vector2(0.5f, 1f);
             titleRect.anchorMax = new Vector2(0.5f, 1f);
             titleRect.pivot = new Vector2(0.5f, 1f);
-            titleRect.anchoredPosition = new Vector2(0f, -40f);
-            titleRect.sizeDelta = new Vector2(panelWidth - 40f, 60f);
+            titleRect.anchoredPosition = new Vector2(0f, -42f);
+            titleRect.sizeDelta = new Vector2(560f, 66f);
         }
 
-        float buttonY = -120f;
-        float buttonSpacing = buttonHeight + spacing;
+        Text subtitle = CreateText("Subtitle", contentPanel,
+            "A cozy LitRPG homestead trial",
+            20, new Color(0.92f, 0.82f, 0.56f, 1f), TextAnchor.MiddleCenter);
+        RectTransform subtitleRect = subtitle.rectTransform;
+        subtitleRect.anchorMin = subtitleRect.anchorMax = new Vector2(0.5f, 1f);
+        subtitleRect.pivot = new Vector2(0.5f, 1f);
+        subtitleRect.anchoredPosition = new Vector2(0f, -154f);
+        subtitleRect.sizeDelta = new Vector2(560f, 30f);
+
+        Text systemLine = CreateText("SystemLine", contentPanel,
+            "SYSTEM GATE // CHARACTER // WORLD // TRIAL",
+            13, new Color(0.58f, 0.78f, 0.92f, 1f), TextAnchor.MiddleCenter);
+        RectTransform systemRect = systemLine.rectTransform;
+        systemRect.anchorMin = systemRect.anchorMax = new Vector2(0.5f, 1f);
+        systemRect.pivot = new Vector2(0.5f, 1f);
+        systemRect.anchoredPosition = new Vector2(0f, -190f);
+        systemRect.sizeDelta = new Vector2(560f, 22f);
+
+        float buttonY = -244f;
+        float buttonSpacing = buttonHeight + 14f;
 
         // Continue — only shown when at least one saved world exists.
         WorldSaveData mostRecent = GetMostRecentWorld();
         if (mostRecent != null)
         {
-            CreateMenuButton("ContinueBtn", contentPanel, "Continue", () => LaunchWorld(mostRecent), 0f, buttonY);
+            CreateMenuButton("ContinueBtn", contentPanel, $"Continue: {mostRecent.worldName}", () => LaunchWorld(mostRecent), 0f, buttonY);
             buttonY -= buttonSpacing;
         }
 
-        CreateMenuButton("NewGameBtn",  contentPanel, "New Game",  () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
-        CreateMenuButton("CreationInstanceBtn", contentPanel, "Creation Instance", LaunchCreationInstance, 0f, buttonY - buttonSpacing);
-        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame),    0f, buttonY - 2 * buttonSpacing);
-        CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 3 * buttonSpacing);
+        CreateMenuButton("NewGameBtn",  contentPanel, "New Trial",  () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
+        CreateMenuButton("LoadGameBtn", contentPanel, "Load World", () => ShowScreen(Screen.LoadGame),    0f, buttonY - buttonSpacing);
+        CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 2 * buttonSpacing);
+        CreateMenuButton("CreationInstanceBtn", contentPanel, "Creation Instance", LaunchCreationInstance, 0f, buttonY - 3 * buttonSpacing);
         CreateMenuButton("QuitBtn",     contentPanel, "Quit",      () => Application.Quit(),             0f, buttonY - 4 * buttonSpacing);
+
+        Text footer = CreateText("Footer", contentPanel,
+            "Create an adventurer, choose a Calling, then step into the seven-day Trial.",
+            14, labelText, TextAnchor.MiddleCenter);
+        footer.horizontalOverflow = HorizontalWrapMode.Wrap;
+        RectTransform footerRect = footer.rectTransform;
+        footerRect.anchorMin = footerRect.anchorMax = new Vector2(0.5f, 0f);
+        footerRect.pivot = new Vector2(0.5f, 0f);
+        footerRect.anchoredPosition = new Vector2(0f, 26f);
+        footerRect.sizeDelta = new Vector2(560f, 42f);
     }
 
     // -------------------------------------------------------------------------
@@ -219,8 +287,25 @@ public class WelcomeScreenManager : MonoBehaviour
     private void BuildCreateWorld()
     {
         contentPanel = CreateMainPanel("CreateWorld");
+        contentPanel.sizeDelta = new Vector2(720f, 620f);
 
-        float y = -30f;
+        Text title = CreateText("CreateWorldTitle", contentPanel, "Create Your World", 36, buttonText, TextAnchor.MiddleCenter);
+        RectTransform titleRect = title.rectTransform;
+        titleRect.anchorMin = titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -24f);
+        titleRect.sizeDelta = new Vector2(620f, 44f);
+
+        Text subtitle = CreateText("CreateWorldSubtitle", contentPanel,
+            "Set the realm. Your adventurer is created on the next screen.",
+            15, labelText, TextAnchor.MiddleCenter);
+        RectTransform subtitleRect = subtitle.rectTransform;
+        subtitleRect.anchorMin = subtitleRect.anchorMax = new Vector2(0.5f, 1f);
+        subtitleRect.pivot = new Vector2(0.5f, 1f);
+        subtitleRect.anchoredPosition = new Vector2(0f, -70f);
+        subtitleRect.sizeDelta = new Vector2(620f, 30f);
+
+        float y = -126f;
 
         // World Name
         CreateLabel("NameLabel", contentPanel, "World Name", y);
@@ -251,7 +336,7 @@ public class WelcomeScreenManager : MonoBehaviour
 
         // Buttons
         float btnY = -panelHeight + 60f;
-        CreateMenuButton("PlayBtn", contentPanel, "Play", OnCreateWorldPlay, -80f, btnY);
+        CreateMenuButton("PlayBtn", contentPanel, "Next", OnCreateWorldPlay, -90f, btnY);
         CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.MainMenu), 80f, btnY);
     }
 
@@ -287,10 +372,12 @@ public class WelcomeScreenManager : MonoBehaviour
             return;
         }
 
-        // New worlds choose a Calling before launch. Existing worlds (Continue / Load)
-        // skip this and keep their saved Calling once save/load lands.
+        // New worlds create an adventurer and choose a Calling before launch.
+        characterName = "Unwritten";
+        selectedCallingId = world.callingId;
+        appearancePreset = 0;
         pendingWorld = world;
-        ShowScreen(Screen.CallingSelect);
+        ShowScreen(Screen.CharacterCreate);
     }
 
     private void UpdateDifficultyLabel(float value)
@@ -312,6 +399,211 @@ public class WelcomeScreenManager : MonoBehaviour
     // -------------------------------------------------------------------------
     // Calling Select  (New Game -> pick a Calling -> launch)
     // -------------------------------------------------------------------------
+
+    private void BuildCharacterCreate()
+    {
+        callingCards.Clear();
+        selectedCallingId = string.IsNullOrWhiteSpace(pendingWorld?.callingId) ? "greenhand" : pendingWorld.callingId;
+        characterName = string.IsNullOrWhiteSpace(characterName) ? "Unwritten" : characterName;
+
+        contentPanel = CreateMainPanel("CharacterCreate");
+        contentPanel.sizeDelta = new Vector2(1120f, 760f);
+
+        Text title = CreateText("CharacterTitle", contentPanel, "Create Your Adventurer", 36, buttonText, TextAnchor.MiddleCenter);
+        RectTransform titleRect = title.rectTransform;
+        titleRect.anchorMin = titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -20f);
+        titleRect.sizeDelta = new Vector2(980f, 44f);
+
+        Text subtitle = CreateText("CharacterSubtitle", contentPanel,
+            "Name the challenger, set a fantasy-styled look, and choose the Calling that shapes your opening Trial.",
+            14, labelText, TextAnchor.MiddleCenter);
+        subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
+        RectTransform subRect = subtitle.rectTransform;
+        subRect.anchorMin = subRect.anchorMax = new Vector2(0.5f, 1f);
+        subRect.pivot = new Vector2(0.5f, 1f);
+        subRect.anchoredPosition = new Vector2(0f, -64f);
+        subRect.sizeDelta = new Vector2(900f, 36f);
+
+        RectTransform heroPanel = CreatePanel("AdventurerPanel", contentPanel,
+            new Color(0.075f, 0.07f, 0.06f, 0.94f), panelBorder);
+        heroPanel.anchorMin = heroPanel.anchorMax = new Vector2(0f, 1f);
+        heroPanel.pivot = new Vector2(0f, 1f);
+        heroPanel.anchoredPosition = new Vector2(48f, -118f);
+        heroPanel.sizeDelta = new Vector2(390f, 500f);
+
+        Text heroTitle = CreateText("HeroTitle", heroPanel, "Adventurer", 22, buttonText, TextAnchor.MiddleCenter);
+        PlaceRect(heroTitle.rectTransform, 18f, 14f, 354f, 32f);
+        DrawCharacterPreview(heroPanel);
+
+        Text nameLabel = CreateText("NameLabel", heroPanel, "Name", 15, labelText, TextAnchor.MiddleLeft);
+        PlaceRect(nameLabel.rectTransform, 34f, 274f, 120f, 24f);
+        characterNameInput = CreateInputField("CharacterNameInput", heroPanel, "Unwritten", -304f);
+        characterNameInput.text = characterName;
+        RectTransform nameRt = characterNameInput.GetComponent<RectTransform>();
+        nameRt.anchorMin = nameRt.anchorMax = new Vector2(0.5f, 1f);
+        nameRt.anchoredPosition = new Vector2(0f, -304f);
+        nameRt.sizeDelta = new Vector2(320f, buttonHeight);
+
+        Text appearanceLabel = CreateText("AppearanceLabel", heroPanel, "Look", 15, labelText, TextAnchor.MiddleLeft);
+        PlaceRect(appearanceLabel.rectTransform, 34f, 374f, 120f, 24f);
+        CreateSwatchButton("PrevLook", heroPanel, "<", -86f, -410f, () => ChangeAppearance(-1));
+        CreateSwatchButton("NextLook", heroPanel, ">", 86f, -410f, () => ChangeAppearance(1));
+        Text preset = CreateText("PresetText", heroPanel, $"Preset {appearancePreset + 1}", 17, buttonText, TextAnchor.MiddleCenter);
+        RectTransform presetRt = preset.rectTransform;
+        presetRt.anchorMin = presetRt.anchorMax = new Vector2(0.5f, 1f);
+        presetRt.pivot = new Vector2(0.5f, 1f);
+        presetRt.anchoredPosition = new Vector2(0f, -410f);
+        presetRt.sizeDelta = new Vector2(150f, 38f);
+
+        Text worldSummary = CreateText("WorldSummary", heroPanel,
+            pendingWorld != null
+                ? $"World: {pendingWorld.worldName}\nSeed: {pendingWorld.seed}\nDifficulty: {DifficultyName(pendingWorld.difficulty)}"
+                : "World: Unset",
+            14, new Color(0.76f, 0.84f, 0.88f, 1f), TextAnchor.UpperLeft);
+        worldSummary.horizontalOverflow = HorizontalWrapMode.Wrap;
+        PlaceRect(worldSummary.rectTransform, 34f, 446f, 320f, 44f);
+
+        RectTransform list = CreateScrollList("CallingList", contentPanel, -118f);
+        RectTransform listRoot = list.parent != null && list.parent.parent != null
+            ? list.parent.parent as RectTransform
+            : null;
+        if (listRoot != null)
+        {
+            listRoot.anchoredPosition = new Vector2(270f, -118f);
+            listRoot.sizeDelta = new Vector2(700f, 500f);
+            list.sizeDelta = new Vector2(640f, 0f);
+        }
+
+        var callings = FoundationContent.BuildDefault().Callings.All;
+        for (int i = 0; i < callings.Count; i++)
+            BuildCallingCard(list, callings[i]);
+
+        if (callings.Count > 0)
+            SelectCallingCard(selectedCallingId);
+
+        float btnY = -690f;
+        CreateMenuButton("BeginBtn", contentPanel, "Begin Trial", BeginTrial, -110f, btnY);
+        CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.CreateWorld), 110f, btnY);
+    }
+
+    private void DrawCharacterPreview(Transform parent)
+    {
+        RectTransform frame = CreatePanel("PreviewFrame", parent,
+            new Color(0.035f, 0.045f, 0.060f, 0.96f),
+            new Color(0.52f, 0.56f, 0.62f, 1f));
+        PlaceRect(frame, 92f, 58f, 206f, 198f);
+
+        int index = Mathf.Abs(appearancePreset) % skinPresets.Length;
+        Color skin = skinPresets[index];
+        Color hair = hairPresets[index % hairPresets.Length];
+        Color outfit = outfitPresets[index % outfitPresets.Length];
+
+        RectTransform aura = CreateColorRect("Aura", frame, new Color(0.95f, 0.72f, 0.28f, 0.18f));
+        PlaceRect(aura, 42f, 20f, 122f, 150f);
+
+        RectTransform cloak = CreateColorRect("Cloak", frame, new Color(outfit.r * 0.65f, outfit.g * 0.65f, outfit.b * 0.65f, 1f));
+        PlaceRect(cloak, 66f, 94f, 74f, 72f);
+
+        RectTransform body = CreateColorRect("Body", frame, outfit);
+        PlaceRect(body, 76f, 82f, 54f, 76f);
+
+        RectTransform head = CreateColorRect("Head", frame, skin);
+        PlaceRect(head, 78f, 40f, 50f, 48f);
+
+        RectTransform hairCap = CreateColorRect("Hair", frame, hair);
+        PlaceRect(hairCap, 74f, 34f, 58f, 24f);
+
+        RectTransform boots = CreateColorRect("Boots", frame, new Color(0.13f, 0.09f, 0.06f, 1f));
+        PlaceRect(boots, 70f, 154f, 66f, 14f);
+    }
+
+    private RectTransform CreateColorRect(string name, Transform parent, Color color)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        Image image = go.AddComponent<Image>();
+        image.color = color;
+        image.raycastTarget = false;
+        return go.GetComponent<RectTransform>();
+    }
+
+    private void CreateSwatchButton(string name, Transform parent, string text, float x, float y, System.Action onClick)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = new Vector2(x, y);
+        rt.sizeDelta = new Vector2(46f, 38f);
+
+        Image bg = go.AddComponent<Image>();
+        bg.color = buttonBg;
+        Outline outline = go.AddComponent<Outline>();
+        outline.effectColor = panelBorder;
+        outline.effectDistance = new Vector2(1.5f, -1.5f);
+
+        Button button = go.AddComponent<Button>();
+        button.targetGraphic = bg;
+        button.onClick.AddListener(() => onClick?.Invoke());
+
+        Text label = CreateText("Text", rt, text, 18, buttonText, TextAnchor.MiddleCenter);
+        label.raycastTarget = false;
+        label.rectTransform.anchorMin = Vector2.zero;
+        label.rectTransform.anchorMax = Vector2.one;
+        label.rectTransform.offsetMin = Vector2.zero;
+        label.rectTransform.offsetMax = Vector2.zero;
+    }
+
+    private void ChangeAppearance(int delta)
+    {
+        if (characterNameInput != null)
+            characterName = NormalizeCharacterName(characterNameInput.text);
+        appearancePreset = (appearancePreset + delta + skinPresets.Length) % skinPresets.Length;
+        ShowScreen(Screen.CharacterCreate);
+    }
+
+    private void BeginTrial()
+    {
+        if (pendingWorld == null || string.IsNullOrEmpty(selectedCallingId))
+            return;
+
+        characterName = NormalizeCharacterName(characterNameInput != null ? characterNameInput.text : characterName);
+        pendingWorld.characterName = characterName;
+        pendingWorld.callingId = selectedCallingId;
+        pendingWorld.appearancePreset = Mathf.Abs(appearancePreset) % skinPresets.Length;
+        if (!SaveWorld(pendingWorld))
+            return;
+
+        LaunchWorld(pendingWorld, selectedCallingId, characterName, pendingWorld.appearancePreset);
+    }
+
+    private static string NormalizeCharacterName(string value)
+    {
+        value = string.IsNullOrWhiteSpace(value) ? "Unwritten" : value.Trim();
+        return value.Length > 24 ? value.Substring(0, 24) : value;
+    }
+
+    private static string DifficultyName(int difficulty)
+    {
+        return difficulty switch
+        {
+            0 => "Easy",
+            1 => "Normal",
+            2 => "Hard",
+            _ => "Normal"
+        };
+    }
+
+    private static void PlaceRect(RectTransform rt, float x, float y, float width, float height)
+    {
+        rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+        rt.pivot = new Vector2(0f, 1f);
+        rt.anchoredPosition = new Vector2(x, -y);
+        rt.sizeDelta = new Vector2(width, height);
+    }
 
     private void BuildCallingSelect()
     {
@@ -361,12 +653,15 @@ public class WelcomeScreenManager : MonoBehaviour
 
     private void BuildCallingCard(Transform parent, FoundationCallingDefinition calling)
     {
+        float cardWidth = parent is RectTransform parentRect && parentRect.sizeDelta.x > 0f
+            ? Mathf.Max(420f, parentRect.sizeDelta.x)
+            : panelWidth - 80f;
         RectTransform card = CreatePanel("Calling_" + calling.id, parent, buttonBg, panelBorder);
-        card.sizeDelta = new Vector2(panelWidth - 80f, 104f);
+        card.sizeDelta = new Vector2(cardWidth, 116f);
 
         // Guarantee the row height under the list's VerticalLayoutGroup.
         var le = card.gameObject.AddComponent<LayoutElement>();
-        le.minHeight = 104f; le.preferredHeight = 104f;
+        le.minHeight = 116f; le.preferredHeight = 116f;
 
         Image cardBg = card.GetComponent<Image>();
         Outline cardOutline = card.GetComponent<Outline>(); // null when a panel skin is used
@@ -390,7 +685,7 @@ public class WelcomeScreenManager : MonoBehaviour
         RectTransform tRect = titleText.rectTransform;
         tRect.anchorMin = new Vector2(0f, 1f); tRect.anchorMax = new Vector2(1f, 1f);
         tRect.pivot = new Vector2(0f, 1f);
-        tRect.offsetMin = new Vector2(panelWidth - 80f - 150f, -30f); tRect.offsetMax = new Vector2(-12f, -8f);
+        tRect.offsetMin = new Vector2(cardWidth - 170f, -30f); tRect.offsetMax = new Vector2(-12f, -8f);
 
         // Stat bonuses line.
         Text stats = CreateText("Stats", card, StatBonusLine(calling), 13, new Color(0.95f, 0.91f, 0.74f, 1f), TextAnchor.UpperLeft);
@@ -498,7 +793,9 @@ public class WelcomeScreenManager : MonoBehaviour
                     RectTransform entry = CreatePanel("Entry", worldListContent, buttonBg, panelBorder);
                     entry.sizeDelta = new Vector2(panelWidth - 80f, 60f);
 
-                    Text entryText = CreateText("Name", entry, $"{world.worldName} (Seed: {world.seed})", 16, buttonText, TextAnchor.MiddleLeft);
+                    string hero = string.IsNullOrWhiteSpace(world.characterName) ? "Unwritten" : world.characterName;
+                    string calling = string.IsNullOrWhiteSpace(world.callingId) ? "Greenhand" : world.callingId;
+                    Text entryText = CreateText("Name", entry, $"{world.worldName} / {hero} / {calling} (Seed: {world.seed})", 16, buttonText, TextAnchor.MiddleLeft);
                     RectTransform entryTextRect = entryText.rectTransform;
                     entryTextRect.anchorMin = new Vector2(0f, 0.5f);
                     entryTextRect.anchorMax = new Vector2(1f, 0.5f);
@@ -628,9 +925,13 @@ public class WelcomeScreenManager : MonoBehaviour
         }
     }
 
-    private void LaunchWorld(WorldSaveData world, string callingId = null)
+    private void LaunchWorld(WorldSaveData world, string callingId = null, string launchCharacterName = null, int launchAppearancePreset = -1)
     {
-        Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty}, Calling: {callingId ?? "default"})");
+        string effectiveCalling = string.IsNullOrWhiteSpace(callingId) ? world.callingId : callingId;
+        string effectiveName = NormalizeCharacterName(string.IsNullOrWhiteSpace(launchCharacterName) ? world.characterName : launchCharacterName);
+        int effectiveAppearance = launchAppearancePreset >= 0 ? launchAppearancePreset : world.appearancePreset;
+
+        Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty}, Character: {effectiveName}, Calling: {effectiveCalling ?? "default"})");
 
         string foundationSavePath = FoundationBootstrap.DefaultSavePathForWorld(world.worldName, world.seed);
         bool isExistingWorldLaunch = string.IsNullOrWhiteSpace(callingId);
@@ -649,7 +950,8 @@ public class WelcomeScreenManager : MonoBehaviour
             // ConfigureLaunch must be called BEFORE LoadScene so FoundationBootstrap.Awake()
             // picks up the seed/name/difficulty/calling. callingId is null for
             // Continue/Load fallback; the New Game flow passes the picked Calling.
-            FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty, callingId);
+            FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty,
+                effectiveCalling, effectiveName, effectiveAppearance);
         }
 
         // Load the Foundation scene (canonical game).
@@ -768,7 +1070,7 @@ public class WelcomeScreenManager : MonoBehaviour
         rt.anchorMax = new Vector2(0.5f, 1f);
         rt.pivot = new Vector2(0.5f, 1f);
         rt.anchoredPosition = new Vector2(x, y);
-        rt.sizeDelta = new Vector2(200f, buttonHeight);
+        rt.sizeDelta = new Vector2(300f, buttonHeight);
 
         Image bgImage = go.AddComponent<Image>();
         Button button = go.AddComponent<Button>();
@@ -809,6 +1111,8 @@ public class WelcomeScreenManager : MonoBehaviour
         }
 
         Text btnText = CreateText("Text", rt, text, 20, this.buttonText, TextAnchor.MiddleCenter);
+        btnText.horizontalOverflow = HorizontalWrapMode.Wrap;
+        btnText.verticalOverflow = VerticalWrapMode.Truncate;
         RectTransform textRect = btnText.rectTransform;
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;

@@ -33,6 +33,7 @@ namespace LitIso.UI.InGame
         static InGameNotificationView    _notifyView;
         static FoundationDayClockAdapter _dayAdapter;
         static DayClockView              _dayView;
+        static TrialIntroView            _trialIntroView;
         static PlayerInteraction         _boundInteraction;
         static FoundationBootstrap       _boundBootstrap;
 
@@ -91,7 +92,7 @@ namespace LitIso.UI.InGame
             }
 
             _panels.BindInventory(new FoundationInventoryAdapter(bootstrap.Inventory, bootstrap.Content));
-            _panels.BindCharacter(new FoundationCharacterSheetAdapter(stats));
+            _panels.BindCharacter(new FoundationCharacterSheetAdapter(stats, bootstrap.ActiveCharacterName));
             _panels.BindCrafting(new FoundationCraftingAdapter(bootstrap.Crafting, bootstrap.Inventory, bootstrap.Content));
             _panels.BindProgression(progression, bootstrap.QoL);
             BindInteractionPanelRequests(bootstrap.Interaction);
@@ -143,6 +144,16 @@ namespace LitIso.UI.InGame
 
             if (_dayAdapter != null)
                 _dayView.Init(_dayAdapter);
+
+            // ---- Fresh-world Trial intro ------------------------------------
+            if (_trialIntroView == null)
+            {
+                var igo = new GameObject("[uGUI TrialIntro]");
+                Object.DontDestroyOnLoad(igo);
+                _trialIntroView = igo.AddComponent<TrialIntroView>();
+            }
+
+            _trialIntroView.Play(bootstrap);
 
             // FoundationBootstrap no longer creates the old IMGUI FoundationHUD. The
             // uGUI controller, panels, quest tracker, notifications, day clock, map,

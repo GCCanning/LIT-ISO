@@ -21,8 +21,8 @@ namespace LitIso.UI.InGame
         static readonly Color DayText   = new Color(1.00f, 0.92f, 0.72f, 1f);
         static readonly Color NightText = new Color(0.78f, 0.85f, 1.00f, 1f);
 
-        const float PanelW = 260f;
-        const float PanelH = 58f;
+        const float PanelW = 320f;
+        const float PanelH = 70f;
 
         IDayClockViewModel _model;
 
@@ -61,15 +61,15 @@ namespace LitIso.UI.InGame
             rt.anchorMin = new Vector2(1f, 1f);
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot     = new Vector2(1f, 1f);
-            rt.anchoredPosition = new Vector2(-260f, -30f);
+            rt.anchoredPosition = new Vector2(-300f, -30f);
             rt.sizeDelta = new Vector2(PanelW, PanelH);
-            PlayerResizableUi.Attach(rt, "hud.day_clock", new Vector2(180f, 42f), new Vector2(420f, 100f));
+            PlayerResizableUi.Attach(rt, "hud.day_clock", new Vector2(240f, 54f), new Vector2(520f, 130f));
 
             var outline = _panel.gameObject.AddComponent<Outline>();
             outline.effectColor    = UiBuilder.Border;
             outline.effectDistance = new Vector2(1.5f, -1.5f);
 
-            _text = UiBuilder.NewText(_panel.transform, "DayClockText", "", 16, TextAnchor.MiddleCenter, DayText);
+            _text = UiBuilder.NewText(_panel.transform, "DayClockText", "", 18, TextAnchor.MiddleCenter, DayText);
             _text.raycastTarget = false;
             UiBuilder.Stretch(_text.rectTransform, 8f);
             ApplyHudViewMode(_hudMode);

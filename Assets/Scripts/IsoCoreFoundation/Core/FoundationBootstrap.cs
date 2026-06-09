@@ -32,9 +32,12 @@ namespace IsoCore.Foundation
         public float cameraZoomTapStep = 0.75f;
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
+        public string ActiveCharacterName { get; private set; } = "Unwritten";
+        public int ActiveAppearancePreset { get; private set; }
         public int ActiveDifficulty { get; private set; } = 1;
         public string ActiveCallingId { get; private set; } = "greenhand";
         public FoundationLaunchMode ActiveLaunchMode { get; private set; } = FoundationLaunchMode.Standard;
+        public bool ActiveLaunchIsLoad { get; private set; }
         public FoundationContent Content { get; private set; }
         public IsoWorld World { get; private set; }
         public Inventory Inventory { get; private set; }
@@ -71,13 +74,16 @@ namespace IsoCore.Foundation
         /// Call before loading IsoCoreFoundation.unity to hand menu/world settings into
         /// the isolated Foundation scene without coupling it to the legacy WorldManager.
         /// </summary>
-        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null)
+        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null,
+            string characterName = null, int appearancePreset = 0)
         {
             s_LaunchOptions = new LaunchOptions(
                 NormalizeWorldName(worldName),
                 SeedStringToInt(seed),
                 Mathf.Clamp(difficulty, 0, 2),
                 NormalizeCallingId(callingId),
+                NormalizeCharacterName(characterName),
+                Mathf.Max(0, appearancePreset),
                 null,
                 FoundationLaunchMode.Standard);
             s_HasLaunchOptions = true;
@@ -94,6 +100,8 @@ namespace IsoCore.Foundation
                 FoundationCreationInstanceShowroom.Seed,
                 0,
                 NormalizeCallingId(callingId),
+                "Showroom Visitor",
+                0,
                 null,
                 FoundationLaunchMode.CreationInstance);
             s_HasLaunchOptions = true;
@@ -113,26 +121,31 @@ namespace IsoCore.Foundation
                     metadata.seed,
                     Mathf.Clamp(metadata.difficulty, 0, 2),
                     NormalizeCallingId(metadata.callingId),
+                    NormalizeCharacterName(metadata.characterName),
+                    Mathf.Max(0, metadata.appearancePreset),
                     savePath,
                     FoundationLaunchMode.Standard);
             }
             else
             {
                 Debug.LogWarning($"[FoundationBootstrap] ConfigureLoad could not read metadata ({error}). Booting default world, then attempting load.");
-                s_LaunchOptions = new LaunchOptions(DefaultWorldName, 1337, 1, null, savePath,
+                s_LaunchOptions = new LaunchOptions(DefaultWorldName, 1337, 1, null, "Unwritten", 0, savePath,
                     FoundationLaunchMode.Standard);
             }
             s_HasLaunchOptions = true;
         }
 
         /// <summary>Explicit load handoff when the menu already knows the slot metadata.</summary>
-        public static void ConfigureLoad(string worldName, string seed, int difficulty, string savePath, string callingId = null)
+        public static void ConfigureLoad(string worldName, string seed, int difficulty, string savePath, string callingId = null,
+            string characterName = null, int appearancePreset = 0)
         {
             s_LaunchOptions = new LaunchOptions(
                 NormalizeWorldName(worldName),
                 SeedStringToInt(seed),
                 Mathf.Clamp(difficulty, 0, 2),
                 NormalizeCallingId(callingId),
+                NormalizeCharacterName(characterName),
+                Mathf.Max(0, appearancePreset),
                 savePath,
                 FoundationLaunchMode.Standard);
             s_HasLaunchOptions = true;
@@ -324,16 +337,22 @@ namespace IsoCore.Foundation
             config.moveSpeed = Mathf.Clamp(config.moveSpeed <= 0f ? 2.8f : config.moveSpeed, 1.5f, 2.8f);
 
             ActiveWorldName = DefaultWorldName;
+            ActiveCharacterName = "Unwritten";
+            ActiveAppearancePreset = 0;
             ActiveDifficulty = 1;
             ActiveCallingId = "greenhand";
             ActiveLaunchMode = FoundationLaunchMode.Standard;
+            ActiveLaunchIsLoad = false;
 
             if (!s_HasLaunchOptions)
                 return;
 
             ActiveWorldName = s_LaunchOptions.worldName;
+            ActiveCharacterName = s_LaunchOptions.characterName;
+            ActiveAppearancePreset = s_LaunchOptions.appearancePreset;
             ActiveDifficulty = s_LaunchOptions.difficulty;
             ActiveLaunchMode = s_LaunchOptions.launchMode;
+            ActiveLaunchIsLoad = !string.IsNullOrWhiteSpace(s_LaunchOptions.savePath);
             config.seed = s_LaunchOptions.seed;
             if (ActiveLaunchMode == FoundationLaunchMode.CreationInstance)
                 FoundationCreationInstanceShowroom.ApplyConfig(this);
@@ -429,6 +448,8 @@ namespace IsoCore.Foundation
                 version = FoundationSaveData.CurrentVersion,
                 savedUtc = DateTime.UtcNow.ToString("o"),
                 worldName = ActiveWorldName,
+                characterName = ActiveCharacterName,
+                appearancePreset = ActiveAppearancePreset,
                 seed = config != null ? config.seed : 1337,
                 difficulty = ActiveDifficulty,
                 callingId = ActiveCallingId,
@@ -462,6 +483,8 @@ namespace IsoCore.Foundation
             if (data == null) return;
 
             ActiveWorldName = NormalizeWorldName(data.worldName);
+            ActiveCharacterName = NormalizeCharacterName(data.characterName);
+            ActiveAppearancePreset = Mathf.Max(0, data.appearancePreset);
             ActiveDifficulty = Mathf.Clamp(data.difficulty, 0, 2);
 
             if (Progression != null && data.progression != null)
@@ -746,16 +769,20 @@ namespace IsoCore.Foundation
             public readonly int seed;
             public readonly int difficulty;
             public readonly string callingId;
+            public readonly string characterName;
+            public readonly int appearancePreset;
             public readonly string savePath;
             public readonly FoundationLaunchMode launchMode;
 
-            public LaunchOptions(string worldName, int seed, int difficulty, string callingId, string savePath,
-                FoundationLaunchMode launchMode)
+            public LaunchOptions(string worldName, int seed, int difficulty, string callingId,
+                string characterName, int appearancePreset, string savePath, FoundationLaunchMode launchMode)
             {
                 this.worldName = worldName;
                 this.seed = seed;
                 this.difficulty = difficulty;
                 this.callingId = callingId;
+                this.characterName = characterName;
+                this.appearancePreset = appearancePreset;
                 this.savePath = savePath;
                 this.launchMode = launchMode;
             }
@@ -769,6 +796,12 @@ namespace IsoCore.Foundation
         static string NormalizeCallingId(string callingId)
         {
             return string.IsNullOrWhiteSpace(callingId) ? null : callingId.Trim();
+        }
+
+        static string NormalizeCharacterName(string characterName)
+        {
+            characterName = string.IsNullOrWhiteSpace(characterName) ? "Unwritten" : characterName.Trim();
+            return characterName.Length > 24 ? characterName.Substring(0, 24) : characterName;
         }
     }
 }
