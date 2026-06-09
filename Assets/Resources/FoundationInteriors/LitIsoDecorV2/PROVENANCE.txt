@@ -1,0 +1,45 @@
+﻿LitIsoDecorV2 provenance
+Generated locally by Codex on 2026-06-08 for LIT-ISO prototype use.
+
+These PNGs are original deterministic isometric sprite drafts authored with
+simple geometry, palette choices, and procedural book/detail placement. They do
+not copy pixels from ISO-CORE, OpenGameArt, Kenney, or the provided reference
+images.
+
+The old Kenney/OpenGameArt library subset was used only for visual comparison
+in the handoff preview images under Docs/handoff/building_concepts.
+
+Current sprites:
+- archive_catalog_wall_v2.png
+- archive_display_case_deep_v2.png
+- archive_notice_board_v2.png
+- archive_shelf_back_ladder_v2.png
+- archive_shelf_back_wide_v2.png
+- archive_shelf_side_left_v2.png
+- guild_contract_table_v2.png
+- guild_large_rug_v2.png
+- guild_quest_board_v2.png
+- guild_reception_counter_v2.png
+- guild_red_banner_v2.png
+- guild_round_table_v2.png
+- library_blue_banner_v2.png
+- library_book_podium_v2.png
+- library_catalog_wall_v2.png
+- library_catalog_counter_v2.png
+- library_display_case_deep_v2.png
+- library_large_rug_v2.png
+- library_owl_statue_v2.png
+- library_reading_table_v2.png
+- library_shelf_back_ladder_v2.png
+- library_shelf_back_wide_v2.png
+- library_shelf_side_ladder_v2.png
+- library_shelf_side_left_v2.png
+- tavern_back_bar_v2.png
+- tavern_bar_counter_v2.png
+- tavern_barrel_stack_v2.png
+- tavern_feast_table_v2.png
+- tavern_fireplace_v2.png
+- tavern_large_rug_v2.png
+- tavern_round_table_food_v2.png
+- wood_bench_row_v2.png
+- wood_railing_row_v2.png

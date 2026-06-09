@@ -1,0 +1,1 @@
+﻿Source: C:\Users\garyc\Downloads\medieval_tavern_with_sign__isometric__128x128__medieval_fantasy_style__no_ground__no_floor__no_base_.png Imported by Codex as prototype tavern exterior placeable art. Owner should confirm provenance/ship status before final release. Runtime path: Resources/FoundationBuildings/tavern_building.
