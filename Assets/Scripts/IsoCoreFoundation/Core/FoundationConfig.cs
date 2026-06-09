@@ -11,7 +11,7 @@ namespace IsoCore.Foundation
         [Header("World")]
         public int seed = 1337;
         public int chunkSize = 12;
-        public int viewRadiusChunks = 2;     // chunks streamed around the player (5x5) — keeps a wide off-screen margin so edges never show empty
+        public int viewRadiusChunks = 3;     // chunks streamed around the player (7x7) with a wide off-screen margin
         public int maxHeight = 4;
         public int spawnClearingRadius = 6;  // flat, mob-free safe start (cells)
         public int spawnHeight = 1;
@@ -72,7 +72,7 @@ namespace IsoCore.Foundation
         public bool pixelPerfect = true;
 
         [Header("Player")]
-        public float moveSpeed = 4.0f;
+        public float moveSpeed = 2.8f;
         public float interactRange = 1.8f;
 
         [Header("Mobs")]

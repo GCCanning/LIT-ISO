@@ -1,0 +1,110 @@
+{
+  "schema": "lit_iso.asset_forge.tile_family_spec.v1",
+  "name": "greenwake_height_tile_family_v1",
+  "biome": "Greenwake",
+  "status": "planned",
+  "style_anchor_pack": "Assets/Generated/_Review/greenwake_height_material_masters_selected_v1",
+  "direction": "Generate only geometry/material masters with Sprixen. Do not generate props, trees, shrubs, items, characters, or complete maps inside terrain tiles.",
+  "canvas": {
+    "source_px": 64,
+    "ppu": 64,
+    "footprint": "diamond_1x1",
+    "height": 1,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.25
+    }
+  },
+  "materials": [
+    "grass",
+    "dirt",
+    "forest_floor",
+    "stone",
+    "path"
+  ],
+  "required_shapes": [
+    {
+      "id": "flat_top",
+      "count_per_material": 1,
+      "prompt_shape": "single flat 2:1 isometric diamond terrain top tile, no side walls, transparent corners"
+    },
+    {
+      "id": "raised_block",
+      "count_per_material": 1,
+      "prompt_shape": "single raised 2:1 isometric terrain block, visible top and clean side faces, height level one"
+    },
+    {
+      "id": "north_edge",
+      "count_per_material": 1,
+      "prompt_shape": "raised terrain edge tile with side face visible along the north/back edge, clean tile alignment"
+    },
+    {
+      "id": "south_edge",
+      "count_per_material": 1,
+      "prompt_shape": "raised terrain edge tile with side face visible along the south/front edge, clean tile alignment"
+    },
+    {
+      "id": "east_edge",
+      "count_per_material": 1,
+      "prompt_shape": "raised terrain edge tile with side face visible along the east/right edge, clean tile alignment"
+    },
+    {
+      "id": "west_edge",
+      "count_per_material": 1,
+      "prompt_shape": "raised terrain edge tile with side face visible along the west/left edge, clean tile alignment"
+    },
+    {
+      "id": "outer_corner",
+      "count_per_material": 4,
+      "prompt_shape": "raised terrain outer corner tile, clean two-face corner, variants for north-east, south-east, south-west, north-west"
+    },
+    {
+      "id": "inner_corner",
+      "count_per_material": 4,
+      "prompt_shape": "raised terrain inner corner cut tile, clean concave corner, variants for north-east, south-east, south-west, north-west"
+    }
+  ],
+  "blend_shapes": [
+    {
+      "id": "grass_to_dirt_edge",
+      "materials": [
+        "grass",
+        "dirt"
+      ],
+      "count": 4,
+      "prompt_shape": "flat terrain blend edge from warm moss grass to compact dirt, four directional edge variants"
+    },
+    {
+      "id": "grass_to_forest_floor_edge",
+      "materials": [
+        "grass",
+        "forest_floor"
+      ],
+      "count": 4,
+      "prompt_shape": "flat terrain blend edge from moss grass to muted leaf-litter forest floor, four directional edge variants"
+    },
+    {
+      "id": "path_on_grass",
+      "materials": [
+        "path",
+        "grass"
+      ],
+      "count": 7,
+      "prompt_shape": "trampled dirt path embedded in grass: straight, corner, T, crossing, cap variants"
+    }
+  ],
+  "first_generation_batch": [
+    "flat_top",
+    "raised_block",
+    "north_edge",
+    "south_edge",
+    "east_edge",
+    "west_edge"
+  ],
+  "deferred_until_core_tiles_pass": [
+    "outer_corner",
+    "inner_corner",
+    "blend_shapes"
+  ],
+  "negative_prompt": "tree, bush, rock, flower, log, prop, item, character, creature, building, wall, complete map, scene background, UI frame, text, watermark, realistic render, noisy clutter, object on top"
+}

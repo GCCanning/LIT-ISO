@@ -38,6 +38,16 @@ namespace IsoCore.Foundation
             return null;
         }
 
+        public static bool UsesAuthoredFootprint(BlockDefinition block)
+        {
+            if (block == null)
+                return false;
+
+            return (!string.IsNullOrEmpty(block.id) &&
+                    block.id.StartsWith("dungeon_floor_", System.StringComparison.Ordinal)) ||
+                string.Equals(block.groupId, "dungeon_floor_blocks", System.StringComparison.Ordinal);
+        }
+
         /// <summary>Clears the cache; useful after editor hot reload of new tiles.</summary>
         public static void ClearCache() => _cache.Clear();
 

@@ -5,13 +5,22 @@ using UnityEngine.UI;
 namespace LitIso.UI.InGame
 {
     public struct CraftingIngredient { public string itemId; public string display; public Sprite icon; public int needed; public int have; }
-    public struct CraftingRecipeRow  { public string id; public string display; public Sprite icon; public bool canCraft; }
+    public struct CraftingRecipeRow
+    {
+        public string id;
+        public string display;
+        public Sprite icon;
+        public bool canCraft;
+        public string station;
+        public string disabledReason;
+    }
     public struct CraftingRecipeDetails
     {
         public string id; public string display; public Sprite icon;
         public CraftingIngredient[] inputs;
         public CraftingIngredient[] outputs;
         public bool canCraft;
+        public string disabledReason;
     }
 
     /// <summary>Model the crafting panel renders from. Foundation-free; adapter binds later.</summary>
@@ -31,10 +40,10 @@ namespace LitIso.UI.InGame
         {
             _rows = new CraftingRecipeRow[]
             {
-                new CraftingRecipeRow { id="copper_bar_refined", display="Copper Bar (Refined)", icon=ItemIconResolver.Resolve("copper_bar_refined"), canCraft=true },
-                new CraftingRecipeRow { id="iron_helmet",        display="Iron Helmet",          icon=ItemIconResolver.Resolve("iron_helmet"),        canCraft=false },
-                new CraftingRecipeRow { id="fireball",           display="Fireball Scroll",      icon=ItemIconResolver.Resolve("fireball"),           canCraft=true },
-                new CraftingRecipeRow { id="ruby_common",        display="Cut Ruby (Common)",    icon=ItemIconResolver.Resolve("ruby_common"),        canCraft=false },
+                new CraftingRecipeRow { id="copper_bar_refined", display="Copper Bar (Refined)", icon=ItemIconResolver.Resolve("copper_bar_refined"), canCraft=true, station="Forge", disabledReason="" },
+                new CraftingRecipeRow { id="iron_helmet",        display="Iron Helmet",          icon=ItemIconResolver.Resolve("iron_helmet"),        canCraft=false, station="Anvil", disabledReason="Need iron bars" },
+                new CraftingRecipeRow { id="fireball",           display="Fireball Scroll",      icon=ItemIconResolver.Resolve("fireball"),           canCraft=true, station="Scribe", disabledReason="" },
+                new CraftingRecipeRow { id="ruby_common",        display="Cut Ruby (Common)",    icon=ItemIconResolver.Resolve("ruby_common"),        canCraft=false, station="Bench", disabledReason="Need ruby" },
             };
         }
         public int RecipeCount => _rows.Length;
@@ -51,6 +60,7 @@ namespace LitIso.UI.InGame
                 },
                 outputs = new[] { new CraftingIngredient { itemId=recipeId, display=recipeId, icon=ItemIconResolver.Resolve(recipeId), needed=1, have=0 } },
                 canCraft = true,
+                disabledReason = "",
             };
         }
         public void Craft(string recipeId) { Debug.Log("[placeholder] craft " + recipeId); }

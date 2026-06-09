@@ -20,7 +20,8 @@ namespace IsoCore.Foundation
         {
             if (_inst != null) return;
             var go = new GameObject("SfxManager");
-            DontDestroyOnLoad(go);
+            if (Application.isPlaying)
+                DontDestroyOnLoad(go);
             _inst = go.AddComponent<SfxManager>();
             _inst._pool = new AudioSource[8];
             for (int i = 0; i < _inst._pool.Length; i++)

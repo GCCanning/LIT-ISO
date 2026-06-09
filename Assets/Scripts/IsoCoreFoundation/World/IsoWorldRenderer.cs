@@ -167,13 +167,16 @@ namespace IsoCore.Foundation
             // Real pixel-art tiles already carry their own colour; PlaceholderArt.Cube
             // bakes 'col' into its texture, so sr.color stays white either way.
             var surfaceSprite = TileSpriteResolver.Resolve(block);
+            bool authoredFootprint = TileSpriteResolver.UsesAuthoredFootprint(block);
             if (surfaceSprite != null)
             {
                 // Floor cells (height 0 / water) use a FLAT top-face-only diamond so the
                 // ground reads perfectly flat with no fake cube-side height. Raised cells
                 // keep the full cube (with baked border) and stack a dirt body beneath.
                 bool raised = !cell.Water && cell.Height > 0;
-                sr.sprite = raised ? Bordered(surfaceSprite) : FlatTile(surfaceSprite);
+                sr.sprite = authoredFootprint
+                    ? surfaceSprite
+                    : raised ? Bordered(surfaceSprite) : FlatTile(surfaceSprite);
             }
             else
             {
@@ -189,7 +192,7 @@ namespace IsoCore.Foundation
             // SpriteRenderer drawing the same surface sprite, positioned one cell
             // lower. Adjacent cells at the same height naturally tessellate at every
             // level because each level's tile sits at IsoGrid.CellToWorld(wx, wy, h).
-            if (surfaceSprite != null && !cell.Water && cell.Height > 0)
+            if (surfaceSprite != null && !authoredFootprint && !cell.Water && cell.Height > 0)
                 EnsureStack(sr, world, wx, wy, cell.Height, SubsurfaceSprite() ?? surfaceSprite);
             else
                 HideStack(sr);

@@ -44,17 +44,49 @@ function Get-FileSummary {
     }
 }
 
+function Get-ObservedTrainingProgress {
+    param([string]$Path)
+    if (-not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+
+    $lines = @(Get-Content -LiteralPath $Path -Tail 80 -ErrorAction SilentlyContinue)
+    for ($i = $lines.Count - 1; $i -ge 0; $i--) {
+        $line = [string]$lines[$i]
+        if ($line -match 'LIT-ISO resumable LoRA:\s+\S+\|.*?\|\s+(\d+)/(\d+)\s+\[') {
+            $observedStep = [int]$Matches[1]
+            $observedMax = [int]$Matches[2]
+            return [ordered]@{
+                step = $observedStep
+                max_steps = $observedMax
+                percent = if ($observedMax -gt 0) { [Math]::Round(($observedStep / $observedMax) * 100, 1) } else { 0 }
+                source = $Path
+            }
+        }
+    }
+
+    return $null
+}
+
 $step = if ($statusPayload -and $null -ne $statusPayload.step) { [int]$statusPayload.step } else { 0 }
 $maxSteps = if ($statusPayload -and $null -ne $statusPayload.max_steps) { [int]$statusPayload.max_steps } else { 0 }
-$percent = if ($maxSteps -gt 0) { [Math]::Round(($step / $maxSteps) * 100, 1) } else { 0 }
 $latestSummary = if ($latestCheckpoint) { Get-FileSummary -Path $latestCheckpoint.FullName } else { $null }
 $logSummary = Get-FileSummary -Path $logPath
 $errSummary = Get-FileSummary -Path $errPath
+$observedProgress = Get-ObservedTrainingProgress -Path $errPath
+$effectiveStep = $step
+$effectiveMaxSteps = $maxSteps
+if ($observedProgress -and [int]$observedProgress.step -gt $effectiveStep) {
+    $effectiveStep = [int]$observedProgress.step
+    $effectiveMaxSteps = [int]$observedProgress.max_steps
+}
+$percent = if ($effectiveMaxSteps -gt 0) { [Math]::Round(($effectiveStep / $effectiveMaxSteps) * 100, 1) } else { 0 }
 $state = if ($statusPayload -and $statusPayload.state) { [string]$statusPayload.state } elseif ($statusReadError) { "status_unreadable" } else { "unknown" }
 $isRunning = @($processes).Count -gt 0
+$recentProgressLog = $errSummary -and $errSummary.age_minutes -le 2
 $health = if ($state -eq "complete") {
     "complete"
-} elseif ($isRunning) {
+} elseif ($isRunning -or ($state -eq "running" -and $recentProgressLog)) {
     "active_process"
 } elseif ($state -in @("paused", "stopped")) {
     $state
@@ -90,6 +122,7 @@ $payload = [ordered]@{
     state = $state
     health = $health
     percent = $percent
+    observed_progress = $observedProgress
     latest_checkpoint = $latestSummary
     checkpoint_count = @($checkpoints).Count
     active_processes = @($processes)

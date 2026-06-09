@@ -30,8 +30,7 @@ public static class LitIsoFont
 
     public static int SnapSize(int requestedSize)
     {
-        if (requestedSize <= 13) return 13;
-        return Mathf.Max(13, Mathf.RoundToInt(requestedSize / 13f) * 13);
+        return Mathf.Max(16, Mathf.RoundToInt(requestedSize * 1.2f));
     }
 
     public static void Apply(Text text, int requestedSize, FontStyle style = FontStyle.Normal)

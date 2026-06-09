@@ -21,6 +21,18 @@ namespace IsoCore.Foundation
         public readonly FoundationCallingDatabase Callings = new();
         public readonly FoundationSkillDatabase Skills = new();
         public readonly FoundationQuestDatabase Quests = new();
+        public readonly SystemMessageDatabase SystemMessages = new();
+        public readonly EvidenceEventDatabase EvidenceEvents = new();
+        public readonly XPChannelDatabase XPChannels = new();
+        public readonly TitleDatabase Titles = new();
+        public readonly AffinityDatabase Affinities = new();
+        public readonly ClassDatabase Classes = new();
+        public readonly ProfessionDatabase Professions = new();
+        public readonly DungeonDatabase Dungeons = new();
+        public readonly ExpeditionTemplateDatabase Expeditions = new();
+        public readonly DungeonResultDatabase DungeonResults = new();
+        public readonly GuildBoardEntryDatabase GuildBoardEntries = new();
+        public readonly WorldEventDatabase WorldEvents = new();
 
         static T New<T>(string id) where T : FoundationDefinition
         {
@@ -61,6 +73,11 @@ namespace IsoCore.Foundation
             Block("dirt", "dirt_blocks", new Color(0.45f, 0.32f, 0.20f), CollisionMode.Walkable);
             Block("stone_block", "stone_blocks", new Color(0.55f, 0.55f, 0.58f), CollisionMode.Solid);
             Block("stone_path", "path_blocks", new Color(0.62f, 0.62f, 0.64f), CollisionMode.Decorative);
+            var dungeonFloor1 = Block("dungeon_floor_1", "dungeon_floor_blocks", new Color(0.30f, 0.34f, 0.40f), CollisionMode.Decorative);
+            var dungeonFloor2 = Block("dungeon_floor_2", "dungeon_floor_blocks", new Color(0.32f, 0.36f, 0.42f), CollisionMode.Decorative);
+            var dungeonFloor3 = Block("dungeon_floor_3", "dungeon_floor_blocks", new Color(0.28f, 0.32f, 0.38f), CollisionMode.Decorative);
+            var dungeonFloor4 = Block("dungeon_floor_4", "dungeon_floor_blocks", new Color(0.34f, 0.38f, 0.44f), CollisionMode.Decorative);
+            var dungeonFloor5 = Block("dungeon_floor_5", "dungeon_floor_blocks", new Color(0.24f, 0.28f, 0.34f), CollisionMode.Decorative);
             Block("wood_floor", "floor_blocks", new Color(0.66f, 0.50f, 0.30f), CollisionMode.Decorative);
             Block("soil", "soil_blocks", new Color(0.40f, 0.27f, 0.16f), CollisionMode.Walkable);
 
@@ -74,6 +91,7 @@ namespace IsoCore.Foundation
             var grassGroup = Group("grass_blocks", grass1, grass2, grass3);
             var sandGroup = Group("sand_blocks", sand1, sand2);
             var snowGroup = Group("snow_blocks", snow1, snow2);
+            var dungeonFloorGroup = Group("dungeon_floor_blocks", dungeonFloor1, dungeonFloor2, dungeonFloor3, dungeonFloor4, dungeonFloor5);
 
             // ---- Items ----
             ItemDefinition Item(string id, Color col, ItemCategory cat, int stack = 99)
@@ -92,6 +110,10 @@ namespace IsoCore.Foundation
             var carrot = Item("carrot", new Color(0.90f, 0.45f, 0.15f), ItemCategory.Food);
             carrot.foodRestore = 12;
             Item("wheat", new Color(0.85f, 0.75f, 0.35f), ItemCategory.Resource);
+            var roastedApple = Item("roasted_apple", new Color(0.95f, 0.36f, 0.18f), ItemCategory.Food);
+            roastedApple.foodRestore = 24;
+            var campStew = Item("camp_stew", new Color(0.76f, 0.50f, 0.25f), ItemCategory.Food);
+            campStew.foodRestore = 40;
 
             ItemDefinition Seed(string id, Color col, string cropId)
             {
@@ -113,18 +135,28 @@ namespace IsoCore.Foundation
             Item("copper_ore", new Color(0.80f, 0.45f, 0.25f), ItemCategory.Resource);
             Item("copper_bar", new Color(0.85f, 0.55f, 0.35f), ItemCategory.Resource);
 
-            ItemDefinition Tool(string id, Color col, ToolType tool, int tier)
+            ItemDefinition Tool(string id, Color col, ToolType tool, int tier, int durability)
             {
                 var it = Item(id, col, ItemCategory.Tool, 1);
-                it.toolType = tool; it.toolTier = tier; return it;
+                it.toolType = tool;
+                it.toolTier = tier;
+                it.maxDurability = durability;
+                it.durabilityLossPerUse = 1;
+                return it;
             }
-            Tool("wood_axe", new Color(0.60f, 0.42f, 0.24f), ToolType.Axe, 1);
-            Tool("wood_pickaxe", new Color(0.60f, 0.42f, 0.24f), ToolType.Pickaxe, 1);
-            Tool("stone_axe", new Color(0.55f, 0.55f, 0.58f), ToolType.Axe, 2);
-            Tool("stone_pickaxe", new Color(0.55f, 0.55f, 0.58f), ToolType.Pickaxe, 2);
-            Tool("copper_axe", new Color(0.85f, 0.55f, 0.35f), ToolType.Axe, 3);
-            Tool("copper_pickaxe", new Color(0.85f, 0.55f, 0.35f), ToolType.Pickaxe, 3);
-            Tool("hoe", new Color(0.55f, 0.42f, 0.28f), ToolType.Hoe, 1);
+            Tool("wood_axe", new Color(0.60f, 0.42f, 0.24f), ToolType.Axe, 1, 80);
+            Tool("wood_pickaxe", new Color(0.60f, 0.42f, 0.24f), ToolType.Pickaxe, 1, 80);
+            Tool("wood_shovel", new Color(0.58f, 0.40f, 0.22f), ToolType.Shovel, 1, 70);
+            Tool("wood_sword", new Color(0.62f, 0.44f, 0.26f), ToolType.Sword, 1, 85);
+            Tool("stone_axe", new Color(0.55f, 0.55f, 0.58f), ToolType.Axe, 2, 150);
+            Tool("stone_pickaxe", new Color(0.55f, 0.55f, 0.58f), ToolType.Pickaxe, 2, 150);
+            Tool("stone_shovel", new Color(0.56f, 0.56f, 0.58f), ToolType.Shovel, 2, 135);
+            Tool("stone_sword", new Color(0.60f, 0.60f, 0.62f), ToolType.Sword, 2, 165);
+            Tool("copper_axe", new Color(0.85f, 0.55f, 0.35f), ToolType.Axe, 3, 260);
+            Tool("copper_pickaxe", new Color(0.85f, 0.55f, 0.35f), ToolType.Pickaxe, 3, 260);
+            Tool("copper_shovel", new Color(0.84f, 0.52f, 0.32f), ToolType.Shovel, 3, 230);
+            Tool("copper_sword", new Color(0.90f, 0.58f, 0.36f), ToolType.Sword, 3, 280);
+            Tool("hoe", new Color(0.55f, 0.42f, 0.28f), ToolType.Hoe, 1, 120);
 
             ItemDefinition PlaceItem(string id, Color col, string placeableId)
             {
@@ -135,6 +167,14 @@ namespace IsoCore.Foundation
             PlaceItem("chest_item", new Color(0.70f, 0.55f, 0.35f), "chest");
             PlaceItem("lantern_item", new Color(0.95f, 0.85f, 0.40f), "lantern");
             PlaceItem("furnace_item", new Color(0.45f, 0.42f, 0.45f), "furnace");
+            PlaceItem("campfire_item", new Color(0.90f, 0.42f, 0.18f), "campfire");
+            PlaceItem("fireplace_item", new Color(0.88f, 0.48f, 0.20f), "fireplace");
+            PlaceItem("tavern_door_item", new Color(0.58f, 0.34f, 0.18f), "tavern_door");
+            PlaceItem("tavern_plot_item", new Color(0.56f, 0.38f, 0.22f), "tavern_plot");
+            PlaceItem("tavern_building_item", new Color(0.66f, 0.40f, 0.22f), "tavern_building");
+            PlaceItem("library_plot_item", new Color(0.58f, 0.56f, 0.50f), "library_plot");
+            PlaceItem("library_building_item", new Color(0.60f, 0.58f, 0.52f), "library_building");
+            PlaceItem("rootcellar_portal_item", new Color(0.40f, 0.75f, 0.85f), "rootcellar_portal");
 
             // ---- Placeables ----
             PlaceableDefinition Placeable(string id, Color col, bool blocks, InteractionKind kind,
@@ -158,9 +198,77 @@ namespace IsoCore.Foundation
                 InteractionKind.CraftingStation, StationType.Furnace, "furnace_item", 1.0f);
             var campfire = Placeable("campfire", new Color(0.5f, 0.32f, 0.2f), false,
                 InteractionKind.Decoration, StationType.None, "campfire_item", 0.5f);
+            campfire.stationType = StationType.CookingPot;
             campfire.emitsLight = true;
             campfire.lightColor = new Color(1f, 0.62f, 0.28f);
             campfire.lightRadius = 3.0f;
+            campfire.isCampsite = true;
+            campfire.campTier = 1;
+            campfire.campWardRadius = 5.5f;
+            campfire.campRecoveryMultiplier = 1.25f;
+            var fireplace = Placeable("fireplace", new Color(0.50f, 0.28f, 0.18f), true,
+                InteractionKind.Decoration, StationType.None, "fireplace_item", 0.8f);
+            fireplace.displayName = "Fireplace";
+            fireplace.widthUnits = 0.95f;
+            fireplace.stationType = StationType.CookingPot;
+            fireplace.emitsLight = true;
+            fireplace.lightColor = new Color(1f, 0.58f, 0.24f);
+            fireplace.lightRadius = 3.6f;
+            fireplace.isCampsite = true;
+            fireplace.campTier = 2;
+            fireplace.campWardRadius = 7.0f;
+            fireplace.campRecoveryMultiplier = 1.55f;
+            var tavernDoor = Placeable("tavern_door", new Color(0.58f, 0.34f, 0.18f), true,
+                InteractionKind.Entrance, StationType.None, "tavern_door_item", 1.2f);
+            tavernDoor.entranceLabel = "Enter";
+            tavernDoor.destinationId = "tavern_common_room";
+            tavernDoor.destinationDisplayName = "Tavern";
+            tavernDoor.widthUnits = 0.9f;
+            var tavernPlot = Placeable("tavern_plot", new Color(0.56f, 0.38f, 0.22f), true,
+                InteractionKind.Construction, StationType.None, "tavern_plot_item", 0.35f);
+            tavernPlot.displayName = "Tavern Plot";
+            tavernPlot.widthUnits = 2.45f;
+            tavernPlot.footprintWidth = 3;
+            tavernPlot.footprintHeight = 3;
+            tavernPlot.footprintLabel = "Tavern";
+            tavernPlot.constructionResultPlaceableId = "tavern_building";
+            tavernPlot.constructionCost = new[]
+            {
+                new RecipeIngredient("wood", 24),
+                new RecipeIngredient("stone", 10),
+                new RecipeIngredient("fiber", 8)
+            };
+            var tavernBuilding = Placeable("tavern_building", new Color(0.66f, 0.40f, 0.22f), true,
+                InteractionKind.Entrance, StationType.None, "tavern_building_item", 1.9f);
+            tavernBuilding.entranceLabel = "Enter";
+            tavernBuilding.destinationId = "tavern_common_room";
+            tavernBuilding.destinationDisplayName = "Tavern";
+            tavernBuilding.widthUnits = 2.65f;
+            tavernBuilding.footprintWidth = 3;
+            tavernBuilding.footprintHeight = 3;
+            tavernBuilding.footprintLabel = "Tavern";
+            var libraryPlot = Placeable("library_plot", new Color(0.58f, 0.56f, 0.50f), true,
+                InteractionKind.Construction, StationType.None, "library_plot_item", 0.35f);
+            libraryPlot.displayName = "Library Plot";
+            libraryPlot.widthUnits = 1.2f;
+            libraryPlot.constructionResultPlaceableId = "library_building";
+            libraryPlot.constructionCost = new[]
+            {
+                new RecipeIngredient("stone", 28),
+                new RecipeIngredient("wood", 18),
+                new RecipeIngredient("fiber", 6)
+            };
+            var libraryBuilding = Placeable("library_building", new Color(0.60f, 0.58f, 0.52f), true,
+                InteractionKind.Entrance, StationType.None, "library_building_item", 2.0f);
+            libraryBuilding.entranceLabel = "Enter";
+            libraryBuilding.destinationId = "library_archive";
+            libraryBuilding.destinationDisplayName = "Library";
+            libraryBuilding.widthUnits = 1.45f;
+            var rootcellarPortal = Placeable("rootcellar_portal", new Color(0.40f, 0.75f, 0.85f), false,
+                InteractionKind.Entrance, StationType.None, "rootcellar_portal_item", 1.1f);
+            rootcellarPortal.entranceLabel = "Enter";
+            rootcellarPortal.destinationId = "rootcellar_starter";
+            rootcellarPortal.destinationDisplayName = "Mosswake Rootcellar";
 
             // ---- Resource nodes ----
             ResourceNodeDefinition Node(string id, Color col, ToolType tool, bool mandatory, int hits, float h, ItemDrop[] drops)
@@ -171,23 +279,23 @@ namespace IsoCore.Foundation
                 c.Nodes.Add(n); return n;
             }
             // Axe/pickaxe preferred (faster) but hand-harvestable; ore veins REQUIRE a pickaxe.
-            var tree = Node("tree", new Color(0.18f, 0.40f, 0.18f), ToolType.Axe, false, 3, 1.5f,
+            var tree = Node("tree", new Color(0.18f, 0.40f, 0.18f), ToolType.Axe, false, 7, 1.5f,
                 new[] { new ItemDrop("wood", 2, 4) });
-            var rock = Node("rock", new Color(0.50f, 0.50f, 0.53f), ToolType.Pickaxe, false, 3, 0.9f,
+            var rock = Node("rock", new Color(0.50f, 0.50f, 0.53f), ToolType.Pickaxe, false, 6, 0.9f,
                 new[] { new ItemDrop("stone", 2, 3) });
-            var bush = Node("bush", new Color(0.25f, 0.50f, 0.25f), ToolType.None, false, 1, 0.7f,
+            var bush = Node("bush", new Color(0.25f, 0.50f, 0.25f), ToolType.None, false, 3, 0.7f,
                 new[] { new ItemDrop("fiber", 1, 2), new ItemDrop("apple", 0, 1, 0.5f) });
-            var copperVein = Node("copper_vein", new Color(0.80f, 0.45f, 0.25f), ToolType.Pickaxe, true, 4, 0.95f,
+            var copperVein = Node("copper_vein", new Color(0.80f, 0.45f, 0.25f), ToolType.Pickaxe, true, 9, 0.95f,
                 new[] { new ItemDrop("copper_ore", 1, 2), new ItemDrop("stone", 0, 1, 0.5f) });
             // Extra flora for visual variety (art in Resources/Decorations). Pine = a second
             // tree species for groves; flower = ambient ground cover; stump/log = low woody bits.
-            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 3, 1.5f,
+            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 7, 1.5f,
                 new[] { new ItemDrop("wood", 2, 4) });
-            var flower = Node("flower", new Color(0.70f, 0.55f, 0.20f), ToolType.None, false, 1, 0.3f,
+            var flower = Node("flower", new Color(0.70f, 0.55f, 0.20f), ToolType.None, false, 2, 0.3f,
                 new[] { new ItemDrop("fiber", 1, 1) });
-            var stump = Node("stump", new Color(0.45f, 0.32f, 0.18f), ToolType.Axe, false, 2, 0.5f,
+            var stump = Node("stump", new Color(0.45f, 0.32f, 0.18f), ToolType.Axe, false, 4, 0.5f,
                 new[] { new ItemDrop("wood", 1, 2) });
-            var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 2, 0.4f,
+            var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 4, 0.4f,
                 new[] { new ItemDrop("wood", 2, 3) });
 
             // ---- Mobs ----
@@ -199,10 +307,19 @@ namespace IsoCore.Foundation
             }
             var deer = Mob("deer", new Color(0.62f, 0.45f, 0.30f), MobBehavior.Skittish, 1.6f, 6f,
                 new[] { new ItemDrop("hide", 1, 2) });
+            deer.threatTier = 0;
+            deer.campWardIgnoreChance = 0f;
+            deer.contactDamage = 0f;
             var slime = Mob("slime", new Color(0.40f, 0.82f, 0.45f), MobBehavior.Passive, 1.0f, 3f,
                 new[] { new ItemDrop("slime_goo", 1, 2) });
+            slime.threatTier = 1;
+            slime.campWardIgnoreChance = 0.12f;
+            slime.contactDamage = 4f;
             var fox = Mob("fox", new Color(0.85f, 0.45f, 0.20f), MobBehavior.Skittish, 2.0f, 7f,
                 new[] { new ItemDrop("hide", 1, 1) });
+            fox.threatTier = 2;
+            fox.campWardIgnoreChance = 0.28f;
+            fox.contactDamage = 6f;
 
             // ---- Crops ----
             void Crop(string id, Color young, Color ripe, int stages, float secs, float matureH, ItemDrop[] harvest)
@@ -261,10 +378,30 @@ namespace IsoCore.Foundation
                 new[] { In("wood", 5) }, new[] { Out("workbench_item", 1) });
             Recipe("craft_campfire", StationType.Hand,
                 new[] { In("wood", 5), In("stone", 3) }, new[] { Out("campfire_item", 1) });
+            Recipe("craft_fireplace", StationType.Workbench,
+                new[] { In("wood", 6), In("stone", 8) }, new[] { Out("fireplace_item", 1) });
+            Recipe("cook_roasted_apple", StationType.CookingPot,
+                new[] { In("apple", 1), In("wood", 1) }, new[] { Out("roasted_apple", 1) });
+            Recipe("cook_camp_stew", StationType.CookingPot,
+                new[] { In("carrot", 1), In("wheat", 1), In("wood", 1) }, new[] { Out("camp_stew", 1) });
+            Recipe("craft_tavern_door", StationType.Hand,
+                new[] { In("wood", 8), In("stone", 2) }, new[] { Out("tavern_door_item", 1) });
+            Recipe("craft_tavern_plot", StationType.Workbench,
+                new[] { In("wood", 4), In("fiber", 2) }, new[] { Out("tavern_plot_item", 1) });
+            Recipe("craft_tavern_building", StationType.Workbench,
+                new[] { In("wood", 24), In("stone", 10), In("fiber", 8) }, new[] { Out("tavern_building_item", 1) });
+            Recipe("craft_library_plot", StationType.Workbench,
+                new[] { In("wood", 4), In("stone", 4), In("fiber", 2) }, new[] { Out("library_plot_item", 1) });
+            Recipe("craft_rootcellar_portal", StationType.Workbench,
+                new[] { In("stone", 6), In("fiber", 4) }, new[] { Out("rootcellar_portal_item", 1) });
             Recipe("craft_wood_axe", StationType.Hand,
                 new[] { In("wood", 3), In("fiber", 2) }, new[] { Out("wood_axe", 1) });
             Recipe("craft_wood_pickaxe", StationType.Workbench,
                 new[] { In("wood", 3), In("stone", 2) }, new[] { Out("wood_pickaxe", 1) });
+            Recipe("craft_wood_shovel", StationType.Hand,
+                new[] { In("wood", 3), In("fiber", 1) }, new[] { Out("wood_shovel", 1) });
+            Recipe("craft_wood_sword", StationType.Hand,
+                new[] { In("wood", 4), In("fiber", 2) }, new[] { Out("wood_sword", 1) });
             Recipe("craft_stone_path", StationType.Workbench,
                 new[] { In("stone", 2) }, new[] { Out("stone_path_item", 4) });
             Recipe("craft_wood_floor", StationType.Workbench,
@@ -283,10 +420,18 @@ namespace IsoCore.Foundation
                 new[] { In("wood", 2), In("stone", 3) }, new[] { Out("stone_axe", 1) });
             Recipe("craft_stone_pickaxe", StationType.Workbench,
                 new[] { In("wood", 2), In("stone", 3) }, new[] { Out("stone_pickaxe", 1) });
+            Recipe("craft_stone_shovel", StationType.Workbench,
+                new[] { In("wood", 2), In("stone", 2) }, new[] { Out("stone_shovel", 1) });
+            Recipe("craft_stone_sword", StationType.Workbench,
+                new[] { In("wood", 2), In("stone", 4) }, new[] { Out("stone_sword", 1) });
             Recipe("craft_copper_axe", StationType.Workbench,
                 new[] { In("wood", 2), In("copper_bar", 3) }, new[] { Out("copper_axe", 1) });
             Recipe("craft_copper_pickaxe", StationType.Workbench,
                 new[] { In("wood", 2), In("copper_bar", 3) }, new[] { Out("copper_pickaxe", 1) });
+            Recipe("craft_copper_shovel", StationType.Workbench,
+                new[] { In("wood", 2), In("copper_bar", 2) }, new[] { Out("copper_shovel", 1) });
+            Recipe("craft_copper_sword", StationType.Workbench,
+                new[] { In("wood", 2), In("copper_bar", 4) }, new[] { Out("copper_sword", 1) });
 
             // ---- LitRPG progression: skills, Callings, starter quests ----
             FoundationSkillDefinition Skill(string id, string name, FoundationProgressionActivity activity,
@@ -320,6 +465,8 @@ namespace IsoCore.Foundation
                 "Map routes, climb ridges, read landmarks, and find hidden resources.", "shortcuts", "landmarks", "hidden resources");
             Skill("creaturecraft", "Creaturecraft", FoundationProgressionActivity.Creature, FoundationSkillNodeKind.Harmony,
                 "Calm, lure, tame, relocate, and convert dens.", "calming", "lures", "den conversion");
+            Skill("combat", "Combat", FoundationProgressionActivity.Combat, FoundationSkillNodeKind.Utility,
+                "Read attack windows, swing weapons cleanly, dodge pressure, and finish dungeon threats.", "weapon timing", "dungeon tactics", "finisher cues");
             Skill("warding", "Warding", FoundationProgressionActivity.Combat, FoundationSkillNodeKind.Utility,
                 "Use lights, traps, patrol posts, and wards to shape threat.", "non-lethal defenses", "threat shaping", "patrol posts");
             Skill("trade", "Trade", FoundationProgressionActivity.Trade, FoundationSkillNodeKind.Ease,
@@ -378,7 +525,7 @@ namespace IsoCore.Foundation
                 "Protector, patrol fighter, shieldhand, and gloom-clearing defender.",
                 "Patrol Legend: patrol routes reduce threat and unlock heroic town events.",
                 new[] { Bonus(FoundationStatType.STR, 1), Bonus(FoundationStatType.DEF, 2) },
-                new[] { "patroller", "shieldhand", "gloombreaker" }, "warding", "exploration", "mining");
+                new[] { "patroller", "shieldhand", "gloombreaker" }, "combat", "warding", "exploration");
 
             FoundationQuestDefinition Quest(string id, string name, FoundationQuestType type, string act,
                 string description, FoundationQuestObjective[] objectives, FoundationQuestReward[] rewards)
@@ -405,7 +552,7 @@ namespace IsoCore.Foundation
                 new[] { Reward(FoundationRewardType.Xp, "character", 40), Reward(FoundationRewardType.Recipe, "craft_campfire") });
             Quest("a_roof_before_rain", "A Roof Before Rain", FoundationQuestType.Civic, "Act 1: First Fire",
                 "Prepare a real shelter before the first hard weather rolls through Mosswake.",
-                new[] { Obj("place_floor", "Place wood floor tiles", 4), Obj("place_lantern", "Place a lantern"), Obj("store_food", "Store any food item", 3) },
+                new[] { Obj("place_floor", "Place wood floor tiles", 4), Obj("place_lantern", "Place a lantern"), Obj("place_chest", "Place a chest") },
                 new[] { Reward(FoundationRewardType.Xp, "character", 60), Reward(FoundationRewardType.Pattern, "hearthplank_flooring") });
             Quest("thread_twig_and_tin", "Thread, Twig, and Tin", FoundationQuestType.Craft, "Act 1: First Fire",
                 "Learn the first loop of gathering, refining, and improving a tool.",
@@ -419,6 +566,349 @@ namespace IsoCore.Foundation
                 "Find the first underground room and bring back proof that the old systems are still humming.",
                 new[] { Obj("enter_cellar", "Enter the Rootcellar"), Obj("recover_relic", "Recover a Memory Amber"), Obj("return_home", "Return home safely") },
                 new[] { Reward(FoundationRewardType.Xp, "character", 100), Reward(FoundationRewardType.MemoryPage, "old_lamps_01") });
+
+            // ---- Seven-day trial data spine ----
+            FoundationEvidenceWeight W(TrialEvidenceCategory category, int amount) => new FoundationEvidenceWeight(category, amount);
+            FoundationXpGrant X(FoundationXpChannel channel, string id, int amount) => new FoundationXpGrant(channel, id, amount);
+            FoundationTitleProgressGrant T(string id, int amount) => new FoundationTitleProgressGrant(id, amount);
+            FoundationAffinityGrant A(string id, int amount) => new FoundationAffinityGrant(id, amount);
+
+            SystemMessageDefinition SystemMessage(string id, SystemMessageChannel channel, string text, int priority = 1)
+            {
+                var m = New<SystemMessageDefinition>(id);
+                m.channel = channel;
+                m.text = text;
+                m.priority = priority;
+                c.SystemMessages.Add(m);
+                return m;
+            }
+
+            XPChannelDefinition XpChannel(FoundationXpChannel channel, string id, string name, string description, int xpPerLevel = 100)
+            {
+                var x = New<XPChannelDefinition>(id);
+                x.displayName = name;
+                x.channel = channel;
+                x.description = description;
+                x.xpPerLevel = xpPerLevel;
+                c.XPChannels.Add(x);
+                return x;
+            }
+
+            TitleDefinition Title(string id, string name, int threshold, string effectPolicy, string message, bool mechanical = false, string hiddenClassKey = "")
+            {
+                var t = New<TitleDefinition>(id);
+                t.displayName = name;
+                t.threshold = threshold;
+                t.effectPolicy = effectPolicy;
+                t.unlockMessage = message;
+                t.mechanical = mechanical;
+                t.hiddenClassKey = hiddenClassKey;
+                c.Titles.Add(t);
+                return t;
+            }
+
+            AffinityDefinition Affinity(string id, string name, string family, int awakenThreshold, string description, params string[] rewards)
+            {
+                var a = New<AffinityDefinition>(id);
+                a.displayName = name;
+                a.family = family;
+                a.awakenThreshold = awakenThreshold;
+                a.description = description;
+                a.thresholdRewards = rewards;
+                c.Affinities.Add(a);
+                return a;
+            }
+
+            EvidenceEventDefinition Evidence(string id, string name, string message,
+                FoundationEvidenceWeight[] weights, FoundationXpGrant[] xp,
+                FoundationTitleProgressGrant[] titles, FoundationAffinityGrant[] affinities,
+                SystemMessageChannel channel = SystemMessageChannel.TrialEvidence)
+            {
+                var e = New<EvidenceEventDefinition>(id);
+                e.displayName = name;
+                e.message = message;
+                e.messageChannel = channel;
+                e.evidenceWeights = weights;
+                e.xpGrants = xp;
+                e.titleProgress = titles;
+                e.affinityProgress = affinities;
+                c.EvidenceEvents.Add(e);
+                return e;
+            }
+
+            ClassDefinition Class(string id, string name, FoundationClassRarity rarity, string description,
+                FoundationEvidenceWeight[] weights, params string[] affinityIds)
+            {
+                var cls = New<ClassDefinition>(id);
+                cls.displayName = name;
+                cls.rarity = rarity;
+                cls.description = description;
+                cls.weights = weights;
+                cls.preferredAffinityIds = affinityIds;
+                c.Classes.Add(cls);
+                return cls;
+            }
+
+            ProfessionDefinition Profession(string id, string name, FoundationProgressionActivity activity,
+                string description, params string[] skillIds)
+            {
+                var p = New<ProfessionDefinition>(id);
+                p.displayName = name;
+                p.primaryActivity = activity;
+                p.description = description;
+                p.progressionSkillIds = skillIds;
+                c.Professions.Add(p);
+                return p;
+            }
+
+            DungeonResultDefinition DungeonResult(string id, string name, string dungeonId, string summary,
+                FoundationXpGrant[] xp, FoundationTitleProgressGrant[] titles, FoundationAffinityGrant[] affinities,
+                FoundationQuestReward[] rewards)
+            {
+                var r = New<DungeonResultDefinition>(id);
+                r.displayName = name;
+                r.dungeonId = dungeonId;
+                r.summary = summary;
+                r.xpRewards = xp;
+                r.titleProgress = titles;
+                r.affinityProgress = affinities;
+                r.rewards = rewards;
+                c.DungeonResults.Add(r);
+                return r;
+            }
+
+            DungeonDefinition Dungeon(string id, string name, string family, int threat, int travelHours,
+                string resultId, string description, params string[] supplies)
+            {
+                var d = New<DungeonDefinition>(id);
+                d.displayName = name;
+                d.family = family;
+                d.threatRank = threat;
+                d.travelHours = travelHours;
+                d.resultId = resultId;
+                d.description = description;
+                d.recommendedSupplyItemIds = supplies;
+                c.Dungeons.Add(d);
+                return d;
+            }
+
+            ExpeditionTemplateDefinition Expedition(string id, string name, string dungeonId, int hours, int danger, params string[] supplies)
+            {
+                var e = New<ExpeditionTemplateDefinition>(id);
+                e.displayName = name;
+                e.dungeonId = dungeonId;
+                e.expectedHours = hours;
+                e.danger = danger;
+                e.requiredSupplyItemIds = supplies;
+                c.Expeditions.Add(e);
+                return e;
+            }
+
+            GuildBoardEntryDefinition BoardEntry(string id, string name, string questId, string eventId, int rank, int days, string description)
+            {
+                var b = New<GuildBoardEntryDefinition>(id);
+                b.displayName = name;
+                b.questId = questId;
+                b.worldEventId = eventId;
+                b.rankRequirement = rank;
+                b.expiresAfterDays = days;
+                b.description = description;
+                c.GuildBoardEntries.Add(b);
+                return b;
+            }
+
+            WorldEventDefinition WorldEvent(string id, string name, int severity, string trigger, string consequence, string message)
+            {
+                var e = New<WorldEventDefinition>(id);
+                e.displayName = name;
+                e.severity = severity;
+                e.triggerId = trigger;
+                e.consequenceId = consequence;
+                e.message = message;
+                c.WorldEvents.Add(e);
+                return e;
+            }
+
+            SystemMessage("foreign_soul_detected", SystemMessageChannel.Notice, "Foreign soul detected.", 3);
+            SystemMessage("trial_protocol_started", SystemMessageChannel.Notice, "Trial Protocol initiated: survive, adapt, act.", 3);
+
+            XpChannel(FoundationXpChannel.Character, "character", "Character Level", "Broad survivability from quests, discoveries, and major proof.");
+            XpChannel(FoundationXpChannel.Class, "class", "Class Level", "Future class-aligned action growth after the Obelisk.");
+            XpChannel(FoundationXpChannel.Profession, "profession", "Profession Level", "Production, contracts, station chains, and economic identity.");
+            XpChannel(FoundationXpChannel.SkillMastery, "skill_mastery", "Skill Mastery", "Repeated use of tools, weapons, craft, routes, and rituals.");
+            XpChannel(FoundationXpChannel.AdventurerRank, "adventurer_rank", "Adventurer Rank", "Guild-reviewed delves, bounties, rescues, and reliability.");
+            XpChannel(FoundationXpChannel.GuildRank, "guild_rank", "Guild Rank", "Shared base, civic, and party-scale milestones.");
+            XpChannel(FoundationXpChannel.RegionReputation, "mosswake_reputation", "Mosswake Reputation", "Local trust, permissions, shop standing, and civic help.");
+            XpChannel(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", "Rootcellar Clearance", "Performance records for the first dungeon family.");
+
+            Title("first_night_survivor", "First Night Survivor", 5, "fatigue_resistance_minor",
+                "Title acquired: First Night Survivor.", true, "survivalist");
+            Title("village_shield", "Village Shield", 6, "town_defense_reputation",
+                "Title acquired: Village Shield.", true, "guardian");
+            Title("campfire_captain", "Campfire Captain", 4, "camp_recovery_minor",
+                "Title acquired: Campfire Captain.", true, "hearthkeeper");
+            Title("trail_cook", "Trail Cook", 4, "travel_meal_bonus",
+                "Title acquired: Trail Cook.", true, "cook");
+            Title("goblin_bane", "Goblin-Bane", 5, "goblin_threat_bias",
+                "Title acquired: Goblin-Bane.", true, "warden");
+            Title("returned_for_them", "Returned For Them", 3, "support_leadership_key",
+                "Title acquired: Returned For Them.", true, "oathbearer");
+
+            Affinity("ember", "Ember", "Fire, forging, courage, and camp warmth.", 10,
+                "Warmth, flamecraft, bold combat, and firelit shelter.", "campfire focus", "forge rites");
+            Affinity("tide", "Tide", "Water, healing, fishing, and weather.", 10,
+                "Water work, recovery, fishing, weather survival, and mercy.", "rain reading", "healing springs");
+            Affinity("root", "Root", "Growth, farming, binding, and wild care.", 10,
+                "Plants, soil, forage, animals, and living terrain.", "crop memory", "den accord");
+            Affinity("stone", "Stone", "Defense, mining, construction, and endurance.", 10,
+                "Ore, paths, walls, shields, and hard choices held steady.", "mason signs", "ward anchors");
+            Affinity("gale", "Gale", "Speed, scouting, sailing, and clean routes.", 10,
+                "Travel, mapping, scouting, movement, and road sense.", "route whisper", "storm step");
+            Affinity("glimmer", "Glimmer", "Light, illusion, secrets, and hidden knowledge.", 10,
+                "Lanterns, shrines, lore, stealth, and revealed paths.", "hidden doors", "memory pages");
+            Affinity("hearth", "Hearth", "Food, comfort, camp safety, and morale.", 10,
+                "Meals, shelter, camp order, rest, and safe returns.", "shared supper", "rested camp");
+
+            Evidence("harvest_wood", "Harvest Wood",
+                "Entry recorded: wood gathered. Survival and craft tendencies rise.",
+                new[] { W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Survival, 1), W(TrialEvidenceCategory.Building, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "woodcraft", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("first_night_survivor", 1), T("campfire_captain", 1) },
+                new[] { A("root", 1), A("hearth", 1) });
+            Evidence("harvest_stone", "Mine Stone",
+                "Entry recorded: stone broken. Building and Stone resonance rise.",
+                new[] { W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Building, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "mining", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("village_shield", 1) },
+                new[] { A("stone", 2) });
+            Evidence("harvest_forage", "Gather Forage",
+                "Entry recorded: forage recovered. Survival and Root resonance rise.",
+                new[] { W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "foraging", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("trail_cook", 1) },
+                new[] { A("root", 2), A("hearth", 1) });
+            Evidence("craft_workbench", "Craft Workbench",
+                "Entry recorded: first station made. Crafting identity rises.",
+                new[] { W(TrialEvidenceCategory.Crafting, 3), W(TrialEvidenceCategory.Building, 2) },
+                new[] { X(FoundationXpChannel.SkillMastery, "crafting", 4), X(FoundationXpChannel.Profession, "builder", 2) },
+                new[] { T("campfire_captain", 1) },
+                new[] { A("stone", 1), A("hearth", 1) });
+            Evidence("craft_campfire", "Craft Campfire",
+                "Entry recorded: camp warmth secured. Hearth resonance rises.",
+                new[] { W(TrialEvidenceCategory.Survival, 3), W(TrialEvidenceCategory.Crafting, 1), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "cooking", 2), X(FoundationXpChannel.Character, "character", 2) },
+                new[] { T("first_night_survivor", 2), T("campfire_captain", 2) },
+                new[] { A("ember", 2), A("hearth", 3) });
+            Evidence("place_path", "Place Path",
+                "Entry recorded: route improved. Building and Gale tendencies rise.",
+                new[] { W(TrialEvidenceCategory.Building, 2), W(TrialEvidenceCategory.Exploration, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "building", 3), X(FoundationXpChannel.RegionReputation, "mosswake_reputation", 1) },
+                new[] { T("village_shield", 1) },
+                new[] { A("stone", 1), A("gale", 1) });
+            Evidence("till_soil", "Till Soil",
+                "Entry recorded: soil prepared. Root resonance rises.",
+                new[] { W(TrialEvidenceCategory.Gathering, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "farming", 3), X(FoundationXpChannel.Profession, "farmer", 2) },
+                new[] { T("trail_cook", 1) },
+                new[] { A("root", 3), A("hearth", 1) });
+            Evidence("crop_harvest", "Harvest Crop",
+                "Entry recorded: food brought home. Hearth and Root progress rise.",
+                new[] { W(TrialEvidenceCategory.Survival, 2), W(TrialEvidenceCategory.Gathering, 1), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "farming", 4), X(FoundationXpChannel.Profession, "farmer", 2) },
+                new[] { T("trail_cook", 2), T("campfire_captain", 1) },
+                new[] { A("root", 2), A("hearth", 2) });
+            Evidence("cook_fire_meal", "Cook Fire Meal",
+                "Entry recorded: a cooked meal steadies the camp. Hearth progress rises.",
+                new[] { W(TrialEvidenceCategory.Survival, 2), W(TrialEvidenceCategory.Crafting, 1), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "cooking", 4), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("trail_cook", 2), T("campfire_captain", 1) },
+                new[] { A("hearth", 3), A("ember", 1) });
+            Evidence("rest_at_camp", "Rest at Camp",
+                "Entry recorded: you slept inside firelight. Survival and Hearth evidence rise.",
+                new[] { W(TrialEvidenceCategory.Survival, 3), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.Character, "character", 2), X(FoundationXpChannel.SkillMastery, "cooking", 1) },
+                new[] { T("first_night_survivor", 2), T("campfire_captain", 2) },
+                new[] { A("hearth", 3), A("ember", 1) });
+            Evidence("mob_defeated", "Mob Defeated",
+                "Entry recorded: threat resolved by force. Combat evidence rises.",
+                new[] { W(TrialEvidenceCategory.Combat, 3), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "warding", 4), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 2) },
+                new[] { T("village_shield", 1), T("goblin_bane", 1) },
+                new[] { A("ember", 1), A("stone", 1) });
+            Evidence("mob_calmed", "Mob Calmed",
+                "Entry recorded: threat softened without bloodshed. Support and Root evidence rise.",
+                new[] { W(TrialEvidenceCategory.Support, 2), W(TrialEvidenceCategory.Social, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "creaturecraft", 4), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("returned_for_them", 1) },
+                new[] { A("root", 2), A("tide", 1) });
+
+            Class("trailblade", "Trailblade", FoundationClassRarity.Uncommon,
+                "A practical scout-fighter shaped by routes, tools, and first danger.",
+                new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Combat, 2), W(TrialEvidenceCategory.Survival, 2) }, "gale", "stone");
+            Class("iron_warden", "Iron Warden", FoundationClassRarity.Rare,
+                "A defender whose proof is shelter, shields, paths, and pressure held.",
+                new[] { W(TrialEvidenceCategory.Combat, 3), W(TrialEvidenceCategory.Building, 3), W(TrialEvidenceCategory.Survival, 2) }, "stone", "ember");
+            Class("hearthbound_acolyte", "Hearthbound Acolyte", FoundationClassRarity.Rare,
+                "A camp-centered support path built from food, warmth, and safe returns.",
+                new[] { W(TrialEvidenceCategory.Support, 3), W(TrialEvidenceCategory.Survival, 3), W(TrialEvidenceCategory.Crafting, 1) }, "hearth", "ember");
+            Class("stonehand_delver", "Stonehand Delver", FoundationClassRarity.Uncommon,
+                "A miner-builder suited to stone, ore, tunnels, and steady tool work.",
+                new[] { W(TrialEvidenceCategory.Gathering, 3), W(TrialEvidenceCategory.Building, 2), W(TrialEvidenceCategory.Exploration, 1) }, "stone");
+            Class("wildsign_ranger", "Wildsign Ranger", FoundationClassRarity.Rare,
+                "A wilderness reader whose trial favors forage, beasts, and route sense.",
+                new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Survival, 2) }, "root", "gale");
+            Class("ashvein_pyromancer", "Ashvein Pyromancer", FoundationClassRarity.Epic,
+                "A flame path opened by danger, campfire discipline, and Ember resonance.",
+                new[] { W(TrialEvidenceCategory.Magic, 3), W(TrialEvidenceCategory.Combat, 2), W(TrialEvidenceCategory.Survival, 1) }, "ember");
+            Class("wayfarer", "Wayfarer", FoundationClassRarity.CommonPlus,
+                "A reliable traveler shaped by roads, resource sense, and adaptable work.",
+                new[] { W(TrialEvidenceCategory.Exploration, 2), W(TrialEvidenceCategory.Gathering, 2), W(TrialEvidenceCategory.Trade, 1) }, "gale", "hearth");
+            Class("oathbearer", "Oathbearer", FoundationClassRarity.Epic,
+                "A support-defender path for players who repeatedly return for others.",
+                new[] { W(TrialEvidenceCategory.Support, 3), W(TrialEvidenceCategory.Social, 2), W(TrialEvidenceCategory.Combat, 2) }, "hearth", "stone");
+
+            Profession("blacksmith", "Blacksmith", FoundationProgressionActivity.Craft,
+                "Smelting, forging, repair, metal tools, and durable gear.", "crafting", "mining");
+            Profession("alchemist", "Alchemist", FoundationProgressionActivity.Craft,
+                "Potions, reagents, refining, and risky recipe discovery.", "foraging", "lorekeeping");
+            Profession("cook", "Cook", FoundationProgressionActivity.Craft,
+                "Meals, expedition food, comfort buffs, and visitor favorites.", "cooking", "trade");
+            Profession("builder", "Builder", FoundationProgressionActivity.Build,
+                "Floors, paths, civic footprints, shelter scoring, and expansion.", "building", "woodcraft");
+            Profession("trader", "Trader", FoundationProgressionActivity.Trade,
+                "Orders, prices, routes, reputation, and economic quests.", "trade", "lorekeeping");
+            Profession("farmer", "Farmer", FoundationProgressionActivity.Farm,
+                "Soil, seed memory, crop traits, and reliable food.", "farming", "foraging");
+            Profession("miner", "Miner", FoundationProgressionActivity.Harvest,
+                "Ore, stone, tunnels, durability, and delver preparation.", "mining", "warding");
+            Profession("fisher", "Fisher", FoundationProgressionActivity.Harvest,
+                "Water routes, fish, weather, and Tide-aligned food work.", "foraging", "cooking");
+
+            DungeonResult("rootcellar_first_return", "Rootcellar First Return", "rootcellar_starter",
+                "Returned with proof from the old food stores beneath Mosswake.",
+                new[] { X(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", 20), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 8) },
+                new[] { T("first_night_survivor", 1), T("returned_for_them", 1) },
+                new[] { A("root", 2), A("glimmer", 1) },
+                new[] { Reward(FoundationRewardType.MemoryPage, "old_lamps_01"), Reward(FoundationRewardType.Xp, "character", 50) });
+            Dungeon("rootcellar_starter", "Mosswake Rootcellar", "Root Cellar", 1, 2, "rootcellar_first_return",
+                "An old cellar where roots, pests, and stale System hums gather under the first fields.",
+                "apple", "carrot", "wood_axe");
+            Expedition("rootcellar_day_two_probe", "Day Two Rootcellar Probe", "rootcellar_starter", 4, 2,
+                "apple", "wood_axe");
+
+            WorldEvent("goblin_raid_chain", "Goblin Raid Chain", 2, "ignored_road_threat", "settlement_pressure",
+                "World event: tracks suggest a raid chain forming beyond the safe road.");
+            WorldEvent("dangerous_mob_sighting", "Dangerous Mob Sighting", 1, "night_noise", "local_warning",
+                "World event: something large crossed the outer meadow after dusk.");
+            WorldEvent("resource_bloom", "Resource Bloom", 1, "rain_after_clear", "rare_nodes",
+                "World event: fresh rain has woken rare sprouts and exposed stone seams.");
+            WorldEvent("rival_npc_party", "Rival NPC Party", 1, "guild_board_day_two", "social_pressure",
+                "World event: another Unwritten party accepted a nearby contract.");
+
+            BoardEntry("board_rootcellar_probe", "Rootcellar Probe", "the_rootcellar_below", "resource_bloom", 0, 3,
+                "Bring back proof from the old cellar before pests chew through the stores.");
+            BoardEntry("board_south_path", "South Path Repair", "fixing_the_south_path", "dangerous_mob_sighting", 0, 4,
+                "Clear and mark the south path so visitors stop losing half a day in brambles.");
 
             return c;
         }

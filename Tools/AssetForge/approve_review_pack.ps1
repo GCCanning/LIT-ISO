@@ -64,6 +64,46 @@ function Ensure-GeneratedFolderMetas {
     }
 }
 
+function Format-InvariantNumber {
+    param([object]$Value)
+
+    if ($null -eq $Value -or [string]::IsNullOrWhiteSpace([string]$Value)) {
+        return "0"
+    }
+
+    $number = [double]$Value
+    return $number.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture)
+}
+
+function Get-DecisionUnitySettings {
+    param(
+        [object]$Decision,
+        [string]$Category
+    )
+
+    $expectedPpu = if ($Category -eq "decoration") { "128" } else { "32" }
+    $expectedPivot = if ($Category -eq "decoration") { "{x: 0.5, y: 0}" } else { "{x: 0.5, y: 0.75}" }
+
+    if ($Decision.PSObject.Properties.Name.Contains("unity") -and $null -ne $Decision.unity) {
+        if ($Decision.unity.PSObject.Properties.Name.Contains("ppu") -and -not [string]::IsNullOrWhiteSpace([string]$Decision.unity.ppu)) {
+            $expectedPpu = [string]$Decision.unity.ppu
+        }
+        if ($Decision.unity.PSObject.Properties.Name.Contains("pivot") -and $null -ne $Decision.unity.pivot) {
+            $pivot = $Decision.unity.pivot
+            if ($pivot.PSObject.Properties.Name.Contains("x") -and $pivot.PSObject.Properties.Name.Contains("y")) {
+                $x = Format-InvariantNumber -Value $pivot.x
+                $y = Format-InvariantNumber -Value $pivot.y
+                $expectedPivot = "{x: $x, y: $y}"
+            }
+        }
+    }
+
+    return [PSCustomObject]@{
+        ppu = $expectedPpu
+        pivot = $expectedPivot
+    }
+}
+
 function Get-VersionedDestination {
     param(
         [string]$DestinationPath,
@@ -90,22 +130,21 @@ function Copy-ImporterMetaFresh {
         [string]$SourceMetaPath,
         [string]$DestinationMetaPath,
         [string]$DestinationPngPath,
-        [string]$Category
+        [string]$PixelsPerUnit,
+        [string]$Pivot
     )
 
     if (-not (Test-Path $SourceMetaPath)) { return $false }
 
     $content = Get-Content -Raw -Path $SourceMetaPath
     $spriteName = [IO.Path]::GetFileNameWithoutExtension($DestinationPngPath)
-    $expectedPpu = if ($Category -eq "decoration") { "128" } else { "32" }
-    $expectedPivot = if ($Category -eq "decoration") { "{x: 0.5, y: 0}" } else { "{x: 0.5, y: 0.75}" }
 
     $content = [Regex]::Replace($content, "(?m)^guid:\s*[0-9a-f]+$", "guid: $(New-HexId)")
     $content = [Regex]::Replace($content, "spriteID:\s*[0-9a-f]+", "spriteID: $(New-HexId)")
     $content = [Regex]::Replace($content, "second:\s*[^\r\n]+", "second: ${spriteName}_0")
     $content = [Regex]::Replace($content, "(?m)^(\s*)name:\s*[^\r\n]+$", "`${1}name: ${spriteName}_0")
-    $content = [Regex]::Replace($content, "(?m)^(\s*)spritePixelsToUnits:\s*.+$", "`${1}spritePixelsToUnits: $expectedPpu")
-    $content = [Regex]::Replace($content, "(?m)^(\s*)spritePivot:\s*\{x:\s*[^,]+,\s*y:\s*[^}]+\}", "`${1}spritePivot: $expectedPivot")
+    $content = [Regex]::Replace($content, "(?m)^(\s*)spritePixelsToUnits:\s*.+$", "`${1}spritePixelsToUnits: $PixelsPerUnit")
+    $content = [Regex]::Replace($content, "(?m)^(\s*)spritePivot:\s*\{x:\s*[^,]+,\s*y:\s*[^}]+\}", "`${1}spritePivot: $Pivot")
     $content = [Regex]::Replace($content, "(?m)^(\s*)filterMode:\s*.+$", "`${1}filterMode: 0")
     $content = [Regex]::Replace($content, "(?m)^(\s*)enableMipMap:\s*.+$", "`${1}enableMipMap: 0")
     $content = [Regex]::Replace($content, "(?m)^(\s*)alphaIsTransparency:\s*.+$", "`${1}alphaIsTransparency: 1")
@@ -211,7 +250,8 @@ foreach ($decision in $decisionsPayload.decisions) {
     Ensure-GeneratedFolderMetas -DestinationDir $destinationDir
 
     Copy-Item -LiteralPath $source -Destination $destination -Force
-    $metaCopied = Copy-ImporterMetaFresh -SourceMetaPath "$source.meta" -DestinationMetaPath "$destination.meta" -DestinationPngPath $destination -Category $decision.category
+    $unitySettings = Get-DecisionUnitySettings -Decision $decision -Category $decision.category
+    $metaCopied = Copy-ImporterMetaFresh -SourceMetaPath "$source.meta" -DestinationMetaPath "$destination.meta" -DestinationPngPath $destination -PixelsPerUnit $unitySettings.ppu -Pivot $unitySettings.pivot
 
     $copied += [PSCustomObject]@{
         id = $decision.id
@@ -221,6 +261,10 @@ foreach ($decision in $decisionsPayload.decisions) {
         source_path = $decision.source_path
         destination_path = $destination.Replace($ProjectRoot + "\", "").Replace("\", "/")
         meta_created = $metaCopied
+        unity = [PSCustomObject]@{
+            ppu = $unitySettings.ppu
+            pivot = $unitySettings.pivot
+        }
     }
 }
 

@@ -1,0 +1,62 @@
+{
+  "schema": "lit_iso.asset_forge.tile_family_spec.v1",
+  "name": "greenwake_reference32_tile_family_v1",
+  "biome": "Greenwake",
+  "status": "review",
+  "style_profile": "Assets/Generated/_StyleProfiles/greenwake_reference_32_v1/style_profile.json",
+  "style_reference_pack": "Assets/Generated/_Review/ReferenceStyle_IsometricTileset2_v1",
+  "direction": "Refine terrain toward the approved 32px reference target. Generate or author terrain-only tiles first. Decorations, trees, rocks, logs, flowers, and grass clumps belong in prop/deco passes, not baked into terrain.",
+  "canvas": {
+    "source_px": 32,
+    "display_scale": 2,
+    "ppu": 32,
+    "footprint": "diamond_1x1",
+    "height": 1,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.25
+    }
+  },
+  "materials": [
+    "grass",
+    "dirt",
+    "path",
+    "stone",
+    "water_edge",
+    "snow"
+  ],
+  "required_shapes_first_gate": [
+    {
+      "id": "grass_flat_top",
+      "count": 1,
+      "prompt_shape": "single flat 32x32 2:1 isometric grass diamond tile, bright green top, sparse dark grass speckles, transparent corners, no side walls"
+    },
+    {
+      "id": "dirt_flat_top",
+      "count": 1,
+      "prompt_shape": "single flat 32x32 2:1 isometric dirt diamond tile, warm brown top, sparse darker pixel texture, transparent corners, no side walls"
+    },
+    {
+      "id": "grass_raised_block",
+      "count": 1,
+      "prompt_shape": "single raised 32x32 isometric grass block, bright green top face dominant, short warm brown side faces, clean underside shadow"
+    },
+    {
+      "id": "dirt_raised_block",
+      "count": 1,
+      "prompt_shape": "single raised 32x32 isometric dirt block, warm dirt top face dominant, short darker brown side faces, clean underside shadow"
+    }
+  ],
+  "required_shapes_after_gate": [
+    "grass_to_dirt_north",
+    "grass_to_dirt_south",
+    "grass_to_dirt_east",
+    "grass_to_dirt_west",
+    "outer_corners",
+    "inner_corners",
+    "path_caps",
+    "path_straights",
+    "path_corners"
+  ],
+  "negative_prompt": "tree, bush, rock, flower, log, stump, prop, item, character, creature, building, wall, complete map, scene background, UI frame, text, watermark, realistic render, noisy clutter, object on top, oversized side wall"
+}

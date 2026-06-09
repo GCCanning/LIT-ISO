@@ -13,8 +13,17 @@ namespace IsoCore.Foundation
         public int Wy { get; private set; }
 
         IsoWorld _world;
+        WorldProgressBar _progressBar;
+        SpriteRenderer _renderer;
+        int _maxHits;
         int _remainingHits;
         bool _shaking;
+
+        public int MaxHits => _maxHits;
+        public int RemainingHits => _remainingHits;
+        public float BreakProgress01 => _maxHits <= 0 ? 1f : 1f - _remainingHits / (float)_maxHits;
+        public int SortingOrder => _renderer != null ? _renderer.sortingOrder : 0;
+        public Vector3 HighlightPosition => transform.position;
 
         // Down-screen nudge (world units) that seats a prop into the front-centre of its
         // tile instead of on the tile's widest line (the 4-tile meeting points).
@@ -23,7 +32,8 @@ namespace IsoCore.Foundation
         public void Init(ResourceNodeDefinition def, IsoWorld world, int wx, int wy)
         {
             Def = def; _world = world; Wx = wx; Wy = wy;
-            _remainingHits = Mathf.Max(1, def.hitsToHarvest);
+            _maxHits = Mathf.Max(1, def.hitsToHarvest);
+            _remainingHits = _maxHits;
 
             int height = world.GetHeight(wx, wy);
             // Seat the prop slightly forward (down-screen) of the exact cell centre. The
@@ -31,24 +41,36 @@ namespace IsoCore.Foundation
             // where four tiles meet — planting a base there reads as "on the intersection".
             // Nudging down into the front triangle plants it clearly inside the one tile.
             Vector3 pos = IsoGrid.CellToWorld(wx, wy, height);
-            pos.y += SeatOffsetY;
-            transform.position = pos;
-            var sr = GetComponent<SpriteRenderer>();
-            sr.sharedMaterial = SpriteAmbient.Material; // day/night world tint
+            _renderer = GetComponent<SpriteRenderer>();
+            _renderer.sharedMaterial = SpriteAmbient.Material; // day/night world tint
             // Prefer real pixel-art from Resources/Decorations/<nodeId>.png (sized via its
             // PPU and pivoted at its base so it stands inside the cell). Fall back to the
             // procedural placeholder box when no art is present for this node id.
             var art = DecorationSpriteResolver.Resolve(def.id);
             if (art != null)
             {
-                sr.sprite = art;
-                sr.color = Color.white; // real art carries its own colour
+                _renderer.sprite = art;
+                _renderer.color = Color.white; // real art carries its own colour
+                transform.position = pos;
             }
             else
             {
-                sr.sprite = PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
+                pos.y += SeatOffsetY;
+                transform.position = pos;
+                _renderer.sprite = PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
             }
-            sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, height, IsoGrid.LayerProp);
+            _renderer.sortingOrder = IsoGrid.SortingOrder(wx, wy, height, IsoGrid.LayerProp);
+
+            _progressBar = null;
+        }
+
+        public bool ContainsWorldPoint(Vector2 worldPoint)
+        {
+            if (_renderer == null)
+                _renderer = GetComponent<SpriteRenderer>();
+
+            return _renderer != null &&
+                _renderer.bounds.Contains(new Vector3(worldPoint.x, worldPoint.y, _renderer.bounds.center.z));
         }
 
         /// <summary>True when this node needs a tool the player isn't holding.</summary>
@@ -57,15 +79,16 @@ namespace IsoCore.Foundation
 
         /// <summary>One harvest hit. Better tools (higher tier) deplete faster.
         /// Returns true when fully depleted (drops granted).</summary>
-        public bool Harvest(Inventory inv, ToolType tool, int tier, out bool blockedFull)
+        public bool Harvest(Inventory inv, ToolType tool, int tier, out bool blockedFull, List<ItemStack> grantedDrops = null)
         {
             blockedFull = false;
             if (RequiresMissingTool(tool)) return false;
-            int power = (Def.requiredTool != ToolType.None && tool == Def.requiredTool)
-                ? Mathf.Max(1, tier) : 1; // right tool tier is faster; hand/other = 1
+            int power = Def.requiredTool != ToolType.None
+                ? (tool == Def.requiredTool ? Mathf.Max(2, tier + 1) : 1)
+                : Mathf.Max(1, tier); // right/generic tool tier is faster; hand = 1
 
-            // Only the depleting hit grants drops — block it (without losing yield) if the
-            // guaranteed drops can't fit. Considers partial stacks via Inventory.CanFit.
+            // Only the depleting hit grants drops. Block it if the full possible roll
+            // cannot fit; without world-drop entities this avoids silent overflow loss.
             if (_remainingHits - power <= 0 && !DropsCanFit(inv))
             {
                 blockedFull = true;
@@ -73,6 +96,7 @@ namespace IsoCore.Foundation
             }
 
             _remainingHits -= power;
+            EnsureProgressBar().Show(BreakProgress01);
 
             // Per-hit juice: a directional chip burst, sound, and a quick shake.
             Vector3 fxOrigin = transform.position + Vector3.up * (Def.heightUnits * 0.5f);
@@ -86,7 +110,7 @@ namespace IsoCore.Foundation
             }
 
             // Depletion: grant drops, show pickup text, bigger burst + completion sound.
-            var granted = new List<ItemStack>();
+            var granted = grantedDrops ?? new List<ItemStack>();
             HarvestSystem.RollDrops(Def.drops, inv, granted);
             ShowPickups(granted, fxOrigin);
             WorldFx.Debris(fxOrigin, DebrisColor(), 12, 0.08f, 2.9f);
@@ -96,6 +120,19 @@ namespace IsoCore.Foundation
         }
 
         // ---- Juice helpers ----
+        WorldProgressBar EnsureProgressBar()
+        {
+            if (_progressBar != null) return _progressBar;
+
+            var sr = GetComponent<SpriteRenderer>();
+            var barGo = new GameObject("BreakProgress");
+            barGo.transform.SetParent(transform, false);
+            barGo.transform.localPosition = new Vector3(0f, Def.heightUnits + 0.16f, 0f);
+            _progressBar = barGo.AddComponent<WorldProgressBar>();
+            _progressBar.Build(sr != null ? sr.sortingOrder + 2 : 2);
+            return _progressBar;
+        }
+
         string HitSfxKey()
         {
             switch (Def.id)
@@ -164,17 +201,17 @@ namespace IsoCore.Foundation
             if (Def.drops == null) return true;
             int count = 0;
             foreach (var d in Def.drops)
-                if (!string.IsNullOrEmpty(d.itemId) && d.chance >= 1f) count++;
+                if (!string.IsNullOrEmpty(d.itemId)) count++;
             if (count == 0) return true;
 
-            var guaranteed = new ItemStack[count];
+            var possible = new ItemStack[count];
             int i = 0;
             foreach (var d in Def.drops)
             {
-                if (string.IsNullOrEmpty(d.itemId) || d.chance < 1f) continue; // bonus drops may be skipped
-                guaranteed[i++] = new ItemStack(d.itemId, Mathf.Max(1, d.max));
+                if (string.IsNullOrEmpty(d.itemId)) continue;
+                possible[i++] = new ItemStack(d.itemId, Mathf.Max(1, d.max));
             }
-            return inv.CanFitAll(guaranteed);
+            return inv.CanFitAll(possible);
         }
     }
 }

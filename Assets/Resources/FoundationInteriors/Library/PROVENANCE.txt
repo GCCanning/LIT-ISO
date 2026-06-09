@@ -1,0 +1,6 @@
+﻿Source: OpenGameArt / Kenney "Isometric Miniature Library"
+URL: https://opengameart.org/content/isometric-miniature-library
+License: CC0 1.0 Universal
+Imported by Codex as a curated prototype subset for the Foundation library interior.
+Full downloaded archive is kept outside Unity at C:\tmp\LIT-ISO-OGA-Kenney-Review\library.zip.
+Runtime path: Resources/FoundationInteriors/Library.

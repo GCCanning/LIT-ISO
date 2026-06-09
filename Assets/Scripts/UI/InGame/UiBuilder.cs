@@ -10,12 +10,12 @@ namespace LitIso.UI.InGame
     /// </summary>
     internal static class UiBuilder
     {
-        internal static readonly Color TextCol  = new Color(0.95f, 0.91f, 0.74f, 1f);
-        internal static readonly Color MutedCol = new Color(0.75f, 0.75f, 0.75f, 1f);
-        internal static readonly Color PanelBg  = new Color(0.07f, 0.09f, 0.13f, 0.95f);
-        internal static readonly Color Border   = new Color(0.30f, 0.36f, 0.42f, 1f);
+        internal static readonly Color TextCol  = new Color(0.98f, 0.94f, 0.78f, 1f);
+        internal static readonly Color MutedCol = new Color(0.82f, 0.82f, 0.78f, 1f);
+        internal static readonly Color PanelBg  = new Color(0.055f, 0.065f, 0.085f, 0.985f);
+        internal static readonly Color Border   = new Color(0.42f, 0.46f, 0.50f, 1f);
         internal static readonly Color Scrim    = new Color(0f, 0f, 0f, 0.55f);
-        internal static readonly Color SlotBg   = new Color(0.10f, 0.12f, 0.16f, 0.85f);
+        internal static readonly Color SlotBg   = new Color(0.08f, 0.095f, 0.125f, 0.94f);
         internal static readonly Color Select   = new Color(0.98f, 0.85f, 0.45f, 1f);
 
         /// <summary>Sprite from Resources/UI/InGame/&lt;name&gt; (null if not present).</summary>
@@ -27,6 +27,7 @@ namespace LitIso.UI.InGame
             go.transform.SetParent(parent, false);
             var c = go.AddComponent<Canvas>();
             c.renderMode = RenderMode.ScreenSpaceOverlay;
+            c.pixelPerfect = true;
             c.sortingOrder = sortingOrder;
             var s = go.AddComponent<CanvasScaler>();
             s.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -62,7 +63,7 @@ namespace LitIso.UI.InGame
             {
                 var outline = img.gameObject.AddComponent<Outline>();
                 outline.effectColor = Border;
-                outline.effectDistance = new Vector2(1.5f, -1.5f);
+                outline.effectDistance = new Vector2(2f, -2f);
             }
             return img;
         }
@@ -78,7 +79,19 @@ namespace LitIso.UI.InGame
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
             LitIsoFont.Apply(t, size);
+            ApplyTextReadability(t);
             return t;
+        }
+
+        internal static void ApplyTextReadability(Text text)
+        {
+            if (text == null || text.GetComponent<Shadow>() != null)
+                return;
+
+            var shadow = text.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
+            shadow.effectDistance = new Vector2(1.5f, -1.5f);
+            shadow.useGraphicAlpha = true;
         }
 
         /// <summary>Stretches the rect to fill its parent with optional uniform padding.</summary>

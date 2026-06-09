@@ -37,10 +37,27 @@ namespace IsoCore.Foundation
             {
                 // Horizon -> noon, warmed by the sun's own colour near the horizon.
                 Color lit = Color.Lerp(dayNight.LightColor, NoonColor, i);
-                return Color.Lerp(DuskFloor, lit, Mathf.Clamp01(i * 1.15f));
+                return ApplyWeather(Color.Lerp(DuskFloor, lit, Mathf.Clamp01(i * 1.15f)));
             }
             float m = dayNight.moonStrength > 0.001f ? Mathf.Clamp01(i / dayNight.moonStrength) : 0f;
-            return Color.Lerp(NightDeep, NightMoon, m);
+            return ApplyWeather(Color.Lerp(NightDeep, NightMoon, m));
+        }
+
+        static Color ApplyWeather(Color baseColor)
+        {
+            var weather = FoundationWeatherVisuals.Active;
+            if (weather == null || weather.AmbientDimming <= 0.001f)
+                return baseColor;
+
+            float dim = Mathf.Clamp01(weather.AmbientDimming);
+            Color tinted = new Color(
+                baseColor.r * weather.AmbientTint.r,
+                baseColor.g * weather.AmbientTint.g,
+                baseColor.b * weather.AmbientTint.b,
+                baseColor.a);
+            Color dimmed = Color.Lerp(tinted, tinted * 0.72f, dim);
+            dimmed.a = baseColor.a;
+            return dimmed;
         }
     }
 }

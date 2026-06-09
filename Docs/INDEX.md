@@ -18,6 +18,9 @@ Navigation hub. Open only what your current task needs (keeps context lean).
   - `10_CleanRoom_Clone_Backlog.md` — **the art/content roadmap (Milestones A/B/C)**.
   - `15_LitRPG_System_Bible.md` — original LitRPG classes, stats, quests,
     skills, items, biomes, tile names, and progression direction.
+  - `22_Legacy_Retirement_Register.md` — what to keep, re-author into
+    Foundation, quarantine, or retire as the legacy Assembly-CSharp world winds
+    down.
 
 ## Editor entry points (Unity menu)
 - Foundation: `Tools/LIT-ISO/ISO-Core Foundation/{Build Foundation Scene, Generate

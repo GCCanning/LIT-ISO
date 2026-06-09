@@ -1,4 +1,5 @@
 using System;
+using IsoCore.Foundation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ namespace LitIso.UI.InGame
         public int count;      // stack count (only drawn when > 1)
         public Sprite icon;    // resolved item icon, or null → placeholder box
         public bool selected;  // is this the active hotbar slot
+        public float durability01;
     }
 
     /// <summary>
@@ -93,11 +95,16 @@ namespace LitIso.UI.InGame
 
         IGameHudModel _model;
         Canvas _canvas;
+        CanvasGroup _canvasGroup;
+        RectTransform _vitalsRoot;
+        RectTransform _hotbarRoot;
+        FoundationHudViewMode _hudMode = FoundationHudViewMode.Adventure;
 
         // Slot widget refs (for cheap per-frame updates without rebuilding).
         Image[] _slotFrames;
         Image[] _slotIcons;
         Image[] _slotHighlights;
+        Image[] _slotDurabilityFills;
         Text[]  _slotCounts;
 
         Image _healthFill, _manaFill, _hungerFill, _xpFill;
@@ -111,6 +118,7 @@ namespace LitIso.UI.InGame
             Build();
             Subscribe();
             Refresh();
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
         void Awake()
@@ -119,6 +127,18 @@ namespace LitIso.UI.InGame
             Build();
             Subscribe();
             Refresh();
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
+        }
+
+        void OnEnable()
+        {
+            FoundationUiCoordinator.HudViewModeChanged += ApplyHudViewMode;
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
+        }
+
+        void OnDisable()
+        {
+            FoundationUiCoordinator.HudViewModeChanged -= ApplyHudViewMode;
         }
 
         void OnDestroy() => Unsubscribe();
@@ -138,15 +158,18 @@ namespace LitIso.UI.InGame
             canvasGo.transform.SetParent(transform, false);
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _canvas.pixelPerfect = true;
             _canvas.sortingOrder = 100; // above the world
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 0.5f;
             canvasGo.AddComponent<GraphicRaycaster>();
+            _canvasGroup = canvasGo.AddComponent<CanvasGroup>();
 
             BuildVitals(canvasGo.transform);
             BuildHotbar(canvasGo.transform);
+            ApplyHudViewMode(_hudMode);
         }
 
         void BuildVitals(Transform parent)
@@ -155,10 +178,12 @@ namespace LitIso.UI.InGame
             int rowCount = showHungerBar ? 4 : 3;
 
             var col = NewRect("Vitals", parent);
-            col.anchorMin = col.anchorMax = new Vector2(0f, 0f);
-            col.pivot = new Vector2(0f, 0f);
-            col.anchoredPosition = new Vector2(24f, 24f);
-            col.sizeDelta = new Vector2(320f, 38f * rowCount + 24f);
+            _vitalsRoot = col;
+            col.anchorMin = col.anchorMax = new Vector2(0f, 1f);
+            col.pivot = new Vector2(0f, 1f);
+            col.anchoredPosition = new Vector2(24f, -24f);
+            col.sizeDelta = new Vector2(430f, 46f * rowCount + 30f);
+            PlayerResizableUi.Attach(col, "hud.vitals", new Vector2(260f, 120f), new Vector2(820f, 360f));
 
             // Optional decorative plate behind the bars (vitals_bg). Renders only if art exists.
             var plate = Spr("vitals_bg");
@@ -173,19 +198,19 @@ namespace LitIso.UI.InGame
             }
 
             int row = 0;
-            _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", 24f, "bar_track", "HP");
-            _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   24f, "bar_track", "MP");
+            _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", 30f, "bar_track", "HP");
+            _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   30f, "bar_track", "MP");
             if (showHungerBar)
-                _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", 24f, "bar_track", "FOOD");
-            _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 18f, "bar_xp_track", "XP");
+                _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", 30f, "bar_track", "FOOD");
+            _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 24f, "bar_xp_track", "XP");
 
             // Level label sits on the XP bar.
             _levelText = NewText(col, "Level", "Lv 1", 16, TextAnchor.MiddleLeft);
             var lt = _levelText.rectTransform;
             lt.anchorMin = lt.anchorMax = new Vector2(0f, 0f);
             lt.pivot = new Vector2(0f, 0f);
-            lt.anchoredPosition = new Vector2(6f, 0f);
-            lt.sizeDelta = new Vector2(120f, 18f);
+            lt.anchoredPosition = new Vector2(48f, -((rowCount - 1) * 44f));
+            lt.sizeDelta = new Vector2(140f, 22f);
         }
 
         // Creates a track + fill bar; returns the fill Image. row 0=top.
@@ -195,11 +220,11 @@ namespace LitIso.UI.InGame
         Image Bar(RectTransform parent, string name, int row, Color fillCol, string fillSkin, float h = 24f, string trackSkin = "bar_track", string label = null)
         {
             // Wider vertical gap so the bars don't visually crowd each other.
-            float gap = 12f;
+            float gap = 14f;
             // Labels sit OUTSIDE the track to the left; the track + fill occupy the
             // remaining width. labelW=0 when no label so a no-label bar fills the row.
-            float labelW = string.IsNullOrEmpty(label) ? 0f : 40f;
-            float trackW = 296f - labelW;
+            float labelW = string.IsNullOrEmpty(label) ? 0f : 48f;
+            float trackW = 382f - labelW;
             float y = -(row * (h + gap));
 
             // Label sits to the left of the track on its own rect — keeps the colored
@@ -243,14 +268,16 @@ namespace LitIso.UI.InGame
         void BuildHotbar(Transform parent)
         {
             int n = Mathf.Max(1, _model?.SlotCount ?? defaultSlotCount);
-            const float slot = 72f, gap = 6f;
+            const float slot = 68f, gap = 10f;
             float totalW = n * slot + (n - 1) * gap;
 
             var bar = NewRect("Hotbar", parent);
+            _hotbarRoot = bar;
             bar.anchorMin = bar.anchorMax = new Vector2(0.5f, 0f);
             bar.pivot = new Vector2(0.5f, 0f);
-            bar.anchoredPosition = new Vector2(0f, 24f);
-            bar.sizeDelta = new Vector2(totalW + 24f, slot + 16f);
+            bar.anchoredPosition = new Vector2(0f, 30f);
+            bar.sizeDelta = new Vector2(totalW + 32f, slot + 22f);
+            PlayerResizableUi.Attach(bar, "hud.hotbar", new Vector2(360f, 80f), new Vector2(1200f, 180f));
 
             // Optional bar background behind the slots (hotbar_bg.png if provided).
             var barBgSpr = Spr("hotbar_bg");
@@ -266,6 +293,7 @@ namespace LitIso.UI.InGame
             _slotFrames = new Image[n];
             _slotIcons = new Image[n];
             _slotHighlights = new Image[n];
+            _slotDurabilityFills = new Image[n];
             _slotCounts = new Text[n];
 
             float x0 = -(totalW * 0.5f) + slot * 0.5f;
@@ -312,6 +340,23 @@ namespace LitIso.UI.InGame
             ir.offsetMin = new Vector2(10f, 10f); ir.offsetMax = new Vector2(-10f, -10f);
             icon.enabled = false;
             _slotIcons[i] = icon;
+
+            var durTrack = NewImage(fr, "DurabilityTrack", null, new Color(0.04f, 0.05f, 0.06f, 0.9f));
+            durTrack.raycastTarget = false;
+            var dr = durTrack.rectTransform;
+            dr.anchorMin = new Vector2(0f, 0f); dr.anchorMax = new Vector2(1f, 0f);
+            dr.offsetMin = new Vector2(8f, 7f); dr.offsetMax = new Vector2(-8f, 12f);
+
+            var durFill = NewImage(durTrack.transform, "DurabilityFill", null, Color.green);
+            durFill.raycastTarget = false;
+            durFill.type = Image.Type.Filled;
+            durFill.fillMethod = Image.FillMethod.Horizontal;
+            durFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            var dfr = durFill.rectTransform;
+            dfr.anchorMin = Vector2.zero; dfr.anchorMax = Vector2.one;
+            dfr.offsetMin = new Vector2(1f, 1f); dfr.offsetMax = new Vector2(-1f, -1f);
+            durTrack.gameObject.SetActive(false);
+            _slotDurabilityFills[i] = durFill;
 
             // Stack count (bottom-right).
             var count = NewText(fr, "Count", "", 14, TextAnchor.LowerRight);
@@ -367,7 +412,44 @@ namespace LitIso.UI.InGame
 
                 if (_slotHighlights[i] != null)
                     _slotHighlights[i].gameObject.SetActive(s.selected);
+
+                if (_slotDurabilityFills != null && i < _slotDurabilityFills.Length && _slotDurabilityFills[i] != null)
+                {
+                    float durability = Mathf.Clamp01(s.durability01);
+                    var track = _slotDurabilityFills[i].transform.parent.gameObject;
+                    track.SetActive(durability > 0f && hasItem);
+                    _slotDurabilityFills[i].fillAmount = durability;
+                    _slotDurabilityFills[i].color = Color.Lerp(
+                        new Color(0.95f, 0.25f, 0.18f, 1f),
+                        new Color(0.32f, 0.90f, 0.42f, 1f),
+                        durability);
+                }
             }
+        }
+
+        void ApplyHudViewMode(FoundationHudViewMode mode)
+        {
+            _hudMode = mode;
+            bool show = mode != FoundationHudViewMode.Hidden;
+
+            if (_canvas != null)
+                _canvas.gameObject.SetActive(show);
+
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = show ? 1f : 0f;
+                _canvasGroup.blocksRaycasts = show;
+                _canvasGroup.interactable = show;
+            }
+
+            SetVisible(_vitalsRoot, show);
+            SetVisible(_hotbarRoot, show);
+        }
+
+        static void SetVisible(RectTransform root, bool visible)
+        {
+            if (root != null && root.gameObject.activeSelf != visible)
+                root.gameObject.SetActive(visible);
         }
 
         // --------------------------------------------------------------- helpers
@@ -400,6 +482,10 @@ namespace LitIso.UI.InGame
             t.horizontalOverflow = HorizontalWrapMode.Overflow;
             t.verticalOverflow = VerticalWrapMode.Overflow;
             LitIsoFont.Apply(t, size);
+            var shadow = go.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
+            shadow.effectDistance = new Vector2(1.5f, -1.5f);
+            shadow.useGraphicAlpha = true;
             return t;
         }
     }

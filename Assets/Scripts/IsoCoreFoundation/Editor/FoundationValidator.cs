@@ -18,6 +18,16 @@ namespace IsoCore.Foundation.EditorTools
 
         public static string Validate(bool showDialog)
         {
+            return Validate(showDialog, true);
+        }
+
+        public static string ValidateNoReport()
+        {
+            return Validate(false, false);
+        }
+
+        public static string Validate(bool showDialog, bool writeReport)
+        {
             var checks = new List<Check>();
             void Add(string n, bool p, string d = "") => checks.Add(new Check { name = n, pass = p, detail = d });
 
@@ -36,6 +46,18 @@ namespace IsoCore.Foundation.EditorTools
             Add("LitRPG Calling database", c.Callings.Count >= 7, $"{c.Callings.Count} callings");
             Add("LitRPG Skill database", c.Skills.Count >= 12, $"{c.Skills.Count} skills");
             Add("LitRPG Quest database", c.Quests.Count >= 5, $"{c.Quests.Count} quests");
+            Add("LitRPG Trial data spine databases",
+                c.EvidenceEvents.Count >= 8 &&
+                c.XPChannels.Count >= 8 &&
+                c.Titles.Count >= 6 &&
+                c.Affinities.Count >= 7 &&
+                c.Classes.Count >= 8 &&
+                c.Professions.Count >= 8 &&
+                c.Dungeons.Count >= 1 &&
+                c.DungeonResults.Count >= 1 &&
+                c.GuildBoardEntries.Count >= 1 &&
+                c.WorldEvents.Count >= 4,
+                $"Evidence:{c.EvidenceEvents.Count} XP:{c.XPChannels.Count} Titles:{c.Titles.Count} Affinities:{c.Affinities.Count} Classes:{c.Classes.Count} Professions:{c.Professions.Count}");
 
             // ---- Block groups have variants ----
             bool groupsOk = true; string groupDetail = "";
@@ -71,6 +93,68 @@ namespace IsoCore.Foundation.EditorTools
                 if (!string.IsNullOrEmpty(p.requiredItemId) && !c.Items.Has(p.requiredItemId))
                 { placeReqOk = false; placeReqDetail += $"{p.id}->{p.requiredItemId} "; }
             Add("Placeable required-item references valid", placeReqOk, placeReqOk ? "all resolve" : placeReqDetail);
+
+            bool footprintOk = true; string footprintDetail = "";
+            foreach (var p in c.Placeables.All)
+            {
+                if (p.FootprintWidth < 1 || p.FootprintHeight < 1)
+                {
+                    footprintOk = false;
+                    footprintDetail += $"{p.id}:{p.FootprintWidth}x{p.FootprintHeight} ";
+                }
+            }
+            Add("Placeable footprints valid", footprintOk, footprintOk ? "all >= 1x1" : footprintDetail);
+
+            bool entranceOk = true; string entranceDetail = "";
+            int entranceCount = 0;
+            foreach (var p in c.Placeables.All)
+            {
+                if (p.interaction != InteractionKind.Entrance) continue;
+                entranceCount++;
+                if (string.IsNullOrWhiteSpace(p.destinationId))
+                {
+                    entranceOk = false;
+                    entranceDetail += $"{p.id}:missing_destination ";
+                }
+            }
+            Add("Entrance placeables have destinations",
+                entranceOk && entranceCount >= 1,
+                entranceOk ? $"{entranceCount} entrances" : entranceDetail);
+
+            bool constructionOk = true; string constructionDetail = "";
+            int constructionCount = 0;
+            foreach (var p in c.Placeables.All)
+            {
+                if (p.interaction != InteractionKind.Construction) continue;
+                constructionCount++;
+
+                if (string.IsNullOrWhiteSpace(p.constructionResultPlaceableId) ||
+                    !c.Placeables.Has(p.constructionResultPlaceableId))
+                {
+                    constructionOk = false;
+                    constructionDetail += $"{p.id}:result:{p.constructionResultPlaceableId} ";
+                }
+
+                if (p.constructionCost == null || p.constructionCost.Length == 0)
+                {
+                    constructionOk = false;
+                    constructionDetail += $"{p.id}:empty_cost ";
+                }
+                else
+                {
+                    foreach (var cost in p.constructionCost)
+                    {
+                        if (string.IsNullOrWhiteSpace(cost.itemId) || cost.count <= 0 || !c.Items.Has(cost.itemId))
+                        {
+                            constructionOk = false;
+                            constructionDetail += $"{p.id}:cost:{cost.itemId} ";
+                        }
+                    }
+                }
+            }
+            Add("Construction plots resolve result buildings and materials",
+                constructionOk && constructionCount >= 1,
+                constructionOk ? $"{constructionCount} plots" : constructionDetail);
 
             // ---- Seed / crop references ----
             bool seedOk = true; string seedDetail = "";
@@ -138,6 +222,51 @@ namespace IsoCore.Foundation.EditorTools
             }
             Add("Quest definitions have objectives and rewards", questOk, questOk ? "all populated" : questDetail);
 
+            bool trialRefsOk = true; string trialRefsDetail = "";
+            foreach (var evidence in c.EvidenceEvents.All)
+            {
+                if (evidence.evidenceWeights == null || evidence.evidenceWeights.Length == 0)
+                { trialRefsOk = false; trialRefsDetail += $"{evidence.id}:no_weights "; }
+                if (evidence.titleProgress != null)
+                    foreach (var title in evidence.titleProgress)
+                        if (!c.Titles.Has(title.titleId))
+                        { trialRefsOk = false; trialRefsDetail += $"{evidence.id}->title:{title.titleId} "; }
+                if (evidence.affinityProgress != null)
+                    foreach (var affinity in evidence.affinityProgress)
+                        if (!c.Affinities.Has(affinity.affinityId))
+                        { trialRefsOk = false; trialRefsDetail += $"{evidence.id}->affinity:{affinity.affinityId} "; }
+                if (evidence.xpGrants != null)
+                    foreach (var xp in evidence.xpGrants)
+                        if (!string.IsNullOrWhiteSpace(xp.id) && !c.XPChannels.Has(xp.id) && !c.Skills.Has(xp.id) && !c.Professions.Has(xp.id))
+                        { trialRefsOk = false; trialRefsDetail += $"{evidence.id}->xp:{xp.id} "; }
+            }
+            foreach (var cls in c.Classes.All)
+                if (cls.weights == null || cls.weights.Length == 0)
+                { trialRefsOk = false; trialRefsDetail += $"{cls.id}:no_class_weights "; }
+            foreach (var profession in c.Professions.All)
+                if (profession.progressionSkillIds == null || profession.progressionSkillIds.Length == 0)
+                { trialRefsOk = false; trialRefsDetail += $"{profession.id}:no_skills "; }
+                else foreach (var skillId in profession.progressionSkillIds)
+                    if (!c.Skills.Has(skillId))
+                    { trialRefsOk = false; trialRefsDetail += $"{profession.id}->{skillId} "; }
+            foreach (var dungeon in c.Dungeons.All)
+            {
+                if (!c.DungeonResults.Has(dungeon.resultId))
+                { trialRefsOk = false; trialRefsDetail += $"{dungeon.id}->result:{dungeon.resultId} "; }
+                if (dungeon.recommendedSupplyItemIds != null)
+                    foreach (var itemId in dungeon.recommendedSupplyItemIds)
+                        if (!c.Items.Has(itemId))
+                        { trialRefsOk = false; trialRefsDetail += $"{dungeon.id}->item:{itemId} "; }
+            }
+            foreach (var entry in c.GuildBoardEntries.All)
+            {
+                if (!string.IsNullOrWhiteSpace(entry.questId) && !c.Quests.Has(entry.questId))
+                { trialRefsOk = false; trialRefsDetail += $"{entry.id}->quest:{entry.questId} "; }
+                if (!string.IsNullOrWhiteSpace(entry.worldEventId) && !c.WorldEvents.Has(entry.worldEventId))
+                { trialRefsOk = false; trialRefsDetail += $"{entry.id}->event:{entry.worldEventId} "; }
+            }
+            Add("Trial data spine references resolve", trialRefsOk, trialRefsOk ? "all resolve" : trialRefsDetail);
+
             // ---- Scene / bootstrap / camera ----
             string fullScene = Path.Combine(FoundationPaths.ProjectRoot, FoundationPaths.ScenePath);
             bool sceneExists = File.Exists(fullScene);
@@ -168,11 +297,12 @@ namespace IsoCore.Foundation.EditorTools
             // ---- Report ----
             int passed = 0; foreach (var ch in checks) if (ch.pass) passed++;
             bool allPass = passed == checks.Count;
-            WriteReport(checks, passed, c);
+            if (writeReport)
+                WriteReport(checks, passed, c);
 
             string summary = $"[ISO-Core] Validation: {passed}/{checks.Count} checks passed " +
                              $"({(allPass ? "ALL PASS" : "see report")}). " +
-                             "Report: Docs/IsoCoreFoundation/06_Validation_Report.md";
+                             (writeReport ? "Report: Docs/IsoCoreFoundation/06_Validation_Report.md" : "Report writing skipped");
             if (showDialog) EditorUtility.DisplayDialog("ISO-Core Foundation - Validation",
                 $"{passed}/{checks.Count} checks passed.\n\n" +
                 (allPass ? "All editor-side checks passed." : "Some checks failed - see 06_Validation_Report.md."), "OK");
@@ -202,6 +332,8 @@ namespace IsoCore.Foundation.EditorTools
             sb.AppendLine($"- Biomes: {c.Biomes.Count}, Items: {c.Items.Count}, Placeables: {c.Placeables.Count}");
             sb.AppendLine($"- Recipes: {c.Recipes.Count}, Resource nodes: {c.Nodes.Count}, Mobs: {c.Mobs.Count}, Crops: {c.Crops.Count}");
             sb.AppendLine($"- Callings: {c.Callings.Count}, Skills: {c.Skills.Count}, Quests: {c.Quests.Count}");
+            sb.AppendLine($"- Evidence: {c.EvidenceEvents.Count}, XP Channels: {c.XPChannels.Count}, Titles: {c.Titles.Count}, Affinities: {c.Affinities.Count}");
+            sb.AppendLine($"- Classes: {c.Classes.Count}, Professions: {c.Professions.Count}, Dungeons: {c.Dungeons.Count}, Board Entries: {c.GuildBoardEntries.Count}, World Events: {c.WorldEvents.Count}");
             sb.AppendLine();
             sb.AppendLine("## Manual play-mode checklist");
             sb.AppendLine();
@@ -209,13 +341,13 @@ namespace IsoCore.Foundation.EditorTools
             sb.AppendLine();
             sb.AppendLine("- [ ] Procedural isometric terrain renders around spawn (multiple biome colours visible while walking out).");
             sb.AppendLine("- [ ] Player moves with WASD and **cannot** walk through trees/rocks/water (collision).");
-            sb.AppendLine("- [ ] `E` near a tree/rock harvests it; item appears in the hotbar/inventory (`I`).");
+            sb.AppendLine("- [ ] `LMB` on a tree/rock/bush breaks it; a durability bar appears and drops enter the hotbar/inventory (`I`).");
             sb.AppendLine("- [ ] Select the hoe and `LMB` a walkable cell to till soil; select seeds and `LMB` tilled soil to plant.");
-            sb.AppendLine("- [ ] Crops grow through visible stages; `E` near a mature crop harvests produce without deleting it when inventory is full.");
+            sb.AppendLine("- [ ] Crops grow through visible stages; `LMB` on a mature crop harvests produce without deleting it when inventory is full.");
             sb.AppendLine("- [ ] Select `workbench` (or stone block) on the hotbar (1-9); a green/red ghost shows at the cursor.");
-            sb.AppendLine("- [ ] `LMB` places a block / placeable; the item count decrements; `RMB` removes a placeable.");
+            sb.AppendLine("- [ ] `LMB` places a block / placeable; the item count decrements; `RMB` opens context options for blocks/placeables.");
             sb.AppendLine("- [ ] Placed solid block blocks player movement (collision refresh).");
-            sb.AppendLine("- [ ] `E` next to the placed workbench opens the crafting panel; a recipe crafts and consumes inputs.");
+            sb.AppendLine("- [ ] `RMB` on a placed workbench offers a crafting action; a recipe crafts and consumes inputs.");
             sb.AppendLine("- [ ] At least one mob (deer/slime) wanders nearby and despawns when far away.");
             sb.AppendLine();
             sb.AppendLine("> Note: legacy movement uses the classic `Input` axes. Ensure Project Settings > Player >");

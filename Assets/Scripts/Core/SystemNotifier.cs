@@ -31,6 +31,8 @@ public class SystemNotifier : MonoBehaviour
         WorldEvent,    // World boss spawn, Blood Moon, invasion (red/orange)
         Warning,       // Low HP, debuff, danger (yellow)
         Achievement,   // Title earned, achievement unlocked (purple)
+        QuestNew,      // New quest started (soft purple)
+        QuestComplete, // Quest completed (gold)
     }
 
     // -------------------------------------------------------------------------
@@ -54,7 +56,6 @@ public class SystemNotifier : MonoBehaviour
     // -------------------------------------------------------------------------
 
     private readonly Queue<(string text, MessageType type)> queue = new();
-    private bool isProcessing = false;
 
     // -------------------------------------------------------------------------
     // Singleton lifecycle

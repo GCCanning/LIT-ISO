@@ -42,6 +42,19 @@ namespace IsoCore.Foundation
             Refresh();
         }
 
+        public void SetGround(Vector2 ground)
+        {
+            if (_world == null) return;
+            _ground = ground;
+            Refresh();
+        }
+
+        public void SetCell(int wx, int wy)
+        {
+            var world = IsoGrid.CellToWorld(wx, wy, 0);
+            SetGround(new Vector2(world.x, world.y));
+        }
+
         void Update()
         {
             IsMoving = false;

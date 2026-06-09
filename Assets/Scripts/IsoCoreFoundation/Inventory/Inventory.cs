@@ -23,10 +23,55 @@ namespace IsoCore.Foundation
 
         public ItemStack GetSlot(int i) => (i >= 0 && i < _slots.Length) ? _slots[i] : default;
 
+        public ItemStack[] SnapshotSlots()
+        {
+            var copy = new ItemStack[_slots.Length];
+            Array.Copy(_slots, copy, _slots.Length);
+            return copy;
+        }
+
+        public void RestoreSlots(ItemStack[] slots)
+        {
+            for (int i = 0; i < _slots.Length; i++)
+                _slots[i] = default;
+
+            if (slots != null)
+            {
+                int n = Mathf.Min(_slots.Length, slots.Length);
+                for (int i = 0; i < n; i++)
+                {
+                    var stack = slots[i];
+                    if (stack.IsEmpty) continue;
+                    if (_content.Items.Get(stack.itemId) == null) continue;
+                    _slots[i] = NormalizeStack(stack.itemId,
+                        Mathf.Min(stack.count, MaxStack(stack.itemId)),
+                        stack.durability);
+                }
+            }
+
+            OnChanged?.Invoke();
+        }
+
         int MaxStack(string itemId)
         {
             var def = _content.Items.Get(itemId);
             return def != null ? Mathf.Max(1, def.maxStack) : 99;
+        }
+
+        int MaxDurability(string itemId)
+        {
+            var def = _content.Items.Get(itemId);
+            return def != null ? Mathf.Max(0, def.maxDurability) : 0;
+        }
+
+        ItemStack NormalizeStack(string itemId, int count, int durability = 0)
+        {
+            int maxDurability = MaxDurability(itemId);
+            if (maxDurability > 0)
+                durability = durability > 0 ? Mathf.Clamp(durability, 1, maxDurability) : maxDurability;
+            else
+                durability = 0;
+            return new ItemStack(itemId, count, durability);
         }
 
         /// <summary>Adds count; returns leftover that did not fit.</summary>
@@ -49,7 +94,7 @@ namespace IsoCore.Foundation
                 if (_slots[i].IsEmpty)
                 {
                     int add = Mathf.Min(max, count);
-                    _slots[i] = new ItemStack(itemId, add);
+                    _slots[i] = NormalizeStack(itemId, add);
                     count -= add;
                 }
             }
@@ -92,8 +137,50 @@ namespace IsoCore.Foundation
         public bool CanFitAll(ItemStack[] stacks)
         {
             if (stacks == null || stacks.Length == 0) return true;
+            return CanFitAllInto(CopySlots(), stacks);
+        }
+
+        /// <summary>Would removing ingredients and then adding outputs fit without overflow?</summary>
+        public bool CanExchange(RecipeIngredient[] remove, ItemStack[] add)
+        {
+            var scratch = CopySlots();
+            if (remove != null)
+            {
+                foreach (var ingredient in remove)
+                {
+                    int remaining = ingredient.count;
+                    if (remaining <= 0) continue;
+
+                    for (int i = 0; i < scratch.Length && remaining > 0; i++)
+                    {
+                        if (scratch[i].itemId != ingredient.itemId)
+                            continue;
+
+                        int take = Mathf.Min(scratch[i].count, remaining);
+                        scratch[i].count -= take;
+                        remaining -= take;
+                        if (scratch[i].count <= 0)
+                            scratch[i] = default;
+                    }
+
+                    if (remaining > 0)
+                        return false;
+                }
+            }
+
+            return CanFitAllInto(scratch, add);
+        }
+
+        ItemStack[] CopySlots()
+        {
             var scratch = new ItemStack[_slots.Length];
             Array.Copy(_slots, scratch, _slots.Length);
+            return scratch;
+        }
+
+        bool CanFitAllInto(ItemStack[] scratch, ItemStack[] stacks)
+        {
+            if (stacks == null || stacks.Length == 0) return true;
 
             foreach (var stack in stacks)
             {
@@ -142,6 +229,48 @@ namespace IsoCore.Foundation
             }
             OnChanged?.Invoke();
             return true;
+        }
+
+        public bool DamageSlot(int slot, int amount)
+        {
+            if (slot < 0 || slot >= _slots.Length || amount <= 0)
+                return false;
+
+            var stack = _slots[slot];
+            if (stack.IsEmpty)
+                return false;
+
+            int maxDurability = MaxDurability(stack.itemId);
+            if (maxDurability <= 0)
+                return false;
+
+            if (stack.durability <= 0)
+                stack.durability = maxDurability;
+
+            stack.durability -= amount;
+            if (stack.durability <= 0)
+            {
+                _slots[slot] = default;
+                OnChanged?.Invoke();
+                return true;
+            }
+
+            _slots[slot] = stack;
+            OnChanged?.Invoke();
+            return false;
+        }
+
+        public float Durability01(int slot)
+        {
+            if (slot < 0 || slot >= _slots.Length)
+                return 0f;
+
+            var stack = _slots[slot];
+            if (stack.IsEmpty)
+                return 0f;
+
+            int maxDurability = MaxDurability(stack.itemId);
+            return maxDurability > 0 ? Mathf.Clamp01(stack.durability / (float)maxDurability) : 0f;
         }
     }
 }

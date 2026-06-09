@@ -20,6 +20,8 @@ namespace IsoCore.Foundation
         [Header("Tool (if category == Tool)")]
         public ToolType toolType = ToolType.None;
         public int toolTier = 1; // 1=wood, 2=stone, 3=copper... higher harvests faster
+        public int maxDurability = 0;
+        public int durabilityLossPerUse = 1;
 
         [Header("Food (if category == Food)")]
         public int foodRestore = 0;
@@ -33,6 +35,7 @@ namespace IsoCore.Foundation
         public bool PlacesPlaceable => !string.IsNullOrEmpty(placeableId);
         public bool IsPlaceable => PlacesBlock || PlacesPlaceable;
         public bool IsSeed => !string.IsNullOrEmpty(plantCropId);
+        public bool HasDurability => maxDurability > 0;
         public Sprite Icon => icon;
     }
 

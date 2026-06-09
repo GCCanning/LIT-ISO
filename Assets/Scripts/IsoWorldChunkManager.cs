@@ -964,11 +964,14 @@ public IsoBiomeDefinition[] biomes;
             return false;
         }
 
-        int hitCount = Physics2D.OverlapCircleNonAlloc(
+        var filter = new ContactFilter2D();
+        filter.SetLayerMask(1 << layerIndex);
+        filter.useTriggers = true;
+        int hitCount = Physics2D.OverlapCircle(
             new Vector2(footWorldPosition.x, footWorldPosition.y),
             Mathf.Max(0.05f, footprintRadius),
-            terrainOverlapBuffer,
-            1 << layerIndex);
+            filter,
+            terrainOverlapBuffer);
 
         for (int i = 0; i < hitCount; i++)
         {
@@ -1169,7 +1172,6 @@ public IsoBiomeDefinition[] biomes;
             colliderRb.bodyType = RigidbodyType2D.Static;
 
             TilemapCollider2D tilemapCollider = colliderLayers[i].gameObject.AddComponent<TilemapCollider2D>();
-            tilemapCollider.usedByComposite = true;
             tilemapCollider.compositeOperation = Collider2D.CompositeOperation.Merge;
 
             CompositeCollider2D composite = colliderLayers[i].gameObject.AddComponent<CompositeCollider2D>();

@@ -18,11 +18,19 @@ namespace IsoCore.Foundation
 
         SpriteRenderer _sr;
         float _alpha = 1f;
+        bool _occluding;
+        float _nextCheckTime;
+
+        const float CheckInterval = 0.08f;
 
         // Shared across all props: the one player sprite. Lazily found, re-found if destroyed.
         static SpriteRenderer s_playerSr;
 
-        void Awake() => _sr = GetComponent<SpriteRenderer>();
+        void Awake()
+        {
+            _sr = GetComponent<SpriteRenderer>();
+            _nextCheckTime = Time.time + Mathf.Abs(GetInstanceID() % 17) * 0.005f;
+        }
 
         static SpriteRenderer PlayerSprite()
         {
@@ -34,14 +42,18 @@ namespace IsoCore.Foundation
 
         void LateUpdate()
         {
-            var psr = PlayerSprite();
-            bool occluding =
-                psr != null && psr.enabled && _sr.enabled &&
-                _sr.sortingLayerID == psr.sortingLayerID &&
-                _sr.sortingOrder > psr.sortingOrder &&   // this prop draws in front of the player
-                _sr.bounds.Intersects(psr.bounds);        // and overlaps the player on screen
+            if (Time.time >= _nextCheckTime)
+            {
+                _nextCheckTime = Time.time + CheckInterval;
+                var psr = PlayerSprite();
+                _occluding =
+                    psr != null && psr.enabled && _sr.enabled &&
+                    _sr.sortingLayerID == psr.sortingLayerID &&
+                    _sr.sortingOrder > psr.sortingOrder &&   // this prop draws in front of the player
+                    _sr.bounds.Intersects(psr.bounds);        // and overlaps the player on screen
+            }
 
-            float target = occluding ? fadedAlpha : 1f;
+            float target = _occluding ? fadedAlpha : 1f;
             if (!Mathf.Approximately(_alpha, target))
             {
                 _alpha = Mathf.MoveTowards(_alpha, target, fadeSpeed * Time.deltaTime);

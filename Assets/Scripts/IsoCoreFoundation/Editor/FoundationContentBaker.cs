@@ -18,7 +18,7 @@ namespace IsoCore.Foundation.EditorTools
             if (AssetDatabase.IsValidFolder(Root)) AssetDatabase.DeleteAsset(Root);
             EnsureFolder("Assets", "IsoCoreFoundation");
             EnsureFolder("Assets/IsoCoreFoundation", "GeneratedContent");
-            foreach (var sub in new[] { "Blocks", "BlockGroups", "Biomes", "Items", "Placeables", "Nodes", "Mobs", "Recipes", "Crops", "Callings", "Skills", "Quests" })
+            foreach (var sub in new[] { "Blocks", "BlockGroups", "Biomes", "Items", "Placeables", "Nodes", "Mobs", "Recipes", "Crops", "Callings", "Skills", "Quests", "SystemMessages", "EvidenceEvents", "XPChannels", "Titles", "Affinities", "Classes", "Professions", "Dungeons", "Expeditions", "DungeonResults", "GuildBoardEntries", "WorldEvents" })
                 EnsureFolder(Root, sub);
 
             var c = FoundationContent.BuildDefault();
@@ -36,13 +36,29 @@ namespace IsoCore.Foundation.EditorTools
             foreach (var calling in c.Callings.All) Create(calling, $"{Root}/Callings/{calling.id}.asset");
             foreach (var skill in c.Skills.All) Create(skill, $"{Root}/Skills/{skill.id}.asset");
             foreach (var quest in c.Quests.All) Create(quest, $"{Root}/Quests/{quest.id}.asset");
+            foreach (var message in c.SystemMessages.All) Create(message, $"{Root}/SystemMessages/{message.id}.asset");
+            foreach (var evidence in c.EvidenceEvents.All) Create(evidence, $"{Root}/EvidenceEvents/{evidence.id}.asset");
+            foreach (var xp in c.XPChannels.All) Create(xp, $"{Root}/XPChannels/{xp.id}.asset");
+            foreach (var title in c.Titles.All) Create(title, $"{Root}/Titles/{title.id}.asset");
+            foreach (var affinity in c.Affinities.All) Create(affinity, $"{Root}/Affinities/{affinity.id}.asset");
+            foreach (var cls in c.Classes.All) Create(cls, $"{Root}/Classes/{cls.id}.asset");
+            foreach (var profession in c.Professions.All) Create(profession, $"{Root}/Professions/{profession.id}.asset");
+            foreach (var dungeon in c.Dungeons.All) Create(dungeon, $"{Root}/Dungeons/{dungeon.id}.asset");
+            foreach (var expedition in c.Expeditions.All) Create(expedition, $"{Root}/Expeditions/{expedition.id}.asset");
+            foreach (var result in c.DungeonResults.All) Create(result, $"{Root}/DungeonResults/{result.id}.asset");
+            foreach (var entry in c.GuildBoardEntries.All) Create(entry, $"{Root}/GuildBoardEntries/{entry.id}.asset");
+            foreach (var evt in c.WorldEvents.All) Create(evt, $"{Root}/WorldEvents/{evt.id}.asset");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
             int total = c.Blocks.Count + c.BlockGroups.Count + c.Biomes.Count + c.Items.Count +
                         c.Placeables.Count + c.Nodes.Count + c.Mobs.Count + c.Recipes.Count + c.Crops.Count +
-                        c.Callings.Count + c.Skills.Count + c.Quests.Count;
+                        c.Callings.Count + c.Skills.Count + c.Quests.Count +
+                        c.SystemMessages.Count + c.EvidenceEvents.Count + c.XPChannels.Count +
+                        c.Titles.Count + c.Affinities.Count + c.Classes.Count + c.Professions.Count +
+                        c.Dungeons.Count + c.Expeditions.Count + c.DungeonResults.Count +
+                        c.GuildBoardEntries.Count + c.WorldEvents.Count;
             string log = $"[ISO-Core] Baked {total} content assets to {Root} (authoring convenience; runtime builds in code).";
             if (showDialog) EditorUtility.DisplayDialog("ISO-Core Foundation — Bake Content", log, "OK");
             Debug.Log(log);
