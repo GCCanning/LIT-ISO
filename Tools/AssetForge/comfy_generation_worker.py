@@ -564,13 +564,13 @@ def remove_floor_artifacts(image, alpha_threshold: int = 16):
 
 
 def make_tile(image):
-    fitted = fit_foreground(image, (32, 32), 1.0, "center")
-    fitted = fitted.resize((32, 32), Image.Resampling.NEAREST)
+    fitted = fit_foreground(image, (64, 64), 1.0, "center")
+    fitted = fitted.resize((64, 64), Image.Resampling.NEAREST)
     pixels = fitted.load()
-    cx, cy = 15.5, 15.5
-    for y in range(32):
-        for x in range(32):
-            if abs(x - cx) / 16.0 + abs(y - cy) / 8.0 > 1.0:
+    cx, cy = 31.5, 31.5
+    for y in range(64):
+        for x in range(64):
+            if abs(x - cx) / 31.0 + abs(y - cy) / 15.5 > 1.0:
                 r, g, b, _ = pixels[x, y]
                 pixels[x, y] = (r, g, b, 0)
     return fitted

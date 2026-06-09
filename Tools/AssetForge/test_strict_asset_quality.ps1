@@ -222,13 +222,16 @@ function Test-Png {
                 }
             }
             else {
+                if ($img.Width -eq 32 -and $img.Height -eq 32) {
+                    $warnings.Add("flat_terrain_legacy_32px_review_size")
+                }
                 if ($coverage -gt 0.72) {
                     $warnings.Add("terrain_may_be_square_or_block_instead_of_diamond")
                 }
-                if ($coverage -lt 0.18 -and $img.Width -eq 64) {
+                if ($coverage -lt 0.21 -and $img.Width -eq 64) {
                     $issues.Add("flat_terrain_too_empty_or_weak")
                 }
-                if ($coverage -lt 0.16 -and $img.Width -eq 32) {
+                if ($coverage -lt 0.18 -and $img.Width -eq 32) {
                     $issues.Add("flat_terrain_too_empty_or_weak")
                 }
                 if ($bboxWidth -gt 0 -and $bboxHeight -gt ($bboxWidth * 1.05)) {
