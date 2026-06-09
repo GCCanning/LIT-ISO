@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "generated_utc": "2026-06-08T00:00:00Z",
+  "policy": {
+    "download_method": "official pack download only",
+    "no_scraping": true,
+    "no_individual_asset_crawling": true,
+    "ai_training": "not allowed unless FreePixel/Sprixen explicitly grants training rights",
+    "game_use": "verify per downloaded pack license/terms before runtime promotion"
+  },
+  "target_download_root": "C:\\Projects\\Pixel Pipeline\\sources\\freepixel",
+  "priority_packs": [
+    {
+      "id": "pixelvault-rpg-animations",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-animations",
+      "itch_url_verified": "https://freepixelart.itch.io/free-rpg-animations-pixel-art-270-sprites",
+      "usefulness": "critical",
+      "isometric_relevance": "high",
+      "why": "RPG animation vocabulary: walk, idle, melee, spell casts. Use to compare animation naming, frame counts, and action coverage.",
+      "pipeline_use": ["animation_reference", "action_taxonomy", "manual_review_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "freepixel-characters",
+      "url": "https://freepixel.art/characters",
+      "usefulness": "critical",
+      "isometric_relevance": "high",
+      "why": "Large 8-direction animated character catalogue. Best source for true diagonal direction QA/reference.",
+      "pipeline_use": ["8d_direction_oracle", "turntable_qa", "character_direction_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-characters-companions",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-characters-companions",
+      "usefulness": "high",
+      "isometric_relevance": "medium",
+      "why": "Character/NPC/mount archetype vocabulary. Useful for roster planning and style comparison.",
+      "pipeline_use": ["character_archetypes", "npc_reference", "manual_style_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-tilesets",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-tilesets",
+      "usefulness": "high",
+      "isometric_relevance": "needs_manual_verification",
+      "why": "Broad RPG terrain/tile vocabulary. Must verify whether tiles are true isometric tilemap-compatible before using as terrain reference.",
+      "pipeline_use": ["tile_vocabulary", "biome_coverage_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-blocks",
+      "url": "https://freepixel.art/pack/pixelvault-blocks",
+      "usefulness": "high",
+      "isometric_relevance": "high",
+      "why": "Block/cube assets are explicitly isometric-useful for height, raised terrain, material cubes, and footprint testing.",
+      "pipeline_use": ["height_tile_reference", "block_geometry_reference", "isometric_footprint_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-environment",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-environment",
+      "usefulness": "high",
+      "isometric_relevance": "medium",
+      "why": "Props/interactables for camp, dungeon, tavern, nature, and harvest world dressing. Verify perspective per asset.",
+      "pipeline_use": ["props_reference", "interactable_vocabulary", "biome_decoration_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-items-loot",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-items-loot",
+      "usefulness": "high",
+      "isometric_relevance": "low_to_medium",
+      "why": "Inventory/loot icon vocabulary. Isometric perspective is less important for icons.",
+      "pipeline_use": ["item_icon_reference", "loot_table_visual_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-weapons-armor",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-weapons-armor",
+      "usefulness": "high",
+      "isometric_relevance": "low_to_medium",
+      "why": "Equipment icon and gear silhouette vocabulary. Useful for item generation and character loadouts.",
+      "pipeline_use": ["equipment_reference", "item_icon_reference", "gear_taxonomy"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-enemies-bosses",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-enemies-bosses",
+      "usefulness": "medium_high",
+      "isometric_relevance": "needs_manual_verification",
+      "why": "Mob and boss vocabulary. Useful if sprites are readable at our scale; animation/direction coverage must be checked.",
+      "pipeline_use": ["mob_reference", "boss_reference", "enemy_taxonomy"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rpg-ui-kit",
+      "url": "https://freepixel.art/pack/pixelvault-rpg-ui-kit",
+      "usefulness": "medium_high",
+      "isometric_relevance": "not_applicable",
+      "why": "HUD, inventory, buttons, panels. Not isometric, but useful for UI vocabulary.",
+      "pipeline_use": ["ui_reference", "hud_reference", "inventory_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-rocks",
+      "url": "https://freepixel.art/pack/pixelvault-rocks",
+      "usefulness": "medium_high",
+      "isometric_relevance": "medium",
+      "why": "Rocks and boulders are core forest/plains biome props. Verify perspective and footprint before use.",
+      "pipeline_use": ["prop_reference", "resource_node_reference", "biome_decoration_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    },
+    {
+      "id": "pixelvault-environment",
+      "url": "https://freepixel.art/pack/pixelvault-environment",
+      "usefulness": "medium",
+      "isometric_relevance": "needs_manual_verification",
+      "why": "General environment assets. Useful after RPG-specific packs are acquired.",
+      "pipeline_use": ["broad_environment_reference"],
+      "training_use": "blocked_until_explicit_ai_training_permission"
+    }
+  ],
+  "not_first_pass": [
+    "3D assets",
+    "audio",
+    "parallax/background packs",
+    "non-RPG decorative packs",
+    "single-object packs that do not help isometric terrain, character directions, props, items, UI, or VFX"
+  ],
+  "post_download_steps": [
+    "Store original ZIPs under C:\\Projects\\Pixel Pipeline\\sources\\freepixel\\zips",
+    "Extract into C:\\Projects\\Pixel Pipeline\\sources\\freepixel\\extracted\\<pack-id>",
+    "Preserve all license/readme files",
+    "Run a local inventory: file count, dimensions, transparency, animation sheet detection, direction order detection",
+    "Generate contact sheets into C:\\Projects\\Pixel Pipeline\\generated\\freepixel_inventory\\<pack-id>",
+    "Classify assets as runtime-reference, direction-oracle, UI-reference, item-reference, or rejected",
+    "Do not place raw FreePixel assets into Unity runtime folders until licensing and art-direction approval are complete"
+  ],
+  "downloaded_first_pass": {
+    "zip_root": "C:\\Projects\\Pixel Pipeline\\sources\\freepixel\\zips",
+    "extracted_root": "C:\\Projects\\Pixel Pipeline\\sources\\freepixel\\extracted",
+    "inventory_root": "C:\\Projects\\Pixel Pipeline\\generated\\freepixel_inventory",
+    "packs": [
+      "free-rpg-animations-pixel-art-270-sprites",
+      "free-rpg-characters-companions-pixel-art-240-sprites",
+      "free-rpg-tilesets-pixel-art-350-sprites",
+      "free-rpg-environment-pixel-art-220-sprites",
+      "free-rpg-items-loot-pixel-art-385-sprites",
+      "free-rpg-weapons-armor-pixel-art-160-sprites",
+      "free-rpg-enemies-bosses-pixel-art-200-sprites",
+      "free-rpg-ui-kit-pixel-art-120-sprites",
+      "free-rpg-essentials-pixel-art-game-kit-900-assets",
+      "free-pixel-art-top-down-rpg-mini-pack-90-sprites"
+    ],
+    "verdict": "Downloaded and inventoried as reference/intake material only. No AI training or runtime promotion without explicit approval."
+  }
+}

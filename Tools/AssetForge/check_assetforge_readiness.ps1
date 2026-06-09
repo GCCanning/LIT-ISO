@@ -3,7 +3,8 @@ param(
     [string]$PackName = "CodexBiomeStarter",
     [string]$OutputName = "litiso_tile_prop_v1",
     [string]$TrainingRoot = "C:\Projects\LoRA-Training",
-    [string]$ComfyRoot = "C:\Projects\ComfyUI"
+    [string]$ComfyRoot = "C:\Projects\ComfyUI",
+    [string]$DatasetRoot = "C:\Projects\Pixel Pipeline\datasets\lit_iso"
 )
 
 $ErrorActionPreference = "Stop"
@@ -36,7 +37,7 @@ $reviewReport = Join-Path $packRoot "review_report.json"
 $reviewDecisions = Join-Path $packRoot "review_decisions.json"
 $strictReport = Join-Path $packRoot "strict_asset_quality_report.json"
 $approvalManifest = Join-Path $packRoot "approval_manifest.json"
-$datasetRoot = Join-Path $ProjectRoot "Assets\Generated\_Datasets\lit_iso\review_packs\$PackName"
+$datasetRoot = Join-Path $DatasetRoot "review_packs\$PackName"
 $loraOutput = Join-Path $TrainingRoot "outputs\$OutputName"
 $loraStatus = Join-Path $TrainingRoot "control\$OutputName\status.json"
 $syncManifest = Join-Path $ComfyRoot "models\loras\$OutputName.sync.json"
@@ -58,6 +59,7 @@ $payload = [ordered]@{
     project_root = $ProjectRoot
     pack_name = $PackName
     output_name = $OutputName
+    dataset_root = $DatasetRoot
     ready_count = @($checks | Where-Object { $_.pass }).Count
     blocked_count = @($checks | Where-Object { -not $_.pass }).Count
     checks = $checks

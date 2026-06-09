@@ -20,7 +20,7 @@ if (-not (Test-Path $reportPath)) {
 }
 
 if ([string]::IsNullOrWhiteSpace($DatasetRoot)) {
-    $DatasetRoot = Join-Path $ProjectRoot "Assets\Generated\_Datasets\lit_iso"
+    $DatasetRoot = "C:\Projects\Pixel Pipeline\datasets\lit_iso"
 }
 
 function Assert-UnderRoot {
@@ -33,21 +33,33 @@ function Assert-UnderRoot {
     $rootFull = [IO.Path]::GetFullPath($Root).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
     $pathFull = [IO.Path]::GetFullPath($Path).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
     if ($pathFull -ne $rootFull -and -not $pathFull.StartsWith($rootFull + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
-        throw "$Label must stay inside the repo. Root: $rootFull Path: $pathFull"
+        throw "$Label must stay inside the configured root. Root: $rootFull Path: $pathFull"
     }
 }
 
 $decisions = Get-Content -Raw -Path $decisionsPath | ConvertFrom-Json
 $report = Get-Content -Raw -Path $reportPath | ConvertFrom-Json
+$styleProfileId = ""
+if ($report.style_provenance) {
+    $stylePath = Join-Path $ProjectRoot ([string]$report.style_provenance -replace "/", "\")
+    if (Test-Path $stylePath) {
+        try {
+            $styleData = Get-Content -Raw -LiteralPath $stylePath | ConvertFrom-Json
+            if ($styleData.profile_id) { $styleProfileId = [string]$styleData.profile_id }
+        }
+        catch { }
+    }
+}
 $issueMap = @{}
+$itemMap = @{}
 foreach ($item in $report.items) {
     $key = $item.path.Replace("\", "/") -replace "^Assets/Generated/_Review/$PackName/", ""
     $issueMap[$key] = @($item.issues)
+    $itemMap[$key] = $item
 }
 
 $projectRootResolved = (Resolve-Path -LiteralPath $ProjectRoot).Path
 $datasetRootFull = [IO.Path]::GetFullPath($DatasetRoot)
-Assert-UnderRoot -Root $projectRootResolved -Path $datasetRootFull -Label "DatasetRoot"
 New-Item -ItemType Directory -Force -Path $datasetRootFull | Out-Null
 
 $datasetPackRoot = Join-Path $datasetRootFull "review_packs\$PackName"
@@ -93,8 +105,29 @@ foreach ($decision in $decisions.decisions) {
 
     Copy-Item -LiteralPath $sourceAbs -Destination $imageDest -Force
 
-    $modeText = if ($decision.category -eq "decoration") { "pixel prop" } else { "isometric terrain tile" }
-    $caption = "LIT-ISO $modeText, $($decision.biome) biome, $($decision.name -replace '\.png$', '' -replace '_', ' '), pixel art, transparent background"
+    $reportItem = if ($itemMap.ContainsKey($decision.id)) { $itemMap[$decision.id] } else { $null }
+    $subject = $decision.name -replace '\.png$', '' -replace '_', ' '
+    $modeText = switch ($decision.category) {
+        "terrain" { "isometric terrain tile" }
+        "decoration" { "pixel prop" }
+        "item" { "pixel item sprite" }
+        "character" { "pixel character sprite" }
+        "npc" { "pixel NPC sprite" }
+        "mob" { "pixel creature sprite" }
+        "vfx" { "pixel VFX sprite sheet" }
+        default { "pixel art asset" }
+    }
+    $anchorText = switch ($decision.category) {
+        "terrain" { "2:1 diamond grid, centered anchor" }
+        "item" { "centered icon anchor" }
+        "vfx" { "centered frame anchor" }
+        default { "bottom-center anchor" }
+    }
+    $caption = "LIT-ISO $modeText, $($decision.biome) set, $subject, cyan-knight-compatible palette, isometric view, pixel art, transparent background, $anchorText"
+    $provider = if ($reportItem -and $reportItem.generation -and $reportItem.generation.provider) { [string]$reportItem.generation.provider } else { [string]$report.provider }
+    $prompt = if ($reportItem -and $reportItem.generation -and $reportItem.generation.prompt) { [string]$reportItem.generation.prompt } else { "" }
+    $negativePrompt = if ($reportItem -and $reportItem.generation -and $reportItem.generation.negative_prompt) { [string]$reportItem.generation.negative_prompt } else { "" }
+    $sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $imageDest).Hash.ToLowerInvariant()
     Set-Content -Path $captionDest -Value $caption -Encoding UTF8
 
     $records += [PSCustomObject]@{
@@ -103,8 +136,21 @@ foreach ($decision in $decisions.decisions) {
         source_path = $decision.source_path
         decision = $decision.decision
         category = $decision.category
+        asset_mode = $decision.category
+        subcategory = $subject
         biome = $decision.biome
         pack = $PackName
+        provider = $provider
+        prompt = $prompt
+        negative_prompt = $negativePrompt
+        qa_status = if ($reportItem) { [string]$reportItem.status } else { [string]$decision.review_status }
+        style_profile_id = $styleProfileId
+        palette_tags = @("cyan_knight", "teal_accent", "warm_muted")
+        camera = "2:1_isometric"
+        license = "project_internal_or_explicitly_licensed"
+        author = "LIT-ISO"
+        clean_room_notes = "Approved through Asset Forge review. Do not train on copied third-party pixels."
+        sha256 = $sha256
     }
 }
 

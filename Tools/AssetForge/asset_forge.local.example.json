@@ -8,7 +8,171 @@
   "comfyui": {
     "url": "http://127.0.0.1:8188",
     "root": "C:/Projects/ComfyUI",
-    "output_root": "C:/Projects/ComfyUI/output"
+    "output_root": "C:/Projects/ComfyUI/output",
+    "worker_defaults": {
+      "checkpoint": "DreamShaper_8_pruned.safetensors",
+      "lora": "",
+      "lora_strength": 0.0,
+      "steps": 22,
+      "cfg": 6.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "width": 512,
+      "height": 512,
+      "denoise": 1.0,
+      "timeout_seconds": 600,
+      "mode_defaults": {
+        "tile": {
+          "checkpoint": "DreamShaper_8_pruned.safetensors",
+          "lora": "litiso_tile_prop_v1_final.safetensors",
+          "lora_strength": 0.55,
+          "steps": 24,
+          "cfg": 5.8,
+          "sampler": "dpmpp_2m",
+          "scheduler": "karras",
+          "width": 512,
+          "height": 512,
+          "denoise": 1.0,
+          "timeout_seconds": 600
+        },
+        "prop": {
+          "checkpoint": "DreamShaper_8_pruned.safetensors",
+          "lora": "litiso_tile_prop_v1_final.safetensors",
+          "lora_strength": 0.62,
+          "steps": 24,
+          "cfg": 5.6,
+          "sampler": "dpmpp_2m",
+          "scheduler": "karras",
+          "width": 512,
+          "height": 512,
+          "denoise": 1.0,
+          "timeout_seconds": 600
+        },
+        "item": {
+          "checkpoint": "DreamShaper_8_pruned.safetensors",
+          "lora": "PixelArtRedmond-Lite64.safetensors",
+          "lora_strength": 0.42,
+          "steps": 24,
+          "cfg": 6.0,
+          "sampler": "dpmpp_2m",
+          "scheduler": "karras",
+          "width": 512,
+          "height": 512,
+          "denoise": 1.0,
+          "timeout_seconds": 600
+        },
+        "character": {
+          "checkpoint": "DreamShaper_8_pruned.safetensors",
+          "lora": "litiso_style_directional_v1.safetensors",
+          "lora_strength": 0.5,
+          "steps": 26,
+          "cfg": 6.0,
+          "sampler": "dpmpp_2m",
+          "scheduler": "karras",
+          "width": 512,
+          "height": 512,
+          "denoise": 0.42,
+          "timeout_seconds": 600
+        },
+        "npc": {
+          "checkpoint": "DreamShaper_8_pruned.safetensors",
+          "lora": "litiso_style_directional_v1.safetensors",
+          "lora_strength": 0.48,
+          "steps": 26,
+          "cfg": 6.0,
+          "sampler": "dpmpp_2m",
+          "scheduler": "karras",
+          "width": 512,
+          "height": 512,
+          "denoise": 0.42,
+          "timeout_seconds": 600
+        },
+        "mob": {
+          "checkpoint": "DreamShaper_8_pruned.safetensors",
+          "lora": "litiso_style_directional_v1.safetensors",
+          "lora_strength": 0.5,
+          "steps": 26,
+          "cfg": 6.0,
+          "sampler": "dpmpp_2m",
+          "scheduler": "karras",
+          "width": 512,
+          "height": 512,
+          "denoise": 0.42,
+          "timeout_seconds": 600
+        }
+      },
+      "supported_modes": [
+        "tile",
+        "prop",
+        "item",
+        "character",
+        "npc",
+        "mob"
+      ]
+    }
+  },
+  "sprixen": {
+    "base_url": "https://api.sprixen.com/v1",
+    "api_key_env": "SPRIXEN_API_KEY",
+    "api_key": "",
+    "notes": [
+      "Do not commit a real Sprixen API key. Put it in ignored asset_forge.local.json or set SPRIXEN_API_KEY in your shell.",
+      "Sprixen outputs are optional source material; every result must pass local cleanup, QA, review, and dataset approval before training or Unity promotion."
+    ],
+    "projects": {
+      "objects_project_id": "",
+      "tiles_project_id": "",
+      "characters_project_id": "",
+      "vfx_project_id": ""
+    },
+    "defaults": {
+      "project_id": "",
+      "resolution": "64x64",
+      "pixel_perfect": "on",
+      "timeout_seconds": 180,
+      "chain_animation": false,
+      "mode_defaults": {
+        "tile": {
+          "project_id": "",
+          "resolution": "64x64",
+          "pixel_perfect": "on",
+          "timeout_seconds": 180
+        },
+        "prop": {
+          "project_id": "",
+          "resolution": "64x64",
+          "pixel_perfect": "on",
+          "timeout_seconds": 180
+        },
+        "item": {
+          "project_id": "",
+          "resolution": "64x64",
+          "pixel_perfect": "on",
+          "timeout_seconds": 180
+        },
+        "character": {
+          "project_id": "",
+          "resolution": "64x64",
+          "pixel_perfect": "on",
+          "timeout_seconds": 240,
+          "chain_animation": false
+        },
+        "npc": {
+          "project_id": "",
+          "resolution": "64x64",
+          "pixel_perfect": "on",
+          "timeout_seconds": 240,
+          "chain_animation": false
+        },
+        "mob": {
+          "project_id": "",
+          "resolution": "64x64",
+          "pixel_perfect": "on",
+          "timeout_seconds": 240,
+          "chain_animation": false
+        }
+      }
+    }
   },
   "lora": {
     "training_root": "C:/Projects/LIT-ISO-LoRA",
@@ -19,7 +183,7 @@
   },
   "pixel_pipeline": {
     "output_root": "Assets/Generated/_Review",
-    "dataset_root": "Assets/Generated/_Datasets",
+    "dataset_root": "C:/Projects/Pixel Pipeline/datasets/lit_iso",
     "handoff_root": "Assets/Generated",
     "default_pack_name": "CodexBiomeStarter",
     "default_export_name": "CodexBiomeStarter"
