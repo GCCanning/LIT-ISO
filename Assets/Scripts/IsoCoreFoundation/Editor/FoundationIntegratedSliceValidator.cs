@@ -143,6 +143,21 @@ namespace IsoCore.Foundation.EditorTools
             add("Menu launch no longer writes legacy WorldManager",
                 !source.Contains("WorldManager.Instance") && !source.Contains("AddComponent<WorldManager>"),
                 "FoundationBootstrap.ConfigureLaunch is the canonical launch contract");
+            add("Menu has character creation before Foundation launch",
+                source.Contains("Screen { MainMenu, CreateWorld, CharacterCreate") &&
+                source.Contains("BuildCharacterCreate") &&
+                source.Contains("BeginTrial") &&
+                source.Contains("characterNameInput") &&
+                source.Contains("Begin Trial"),
+                "New Trial -> world setup -> character creation -> Begin Trial");
+            add("Menu passes character name, Calling, and appearance into Foundation",
+                source.Contains("effectiveCalling") &&
+                source.Contains("effectiveName") &&
+                source.Contains("effectiveAppearance") &&
+                source.Contains("FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty,") &&
+                source.Contains("pendingWorld.characterName") &&
+                source.Contains("pendingWorld.appearancePreset"),
+                "character metadata launch contract");
         }
 
         static void ValidateUiSourceWiring(AddCheck add)
@@ -184,6 +199,7 @@ namespace IsoCore.Foundation.EditorTools
             string resourceNodePath = "Assets/Scripts/IsoCoreFoundation/Harvesting/ResourceNode.cs";
             string progressionHooksPath = "Assets/Scripts/IsoCoreFoundation/Progression/FoundationProgressionHooks.cs";
             string tutorialPath = "Assets/Scripts/IsoCoreFoundation/Progression/FoundationTutorialNotifier.cs";
+            string trialIntroPath = "Assets/Scripts/UI/InGame/TrialIntroView.cs";
             string controller = File.Exists(controllerPath) ? File.ReadAllText(controllerPath) : "";
             string gameUi = File.Exists(gameUiPath) ? File.ReadAllText(gameUiPath) : "";
             string panel = File.Exists(panelPath) ? File.ReadAllText(panelPath) : "";
@@ -221,6 +237,7 @@ namespace IsoCore.Foundation.EditorTools
             string resourceNode = File.Exists(resourceNodePath) ? File.ReadAllText(resourceNodePath) : "";
             string progressionHooks = File.Exists(progressionHooksPath) ? File.ReadAllText(progressionHooksPath) : "";
             string tutorial = File.Exists(tutorialPath) ? File.ReadAllText(tutorialPath) : "";
+            string trialIntro = File.Exists(trialIntroPath) ? File.ReadAllText(trialIntroPath) : "";
 
             add("uGUI uses one canonical tabbed Character panel",
                 controller.Contains("CharacterPanelView") &&
@@ -244,6 +261,16 @@ namespace IsoCore.Foundation.EditorTools
                 !interaction.Contains("ToggleCrafting") &&
                 !interaction.Contains("ToggleInventory"),
                 $"{bootstrapPath} / {interactionPath} / {initializerPath}");
+            add("Fresh launch plays character Trial intro before normal HUD settles",
+                bootstrap.Contains("ActiveCharacterName") &&
+                bootstrap.Contains("ActiveLaunchIsLoad") &&
+                bootstrap.Contains("appearancePreset") &&
+                initializer.Contains("TrialIntroView") &&
+                initializer.Contains("_trialIntroView.Play(bootstrap)") &&
+                trialIntro.Contains("YOUR TRIAL AWAITS") &&
+                trialIntro.Contains("HUD online") &&
+                trialIntro.Contains("ActiveLaunchIsLoad"),
+                $"{bootstrapPath} / {initializerPath} / {trialIntroPath}");
             add("Crafting panel surfaces every recipe with station and lock reason",
                 panel.Contains("Recipes ({count}) - all stations") &&
                 panel.Contains("row.disabledReason") &&

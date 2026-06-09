@@ -11,12 +11,14 @@ namespace LitIso.UI.InGame
     public sealed class FoundationCharacterSheetAdapter : ICharacterSheetViewModel, IDisposable
     {
         readonly FoundationPlayerStats _stats;
+        readonly string _characterName;
 
         public event Action Changed;
 
-        public FoundationCharacterSheetAdapter(FoundationPlayerStats stats = null)
+        public FoundationCharacterSheetAdapter(FoundationPlayerStats stats = null, string characterName = null)
         {
             _stats = stats;
+            _characterName = string.IsNullOrWhiteSpace(characterName) ? "Adventurer" : characterName.Trim();
             if (_stats != null)
                 _stats.Changed += OnChanged;
         }
@@ -29,7 +31,7 @@ namespace LitIso.UI.InGame
 
         void OnChanged() => Changed?.Invoke();
 
-        public string CharacterName => "Adventurer";
+        public string CharacterName => _characterName;
         public string ClassName => _stats != null ? _stats.Class : "Greenhand";
         public string TitleName => _stats != null ? _stats.Title : "Newcomer";
         public Sprite Portrait => Resources.Load<Sprite>("UI/InGame/system_portrait");

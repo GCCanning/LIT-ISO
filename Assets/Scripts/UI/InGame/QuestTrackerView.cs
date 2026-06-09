@@ -25,10 +25,10 @@ namespace LitIso.UI.InGame
         static readonly Color RewardCol      = new Color(0.85f, 0.75f, 0.95f, 1f);
 
         // Panel dimensions (in reference-resolution pixels, 1920×1080)
-        const float PanelW   = 356f;
-        const float PanelH   = 122f;
-        const float PanelPad = 10f;
-        const float BarH     = 8f;
+        const float PanelW   = 430f;
+        const float PanelH   = 164f;
+        const float PanelPad = 16f;
+        const float BarH     = 12f;
 
         // ---- runtime references ---------------------------------------------
         IQuestTrackerViewModel _model;
@@ -92,9 +92,9 @@ namespace LitIso.UI.InGame
             rt.anchorMin = new Vector2(1f, 1f);
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot     = new Vector2(1f, 1f);
-            rt.anchoredPosition = new Vector2(-36f, -244f);
+            rt.anchoredPosition = new Vector2(-38f, -128f);
             rt.sizeDelta        = new Vector2(PanelW, PanelH);
-            PlayerResizableUi.Attach(rt, "hud.quest_tracker", new Vector2(260f, 90f), new Vector2(640f, 280f));
+            PlayerResizableUi.Attach(rt, "hud.quest_tracker", new Vector2(320f, 130f), new Vector2(760f, 360f));
 
             // Outline border
             var outline = _root.AddComponent<Outline>();
@@ -104,34 +104,34 @@ namespace LitIso.UI.InGame
             // -- row 1: type tag + title (y from top inside panel) ------------
             float y = -PanelPad;
 
-            _typeText = UiBuilder.NewText(_root.transform, "QuestType", "", 10, TextAnchor.UpperLeft, TypeTagCol);
+            _typeText = UiBuilder.NewText(_root.transform, "QuestType", "", 12, TextAnchor.UpperLeft, TypeTagCol);
             var typeRt = _typeText.rectTransform;
             typeRt.anchorMin = new Vector2(0f, 1f); typeRt.anchorMax = new Vector2(0f, 1f);
             typeRt.pivot     = new Vector2(0f, 1f);
             typeRt.anchoredPosition = new Vector2(PanelPad, y);
-            typeRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 14f);
+            typeRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 18f);
 
-            y -= 16f;
+            y -= 22f;
 
-            _titleText = UiBuilder.NewText(_root.transform, "QuestTitle", "", 14, TextAnchor.UpperLeft, QuestTitleCol);
+            _titleText = UiBuilder.NewText(_root.transform, "QuestTitle", "", 18, TextAnchor.UpperLeft, QuestTitleCol);
             var titleRt = _titleText.rectTransform;
             titleRt.anchorMin = new Vector2(0f, 1f); titleRt.anchorMax = new Vector2(0f, 1f);
             titleRt.pivot     = new Vector2(0f, 1f);
             titleRt.anchoredPosition = new Vector2(PanelPad, y);
-            titleRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 18f);
+            titleRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 24f);
 
-            y -= 20f;
+            y -= 30f;
 
             // -- row 2: objective text ----------------------------------------
-            _objText = UiBuilder.NewText(_root.transform, "ObjText", "", 11, TextAnchor.UpperLeft, UiBuilder.TextCol);
+            _objText = UiBuilder.NewText(_root.transform, "ObjText", "", 15, TextAnchor.UpperLeft, UiBuilder.TextCol);
             _objText.horizontalOverflow = HorizontalWrapMode.Wrap;
             var objRt = _objText.rectTransform;
             objRt.anchorMin = new Vector2(0f, 1f); objRt.anchorMax = new Vector2(0f, 1f);
             objRt.pivot     = new Vector2(0f, 1f);
             objRt.anchoredPosition = new Vector2(PanelPad, y);
-            objRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 15f);
+            objRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 34f);
 
-            y -= 16f;
+            y -= 40f;
 
             // -- progress bar background + fill --------------------------------
             var barBgGo = new GameObject("ProgressBg", typeof(RectTransform));
@@ -154,15 +154,15 @@ namespace LitIso.UI.InGame
             barFgRt.offsetMin = Vector2.zero;
             barFgRt.offsetMax = new Vector2(0f, 0f); // width set in Refresh()
 
-            y -= BarH + 4f;
+            y -= BarH + 10f;
 
             // -- reward preview -----------------------------------------------
-            _rewardText = UiBuilder.NewText(_root.transform, "RewardText", "", 10, TextAnchor.UpperLeft, RewardCol);
+            _rewardText = UiBuilder.NewText(_root.transform, "RewardText", "", 13, TextAnchor.UpperLeft, RewardCol);
             var rewRt = _rewardText.rectTransform;
             rewRt.anchorMin = new Vector2(0f, 1f); rewRt.anchorMax = new Vector2(0f, 1f);
             rewRt.pivot     = new Vector2(0f, 1f);
             rewRt.anchoredPosition = new Vector2(PanelPad, y);
-            rewRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 14f);
+            rewRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 22f);
             ApplyHudViewMode(_hudMode);
         }
 

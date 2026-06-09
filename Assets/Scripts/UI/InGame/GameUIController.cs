@@ -84,7 +84,7 @@ namespace LitIso.UI.InGame
         public bool showHungerBar = false;
 
         // Palette fallbacks (used only when a skin sprite is absent).
-        static readonly Color SlotBg      = new Color(0.10f, 0.12f, 0.16f, 0.85f);
+        static readonly Color SlotBg      = new Color(0.07f, 0.085f, 0.12f, 0.92f);
         static readonly Color SlotSelect  = new Color(0.98f, 0.85f, 0.45f, 1f);
         static readonly Color BarTrack    = new Color(0.05f, 0.06f, 0.09f, 0.85f);
         static readonly Color HealthCol   = new Color(0.80f, 0.25f, 0.25f, 1f);
@@ -181,9 +181,9 @@ namespace LitIso.UI.InGame
             _vitalsRoot = col;
             col.anchorMin = col.anchorMax = new Vector2(0f, 1f);
             col.pivot = new Vector2(0f, 1f);
-            col.anchoredPosition = new Vector2(24f, -24f);
-            col.sizeDelta = new Vector2(430f, 46f * rowCount + 30f);
-            PlayerResizableUi.Attach(col, "hud.vitals", new Vector2(260f, 120f), new Vector2(820f, 360f));
+            col.anchoredPosition = new Vector2(28f, -28f);
+            col.sizeDelta = new Vector2(540f, 54f * rowCount + 42f);
+            PlayerResizableUi.Attach(col, "hud.vitals", new Vector2(340f, 150f), new Vector2(920f, 420f));
 
             // Optional decorative plate behind the bars (vitals_bg). Renders only if art exists.
             var plate = Spr("vitals_bg");
@@ -198,19 +198,19 @@ namespace LitIso.UI.InGame
             }
 
             int row = 0;
-            _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", 30f, "bar_track", "HP");
-            _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   30f, "bar_track", "MP");
+            _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", 34f, "bar_track", "HP");
+            _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   34f, "bar_track", "MP");
             if (showHungerBar)
-                _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", 30f, "bar_track", "FOOD");
-            _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 24f, "bar_xp_track", "XP");
+                _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", 34f, "bar_track", "FOOD");
+            _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 28f, "bar_xp_track", "XP");
 
             // Level label sits on the XP bar.
             _levelText = NewText(col, "Level", "Lv 1", 16, TextAnchor.MiddleLeft);
             var lt = _levelText.rectTransform;
             lt.anchorMin = lt.anchorMax = new Vector2(0f, 0f);
             lt.pivot = new Vector2(0f, 0f);
-            lt.anchoredPosition = new Vector2(48f, -((rowCount - 1) * 44f));
-            lt.sizeDelta = new Vector2(140f, 22f);
+            lt.anchoredPosition = new Vector2(62f, -((rowCount - 1) * 48f));
+            lt.sizeDelta = new Vector2(160f, 26f);
         }
 
         // Creates a track + fill bar; returns the fill Image. row 0=top.
@@ -220,18 +220,18 @@ namespace LitIso.UI.InGame
         Image Bar(RectTransform parent, string name, int row, Color fillCol, string fillSkin, float h = 24f, string trackSkin = "bar_track", string label = null)
         {
             // Wider vertical gap so the bars don't visually crowd each other.
-            float gap = 14f;
+            float gap = 16f;
             // Labels sit OUTSIDE the track to the left; the track + fill occupy the
             // remaining width. labelW=0 when no label so a no-label bar fills the row.
-            float labelW = string.IsNullOrEmpty(label) ? 0f : 48f;
-            float trackW = 382f - labelW;
+            float labelW = string.IsNullOrEmpty(label) ? 0f : 62f;
+            float trackW = 492f - labelW;
             float y = -(row * (h + gap));
 
             // Label sits to the left of the track on its own rect — keeps the colored
             // fill visually unobstructed and the label is readable on the dark panel.
             if (!string.IsNullOrEmpty(label))
             {
-                int sz = Mathf.Max(11, Mathf.RoundToInt(h * 0.6f));
+                int sz = Mathf.Max(13, Mathf.RoundToInt(h * 0.64f));
                 var lbl = NewText(parent, name + "Lbl", label, sz, TextAnchor.MiddleRight);
                 lbl.raycastTarget = false;
                 var lr = lbl.rectTransform;
@@ -268,16 +268,16 @@ namespace LitIso.UI.InGame
         void BuildHotbar(Transform parent)
         {
             int n = Mathf.Max(1, _model?.SlotCount ?? defaultSlotCount);
-            const float slot = 68f, gap = 10f;
+            const float slot = 78f, gap = 12f;
             float totalW = n * slot + (n - 1) * gap;
 
             var bar = NewRect("Hotbar", parent);
             _hotbarRoot = bar;
             bar.anchorMin = bar.anchorMax = new Vector2(0.5f, 0f);
             bar.pivot = new Vector2(0.5f, 0f);
-            bar.anchoredPosition = new Vector2(0f, 30f);
+            bar.anchoredPosition = new Vector2(0f, 36f);
             bar.sizeDelta = new Vector2(totalW + 32f, slot + 22f);
-            PlayerResizableUi.Attach(bar, "hud.hotbar", new Vector2(360f, 80f), new Vector2(1200f, 180f));
+            PlayerResizableUi.Attach(bar, "hud.hotbar", new Vector2(480f, 100f), new Vector2(1400f, 220f));
 
             // Optional bar background behind the slots (hotbar_bg.png if provided).
             var barBgSpr = Spr("hotbar_bg");
@@ -359,7 +359,7 @@ namespace LitIso.UI.InGame
             _slotDurabilityFills[i] = durFill;
 
             // Stack count (bottom-right).
-            var count = NewText(fr, "Count", "", 14, TextAnchor.LowerRight);
+            var count = NewText(fr, "Count", "", 16, TextAnchor.LowerRight);
             count.raycastTarget = false;
             var cr = count.rectTransform;
             cr.anchorMin = Vector2.zero; cr.anchorMax = Vector2.one;
@@ -367,7 +367,7 @@ namespace LitIso.UI.InGame
             _slotCounts[i] = count;
 
             // Number key hint (top-left).
-            var key = NewText(fr, "Key", (i + 1).ToString(), 11, TextAnchor.UpperLeft);
+            var key = NewText(fr, "Key", (i + 1).ToString(), 13, TextAnchor.UpperLeft);
             key.raycastTarget = false;
             key.color = new Color(TextCol.r, TextCol.g, TextCol.b, 0.6f);
             var kr = key.rectTransform;

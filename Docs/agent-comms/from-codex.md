@@ -5,6 +5,29 @@
 
 ---
 
+### 2026-06-09 - Menu / character / HUD redesign validated
+
+Branch:
+- `codex/menu-character-flow`
+
+Delivered:
+- redesigned welcome screen with clearer hierarchy and a Trial-first flow,
+- create-world -> character creation step with Calling cards, name input, appearance preset, and world summary,
+- launch-time character metadata flowing into `FoundationBootstrap`,
+- fresh-world `YOUR TRIAL AWAITS` intro overlay before the normal HUD settles,
+- larger, more readable in-game HUD/quest/notifier/day-clock panels,
+- wider tabbed Character panel / crafting layout and stronger text contrast.
+
+Validation:
+- Unity batch validator passed: `FoundationIntegratedSliceValidator` 135/135.
+
+Notes:
+- I kept the canonical grid / launch contract unchanged.
+- No scene edits were required.
+- If you want to tune the actual visual art next, this is the right branch point to swap in the menu/HUD skin assets later.
+
+---
+
 ### 2026-06-09 - First-hour mechanics slice validated and ready for PR
 
 Owner completed the manual play pass and confirmed we can proceed.

@@ -27,7 +27,7 @@ namespace LitIso.UI.InGame
         const float FadeIn     = 0.30f;
         const float Hold       = 2.50f;
         const float FadeOut    = 0.45f;
-        const float ToastW     = 360f;
+        const float ToastW     = 460f;
 
         Canvas        _canvas;
         RectTransform _stack;
@@ -77,9 +77,9 @@ namespace LitIso.UI.InGame
             _stack.anchorMin = new Vector2(0f, 1f);
             _stack.anchorMax = new Vector2(0f, 1f);
             _stack.pivot     = new Vector2(0f, 1f);
-            _stack.anchoredPosition = new Vector2(24f, -228f);
+            _stack.anchoredPosition = new Vector2(28f, -284f);
             _stack.sizeDelta = new Vector2(ToastW, 0f);
-            PlayerResizableUi.Attach(_stack, "hud.notifications", new Vector2(260f, 80f), new Vector2(900f, 520f));
+            PlayerResizableUi.Attach(_stack, "hud.notifications", new Vector2(340f, 100f), new Vector2(980f, 560f));
 
             var layout = stackGo.AddComponent<VerticalLayoutGroup>();
             layout.childAlignment       = TextAnchor.UpperLeft;
@@ -138,7 +138,7 @@ namespace LitIso.UI.InGame
 
             // Padding so text doesn't sit flush against the pill edge.
             var layout = go.AddComponent<HorizontalLayoutGroup>();
-            layout.padding = new RectOffset(12, 12, 7, 7);
+            layout.padding = new RectOffset(16, 16, 10, 10);
             layout.childAlignment = TextAnchor.MiddleLeft;
             layout.childControlWidth  = true;
             layout.childControlHeight = true;
@@ -156,7 +156,7 @@ namespace LitIso.UI.InGame
             var accLe = accentGo.AddComponent<LayoutElement>();
             accLe.minWidth = 4f; accLe.preferredWidth = 4f; accLe.flexibleWidth = 0f;
 
-            var label = UiBuilder.NewText(go.transform, "Text", text, 16, TextAnchor.MiddleLeft, accent);
+            var label = UiBuilder.NewText(go.transform, "Text", text, 18, TextAnchor.MiddleLeft, accent);
             label.horizontalOverflow = HorizontalWrapMode.Wrap;
             label.raycastTarget = false;
             var le = label.gameObject.AddComponent<LayoutElement>();

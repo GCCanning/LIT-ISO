@@ -143,10 +143,10 @@ namespace LitIso.UI.InGame
             var pr = panel.rectTransform;
             pr.anchorMin = pr.anchorMax = new Vector2(0.5f, 0.5f);
             pr.pivot = new Vector2(0.5f, 0.5f);
-            pr.sizeDelta = new Vector2(1080f, 720f);
-            PlayerResizableUi.Attach(pr, "panel.character", new Vector2(720f, 460f), new Vector2(1700f, 980f));
+            pr.sizeDelta = new Vector2(1240f, 820f);
+            PlayerResizableUi.Attach(pr, "panel.character", new Vector2(860f, 560f), new Vector2(1800f, 1020f));
 
-            _title = UiBuilder.NewText(panel.transform, "Title", "Character", 26, TextAnchor.MiddleLeft);
+            _title = UiBuilder.NewText(panel.transform, "Title", "Character", 30, TextAnchor.MiddleLeft);
             var tr = _title.rectTransform;
             tr.anchorMin = new Vector2(0f, 1f);
             tr.anchorMax = new Vector2(1f, 1f);
@@ -154,21 +154,21 @@ namespace LitIso.UI.InGame
             tr.anchoredPosition = new Vector2(28f, -18f);
             tr.sizeDelta = new Vector2(-96f, 36f);
 
-            var close = UiBuilder.NewButton(panel.transform, "Close", "btn_close", "X", 18);
+            var close = UiBuilder.NewButton(panel.transform, "Close", "btn_close", "X", 20);
             close.onClick.AddListener(Hide);
             var cr = close.GetComponent<RectTransform>();
             cr.anchorMin = cr.anchorMax = new Vector2(1f, 1f);
             cr.pivot = new Vector2(1f, 1f);
             cr.anchoredPosition = new Vector2(-18f, -18f);
-            cr.sizeDelta = new Vector2(42f, 42f);
+            cr.sizeDelta = new Vector2(48f, 48f);
 
             BuildTabs(panel.transform);
 
             _body = UiBuilder.NewRect("Body", panel.transform);
             _body.anchorMin = Vector2.zero;
             _body.anchorMax = Vector2.one;
-            _body.offsetMin = new Vector2(28f, 34f);
-            _body.offsetMax = new Vector2(-28f, -116f);
+            _body.offsetMin = new Vector2(30f, 38f);
+            _body.offsetMax = new Vector2(-30f, -124f);
         }
 
         void BuildTabs(Transform parent)
@@ -179,13 +179,13 @@ namespace LitIso.UI.InGame
             for (int i = 0; i < tabs.Length; i++)
             {
                 var tab = tabs[i];
-                var btn = UiBuilder.NewButton(parent, "Tab_" + tab, "craft_row", LabelFor(tab), 16);
+                var btn = UiBuilder.NewButton(parent, "Tab_" + tab, "craft_row", LabelFor(tab), 17);
                 var rt = btn.GetComponent<RectTransform>();
                 rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
                 rt.pivot = new Vector2(0f, 1f);
                 rt.anchoredPosition = new Vector2(x, -70f);
-                rt.sizeDelta = new Vector2(132f, 40f);
-                x += 138f;
+                rt.sizeDelta = new Vector2(150f, 44f);
+                x += 156f;
                 btn.onClick.AddListener(() => Show(tab));
                 _tabButtons[i] = btn;
             }
@@ -287,7 +287,7 @@ namespace LitIso.UI.InGame
             listFrameRt.anchorMin = new Vector2(0f, 0f);
             listFrameRt.anchorMax = new Vector2(0f, 1f);
             listFrameRt.offsetMin = Vector2.zero;
-            listFrameRt.offsetMax = new Vector2(380f, 0f);
+            listFrameRt.offsetMax = new Vector2(450f, 0f);
 
             var listTitle = UiBuilder.NewText(listFrame.transform, "ListTitle", $"Recipes ({count}) - all stations", 17, TextAnchor.MiddleLeft, UiBuilder.MutedCol);
             var listTitleRt = listTitle.rectTransform;
@@ -310,10 +310,10 @@ namespace LitIso.UI.InGame
                     ? new Color(0.20f, 0.22f, 0.28f, 0.96f)
                     : row.canCraft ? UiBuilder.SlotBg : new Color(0.08f, 0.09f, 0.12f, 0.84f);
                 var rowRt = recipeRow.rectTransform;
-                rowRt.sizeDelta = new Vector2(0f, 68f);
+                rowRt.sizeDelta = new Vector2(0f, 82f);
                 var rowLayout = recipeRow.gameObject.AddComponent<LayoutElement>();
-                rowLayout.preferredHeight = 68f;
-                rowLayout.minHeight = 68f;
+                rowLayout.preferredHeight = 82f;
+                rowLayout.minHeight = 82f;
 
                 var btn = recipeRow.gameObject.AddComponent<Button>();
                 btn.targetGraphic = recipeRow;
@@ -327,23 +327,23 @@ namespace LitIso.UI.InGame
                 iconRt.anchorMin = iconRt.anchorMax = new Vector2(0f, 0.5f);
                 iconRt.pivot = new Vector2(0f, 0.5f);
                 iconRt.anchoredPosition = new Vector2(10f, 0f);
-                iconRt.sizeDelta = new Vector2(44f, 44f);
+                iconRt.sizeDelta = new Vector2(52f, 52f);
 
                 string station = string.IsNullOrWhiteSpace(row.station) ? "Hand" : row.station;
-                var label = UiBuilder.NewText(recipeRow.transform, "Label", $"{row.display}\n{station}", 15, TextAnchor.MiddleLeft,
+                var label = UiBuilder.NewText(recipeRow.transform, "Label", $"{row.display}\n{station}", 17, TextAnchor.MiddleLeft,
                     row.canCraft ? UiBuilder.TextCol : UiBuilder.MutedCol);
                 label.horizontalOverflow = HorizontalWrapMode.Wrap;
                 label.verticalOverflow = VerticalWrapMode.Truncate;
                 var labelRt = label.rectTransform;
                 labelRt.anchorMin = new Vector2(0f, 0f);
                 labelRt.anchorMax = new Vector2(1f, 1f);
-                labelRt.offsetMin = new Vector2(64f, 16f);
-                labelRt.offsetMax = new Vector2(-142f, -8f);
+                labelRt.offsetMin = new Vector2(74f, 14f);
+                labelRt.offsetMax = new Vector2(-152f, -10f);
 
                 string rowStatus = row.canCraft
                     ? "Ready"
                     : string.IsNullOrWhiteSpace(row.disabledReason) ? "Locked" : row.disabledReason;
-                var status = UiBuilder.NewText(recipeRow.transform, "Status", rowStatus, 12,
+                var status = UiBuilder.NewText(recipeRow.transform, "Status", rowStatus, 13,
                     TextAnchor.MiddleRight, row.canCraft ? new Color(0.55f, 0.95f, 0.62f, 1f) : new Color(0.95f, 0.52f, 0.45f, 1f));
                 status.horizontalOverflow = HorizontalWrapMode.Wrap;
                 status.verticalOverflow = VerticalWrapMode.Truncate;
@@ -352,7 +352,7 @@ namespace LitIso.UI.InGame
                 statusRt.anchorMax = new Vector2(1f, 1f);
                 statusRt.pivot = new Vector2(1f, 0.5f);
                 statusRt.anchoredPosition = new Vector2(-10f, 0f);
-                statusRt.sizeDelta = new Vector2(126f, -10f);
+                statusRt.sizeDelta = new Vector2(136f, -12f);
             }
 
             var details = _crafting.GetDetails(_selectedRecipeId);
@@ -361,10 +361,10 @@ namespace LitIso.UI.InGame
             var detailsRt = detailsFrame.rectTransform;
             detailsRt.anchorMin = Vector2.zero;
             detailsRt.anchorMax = Vector2.one;
-            detailsRt.offsetMin = new Vector2(404f, 0f);
+            detailsRt.offsetMin = new Vector2(474f, 0f);
             detailsRt.offsetMax = Vector2.zero;
 
-            var title = UiBuilder.NewText(detailsFrame.transform, "RecipeTitle", details.display ?? "Recipe", 22, TextAnchor.UpperLeft);
+            var title = UiBuilder.NewText(detailsFrame.transform, "RecipeTitle", details.display ?? "Recipe", 26, TextAnchor.UpperLeft);
             title.horizontalOverflow = HorizontalWrapMode.Wrap;
             var titleRt = title.rectTransform;
             titleRt.anchorMin = new Vector2(0f, 1f);
@@ -377,7 +377,7 @@ namespace LitIso.UI.InGame
             string reason = details.canCraft
                 ? "Ready to craft"
                 : string.IsNullOrWhiteSpace(details.disabledReason) ? "Cannot craft" : details.disabledReason;
-            var statusText = UiBuilder.NewText(detailsFrame.transform, "RecipeStatus", $"Station: {detailStation}\n{reason}", 16, TextAnchor.UpperLeft,
+            var statusText = UiBuilder.NewText(detailsFrame.transform, "RecipeStatus", $"Station: {detailStation}\n{reason}", 18, TextAnchor.UpperLeft,
                 details.canCraft ? new Color(0.55f, 0.95f, 0.62f, 1f) : new Color(0.95f, 0.52f, 0.45f, 1f));
             statusText.horizontalOverflow = HorizontalWrapMode.Wrap;
             var statusTextRt = statusText.rectTransform;
@@ -394,14 +394,14 @@ namespace LitIso.UI.InGame
             AddIngredientSection(detailsContent, "Ingredients", details.inputs, true);
             AddIngredientSection(detailsContent, "Creates", details.outputs, false);
 
-            var craft = UiBuilder.NewButton(detailsFrame.transform, "Craft", "craft_button", details.canCraft ? "Craft" : "Cannot Craft", 20);
+            var craft = UiBuilder.NewButton(detailsFrame.transform, "Craft", "craft_button", details.canCraft ? "Craft" : "Cannot Craft", 22);
             craft.interactable = details.canCraft;
             craft.onClick.AddListener(() => { _crafting?.Craft(_selectedRecipeId); Refresh(); });
             var cr = craft.GetComponent<RectTransform>();
             cr.anchorMin = cr.anchorMax = new Vector2(1f, 0f);
             cr.pivot = new Vector2(1f, 0f);
             cr.anchoredPosition = new Vector2(-18f, 18f);
-            cr.sizeDelta = new Vector2(240f, 58f);
+            cr.sizeDelta = new Vector2(270f, 64f);
         }
 
         bool RecipeExists(string recipeId)

@@ -10,13 +10,13 @@ namespace LitIso.UI.InGame
     /// </summary>
     internal static class UiBuilder
     {
-        internal static readonly Color TextCol  = new Color(0.98f, 0.94f, 0.78f, 1f);
-        internal static readonly Color MutedCol = new Color(0.82f, 0.82f, 0.78f, 1f);
-        internal static readonly Color PanelBg  = new Color(0.055f, 0.065f, 0.085f, 0.985f);
-        internal static readonly Color Border   = new Color(0.42f, 0.46f, 0.50f, 1f);
-        internal static readonly Color Scrim    = new Color(0f, 0f, 0f, 0.55f);
-        internal static readonly Color SlotBg   = new Color(0.08f, 0.095f, 0.125f, 0.94f);
-        internal static readonly Color Select   = new Color(0.98f, 0.85f, 0.45f, 1f);
+        internal static readonly Color TextCol  = new Color(1.00f, 0.94f, 0.76f, 1f);
+        internal static readonly Color MutedCol = new Color(0.82f, 0.88f, 0.90f, 1f);
+        internal static readonly Color PanelBg  = new Color(0.040f, 0.050f, 0.070f, 0.985f);
+        internal static readonly Color Border   = new Color(0.70f, 0.56f, 0.28f, 1f);
+        internal static readonly Color Scrim    = new Color(0f, 0f, 0f, 0.62f);
+        internal static readonly Color SlotBg   = new Color(0.075f, 0.085f, 0.110f, 0.96f);
+        internal static readonly Color Select   = new Color(1.00f, 0.78f, 0.28f, 1f);
 
         /// <summary>Sprite from Resources/UI/InGame/&lt;name&gt; (null if not present).</summary>
         internal static Sprite Spr(string name) => Resources.Load<Sprite>("UI/InGame/" + name);
@@ -63,7 +63,12 @@ namespace LitIso.UI.InGame
             {
                 var outline = img.gameObject.AddComponent<Outline>();
                 outline.effectColor = Border;
-                outline.effectDistance = new Vector2(2f, -2f);
+                outline.effectDistance = new Vector2(2.5f, -2.5f);
+
+                var shadow = img.gameObject.AddComponent<Shadow>();
+                shadow.effectColor = new Color(0f, 0f, 0f, 0.60f);
+                shadow.effectDistance = new Vector2(3f, -3f);
+                shadow.useGraphicAlpha = true;
             }
             return img;
         }
