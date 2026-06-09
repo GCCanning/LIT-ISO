@@ -23,13 +23,18 @@ namespace IsoCore.Foundation
         [Tooltip("Inventory slot count.")] public int inventorySlots = 36;
         [Tooltip("Hotbar slot count.")] public int hotbarSlots = 9;
         [Tooltip("Slot count for placed storage containers such as chests.")] public int storageSlots = 18;
-        [Tooltip("Create the temporary IMGUI FoundationHUD. Disable when an external uGUI HUD binds to this bootstrap.")]
-        public bool createImguiHud = true;
+        // Retired serialized field kept so older scenes deserialize without churn.
+        [HideInInspector] public bool createImguiHud = false;
         public float cameraSize = 6f;
+        public float cameraMinSize = 3.75f;
+        public float cameraMaxSize = 9f;
+        public float cameraZoomUnitsPerSecond = 5f;
+        public float cameraZoomTapStep = 0.75f;
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
         public int ActiveDifficulty { get; private set; } = 1;
         public string ActiveCallingId { get; private set; } = "greenhand";
+        public FoundationLaunchMode ActiveLaunchMode { get; private set; } = FoundationLaunchMode.Standard;
         public FoundationContent Content { get; private set; }
         public IsoWorld World { get; private set; }
         public Inventory Inventory { get; private set; }
@@ -42,17 +47,24 @@ namespace IsoCore.Foundation
         public FarmingSystem Farming { get; private set; }
         public MobSpawner MobSpawner { get; private set; }
         public DayNightSystem DayNight { get; private set; }
+        public FoundationCampingSystem Camping { get; private set; }
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationQoLService QoL { get; private set; }
+        public FoundationUiCoordinator Ui { get; private set; }
         public FoundationInteractionOverlay InteractionOverlay { get; private set; }
+        public FoundationDungeonPortalSystem DungeonPortals { get; private set; }
         public FoundationTutorialNotifier TutorialNotifier { get; private set; }
+        public FoundationMapOverlay MapOverlay { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
+        // Retired IMGUI backup handle. This remains null in normal runtime.
         public FoundationHUD Hud { get; private set; }
+        public PlayerInteraction Interaction { get; private set; }
         public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName, config != null ? config.seed : 1337);
 
         Camera _cam;
+        UnityEngine.U2D.PixelPerfectCamera _pixelPerfectCamera;
         Transform _playerT;
 
         /// <summary>
@@ -66,7 +78,24 @@ namespace IsoCore.Foundation
                 SeedStringToInt(seed),
                 Mathf.Clamp(difficulty, 0, 2),
                 NormalizeCallingId(callingId),
-                null);
+                null,
+                FoundationLaunchMode.Standard);
+            s_HasLaunchOptions = true;
+        }
+
+        /// <summary>
+        /// Boots a flat, non-save test world for reviewing portals, buildings, resources,
+        /// interiors, and placed systems without mutating a real player world.
+        /// </summary>
+        public static void ConfigureCreationInstanceLaunch(string callingId = null)
+        {
+            s_LaunchOptions = new LaunchOptions(
+                FoundationCreationInstanceShowroom.WorldName,
+                FoundationCreationInstanceShowroom.Seed,
+                0,
+                NormalizeCallingId(callingId),
+                null,
+                FoundationLaunchMode.CreationInstance);
             s_HasLaunchOptions = true;
         }
 
@@ -84,12 +113,14 @@ namespace IsoCore.Foundation
                     metadata.seed,
                     Mathf.Clamp(metadata.difficulty, 0, 2),
                     NormalizeCallingId(metadata.callingId),
-                    savePath);
+                    savePath,
+                    FoundationLaunchMode.Standard);
             }
             else
             {
                 Debug.LogWarning($"[FoundationBootstrap] ConfigureLoad could not read metadata ({error}). Booting default world, then attempting load.");
-                s_LaunchOptions = new LaunchOptions(DefaultWorldName, 1337, 1, null, savePath);
+                s_LaunchOptions = new LaunchOptions(DefaultWorldName, 1337, 1, null, savePath,
+                    FoundationLaunchMode.Standard);
             }
             s_HasLaunchOptions = true;
         }
@@ -102,7 +133,8 @@ namespace IsoCore.Foundation
                 SeedStringToInt(seed),
                 Mathf.Clamp(difficulty, 0, 2),
                 NormalizeCallingId(callingId),
-                savePath);
+                savePath,
+                FoundationLaunchMode.Standard);
             s_HasLaunchOptions = true;
         }
 
@@ -142,6 +174,8 @@ namespace IsoCore.Foundation
             ApplyLaunchCalling();
             var sampler = new IsoTerrainSampler(config, Content);
             World = new IsoWorld(sampler, Content, config.chunkSize);
+            if (ActiveLaunchMode == FoundationLaunchMode.CreationInstance)
+                FoundationCreationInstanceShowroom.PrepareWorld(World, Content);
 
             // Player.
             var playerGo = new GameObject("Player");
@@ -151,6 +185,8 @@ namespace IsoCore.Foundation
             // Render the knight sheet over the placeholder box (added after Init so it owns
             // the SpriteRenderer): directional facing + walk animation.
             playerGo.AddComponent<PlayerAnimator>();
+            FoundationDepthPolish.Attach(playerGo, fadeWhenOccluding: false, castLongShadow: false,
+                contactScale: 0.72f, contactAlpha: 0.32f);
             _playerT = playerGo.transform;
 
             // World streaming controller.
@@ -165,6 +201,8 @@ namespace IsoCore.Foundation
             Storage = new StorageSystem(Content, storageSlots);
             if (config.starterItems != null)
                 foreach (var s in config.starterItems) Inventory.Add(s.itemId, s.count);
+            var heldTool = playerGo.AddComponent<PlayerHeldTool>();
+            heldTool.Init(Player, Inventory, Hotbar, Content);
 
             // Placement.
             var placementGo = new GameObject("PlacementSystem");
@@ -190,7 +228,7 @@ namespace IsoCore.Foundation
             var spawnerGo = new GameObject("MobSpawner");
             spawnerGo.transform.SetParent(transform, false);
             MobSpawner = spawnerGo.AddComponent<MobSpawner>();
-            MobSpawner.Init(World, Content, config, Player);
+            MobSpawner.Init(World, Content, config, Player, Progression?.Stats);
 
             // Day/night clock.
             DayNight = gameObject.AddComponent<DayNightSystem>();
@@ -214,38 +252,58 @@ namespace IsoCore.Foundation
             worldAudio.dayNight = DayNight;
 
             // Pause / settings overlay (Esc) with volume sliders + control hints.
+            Ui = gameObject.AddComponent<FoundationUiCoordinator>();
             gameObject.AddComponent<PauseMenu>();
 
             // Lightweight Foundation overlay for right-click world options and tutorial
-            // notifications. Kept separate from the temporary IMGUI HUD so uGUI can
-            // replace either surface independently later.
+            // notifications. uGUI is the canonical HUD/panel shell.
             InteractionOverlay = gameObject.AddComponent<FoundationInteractionOverlay>();
+
+            Camping = gameObject.AddComponent<FoundationCampingSystem>();
+            Camping.Init(Player, Placement, DayNight, Progression, InteractionOverlay);
 
             Instances = new FoundationInstanceSystem();
             Instances.Init(World, Player, Content, InteractionOverlay);
+            WorldController.SetInstanceSystem(Instances);
+            MobSpawner.SetInstanceSystem(Instances);
+            MobSpawner.SetCampingSystem(Camping);
 
-            // HUD.
-            if (createImguiHud)
-            {
-                Hud = gameObject.AddComponent<FoundationHUD>();
-                Hud.Init(Inventory, Hotbar, Content, Crafting, Player, World, DayNight);
-            }
+            var portalGo = new GameObject("DungeonPortalSystem");
+            portalGo.transform.SetParent(transform, false);
+            DungeonPortals = portalGo.AddComponent<FoundationDungeonPortalSystem>();
+            DungeonPortals.Init(World, Content, config, Player, Instances, MobSpawner, InteractionOverlay,
+                Progression, ActiveLaunchMode);
+
+            var weatherGo = new GameObject("FoundationWeatherVisuals", typeof(ParticleSystem));
+            weatherGo.transform.SetParent(transform, false);
+            var weather = weatherGo.AddComponent<FoundationWeatherVisuals>();
+            weather.Init(DayNight, _cam, World, Player, Instances, config.seed);
+
+            // The old IMGUI FoundationHUD backup is intentionally not created.
+            // uGUI is the canonical runtime UI; GameHudInitializer spawns it when Ready fires.
+            Hud = null;
 
             // Input router.
-            var interaction = gameObject.AddComponent<PlayerInteraction>();
-            interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
-                Hud, Storage, _cam, InteractionOverlay, Instances);
+            Interaction = gameObject.AddComponent<PlayerInteraction>();
+            Interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
+                Storage, _cam, InteractionOverlay, Instances, DungeonPortals, heldTool, Camping);
 
             // LitRPG progression hooks. Gameplay systems emit success events; this component
             // converts them into activity XP and starter quest progress.
             ProgressionHooks = gameObject.AddComponent<FoundationProgressionHooks>();
-            ProgressionHooks.Init(Progression, interaction, Crafting, Placement, Farming, MobSpawner);
+            ProgressionHooks.Init(Progression, Interaction, Crafting, Placement, Farming, MobSpawner);
 
             TutorialNotifier = gameObject.AddComponent<FoundationTutorialNotifier>();
-            TutorialNotifier.Init(InteractionOverlay, Progression, Hotbar, interaction, Crafting, Placement, Farming);
+            TutorialNotifier.Init(InteractionOverlay, Progression, Hotbar, Interaction, Crafting, Placement, Farming);
+
+            MapOverlay = gameObject.AddComponent<FoundationMapOverlay>();
+            MapOverlay.Init(World, Player, Instances, DungeonPortals);
 
             QoL = new FoundationQoLService();
             QoL.Init(Content, Progression, Inventory);
+
+            if (ActiveLaunchMode == FoundationLaunchMode.CreationInstance)
+                FoundationCreationInstanceShowroom.BuildShowroom(this);
 
             ApplyLaunchSave();
 
@@ -262,17 +320,23 @@ namespace IsoCore.Foundation
         {
             if (config == null)
                 config = new FoundationConfig();
+            config.viewRadiusChunks = Mathf.Max(3, config.viewRadiusChunks);
+            config.moveSpeed = Mathf.Clamp(config.moveSpeed <= 0f ? 2.8f : config.moveSpeed, 1.5f, 2.8f);
 
             ActiveWorldName = DefaultWorldName;
             ActiveDifficulty = 1;
             ActiveCallingId = "greenhand";
+            ActiveLaunchMode = FoundationLaunchMode.Standard;
 
             if (!s_HasLaunchOptions)
                 return;
 
             ActiveWorldName = s_LaunchOptions.worldName;
             ActiveDifficulty = s_LaunchOptions.difficulty;
+            ActiveLaunchMode = s_LaunchOptions.launchMode;
             config.seed = s_LaunchOptions.seed;
+            if (ActiveLaunchMode == FoundationLaunchMode.CreationInstance)
+                FoundationCreationInstanceShowroom.ApplyConfig(this);
         }
 
         void ApplyLaunchCalling()
@@ -384,6 +448,9 @@ namespace IsoCore.Foundation
                 storageContainers = Storage != null ? Storage.CaptureState() : Array.Empty<FoundationSavedStorageContainer>(),
                 crops = Farming != null ? Farming.SnapshotCrops() : Array.Empty<FoundationSavedCrop>(),
                 instance = Instances != null ? Instances.CaptureState() : default,
+                dungeon = DungeonPortals != null ? DungeonPortals.CaptureState() : default,
+                dungeonHistory = DungeonPortals != null ? DungeonPortals.CaptureHistory() : Array.Empty<FoundationSavedDungeonHistory>(),
+                exploredMapCells = MapOverlay != null ? MapOverlay.SnapshotExploredCells() : Array.Empty<FoundationSavedMapCell>(),
                 dayNightTime = DayNight != null ? DayNight.time : 0.30f,
                 mobs = MobSpawner != null ? MobSpawner.SnapshotMobs() : Array.Empty<FoundationSavedMob>(),
                 regionShifts = Progression != null ? ToArray(Progression.RegionShifts) : Array.Empty<string>(),
@@ -411,7 +478,13 @@ namespace IsoCore.Foundation
             Storage?.RestoreState(data.storageContainers, entry =>
                 Placement != null && Placement.HasContainerPlaceable(entry.x, entry.y, entry.placeableId));
             Farming?.RestoreCrops(data.crops);
-            Instances?.RestoreState(data.instance);
+            DungeonPortals?.RestoreHistory(data.dungeonHistory);
+            bool restoringDungeon = data.dungeon.active && !string.IsNullOrWhiteSpace(data.dungeon.portalId);
+            if (restoringDungeon)
+                DungeonPortals?.RestoreState(data.dungeon, data.instance);
+            else
+                Instances?.RestoreState(data.instance);
+            MapOverlay?.RestoreExploredCells(data.exploredMapCells);
             DayNight?.SetTime(data.dayNightTime);
             MobSpawner?.RestoreMobs(data.mobs);
 
@@ -544,6 +617,7 @@ namespace IsoCore.Foundation
             _cam.clearFlags = CameraClearFlags.SolidColor; // else a runtime-made camera clears to skybox
             _cam.backgroundColor = new Color(0.10f, 0.12f, 0.16f);
             _cam.transform.position = new Vector3(0, 0, -10);
+            DisableLegacyCameraZoomControllers();
 
             if (config != null && config.pixelPerfect)
                 SetupPixelPerfect();
@@ -561,6 +635,7 @@ namespace IsoCore.Foundation
 
             var pp = _cam.GetComponent<UnityEngine.U2D.PixelPerfectCamera>()
                   ?? _cam.gameObject.AddComponent<UnityEngine.U2D.PixelPerfectCamera>();
+            _pixelPerfectCamera = pp;
 
             _cam.orthographicSize = (refY / 2f) / assetsPPU; // 5.625
             _cam.allowHDR = false;
@@ -577,6 +652,8 @@ namespace IsoCore.Foundation
             pp.cropFrameX = true;
             pp.cropFrameY = true;
             pp.stretchFill = true;     // fill the window (both crop flags + stretchFill)
+
+            cameraSize = _cam.orthographicSize;
         }
 
         Vector3 _camVel;
@@ -584,6 +661,8 @@ namespace IsoCore.Foundation
 
         void LateUpdate()
         {
+            HandleCameraZoom();
+
             if (_cam != null && _playerT != null)
             {
                 var p = _playerT.position;
@@ -595,6 +674,72 @@ namespace IsoCore.Foundation
             }
         }
 
+        void HandleCameraZoom()
+        {
+            if (_cam == null || !_cam.orthographic)
+                return;
+
+            bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            if (!ctrl)
+                return;
+
+            bool zoomIn =
+                Input.GetKey(KeyCode.Equals) ||
+                Input.GetKey(KeyCode.Plus) ||
+                Input.GetKey(KeyCode.KeypadPlus);
+            bool zoomOut =
+                Input.GetKey(KeyCode.Minus) ||
+                Input.GetKey(KeyCode.KeypadMinus);
+
+            if (!zoomIn && !zoomOut)
+                return;
+
+            if (_pixelPerfectCamera != null && _pixelPerfectCamera.enabled)
+            {
+                _pixelPerfectCamera.enabled = false;
+            }
+
+            float delta = 0f;
+            if (zoomIn)
+                delta -= cameraZoomUnitsPerSecond * Time.unscaledDeltaTime;
+            if (zoomOut)
+                delta += cameraZoomUnitsPerSecond * Time.unscaledDeltaTime;
+
+            bool zoomInTap =
+                Input.GetKeyDown(KeyCode.Equals) ||
+                Input.GetKeyDown(KeyCode.Plus) ||
+                Input.GetKeyDown(KeyCode.KeypadPlus);
+            bool zoomOutTap =
+                Input.GetKeyDown(KeyCode.Minus) ||
+                Input.GetKeyDown(KeyCode.KeypadMinus);
+
+            if (zoomInTap)
+                delta -= cameraZoomTapStep;
+            if (zoomOutTap)
+                delta += cameraZoomTapStep;
+
+            float next = _cam.orthographicSize + delta;
+            _cam.orthographicSize = Mathf.Clamp(next, cameraMinSize, cameraMaxSize);
+            cameraSize = _cam.orthographicSize;
+        }
+
+        void DisableLegacyCameraZoomControllers()
+        {
+            if (_cam == null)
+                return;
+
+            var behaviours = _cam.GetComponents<MonoBehaviour>();
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                var behaviour = behaviours[i];
+                if (behaviour == null || behaviour == this)
+                    continue;
+
+                if (behaviour.GetType().Name == "ZoomController")
+                    behaviour.enabled = false;
+            }
+        }
+
         struct LaunchOptions
         {
             public readonly string worldName;
@@ -602,14 +747,17 @@ namespace IsoCore.Foundation
             public readonly int difficulty;
             public readonly string callingId;
             public readonly string savePath;
+            public readonly FoundationLaunchMode launchMode;
 
-            public LaunchOptions(string worldName, int seed, int difficulty, string callingId, string savePath)
+            public LaunchOptions(string worldName, int seed, int difficulty, string callingId, string savePath,
+                FoundationLaunchMode launchMode)
             {
                 this.worldName = worldName;
                 this.seed = seed;
                 this.difficulty = difficulty;
                 this.callingId = callingId;
                 this.savePath = savePath;
+                this.launchMode = launchMode;
             }
         }
 

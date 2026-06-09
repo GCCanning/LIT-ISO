@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -78,8 +79,10 @@ namespace IsoCore.Foundation.EditorTools
             ValidateBuildSettings(add);
             ValidateMenuScene(add);
             ValidateMenuSourceWiring(add);
+            ValidateUiSourceWiring(add);
             ValidateLaunchSeedPropagation(add);
             ValidateWorldContracts(add);
+            ValidateDungeonGeneration(add);
 
             string foundationSummary = FoundationValidator.Validate(false, writeReports);
             add("Foundation editor validator passes", foundationSummary.Contains("ALL PASS"), foundationSummary);
@@ -131,6 +134,283 @@ namespace IsoCore.Foundation.EditorTools
             add("WelcomeScreenManager loads IsoCoreFoundation", load >= 0, path);
             add("ConfigureLaunch happens before LoadScene", configure >= 0 && load >= 0 && configure < load,
                 configure >= 0 && load >= 0 ? $"ConfigureLaunch index {configure}, LoadScene index {load}" : "missing call");
+            add("Menu Continue loads Foundation save when present",
+                source.Contains("FoundationBootstrap.DefaultSavePathForWorld") &&
+                source.Contains("File.Exists(foundationSavePath)") &&
+                source.Contains("FoundationBootstrap.ConfigureLoad(foundationSavePath)") &&
+                source.Contains("No Foundation save found"),
+                "Continue/Load uses save.json when available, seed launch when absent");
+            add("Menu launch no longer writes legacy WorldManager",
+                !source.Contains("WorldManager.Instance") && !source.Contains("AddComponent<WorldManager>"),
+                "FoundationBootstrap.ConfigureLaunch is the canonical launch contract");
+        }
+
+        static void ValidateUiSourceWiring(AddCheck add)
+        {
+            string controllerPath = "Assets/Scripts/UI/InGame/GamePanelsController.cs";
+            string gameUiPath = "Assets/Scripts/UI/InGame/GameUIController.cs";
+            string panelPath = "Assets/Scripts/UI/InGame/CharacterPanelView.cs";
+            string initializerPath = "Assets/Scripts/UI/InGame/GameHudInitializer.cs";
+            string hudAdapterPath = "Assets/Scripts/UI/InGame/FoundationHudAdapter.cs";
+            string craftingAdapterPath = "Assets/Scripts/UI/InGame/FoundationCraftingAdapter.cs";
+            string characterAdapterPath = "Assets/Scripts/UI/InGame/FoundationCharacterSheetAdapter.cs";
+            string interactionPath = "Assets/Scripts/IsoCoreFoundation/Player/PlayerInteraction.cs";
+            string worldControllerPath = "Assets/Scripts/IsoCoreFoundation/World/IsoWorldController.cs";
+            string placementPath = "Assets/Scripts/IsoCoreFoundation/Building/PlacementSystem.cs";
+            string portalPath = "Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonPortalSystem.cs";
+            string portalInstancePath = "Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonPortalInstance.cs";
+            string portalVisualPath = "Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationPortalVisual.cs";
+            string dungeonSpritePath = "Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonSpriteResolver.cs";
+            string instancePath = "Assets/Scripts/IsoCoreFoundation/Building/FoundationInstanceSystem.cs";
+            string interiorLayoutPath = "Assets/Scripts/IsoCoreFoundation/Building/FoundationInteriorLayout.cs";
+            string interiorResolverPath = "Assets/Scripts/IsoCoreFoundation/Building/FoundationInteriorSpriteResolver.cs";
+            string layoutPath = "Assets/Scripts/UI/InGame/PlayerResizableUi.cs";
+            string mapPath = "Assets/Scripts/IsoCoreFoundation/UI/FoundationMapOverlay.cs";
+            string bootstrapPath = "Assets/Scripts/IsoCoreFoundation/Core/FoundationBootstrap.cs";
+            string showroomPath = "Assets/Scripts/IsoCoreFoundation/Core/FoundationCreationInstanceShowroom.cs";
+            string depthPath = "Assets/Scripts/IsoCoreFoundation/World/FoundationDepthPolish.cs";
+            string contactShadowPath = "Assets/Scripts/IsoCoreFoundation/World/FoundationContactShadow.cs";
+            string weatherPath = "Assets/Scripts/IsoCoreFoundation/World/FoundationWeatherVisuals.cs";
+            string ambientPath = "Assets/Scripts/IsoCoreFoundation/World/AmbientLightController.cs";
+            string uiBuilderPath = "Assets/Scripts/UI/InGame/UiBuilder.cs";
+            string placeablePath = "Assets/Scripts/IsoCoreFoundation/Building/PlaceableInstance.cs";
+            string mobPath = "Assets/Scripts/IsoCoreFoundation/Mobs/Mob.cs";
+            string campingPath = "Assets/Scripts/IsoCoreFoundation/Survival/FoundationCampingSystem.cs";
+            string configPath = "Assets/Scripts/IsoCoreFoundation/Core/FoundationConfig.cs";
+            string contentPath = "Assets/Scripts/IsoCoreFoundation/Core/FoundationContent.cs";
+            string placeableDefinitionPath = "Assets/Scripts/IsoCoreFoundation/Building/PlaceableDefinition.cs";
+            string mobDefinitionPath = "Assets/Scripts/IsoCoreFoundation/Mobs/MobDefinition.cs";
+            string mobSpawnerPath = "Assets/Scripts/IsoCoreFoundation/Mobs/MobSpawner.cs";
+            string resourceNodePath = "Assets/Scripts/IsoCoreFoundation/Harvesting/ResourceNode.cs";
+            string progressionHooksPath = "Assets/Scripts/IsoCoreFoundation/Progression/FoundationProgressionHooks.cs";
+            string tutorialPath = "Assets/Scripts/IsoCoreFoundation/Progression/FoundationTutorialNotifier.cs";
+            string controller = File.Exists(controllerPath) ? File.ReadAllText(controllerPath) : "";
+            string gameUi = File.Exists(gameUiPath) ? File.ReadAllText(gameUiPath) : "";
+            string panel = File.Exists(panelPath) ? File.ReadAllText(panelPath) : "";
+            string initializer = File.Exists(initializerPath) ? File.ReadAllText(initializerPath) : "";
+            string hudAdapter = File.Exists(hudAdapterPath) ? File.ReadAllText(hudAdapterPath) : "";
+            string craftingAdapter = File.Exists(craftingAdapterPath) ? File.ReadAllText(craftingAdapterPath) : "";
+            string characterAdapter = File.Exists(characterAdapterPath) ? File.ReadAllText(characterAdapterPath) : "";
+            string interaction = File.Exists(interactionPath) ? File.ReadAllText(interactionPath) : "";
+            string worldController = File.Exists(worldControllerPath) ? File.ReadAllText(worldControllerPath) : "";
+            string placement = File.Exists(placementPath) ? File.ReadAllText(placementPath) : "";
+            string portal = File.Exists(portalPath) ? File.ReadAllText(portalPath) : "";
+            string portalInstance = File.Exists(portalInstancePath) ? File.ReadAllText(portalInstancePath) : "";
+            string portalVisual = File.Exists(portalVisualPath) ? File.ReadAllText(portalVisualPath) : "";
+            string dungeonSprite = File.Exists(dungeonSpritePath) ? File.ReadAllText(dungeonSpritePath) : "";
+            string instance = File.Exists(instancePath) ? File.ReadAllText(instancePath) : "";
+            string interiorLayout = File.Exists(interiorLayoutPath) ? File.ReadAllText(interiorLayoutPath) : "";
+            string interiorResolver = File.Exists(interiorResolverPath) ? File.ReadAllText(interiorResolverPath) : "";
+            string layout = File.Exists(layoutPath) ? File.ReadAllText(layoutPath) : "";
+            string map = File.Exists(mapPath) ? File.ReadAllText(mapPath) : "";
+            string bootstrap = File.Exists(bootstrapPath) ? File.ReadAllText(bootstrapPath) : "";
+            string showroom = File.Exists(showroomPath) ? File.ReadAllText(showroomPath) : "";
+            string depth = File.Exists(depthPath) ? File.ReadAllText(depthPath) : "";
+            string contact = File.Exists(contactShadowPath) ? File.ReadAllText(contactShadowPath) : "";
+            string weather = File.Exists(weatherPath) ? File.ReadAllText(weatherPath) : "";
+            string ambient = File.Exists(ambientPath) ? File.ReadAllText(ambientPath) : "";
+            string uiBuilder = File.Exists(uiBuilderPath) ? File.ReadAllText(uiBuilderPath) : "";
+            string placeable = File.Exists(placeablePath) ? File.ReadAllText(placeablePath) : "";
+            string mob = File.Exists(mobPath) ? File.ReadAllText(mobPath) : "";
+            string camping = File.Exists(campingPath) ? File.ReadAllText(campingPath) : "";
+            string config = File.Exists(configPath) ? File.ReadAllText(configPath) : "";
+            string content = File.Exists(contentPath) ? File.ReadAllText(contentPath) : "";
+            string placeableDefinition = File.Exists(placeableDefinitionPath) ? File.ReadAllText(placeableDefinitionPath) : "";
+            string mobDefinition = File.Exists(mobDefinitionPath) ? File.ReadAllText(mobDefinitionPath) : "";
+            string mobSpawner = File.Exists(mobSpawnerPath) ? File.ReadAllText(mobSpawnerPath) : "";
+            string resourceNode = File.Exists(resourceNodePath) ? File.ReadAllText(resourceNodePath) : "";
+            string progressionHooks = File.Exists(progressionHooksPath) ? File.ReadAllText(progressionHooksPath) : "";
+            string tutorial = File.Exists(tutorialPath) ? File.ReadAllText(tutorialPath) : "";
+
+            add("uGUI uses one canonical tabbed Character panel",
+                controller.Contains("CharacterPanelView") &&
+                panel.Contains("CharacterPanelTab") &&
+                panel.Contains("DrawInventory") &&
+                panel.Contains("DrawCrafting") &&
+                panel.Contains("DrawSkills") &&
+                panel.Contains("DrawQuests") &&
+                panel.Contains("DrawSystem"),
+                $"{controllerPath} / {panelPath}");
+            add("uGUI panel binds Foundation progression and QoL",
+                initializer.Contains("BindProgression(progression, bootstrap.QoL)") &&
+                panel.Contains("FoundationQoLService") &&
+                panel.Contains("CaptureReadState"),
+                initializerPath);
+            add("Runtime does not create the retired IMGUI FoundationHUD backup",
+                bootstrap.Contains("Hud = null") &&
+                bootstrap.Contains("uGUI is the canonical runtime UI") &&
+                interaction.Contains("CraftingRequested?.Invoke(station)") &&
+                !initializer.Contains("DebugImguiHudVisible") &&
+                !interaction.Contains("ToggleCrafting") &&
+                !interaction.Contains("ToggleInventory"),
+                $"{bootstrapPath} / {interactionPath} / {initializerPath}");
+            add("Crafting panel surfaces every recipe with station and lock reason",
+                panel.Contains("Recipes ({count}) - all stations") &&
+                panel.Contains("row.disabledReason") &&
+                panel.Contains("SelectedRecipeRow") &&
+                craftingAdapter.Contains("public int RecipeCount => _content?.Recipes?.Count ?? 0") &&
+                craftingAdapter.Contains("station        = StationLabel(r.station)") &&
+                craftingAdapter.Contains("disabledReason = disabledReason"),
+                $"{panelPath} / {craftingAdapterPath}");
+            add("uGUI adapters avoid retired legacy singleton fallbacks",
+                !ContainsRetiredRuntimeReference(hudAdapter) &&
+                !ContainsRetiredRuntimeReference(characterAdapter),
+                $"{hudAdapterPath} / {characterAdapterPath}");
+            add("Mouse targeting prefers visible sprite bounds before cell fallback",
+                interaction.Contains("TryDecorationUnderCursor") &&
+                interaction.Contains("TryNodeUnderCursor") &&
+                interaction.Contains("TryPlaceableUnderCursor") &&
+                interaction.Contains("TryPortalUnderCursor") &&
+                worldController.Contains("TryGetNodeUnderCursor") &&
+                placement.Contains("TryGetPlaceableUnderCursor") &&
+                portal.Contains("TryGetPortalUnderCursor"),
+                $"{interactionPath} / bounds-target providers");
+            add("Instance interiors generate wall stacks from layout boundaries",
+                instance.Contains("SpawnLayoutWallDressing") &&
+                instance.Contains("rel.y + 1") &&
+                instance.Contains("rel.x - 1") &&
+                instance.Contains("rel.x + 1") &&
+                instance.Contains("SpawnWallStack") &&
+                !instance.Contains("SpawnTavernDecorations"),
+                instancePath);
+            add("Tavern interior uses a validated non-rectangular layout mask",
+                interiorLayout.Contains("TavernHearthSnug") &&
+                interiorLayout.Contains("floorTiles") &&
+                interiorLayout.Contains("reservedWalkTiles") &&
+                interiorLayout.Contains("FoundationInteriorLayoutValidator") &&
+                interiorLayout.Contains("Flood(layout.spawnCell") &&
+                instance.Contains("BuildInteriorLayout(FoundationInteriorLayout.TavernHearthSnug(), origin)") &&
+                instance.Contains("CopyActiveRenderCells") &&
+                worldController.Contains("explicitInstanceCells") &&
+                worldController.Contains("CopyActiveRenderCells(_instanceRenderCells"),
+                $"{interiorLayoutPath} / {instancePath} / {worldControllerPath}");
+            add("Tavern varied layout uses V2 depth-aware decor sprites",
+                interiorResolver.Contains("LitIsoDecorV2") &&
+                interiorLayout.Contains("tavern_back_bar_v2") &&
+                interiorLayout.Contains("tavern_feast_table_v2") &&
+                interiorLayout.Contains("tavern_fireplace_v2") &&
+                interiorLayout.Contains("wood_bench_row_v2"),
+                $"{interiorLayoutPath} / {interiorResolverPath}");
+            add("Player HUD layout is authorable and persisted",
+                layout.Contains("PlayerResizableUi") &&
+                layout.Contains("PlayerPrefs") &&
+                layout.Contains("AltHeld") &&
+                gameUi.Contains("PlayerResizableUi.Attach") &&
+                panel.Contains("PlayerResizableUi.Attach"),
+                $"{layoutPath} / uGUI panels");
+            add("Map overlay supports saved layout, zoom, pan, and markers",
+                map.Contains("SaveRect") &&
+                map.Contains("HandleLargeMapNavigation") &&
+                map.Contains("DrawPortalMarkers") &&
+                map.Contains("DrawLegend") &&
+                map.Contains("large.zoom"),
+                mapPath);
+            add("Map overlay has dungeon inspection mode",
+                map.Contains("DrawDungeonMapCells") &&
+                map.Contains("DrawDungeonLocalMapCells") &&
+                map.Contains("SnapshotActiveDungeonRoomMarkers") &&
+                map.Contains("ActiveDungeonExitCell") &&
+                map.Contains("RoomColor") &&
+                instance.Contains("IsInsideDungeon") &&
+                instance.Contains("ActiveDungeonTier") &&
+                instance.Contains("SnapshotActiveDungeonRoomMarkers"),
+                $"{mapPath} / {instancePath}");
+            add("Creation Instance has tier and reroll dungeon lab portals",
+                portal.Contains("variantRows") &&
+                portal.Contains("tierColumns") &&
+                portal.Contains("Reroll Variant") &&
+                showroom.Contains("DUNGEON LAB") &&
+                showroom.Contains("Press M inside"),
+                $"{portalPath} / {showroomPath}");
+            add("Dungeon portals use animated dimensional sheet with tier particles",
+                File.Exists("Assets/Resources/FoundationPortals/Dimensional_Portal.png") &&
+                dungeonSprite.Contains("Dimensional_Portal") &&
+                dungeonSprite.Contains("PortalFrames") &&
+                portalVisual.Contains("FoundationPortalVisual") &&
+                portalVisual.Contains("ParticleSystem") &&
+                portalVisual.Contains("ColorForTier") &&
+                portalInstance.Contains("FoundationPortalVisual") &&
+                instance.Contains("AttachPortalVisual"),
+                $"{dungeonSpritePath} / {portalVisualPath} / FoundationPortals/Dimensional_Portal.png");
+            add("Camera zoom supports Ctrl plus/minus taps and hold",
+                bootstrap.Contains("cameraZoomTapStep") &&
+                bootstrap.Contains("KeyCode.Plus") &&
+                bootstrap.Contains("KeyCode.KeypadPlus") &&
+                bootstrap.Contains("KeyCode.KeypadMinus") &&
+                bootstrap.Contains("Input.GetKeyDown") &&
+                bootstrap.Contains("_pixelPerfectCamera.enabled = false") &&
+                bootstrap.Contains("DisableLegacyCameraZoomControllers"),
+                bootstrapPath);
+            add("Depth polish is attached across runtime sprite families",
+                depth.Contains("FoundationDepthPolish") &&
+                contact.Contains("FoundationContactShadow") &&
+                bootstrap.Contains("FoundationDepthPolish.Attach(playerGo") &&
+                worldController.Contains("FoundationDepthPolish.Attach(go") &&
+                placeable.Contains("FoundationDepthPolish.Attach(gameObject") &&
+                instance.Contains("FoundationDepthPolish.Attach(go") &&
+                portalInstance.Contains("FoundationDepthPolish.Attach(gameObject") &&
+                mob.Contains("FoundationDepthPolish.Attach(gameObject"),
+                "contact shadows + occlusion fade + long shadows");
+            add("Visual weather feeds ambient lighting",
+                bootstrap.Contains("FoundationWeatherVisuals") &&
+                weather.Contains("FoundationWeatherMood") &&
+                weather.Contains("AmbientDimming") &&
+                ambient.Contains("ApplyWeather") &&
+                ambient.Contains("FoundationWeatherVisuals.Active"),
+                $"{weatherPath} / {ambientPath}");
+            add("uGUI text readability has default shadow and pixel-perfect canvases",
+                uiBuilder.Contains("ApplyTextReadability") &&
+                uiBuilder.Contains("Shadow") &&
+                uiBuilder.Contains("pixelPerfect = true") &&
+                gameUi.Contains("pixelPerfect = true") &&
+                gameUi.Contains("effectColor = new Color(0f, 0f, 0f"),
+                $"{uiBuilderPath} / {gameUiPath}");
+            add("First-hour mechanics tune player speed and held harvest targeting",
+                config.Contains("public float moveSpeed = 2.8f") &&
+                bootstrap.Contains("config.moveSpeed = Mathf.Clamp") &&
+                interaction.Contains("ResourceNode _heldHarvestTarget") &&
+                interaction.Contains("HeldHarvestInterval = 0.30f") &&
+                resourceNode.Contains("_maxHits = Mathf.Max(1, def.hitsToHarvest)") &&
+                resourceNode.Contains("tier + 1"),
+                $"{configPath} / {interactionPath} / {resourceNodePath}");
+            add("Campfire campsite system is wired into spawn, rest, cook, and tutorial flow",
+                File.Exists(campingPath) &&
+                placeableDefinition.Contains("isCampsite") &&
+                placeableDefinition.Contains("campTier") &&
+                placeableDefinition.Contains("campWardRadius") &&
+                content.Contains("campfire.isCampsite = true") &&
+                content.Contains("fireplace.campTier = 2") &&
+                content.Contains("cook_roasted_apple") &&
+                content.Contains("rest_at_camp") &&
+                bootstrap.Contains("FoundationCampingSystem Camping") &&
+                bootstrap.Contains("Camping.Init(Player, Placement, DayNight, Progression, InteractionOverlay)") &&
+                bootstrap.Contains("MobSpawner.SetCampingSystem(Camping)") &&
+                interaction.Contains("AddCampsiteActions") &&
+                interaction.Contains("Rest until dawn") &&
+                interaction.Contains("Cook at fire") &&
+                tutorial.Contains("Firelight wards weak mobs"),
+                $"{campingPath} / camp content wiring");
+            add("Camp ward breaches can produce bounded mob aggression",
+                mobDefinition.Contains("threatTier") &&
+                mobDefinition.Contains("campWardIgnoreChance") &&
+                mobDefinition.Contains("contactDamage") &&
+                camping.Contains("RollMobSpawnWard") &&
+                camping.Contains("breached = Random.value < breachChance") &&
+                mobSpawner.Contains("RollMobSpawnWard(def, ground, out breachedWard)") &&
+                mobSpawner.Contains("SpawnMob(def, ground, breachedWard") &&
+                mob.Contains("SetCombatContext") &&
+                mob.Contains("TryAttack") &&
+                progressionHooks.Contains("cook_fire_meal"),
+                $"{mobDefinitionPath} / {campingPath} / {mobPath}");
+        }
+
+        static bool ContainsRetiredRuntimeReference(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+                return false;
+
+            return Regex.IsMatch(source,
+                @"\b(PlayerHealth|PlayerMana|PlayerStats|XPSystem|QuestManager|PlayerInventory)\b");
         }
 
         static void ValidateLaunchSeedPropagation(AddCheck add)
@@ -179,8 +459,12 @@ namespace IsoCore.Foundation.EditorTools
             add("Foundation runtime graph creates PlacementSystem", go.transform.Find("PlacementSystem") != null);
             add("Foundation runtime graph creates FarmingSystem", go.transform.Find("FarmingSystem") != null);
             add("Foundation runtime graph creates MobSpawner", go.transform.Find("MobSpawner") != null);
-            add("Foundation runtime graph creates HUD and input router",
-                go.GetComponent<FoundationHUD>() != null && go.GetComponent<PlayerInteraction>() != null);
+            add("Foundation runtime graph creates input router without retired IMGUI HUD",
+                go.GetComponent<FoundationHUD>() == null && boot.Hud == null &&
+                go.GetComponent<PlayerInteraction>() != null);
+            add("Foundation runtime graph creates UI coordinator",
+                go.GetComponent<FoundationUiCoordinator>() != null && boot.Ui != null,
+                boot.Ui != null ? "uGUI/input ownership ready" : "missing coordinator");
             add("FoundationBootstrap Ready event fires with active instance",
                 readyBoot == boot,
                 readyBoot != null ? readyBoot.name : "not fired");
@@ -193,7 +477,7 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Player != null && boot.WorldController != null && boot.Placement != null &&
                 boot.Instances != null &&
                 boot.Farming != null && boot.MobSpawner != null && boot.DayNight != null &&
-                boot.Crafting != null && boot.Hud != null);
+                boot.Crafting != null && boot.Hud == null && boot.Ui != null && boot.Interaction != null);
             add("FoundationBootstrap exposes mouse interaction overlay and tutorial handles",
                 boot.InteractionOverlay != null && boot.TutorialNotifier != null &&
                 boot.TutorialNotifier.CurrentStep >= 0);
@@ -238,20 +522,19 @@ namespace IsoCore.Foundation.EditorTools
 
             var headlessGo = new GameObject("FoundationBootstrap_NoImguiHudValidation");
             var headlessBoot = headlessGo.AddComponent<FoundationBootstrap>();
-            headlessBoot.createImguiHud = false;
             typeof(FoundationBootstrap)
                 .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.Invoke(headlessBoot, null);
-            add("FoundationBootstrap can skip temporary IMGUI HUD",
+            add("FoundationBootstrap keeps retired IMGUI HUD uncreated",
                 headlessBoot.Hud == null && headlessGo.GetComponent<FoundationHUD>() == null &&
                 headlessGo.GetComponent<PlayerInteraction>() != null);
-            add("FoundationBootstrap exposes UI binding handles without IMGUI HUD",
+            add("FoundationBootstrap exposes UI binding handles through canonical shell",
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
                 headlessBoot.Content != null && headlessBoot.World != null &&
                 headlessBoot.Progression != null && headlessBoot.Stats != null &&
                 headlessBoot.ProgressionHooks != null && headlessBoot.Instances != null &&
                 headlessBoot.InteractionOverlay != null && headlessBoot.TutorialNotifier != null &&
-                headlessBoot.QoL != null);
+                headlessBoot.QoL != null && headlessBoot.Ui != null && headlessBoot.Interaction != null);
             UnityEngine.Object.DestroyImmediate(headlessGo);
 
             FoundationBootstrap.ClearLaunchOptions();
@@ -339,8 +622,19 @@ namespace IsoCore.Foundation.EditorTools
                     boot.Instances != null &&
                     boot.Instances.Enter(tavern, boot.Player.CurrentCell);
                 Vector2Int instanceCell = boot.Player.CurrentCell;
+                add("Tavern instance uses expanded render bounds",
+                    enteredInstance &&
+                    boot.Instances.ActiveRenderMax.x - boot.Instances.ActiveRenderMin.x + 1 >= 22 &&
+                    boot.Instances.ActiveRenderMax.y - boot.Instances.ActiveRenderMin.y + 1 >= 22,
+                    enteredInstance ? $"{boot.Instances.ActiveRenderMin}->{boot.Instances.ActiveRenderMax}" : "not entered");
+            add("Foundation map overlay exists",
+                boot.MapOverlay != null,
+                boot.MapOverlay != null ? "minimap + M fullscreen map" : "missing");
+            add("Animated campfire sheet resolves",
+                FoundationPlaceableSpriteResolver.CampfireFrames().Length >= 6,
+                $"frames {FoundationPlaceableSpriteResolver.CampfireFrames().Length}");
 
-                bool saved = boot.Save(path);
+            bool saved = boot.Save(path);
                 bool metadataOk = FoundationBootstrap.TryReadSaveMetadata(path, out var metadata, out string metadataError);
                 var savedDto = File.Exists(path) ? JsonUtility.FromJson<FoundationSaveData>(File.ReadAllText(path)) : null;
                 bool dtoQuestProgressOk = false;
@@ -371,8 +665,10 @@ namespace IsoCore.Foundation.EditorTools
                     savedDto.qol != null &&
                     savedDto.qol.pinnedGoals != null &&
                     savedDto.qol.pinnedGoals.Length == 1 &&
+                    savedDto.exploredMapCells != null &&
+                    savedDto.exploredMapCells.Length > 0 &&
                     dtoQuestProgressOk,
-                    savedDto != null ? $"v{savedDto.version}, pins {savedDto.qol?.pinnedGoals?.Length ?? 0}" : "missing DTO");
+                    savedDto != null ? $"v{savedDto.version}, pins {savedDto.qol?.pinnedGoals?.Length ?? 0}, map {savedDto.exploredMapCells?.Length ?? 0}" : "missing DTO");
 
                 FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLoad(path);
@@ -528,6 +824,14 @@ namespace IsoCore.Foundation.EditorTools
                     loadedQoL.accessibility.highContrast &&
                     !trialEvidenceVisible,
                     $"pins {loadedQoL.pinnedGoals?.Length ?? 0}, hud {loadedQoL.accessibility.hudScale:0.00}");
+                var loadedMapCells = loaded.MapOverlay != null
+                    ? loaded.MapOverlay.SnapshotExploredCells()
+                    : Array.Empty<FoundationSavedMapCell>();
+                add("Save/load preserves explored map cells",
+                    savedDto?.exploredMapCells != null &&
+                    savedDto.exploredMapCells.Length > 0 &&
+                    loadedMapCells.Length >= savedDto.exploredMapCells.Length,
+                    $"saved {savedDto?.exploredMapCells?.Length ?? 0}, loaded {loadedMapCells.Length}");
                 add("Save/load preserves player cell",
                     enteredInstance && loaded.Player.CurrentCell == instanceCell,
                     loaded.Player.CurrentCell.ToString());
@@ -778,6 +1082,221 @@ namespace IsoCore.Foundation.EditorTools
             var stationRecipe = content.Recipes.Get("craft_stone_block");
             bool stationCrafted = crafting.TryCraft(stationRecipe);
             add("Station-gated recipe crafts when station is available", stationCrafted && inv.Count("stone_block_item") == 1);
+
+            var toolInv = new Inventory(4, content);
+            toolInv.Add("wood_axe", 1);
+            var axe = content.Items.Get("wood_axe");
+            var stack = toolInv.GetSlot(0);
+            bool damaged = toolInv.DamageSlot(0, 1);
+            add("Tool durability initializes and damages selected slot",
+                axe != null && axe.maxDurability > 1 && stack.durability == axe.maxDurability &&
+                !damaged && toolInv.GetSlot(0).durability == axe.maxDurability - 1,
+                axe != null ? $"{toolInv.GetSlot(0).durability}/{axe.maxDurability}" : "missing axe");
+
+            var tavernRecipe = content.Recipes.Get("craft_tavern_building");
+            var tavernItem = content.Items.Get("tavern_building_item");
+            var tavernPlaceable = content.Placeables.Get("tavern_building");
+            add("Craftable tavern building enters tavern instance",
+                tavernRecipe != null && tavernItem != null && tavernPlaceable != null &&
+                tavernPlaceable.interaction == InteractionKind.Entrance &&
+                tavernPlaceable.destinationId == "tavern_common_room" &&
+                tavernPlaceable.FootprintWidth == 3 &&
+                tavernPlaceable.FootprintHeight == 3,
+                tavernPlaceable != null ? $"{tavernPlaceable.FootprintWidth}x{tavernPlaceable.FootprintHeight}" : "missing tavern");
+
+            var tavernPlotRecipe = content.Recipes.Get("craft_tavern_plot");
+            var tavernPlotItem = content.Items.Get("tavern_plot_item");
+            var tavernPlot = content.Placeables.Get("tavern_plot");
+            bool tavernPlotOk = tavernPlotRecipe != null &&
+                tavernPlotItem != null &&
+                tavernPlot != null &&
+                tavernPlot.interaction == InteractionKind.Construction &&
+                tavernPlot.constructionResultPlaceableId == "tavern_building" &&
+                tavernPlot.FootprintWidth == 3 &&
+                tavernPlot.FootprintHeight == 3 &&
+                tavernPlot.constructionCost != null &&
+                tavernPlot.constructionCost.Length >= 3;
+            add("Tavern build plot upgrades into tavern building",
+                tavernPlotOk,
+                tavernPlot != null ? $"{tavernPlot.constructionResultPlaceableId} {tavernPlot.FootprintWidth}x{tavernPlot.FootprintHeight}" : "missing plot");
+
+            var fireplaceRecipe = content.Recipes.Get("craft_fireplace");
+            var fireplaceItem = content.Items.Get("fireplace_item");
+            var fireplace = content.Placeables.Get("fireplace");
+            add("Craftable fireplace uses animated fire prop",
+                fireplaceRecipe != null &&
+                fireplaceItem != null &&
+                fireplace != null &&
+                fireplace.emitsLight &&
+                fireplace.blocksMovement &&
+                FoundationPlaceableSpriteResolver.Resolve("fireplace") != null,
+                fireplace != null ? $"light {fireplace.lightRadius:0.0}" : "missing fireplace");
+
+            var libraryPlotRecipe = content.Recipes.Get("craft_library_plot");
+            var libraryPlotItem = content.Items.Get("library_plot_item");
+            var libraryPlot = content.Placeables.Get("library_plot");
+            var libraryPlaceable = content.Placeables.Get("library_building");
+            bool libraryPlotOk = libraryPlotRecipe != null &&
+                libraryPlotItem != null &&
+                libraryPlot != null &&
+                libraryPlaceable != null &&
+                libraryPlot.interaction == InteractionKind.Construction &&
+                libraryPlot.constructionResultPlaceableId == "library_building" &&
+                libraryPlaceable.interaction == InteractionKind.Entrance &&
+                libraryPlaceable.destinationId == "library_archive" &&
+                libraryPlot.constructionCost != null &&
+                libraryPlot.constructionCost.Length >= 3;
+            add("Library build plot upgrades into enterable library",
+                libraryPlotOk,
+                libraryPlaceable != null ? libraryPlaceable.destinationId : "missing library");
+        }
+
+        static void ValidateDungeonGeneration(AddCheck add)
+        {
+            var content = FoundationContent.BuildDefault();
+            var origin = new Vector2Int(61000, 61000);
+            var entrance = new Vector2Int(18, -9);
+            var a = FoundationDungeonGenerator.Generate(content, "rootcellar_starter",
+                "Validation Rootcellar", 1337, entrance, origin, 3);
+            var b = FoundationDungeonGenerator.Generate(content, "rootcellar_starter",
+                "Validation Rootcellar", 1337, entrance, origin, 3);
+
+            var portalFrames = FoundationDungeonSpriteResolver.PortalFrames();
+            add("Dungeon animated portal art resolves",
+                FoundationDungeonSpriteResolver.Portal() != null &&
+                portalFrames.Length >= 6,
+                $"Resources/FoundationPortals/Dimensional_Portal frames {portalFrames.Length}");
+            add("Kenney dungeon floor art resolves",
+                FoundationDungeonSpriteResolver.Decoration("stoneTile_S") != null,
+                "Resources/FoundationDungeon/Kenney/stoneTile_S");
+            add("PixelArt dungeon floor kit resolves",
+                PixelArtDungeonFloorAssetsPresent() &&
+                TileSpriteResolver.Resolve(content.Blocks.Get("dungeon_floor_1")) != null,
+                "Resources/Tiles/dungeon_floor_1..5");
+            add("Dungeon generation is deterministic",
+                a.layoutSeed == b.layoutSeed &&
+                a.cells.Length == b.cells.Length &&
+                a.roomMarkers.Length == b.roomMarkers.Length &&
+                a.spawnCell == b.spawnCell &&
+                a.exitCell == b.exitCell,
+                $"seed {a.layoutSeed}");
+            int dungeonWidth = a.renderMax.x - a.renderMin.x + 1;
+            int dungeonHeight = a.renderMax.y - a.renderMin.y + 1;
+            int spawnExitDistance = Mathf.Abs(a.exitCell.x - a.spawnCell.x) + Mathf.Abs(a.exitCell.y - a.spawnCell.y);
+            add("Dungeon render bounds support movement-scale combat",
+                dungeonWidth >= 60 &&
+                dungeonHeight >= 60,
+                $"{a.renderMin}->{a.renderMax}");
+            add("Dungeon walkable footprint supports spell movement",
+                a.renderCells != null &&
+                a.renderCells.Length >= 900,
+                $"{a.renderCells?.Length ?? 0} walkable render cells");
+            add("Dungeon generation uses PixelArt floor block family",
+                HasDungeonFloorCell(a),
+                "walkable cells use dungeon_floor_* block ids");
+            add("Dungeon spawn-to-exit path spans a real delve",
+                spawnExitDistance >= 32,
+                $"distance {spawnExitDistance}");
+            add("Dungeon generator emits map-readable room roles",
+                a.roomMarkers != null &&
+                a.roomMarkers.Length >= 8 &&
+                HasDungeonMarker(a, FoundationDungeonRoomKind.Spawn) &&
+                HasDungeonMarker(a, FoundationDungeonRoomKind.Exit) &&
+                HasDungeonMarker(a, FoundationDungeonRoomKind.Combat) &&
+                HasDungeonMarker(a, FoundationDungeonRoomKind.Junction),
+                $"room markers {a.roomMarkers?.Length ?? 0}");
+            add("Dungeon spawn and exit are distinct walkable cells",
+                a.spawnCell != a.exitCell &&
+                IsDungeonCellWalkable(a, a.spawnCell) &&
+                IsDungeonCellWalkable(a, a.exitCell),
+                $"spawn {a.spawnCell}, exit {a.exitCell}");
+            add("Dungeon boundary blocks escape",
+                IsDungeonCellBlocked(a, new Vector2Int(a.renderMin.x - 1, a.renderMin.y - 1)) &&
+                IsDungeonCellBlocked(a, new Vector2Int(a.renderMax.x + 1, a.renderMax.y + 1)),
+                "outer ring solid");
+            add("Dungeon focuses on generated tiles with portal exit only",
+                a.mobs.Length >= 6 &&
+                a.decorations.Length == 1 &&
+                a.decorations[0].spriteKey == FoundationDungeonDecoration.ExitPortalSpriteKey &&
+                a.decorations[0].x == a.exitCell.x &&
+                a.decorations[0].y == a.exitCell.y,
+                $"mobs {a.mobs.Length}, decor {a.decorations.Length}");
+
+            string saveSource = File.Exists("Assets/Scripts/IsoCoreFoundation/Core/FoundationSaveData.cs")
+                ? File.ReadAllText("Assets/Scripts/IsoCoreFoundation/Core/FoundationSaveData.cs")
+                : "";
+            string portalSource = File.Exists("Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonPortalSystem.cs")
+                ? File.ReadAllText("Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonPortalSystem.cs")
+                : "";
+            string portalInstanceSource = File.Exists("Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonPortalInstance.cs")
+                ? File.ReadAllText("Assets/Scripts/IsoCoreFoundation/Dungeons/FoundationDungeonPortalInstance.cs")
+                : "";
+            add("Dungeon save layer tracks reward and completion state",
+                saveSource.Contains("FoundationSavedDungeon") &&
+                saveSource.Contains("FoundationSavedDungeonHistory") &&
+                saveSource.Contains("rewardOpened") &&
+                saveSource.Contains("completed") &&
+                portalSource.Contains("OpenReward") &&
+                portalSource.Contains("CompleteAndExit") &&
+                portalSource.Contains("CaptureHistory") &&
+                portalSource.Contains("RestoreHistory") &&
+                portalSource.Contains("ApplyDungeonResult") &&
+                portalInstanceSource.Contains("SetHistoryState"),
+                "FoundationSavedDungeon + persistent portal history");
+        }
+
+        static bool IsDungeonCellWalkable(FoundationDungeonBuild build, Vector2Int cell)
+        {
+            foreach (var c in build.cells)
+                if (c.x == cell.x && c.y == cell.y)
+                    return !c.solidBlock && !c.water && !c.occupantBlocks && !c.nodeBlocks;
+            return false;
+        }
+
+        static bool HasDungeonFloorCell(FoundationDungeonBuild build)
+        {
+            if (build?.cells == null)
+                return false;
+
+            foreach (var c in build.cells)
+            {
+                if (!c.solidBlock &&
+                    !string.IsNullOrEmpty(c.surfaceBlockId) &&
+                    c.surfaceBlockId.StartsWith("dungeon_floor_", StringComparison.Ordinal))
+                    return true;
+            }
+            return false;
+        }
+
+        static bool PixelArtDungeonFloorAssetsPresent()
+        {
+            for (int i = 1; i <= 5; i++)
+            {
+                string path = $"Assets/Resources/Tiles/dungeon_floor_{i}.png";
+                if (!File.Exists(path))
+                    return false;
+            }
+
+            return true;
+        }
+
+        static bool IsDungeonCellBlocked(FoundationDungeonBuild build, Vector2Int cell)
+        {
+            foreach (var c in build.cells)
+                if (c.x == cell.x && c.y == cell.y)
+                    return c.solidBlock || c.water || c.occupantBlocks || c.nodeBlocks;
+            return false;
+        }
+
+        static bool HasDungeonMarker(FoundationDungeonBuild build, FoundationDungeonRoomKind kind)
+        {
+            if (build?.roomMarkers == null)
+                return false;
+
+            foreach (var marker in build.roomMarkers)
+                if (marker.kind == kind)
+                    return true;
+            return false;
         }
 
         static void ValidateFarmingData(AddCheck add, FoundationContent content)
@@ -914,6 +1433,18 @@ namespace IsoCore.Foundation.EditorTools
                 !string.IsNullOrWhiteSpace(completedRead.trial.selectedClassId) &&
                 !string.IsNullOrWhiteSpace(completedRead.trial.selectedProfessionId),
                 $"grade {completedRead.trial.gradeSnapshot}, class {completedRead.trial.selectedClassId}, profession {completedRead.trial.selectedProfessionId}");
+
+            var dungeonProgression = new FoundationProgression(content);
+            var result = content.DungeonResults.Get("rootcellar_first_return");
+            bool resultApplied = dungeonProgression.ApplyDungeonResult(result, 2);
+            add("Dungeon result applies XP/title/affinity/System feedback once per call",
+                resultApplied &&
+                dungeonProgression.GetXpChannelValue("rootcellar_clearance") >= 40 &&
+                dungeonProgression.GetXpChannelValue("adventurer_rank") >= 16 &&
+                dungeonProgression.GetTitleProgress("returned_for_them") >= 2 &&
+                dungeonProgression.GetAffinityScore("root") >= 4 &&
+                dungeonProgression.SystemFeed.Messages.Count >= 1,
+                $"clearance {dungeonProgression.GetXpChannelValue("rootcellar_clearance")}, feed {dungeonProgression.SystemFeed.Messages.Count}");
 
             var inv = new Inventory(12, content);
             inv.Add("wood", 5);

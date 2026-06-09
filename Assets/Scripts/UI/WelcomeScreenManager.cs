@@ -15,7 +15,7 @@ using UnityEngine.UI;
 /// </summary>
 public class WelcomeScreenManager : MonoBehaviour
 {
-    private enum Screen { MainMenu, CreateWorld, LoadGame, Options }
+    private enum Screen { MainMenu, CreateWorld, CallingSelect, LoadGame, Options }
 
     [Header("Menu skin (all optional)")]
     [Tooltip("Each slot can be assigned in the inspector OR auto-loaded by filename from " +
@@ -59,6 +59,12 @@ public class WelcomeScreenManager : MonoBehaviour
     // Load game data
     private List<WorldSaveData> savedWorlds = new List<WorldSaveData>();
     private RectTransform worldListContent;
+
+    // Calling select data — the world is created first, then the player picks a Calling
+    // before the Foundation scene loads. selectedCallingId is passed to ConfigureLaunch.
+    private WorldSaveData pendingWorld;
+    private string selectedCallingId;
+    private readonly List<(string id, Image bg, Outline outline)> callingCards = new();
 
     // Save path
     private string savePath => Path.Combine(Application.persistentDataPath, "LitIsoWorlds");
@@ -138,6 +144,9 @@ public class WelcomeScreenManager : MonoBehaviour
             case Screen.CreateWorld:
                 BuildCreateWorld();
                 break;
+            case Screen.CallingSelect:
+                BuildCallingSelect();
+                break;
             case Screen.LoadGame:
                 BuildLoadGame();
                 break;
@@ -197,9 +206,10 @@ public class WelcomeScreenManager : MonoBehaviour
         }
 
         CreateMenuButton("NewGameBtn",  contentPanel, "New Game",  () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
-        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame),    0f, buttonY - buttonSpacing);
-        CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 2 * buttonSpacing);
-        CreateMenuButton("QuitBtn",     contentPanel, "Quit",      () => Application.Quit(),             0f, buttonY - 3 * buttonSpacing);
+        CreateMenuButton("CreationInstanceBtn", contentPanel, "Creation Instance", LaunchCreationInstance, 0f, buttonY - buttonSpacing);
+        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame),    0f, buttonY - 2 * buttonSpacing);
+        CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 3 * buttonSpacing);
+        CreateMenuButton("QuitBtn",     contentPanel, "Quit",      () => Application.Quit(),             0f, buttonY - 4 * buttonSpacing);
     }
 
     // -------------------------------------------------------------------------
@@ -276,7 +286,11 @@ public class WelcomeScreenManager : MonoBehaviour
             Debug.LogError("World not created: save failed. Not launching.");
             return;
         }
-        LaunchWorld(world);
+
+        // New worlds choose a Calling before launch. Existing worlds (Continue / Load)
+        // skip this and keep their saved Calling once save/load lands.
+        pendingWorld = world;
+        ShowScreen(Screen.CallingSelect);
     }
 
     private void UpdateDifficultyLabel(float value)
@@ -293,6 +307,128 @@ public class WelcomeScreenManager : MonoBehaviour
         {
             difficultyLabel.text = label;
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Calling Select  (New Game -> pick a Calling -> launch)
+    // -------------------------------------------------------------------------
+
+    private void BuildCallingSelect()
+    {
+        callingCards.Clear();
+        selectedCallingId = null;
+
+        contentPanel = CreateMainPanel("CallingSelect");
+
+        Text title = CreateText("CallingTitle", contentPanel, "Choose Your Calling", 36, buttonText, TextAnchor.MiddleCenter);
+        RectTransform titleRect = title.rectTransform;
+        titleRect.anchorMin = new Vector2(0.5f, 1f);
+        titleRect.anchorMax = new Vector2(0.5f, 1f);
+        titleRect.pivot     = new Vector2(0.5f, 1f);
+        titleRect.anchoredPosition = new Vector2(0f, -20f);
+        titleRect.sizeDelta = new Vector2(panelWidth - 40f, 44f);
+
+        Text subtitle = CreateText("CallingSubtitle", contentPanel,
+            "Your Calling sets your starting gifts. You can still learn every skill.",
+            14, labelText, TextAnchor.MiddleCenter);
+        subtitle.horizontalOverflow = HorizontalWrapMode.Wrap;
+        RectTransform subRect = subtitle.rectTransform;
+        subRect.anchorMin = new Vector2(0.5f, 1f);
+        subRect.anchorMax = new Vector2(0.5f, 1f);
+        subRect.pivot     = new Vector2(0.5f, 1f);
+        subRect.anchoredPosition = new Vector2(0f, -64f);
+        subRect.sizeDelta = new Vector2(panelWidth - 60f, 36f);
+
+        // Scrollable list of Calling cards, built from the baked content (single source
+        // of truth — BuildDefault() constructs all definitions in code, no asset load).
+        RectTransform list = CreateScrollList("CallingList", contentPanel, -100f);
+
+        var callings = FoundationContent.BuildDefault().Callings.All;
+        for (int i = 0; i < callings.Count; i++)
+            BuildCallingCard(list, callings[i]);
+
+        if (callings.Count > 0)
+            SelectCallingCard(callings[0].id);
+
+        float btnY = -panelHeight + 50f;
+        CreateMenuButton("BeginBtn", contentPanel, "Begin", () =>
+        {
+            if (pendingWorld != null && !string.IsNullOrEmpty(selectedCallingId))
+                LaunchWorld(pendingWorld, selectedCallingId);
+        }, -80f, btnY);
+        CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.CreateWorld), 80f, btnY);
+    }
+
+    private void BuildCallingCard(Transform parent, FoundationCallingDefinition calling)
+    {
+        RectTransform card = CreatePanel("Calling_" + calling.id, parent, buttonBg, panelBorder);
+        card.sizeDelta = new Vector2(panelWidth - 80f, 104f);
+
+        // Guarantee the row height under the list's VerticalLayoutGroup.
+        var le = card.gameObject.AddComponent<LayoutElement>();
+        le.minHeight = 104f; le.preferredHeight = 104f;
+
+        Image cardBg = card.GetComponent<Image>();
+        Outline cardOutline = card.GetComponent<Outline>(); // null when a panel skin is used
+        Button btn = card.gameObject.AddComponent<Button>();
+        btn.targetGraphic = cardBg;
+        string id = calling.id;
+        btn.onClick.AddListener(() => SelectCallingCard(id));
+
+        callingCards.Add((id, cardBg, cardOutline));
+
+        // Name (gold) + starting title (muted) across the top.
+        Text name = CreateText("Name", card, calling.Display, 20, new Color(1f, 0.85f, 0.35f, 1f), TextAnchor.UpperLeft);
+        name.raycastTarget = false;
+        RectTransform nameRect = name.rectTransform;
+        nameRect.anchorMin = new Vector2(0f, 1f); nameRect.anchorMax = new Vector2(1f, 1f);
+        nameRect.pivot = new Vector2(0f, 1f);
+        nameRect.offsetMin = new Vector2(12f, -30f); nameRect.offsetMax = new Vector2(-150f, -6f);
+
+        Text titleText = CreateText("Title", card, calling.startingTitle, 12, labelText, TextAnchor.UpperRight);
+        titleText.raycastTarget = false;
+        RectTransform tRect = titleText.rectTransform;
+        tRect.anchorMin = new Vector2(0f, 1f); tRect.anchorMax = new Vector2(1f, 1f);
+        tRect.pivot = new Vector2(0f, 1f);
+        tRect.offsetMin = new Vector2(panelWidth - 80f - 150f, -30f); tRect.offsetMax = new Vector2(-12f, -8f);
+
+        // Stat bonuses line.
+        Text stats = CreateText("Stats", card, StatBonusLine(calling), 13, new Color(0.95f, 0.91f, 0.74f, 1f), TextAnchor.UpperLeft);
+        stats.raycastTarget = false;
+        RectTransform sRect = stats.rectTransform;
+        sRect.anchorMin = new Vector2(0f, 1f); sRect.anchorMax = new Vector2(1f, 1f);
+        sRect.pivot = new Vector2(0f, 1f);
+        sRect.offsetMin = new Vector2(12f, -52f); sRect.offsetMax = new Vector2(-12f, -32f);
+
+        // Description (wrapped) fills the remainder.
+        Text desc = CreateText("Desc", card, calling.description, 12, new Color(0.78f, 0.80f, 0.84f, 1f), TextAnchor.UpperLeft);
+        desc.raycastTarget = false;
+        desc.horizontalOverflow = HorizontalWrapMode.Wrap;
+        RectTransform dRect = desc.rectTransform;
+        dRect.anchorMin = new Vector2(0f, 0f); dRect.anchorMax = new Vector2(1f, 1f);
+        dRect.offsetMin = new Vector2(12f, 8f); dRect.offsetMax = new Vector2(-12f, -54f);
+    }
+
+    private void SelectCallingCard(string id)
+    {
+        selectedCallingId = id;
+        Color selBg     = new Color(0.20f, 0.24f, 0.32f, 1f);
+        Color selBorder = new Color(0.98f, 0.85f, 0.45f, 1f);
+        foreach (var card in callingCards)
+        {
+            bool sel = card.id == id;
+            if (card.bg != null)      card.bg.color = sel ? selBg : buttonBg;
+            if (card.outline != null) card.outline.effectColor = sel ? selBorder : panelBorder;
+        }
+    }
+
+    private static string StatBonusLine(FoundationCallingDefinition calling)
+    {
+        if (calling.statBonuses == null || calling.statBonuses.Length == 0) return "";
+        var parts = new List<string>();
+        foreach (var b in calling.statBonuses)
+            parts.Add($"{b.stat} +{b.amount}");
+        return string.Join("    ", parts);
     }
 
     // -------------------------------------------------------------------------
@@ -492,25 +628,38 @@ public class WelcomeScreenManager : MonoBehaviour
         }
     }
 
-    private void LaunchWorld(WorldSaveData world)
+    private void LaunchWorld(WorldSaveData world, string callingId = null)
     {
-        // Ensure WorldManager exists and is configured
-        if (WorldManager.Instance == null)
+        Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty}, Calling: {callingId ?? "default"})");
+
+        string foundationSavePath = FoundationBootstrap.DefaultSavePathForWorld(world.worldName, world.seed);
+        bool isExistingWorldLaunch = string.IsNullOrWhiteSpace(callingId);
+
+        if (isExistingWorldLaunch && File.Exists(foundationSavePath))
         {
-            GameObject wmGO = new GameObject("WorldManager");
-            wmGO.AddComponent<WorldManager>();
+            Debug.Log($"Loading Foundation save: {foundationSavePath}");
+            FoundationBootstrap.ConfigureLoad(foundationSavePath);
+        }
+        else
+        {
+            if (isExistingWorldLaunch)
+                Debug.LogWarning($"No Foundation save found for '{world.worldName}'. Launching fresh from seed. Expected: {foundationSavePath}");
+
+            // Hand the world settings into the isolated Foundation scene (Codex's API).
+            // ConfigureLaunch must be called BEFORE LoadScene so FoundationBootstrap.Awake()
+            // picks up the seed/name/difficulty/calling. callingId is null for
+            // Continue/Load fallback; the New Game flow passes the picked Calling.
+            FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty, callingId);
         }
 
-        WorldManager.Instance.SetWorld(world.worldName, world.seed, world.difficulty);
-        Debug.Log($"Launching world: {world.worldName} (Seed: {world.seed}, Difficulty: {world.difficulty})");
-
-        // Hand the world settings into the isolated Foundation scene (Codex's API).
-        // ConfigureLaunch must be called BEFORE LoadScene so FoundationBootstrap.Awake()
-        // picks up the seed/name/difficulty. WorldManager.SetWorld above stays for the
-        // legacy save-list registry.
-        FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty);
-
         // Load the Foundation scene (canonical game).
+        UnityEngine.SceneManagement.SceneManager.LoadScene("IsoCoreFoundation");
+    }
+
+    private void LaunchCreationInstance()
+    {
+        Debug.Log("Launching Creation Instance showroom.");
+        FoundationBootstrap.ConfigureCreationInstanceLaunch();
         UnityEngine.SceneManagement.SceneManager.LoadScene("IsoCoreFoundation");
     }
 
@@ -808,7 +957,6 @@ public class WelcomeScreenManager : MonoBehaviour
         vpRect.anchorMax = Vector2.one;
         vpRect.offsetMin = Vector2.zero;
         vpRect.offsetMax = Vector2.zero;
-        viewport.AddComponent<Image>();
         Image vpMask = viewport.AddComponent<Image>();
         vpMask.color = Color.clear;
         viewport.AddComponent<Mask>();
@@ -824,6 +972,11 @@ public class WelcomeScreenManager : MonoBehaviour
         VerticalLayoutGroup layout = content.AddComponent<VerticalLayoutGroup>();
         layout.spacing = spacing;
         layout.childForceExpandHeight = false;
+        layout.childControlHeight = true;
+        layout.childControlWidth = true;
+
+        ContentSizeFitter fitter = content.AddComponent<ContentSizeFitter>();
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         scroll.content = contentRect;
         scroll.viewport = vpRect;

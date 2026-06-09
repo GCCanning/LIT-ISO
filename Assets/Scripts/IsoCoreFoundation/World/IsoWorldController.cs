@@ -17,6 +17,7 @@ namespace IsoCore.Foundation
         IsoWorldRenderer _renderer;
         Transform _player;
         IsoFoundationPlayer _isoPlayer;
+        FoundationInstanceSystem _instances;
         Transform _nodeParent;
 
         readonly Dictionary<long, ResourceNode> _nodes = new();
@@ -30,8 +31,9 @@ namespace IsoCore.Foundation
         // queue drains long before the player can reach the unloaded edge.
         readonly HashSet<long> _desired = new();
         readonly List<Vector2Int> _showQueue = new();
+        readonly List<Vector2Int> _instanceRenderCells = new();
         int _showCursor;
-        const int StreamCellsPerFrame = 110;
+        const int StreamCellsPerFrame = 720;
 
         static long Key(int wx, int wy) => ((long)(uint)wx << 32) | (uint)wy;
 
@@ -53,9 +55,37 @@ namespace IsoCore.Foundation
             DrainStreaming(int.MaxValue); // full build once at load (behind the scene load)
         }
 
+        public void SetInstanceSystem(FoundationInstanceSystem instances)
+        {
+            if (_instances != null)
+            {
+                _instances.Entered -= HandleInstanceChanged;
+                _instances.Exited -= HandleInstanceChanged;
+            }
+
+            _instances = instances;
+            if (_instances != null)
+            {
+                _instances.Entered += HandleInstanceChanged;
+                _instances.Exited += HandleInstanceChanged;
+            }
+        }
+
         void OnDestroy()
         {
             if (World != null) World.OnCellChanged -= HandleCellChanged;
+            if (_instances != null)
+            {
+                _instances.Entered -= HandleInstanceChanged;
+                _instances.Exited -= HandleInstanceChanged;
+            }
+        }
+
+        void HandleInstanceChanged(string id, string display)
+        {
+            if (!_ready) return;
+            Retarget(PlayerChunk());
+            DrainStreaming(int.MaxValue);
         }
 
         Vector2Int PlayerChunk()
@@ -83,20 +113,65 @@ namespace IsoCore.Foundation
         void Retarget(Vector2Int center)
         {
             _lastChunk = center;
-            int r = Config.viewRadiusChunks, s = World.ChunkSize;
-            int minX = (center.x - r) * s, maxX = (center.x + r + 1) * s - 1;
-            int minY = (center.y - r) * s, maxY = (center.y + r + 1) * s - 1;
+            int minX;
+            int maxX;
+            int minY;
+            int maxY;
+            bool explicitInstanceCells = false;
 
-            // Ensure chunk terrain exists (sampled once per chunk; cell reads are cached).
-            for (int cy = center.y - r; cy <= center.y + r; cy++)
-            for (int cx = center.x - r; cx <= center.x + r; cx++)
-                World.GetOrCreateChunk(cx, cy);
+            if (_instances != null && _instances.IsInsideInstance)
+            {
+                explicitInstanceCells = _instances.CopyActiveRenderCells(_instanceRenderCells);
+                if (explicitInstanceCells)
+                {
+                    minX = int.MaxValue; maxX = int.MinValue;
+                    minY = int.MaxValue; maxY = int.MinValue;
+                    foreach (var c in _instanceRenderCells)
+                    {
+                        minX = Mathf.Min(minX, c.x);
+                        maxX = Mathf.Max(maxX, c.x);
+                        minY = Mathf.Min(minY, c.y);
+                        maxY = Mathf.Max(maxY, c.y);
+                        World.GetCell(c.x, c.y);
+                    }
+                }
+                else
+                {
+                    var min = _instances.ActiveRenderMin;
+                    var max = _instances.ActiveRenderMax;
+                    minX = min.x; maxX = max.x;
+                    minY = min.y; maxY = max.y;
+
+                    for (int wy = minY; wy <= maxY; wy++)
+                    for (int wx = minX; wx <= maxX; wx++)
+                        World.GetCell(wx, wy);
+                }
+            }
+            else
+            {
+                int r = Config.viewRadiusChunks, s = World.ChunkSize;
+                minX = (center.x - r) * s; maxX = (center.x + r + 1) * s - 1;
+                minY = (center.y - r) * s; maxY = (center.y + r + 1) * s - 1;
+
+                // Ensure chunk terrain exists (sampled once per chunk; cell reads are cached).
+                for (int cy = center.y - r; cy <= center.y + r; cy++)
+                for (int cx = center.x - r; cx <= center.x + r; cx++)
+                    World.GetOrCreateChunk(cx, cy);
+            }
 
             // Rebuild the desired-cell set.
             _desired.Clear();
-            for (int wy = minY; wy <= maxY; wy++)
-            for (int wx = minX; wx <= maxX; wx++)
-                _desired.Add(Key(wx, wy));
+            if (explicitInstanceCells)
+            {
+                foreach (var c in _instanceRenderCells)
+                    _desired.Add(Key(c.x, c.y));
+            }
+            else
+            {
+                for (int wy = minY; wy <= maxY; wy++)
+                for (int wx = minX; wx <= maxX; wx++)
+                    _desired.Add(Key(wx, wy));
+            }
 
             // Hide tiles + despawn nodes that left the view (cheap, done immediately).
             _renderer.RetainOnly(_desired);
@@ -105,7 +180,7 @@ namespace IsoCore.Foundation
                 if (!_desired.Contains(kv.Key)) _despawn.Add(kv.Key);
             foreach (var k in _despawn)
             {
-                if (_nodes[k]) Destroy(_nodes[k].gameObject);
+                if (_nodes[k]) DestroyNodeObject(_nodes[k].gameObject);
                 _nodes.Remove(k);
             }
 
@@ -114,9 +189,17 @@ namespace IsoCore.Foundation
             Vector2Int p = _isoPlayer != null ? _isoPlayer.CurrentCell
                                               : IsoGrid.WorldToCell(_player.position);
             _showQueue.Clear();
-            for (int wy = minY; wy <= maxY; wy++)
-            for (int wx = minX; wx <= maxX; wx++)
-                if (!_renderer.IsShown(wx, wy)) _showQueue.Add(new Vector2Int(wx, wy));
+            if (explicitInstanceCells)
+            {
+                foreach (var c in _instanceRenderCells)
+                    if (!_renderer.IsShown(c.x, c.y)) _showQueue.Add(c);
+            }
+            else
+            {
+                for (int wy = minY; wy <= maxY; wy++)
+                for (int wx = minX; wx <= maxX; wx++)
+                    if (!_renderer.IsShown(wx, wy)) _showQueue.Add(new Vector2Int(wx, wy));
+            }
             _showQueue.Sort((a, b) =>
             {
                 int da = (a.x - p.x) * (a.x - p.x) + (a.y - p.y) * (a.y - p.y);
@@ -155,11 +238,9 @@ namespace IsoCore.Foundation
             go.transform.SetParent(_nodeParent, false);
             var node = go.AddComponent<ResourceNode>();
             node.Init(def, World, wx, wy);
-            // Fade the prop out when it would hide the player behind it (e.g. walking
-            // behind a tree), preserving the depth illusion without losing the player.
-            go.AddComponent<PropOcclusionFader>();
-            // Cast a sun/moon-driven shadow onto the ground.
-            go.AddComponent<DecorationShadow>();
+            // Ground it, fade it when it hides the player, and cast a sun/moon shadow.
+            FoundationDepthPolish.Attach(go, fadeWhenOccluding: true, castLongShadow: true,
+                contactScale: 1f, contactAlpha: 0.30f);
             _nodes[Key(wx, wy)] = node;
         }
 
@@ -183,6 +264,31 @@ namespace IsoCore.Foundation
             return node;
         }
 
+        public bool TryGetNodeUnderCursor(Camera cam, Vector2 screenPosition, out ResourceNode node)
+        {
+            node = null;
+            if (cam == null || _nodes.Count == 0)
+                return false;
+
+            var wp = cam.ScreenToWorldPoint(screenPosition);
+            var point = new Vector2(wp.x, wp.y);
+            int bestOrder = int.MinValue;
+            foreach (var candidate in _nodes.Values)
+            {
+                if (candidate == null || !candidate.ContainsWorldPoint(point))
+                    continue;
+
+                int order = candidate.SortingOrder;
+                if (node != null && order < bestOrder)
+                    continue;
+
+                node = candidate;
+                bestOrder = order;
+            }
+
+            return node != null;
+        }
+
         void HandleCellChanged(int wx, int wy)
         {
             _renderer.RefreshCell(World, wx, wy);
@@ -190,9 +296,16 @@ namespace IsoCore.Foundation
             var cell = World.GetCell(wx, wy);
             if (!cell.HasNode && _nodes.TryGetValue(nk, out var node))
             {
-                if (node) Destroy(node.gameObject);
+                if (node) DestroyNodeObject(node.gameObject);
                 _nodes.Remove(nk);
             }
+        }
+
+        static void DestroyNodeObject(GameObject go)
+        {
+            if (!go) return;
+            if (Application.isPlaying) Destroy(go);
+            else DestroyImmediate(go);
         }
     }
 }

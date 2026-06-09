@@ -73,6 +73,11 @@ namespace IsoCore.Foundation
             Block("dirt", "dirt_blocks", new Color(0.45f, 0.32f, 0.20f), CollisionMode.Walkable);
             Block("stone_block", "stone_blocks", new Color(0.55f, 0.55f, 0.58f), CollisionMode.Solid);
             Block("stone_path", "path_blocks", new Color(0.62f, 0.62f, 0.64f), CollisionMode.Decorative);
+            var dungeonFloor1 = Block("dungeon_floor_1", "dungeon_floor_blocks", new Color(0.30f, 0.34f, 0.40f), CollisionMode.Decorative);
+            var dungeonFloor2 = Block("dungeon_floor_2", "dungeon_floor_blocks", new Color(0.32f, 0.36f, 0.42f), CollisionMode.Decorative);
+            var dungeonFloor3 = Block("dungeon_floor_3", "dungeon_floor_blocks", new Color(0.28f, 0.32f, 0.38f), CollisionMode.Decorative);
+            var dungeonFloor4 = Block("dungeon_floor_4", "dungeon_floor_blocks", new Color(0.34f, 0.38f, 0.44f), CollisionMode.Decorative);
+            var dungeonFloor5 = Block("dungeon_floor_5", "dungeon_floor_blocks", new Color(0.24f, 0.28f, 0.34f), CollisionMode.Decorative);
             Block("wood_floor", "floor_blocks", new Color(0.66f, 0.50f, 0.30f), CollisionMode.Decorative);
             Block("soil", "soil_blocks", new Color(0.40f, 0.27f, 0.16f), CollisionMode.Walkable);
 
@@ -86,6 +91,7 @@ namespace IsoCore.Foundation
             var grassGroup = Group("grass_blocks", grass1, grass2, grass3);
             var sandGroup = Group("sand_blocks", sand1, sand2);
             var snowGroup = Group("snow_blocks", snow1, snow2);
+            var dungeonFloorGroup = Group("dungeon_floor_blocks", dungeonFloor1, dungeonFloor2, dungeonFloor3, dungeonFloor4, dungeonFloor5);
 
             // ---- Items ----
             ItemDefinition Item(string id, Color col, ItemCategory cat, int stack = 99)
@@ -104,6 +110,10 @@ namespace IsoCore.Foundation
             var carrot = Item("carrot", new Color(0.90f, 0.45f, 0.15f), ItemCategory.Food);
             carrot.foodRestore = 12;
             Item("wheat", new Color(0.85f, 0.75f, 0.35f), ItemCategory.Resource);
+            var roastedApple = Item("roasted_apple", new Color(0.95f, 0.36f, 0.18f), ItemCategory.Food);
+            roastedApple.foodRestore = 24;
+            var campStew = Item("camp_stew", new Color(0.76f, 0.50f, 0.25f), ItemCategory.Food);
+            campStew.foodRestore = 40;
 
             ItemDefinition Seed(string id, Color col, string cropId)
             {
@@ -125,18 +135,28 @@ namespace IsoCore.Foundation
             Item("copper_ore", new Color(0.80f, 0.45f, 0.25f), ItemCategory.Resource);
             Item("copper_bar", new Color(0.85f, 0.55f, 0.35f), ItemCategory.Resource);
 
-            ItemDefinition Tool(string id, Color col, ToolType tool, int tier)
+            ItemDefinition Tool(string id, Color col, ToolType tool, int tier, int durability)
             {
                 var it = Item(id, col, ItemCategory.Tool, 1);
-                it.toolType = tool; it.toolTier = tier; return it;
+                it.toolType = tool;
+                it.toolTier = tier;
+                it.maxDurability = durability;
+                it.durabilityLossPerUse = 1;
+                return it;
             }
-            Tool("wood_axe", new Color(0.60f, 0.42f, 0.24f), ToolType.Axe, 1);
-            Tool("wood_pickaxe", new Color(0.60f, 0.42f, 0.24f), ToolType.Pickaxe, 1);
-            Tool("stone_axe", new Color(0.55f, 0.55f, 0.58f), ToolType.Axe, 2);
-            Tool("stone_pickaxe", new Color(0.55f, 0.55f, 0.58f), ToolType.Pickaxe, 2);
-            Tool("copper_axe", new Color(0.85f, 0.55f, 0.35f), ToolType.Axe, 3);
-            Tool("copper_pickaxe", new Color(0.85f, 0.55f, 0.35f), ToolType.Pickaxe, 3);
-            Tool("hoe", new Color(0.55f, 0.42f, 0.28f), ToolType.Hoe, 1);
+            Tool("wood_axe", new Color(0.60f, 0.42f, 0.24f), ToolType.Axe, 1, 80);
+            Tool("wood_pickaxe", new Color(0.60f, 0.42f, 0.24f), ToolType.Pickaxe, 1, 80);
+            Tool("wood_shovel", new Color(0.58f, 0.40f, 0.22f), ToolType.Shovel, 1, 70);
+            Tool("wood_sword", new Color(0.62f, 0.44f, 0.26f), ToolType.Sword, 1, 85);
+            Tool("stone_axe", new Color(0.55f, 0.55f, 0.58f), ToolType.Axe, 2, 150);
+            Tool("stone_pickaxe", new Color(0.55f, 0.55f, 0.58f), ToolType.Pickaxe, 2, 150);
+            Tool("stone_shovel", new Color(0.56f, 0.56f, 0.58f), ToolType.Shovel, 2, 135);
+            Tool("stone_sword", new Color(0.60f, 0.60f, 0.62f), ToolType.Sword, 2, 165);
+            Tool("copper_axe", new Color(0.85f, 0.55f, 0.35f), ToolType.Axe, 3, 260);
+            Tool("copper_pickaxe", new Color(0.85f, 0.55f, 0.35f), ToolType.Pickaxe, 3, 260);
+            Tool("copper_shovel", new Color(0.84f, 0.52f, 0.32f), ToolType.Shovel, 3, 230);
+            Tool("copper_sword", new Color(0.90f, 0.58f, 0.36f), ToolType.Sword, 3, 280);
+            Tool("hoe", new Color(0.55f, 0.42f, 0.28f), ToolType.Hoe, 1, 120);
 
             ItemDefinition PlaceItem(string id, Color col, string placeableId)
             {
@@ -148,7 +168,12 @@ namespace IsoCore.Foundation
             PlaceItem("lantern_item", new Color(0.95f, 0.85f, 0.40f), "lantern");
             PlaceItem("furnace_item", new Color(0.45f, 0.42f, 0.45f), "furnace");
             PlaceItem("campfire_item", new Color(0.90f, 0.42f, 0.18f), "campfire");
+            PlaceItem("fireplace_item", new Color(0.88f, 0.48f, 0.20f), "fireplace");
             PlaceItem("tavern_door_item", new Color(0.58f, 0.34f, 0.18f), "tavern_door");
+            PlaceItem("tavern_plot_item", new Color(0.56f, 0.38f, 0.22f), "tavern_plot");
+            PlaceItem("tavern_building_item", new Color(0.66f, 0.40f, 0.22f), "tavern_building");
+            PlaceItem("library_plot_item", new Color(0.58f, 0.56f, 0.50f), "library_plot");
+            PlaceItem("library_building_item", new Color(0.60f, 0.58f, 0.52f), "library_building");
             PlaceItem("rootcellar_portal_item", new Color(0.40f, 0.75f, 0.85f), "rootcellar_portal");
 
             // ---- Placeables ----
@@ -173,14 +198,72 @@ namespace IsoCore.Foundation
                 InteractionKind.CraftingStation, StationType.Furnace, "furnace_item", 1.0f);
             var campfire = Placeable("campfire", new Color(0.5f, 0.32f, 0.2f), false,
                 InteractionKind.Decoration, StationType.None, "campfire_item", 0.5f);
+            campfire.stationType = StationType.CookingPot;
             campfire.emitsLight = true;
             campfire.lightColor = new Color(1f, 0.62f, 0.28f);
             campfire.lightRadius = 3.0f;
+            campfire.isCampsite = true;
+            campfire.campTier = 1;
+            campfire.campWardRadius = 5.5f;
+            campfire.campRecoveryMultiplier = 1.25f;
+            var fireplace = Placeable("fireplace", new Color(0.50f, 0.28f, 0.18f), true,
+                InteractionKind.Decoration, StationType.None, "fireplace_item", 0.8f);
+            fireplace.displayName = "Fireplace";
+            fireplace.widthUnits = 0.95f;
+            fireplace.stationType = StationType.CookingPot;
+            fireplace.emitsLight = true;
+            fireplace.lightColor = new Color(1f, 0.58f, 0.24f);
+            fireplace.lightRadius = 3.6f;
+            fireplace.isCampsite = true;
+            fireplace.campTier = 2;
+            fireplace.campWardRadius = 7.0f;
+            fireplace.campRecoveryMultiplier = 1.55f;
             var tavernDoor = Placeable("tavern_door", new Color(0.58f, 0.34f, 0.18f), true,
                 InteractionKind.Entrance, StationType.None, "tavern_door_item", 1.2f);
             tavernDoor.entranceLabel = "Enter";
             tavernDoor.destinationId = "tavern_common_room";
             tavernDoor.destinationDisplayName = "Tavern";
+            tavernDoor.widthUnits = 0.9f;
+            var tavernPlot = Placeable("tavern_plot", new Color(0.56f, 0.38f, 0.22f), true,
+                InteractionKind.Construction, StationType.None, "tavern_plot_item", 0.35f);
+            tavernPlot.displayName = "Tavern Plot";
+            tavernPlot.widthUnits = 2.45f;
+            tavernPlot.footprintWidth = 3;
+            tavernPlot.footprintHeight = 3;
+            tavernPlot.footprintLabel = "Tavern";
+            tavernPlot.constructionResultPlaceableId = "tavern_building";
+            tavernPlot.constructionCost = new[]
+            {
+                new RecipeIngredient("wood", 24),
+                new RecipeIngredient("stone", 10),
+                new RecipeIngredient("fiber", 8)
+            };
+            var tavernBuilding = Placeable("tavern_building", new Color(0.66f, 0.40f, 0.22f), true,
+                InteractionKind.Entrance, StationType.None, "tavern_building_item", 1.9f);
+            tavernBuilding.entranceLabel = "Enter";
+            tavernBuilding.destinationId = "tavern_common_room";
+            tavernBuilding.destinationDisplayName = "Tavern";
+            tavernBuilding.widthUnits = 2.65f;
+            tavernBuilding.footprintWidth = 3;
+            tavernBuilding.footprintHeight = 3;
+            tavernBuilding.footprintLabel = "Tavern";
+            var libraryPlot = Placeable("library_plot", new Color(0.58f, 0.56f, 0.50f), true,
+                InteractionKind.Construction, StationType.None, "library_plot_item", 0.35f);
+            libraryPlot.displayName = "Library Plot";
+            libraryPlot.widthUnits = 1.2f;
+            libraryPlot.constructionResultPlaceableId = "library_building";
+            libraryPlot.constructionCost = new[]
+            {
+                new RecipeIngredient("stone", 28),
+                new RecipeIngredient("wood", 18),
+                new RecipeIngredient("fiber", 6)
+            };
+            var libraryBuilding = Placeable("library_building", new Color(0.60f, 0.58f, 0.52f), true,
+                InteractionKind.Entrance, StationType.None, "library_building_item", 2.0f);
+            libraryBuilding.entranceLabel = "Enter";
+            libraryBuilding.destinationId = "library_archive";
+            libraryBuilding.destinationDisplayName = "Library";
+            libraryBuilding.widthUnits = 1.45f;
             var rootcellarPortal = Placeable("rootcellar_portal", new Color(0.40f, 0.75f, 0.85f), false,
                 InteractionKind.Entrance, StationType.None, "rootcellar_portal_item", 1.1f);
             rootcellarPortal.entranceLabel = "Enter";
@@ -196,23 +279,23 @@ namespace IsoCore.Foundation
                 c.Nodes.Add(n); return n;
             }
             // Axe/pickaxe preferred (faster) but hand-harvestable; ore veins REQUIRE a pickaxe.
-            var tree = Node("tree", new Color(0.18f, 0.40f, 0.18f), ToolType.Axe, false, 3, 1.5f,
+            var tree = Node("tree", new Color(0.18f, 0.40f, 0.18f), ToolType.Axe, false, 7, 1.5f,
                 new[] { new ItemDrop("wood", 2, 4) });
-            var rock = Node("rock", new Color(0.50f, 0.50f, 0.53f), ToolType.Pickaxe, false, 3, 0.9f,
+            var rock = Node("rock", new Color(0.50f, 0.50f, 0.53f), ToolType.Pickaxe, false, 6, 0.9f,
                 new[] { new ItemDrop("stone", 2, 3) });
-            var bush = Node("bush", new Color(0.25f, 0.50f, 0.25f), ToolType.None, false, 1, 0.7f,
+            var bush = Node("bush", new Color(0.25f, 0.50f, 0.25f), ToolType.None, false, 3, 0.7f,
                 new[] { new ItemDrop("fiber", 1, 2), new ItemDrop("apple", 0, 1, 0.5f) });
-            var copperVein = Node("copper_vein", new Color(0.80f, 0.45f, 0.25f), ToolType.Pickaxe, true, 4, 0.95f,
+            var copperVein = Node("copper_vein", new Color(0.80f, 0.45f, 0.25f), ToolType.Pickaxe, true, 9, 0.95f,
                 new[] { new ItemDrop("copper_ore", 1, 2), new ItemDrop("stone", 0, 1, 0.5f) });
             // Extra flora for visual variety (art in Resources/Decorations). Pine = a second
             // tree species for groves; flower = ambient ground cover; stump/log = low woody bits.
-            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 3, 1.5f,
+            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 7, 1.5f,
                 new[] { new ItemDrop("wood", 2, 4) });
-            var flower = Node("flower", new Color(0.70f, 0.55f, 0.20f), ToolType.None, false, 1, 0.3f,
+            var flower = Node("flower", new Color(0.70f, 0.55f, 0.20f), ToolType.None, false, 2, 0.3f,
                 new[] { new ItemDrop("fiber", 1, 1) });
-            var stump = Node("stump", new Color(0.45f, 0.32f, 0.18f), ToolType.Axe, false, 2, 0.5f,
+            var stump = Node("stump", new Color(0.45f, 0.32f, 0.18f), ToolType.Axe, false, 4, 0.5f,
                 new[] { new ItemDrop("wood", 1, 2) });
-            var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 2, 0.4f,
+            var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 4, 0.4f,
                 new[] { new ItemDrop("wood", 2, 3) });
 
             // ---- Mobs ----
@@ -224,10 +307,19 @@ namespace IsoCore.Foundation
             }
             var deer = Mob("deer", new Color(0.62f, 0.45f, 0.30f), MobBehavior.Skittish, 1.6f, 6f,
                 new[] { new ItemDrop("hide", 1, 2) });
+            deer.threatTier = 0;
+            deer.campWardIgnoreChance = 0f;
+            deer.contactDamage = 0f;
             var slime = Mob("slime", new Color(0.40f, 0.82f, 0.45f), MobBehavior.Passive, 1.0f, 3f,
                 new[] { new ItemDrop("slime_goo", 1, 2) });
+            slime.threatTier = 1;
+            slime.campWardIgnoreChance = 0.12f;
+            slime.contactDamage = 4f;
             var fox = Mob("fox", new Color(0.85f, 0.45f, 0.20f), MobBehavior.Skittish, 2.0f, 7f,
                 new[] { new ItemDrop("hide", 1, 1) });
+            fox.threatTier = 2;
+            fox.campWardIgnoreChance = 0.28f;
+            fox.contactDamage = 6f;
 
             // ---- Crops ----
             void Crop(string id, Color young, Color ripe, int stages, float secs, float matureH, ItemDrop[] harvest)
@@ -286,14 +378,30 @@ namespace IsoCore.Foundation
                 new[] { In("wood", 5) }, new[] { Out("workbench_item", 1) });
             Recipe("craft_campfire", StationType.Hand,
                 new[] { In("wood", 5), In("stone", 3) }, new[] { Out("campfire_item", 1) });
+            Recipe("craft_fireplace", StationType.Workbench,
+                new[] { In("wood", 6), In("stone", 8) }, new[] { Out("fireplace_item", 1) });
+            Recipe("cook_roasted_apple", StationType.CookingPot,
+                new[] { In("apple", 1), In("wood", 1) }, new[] { Out("roasted_apple", 1) });
+            Recipe("cook_camp_stew", StationType.CookingPot,
+                new[] { In("carrot", 1), In("wheat", 1), In("wood", 1) }, new[] { Out("camp_stew", 1) });
             Recipe("craft_tavern_door", StationType.Hand,
                 new[] { In("wood", 8), In("stone", 2) }, new[] { Out("tavern_door_item", 1) });
+            Recipe("craft_tavern_plot", StationType.Workbench,
+                new[] { In("wood", 4), In("fiber", 2) }, new[] { Out("tavern_plot_item", 1) });
+            Recipe("craft_tavern_building", StationType.Workbench,
+                new[] { In("wood", 24), In("stone", 10), In("fiber", 8) }, new[] { Out("tavern_building_item", 1) });
+            Recipe("craft_library_plot", StationType.Workbench,
+                new[] { In("wood", 4), In("stone", 4), In("fiber", 2) }, new[] { Out("library_plot_item", 1) });
             Recipe("craft_rootcellar_portal", StationType.Workbench,
                 new[] { In("stone", 6), In("fiber", 4) }, new[] { Out("rootcellar_portal_item", 1) });
             Recipe("craft_wood_axe", StationType.Hand,
                 new[] { In("wood", 3), In("fiber", 2) }, new[] { Out("wood_axe", 1) });
             Recipe("craft_wood_pickaxe", StationType.Workbench,
                 new[] { In("wood", 3), In("stone", 2) }, new[] { Out("wood_pickaxe", 1) });
+            Recipe("craft_wood_shovel", StationType.Hand,
+                new[] { In("wood", 3), In("fiber", 1) }, new[] { Out("wood_shovel", 1) });
+            Recipe("craft_wood_sword", StationType.Hand,
+                new[] { In("wood", 4), In("fiber", 2) }, new[] { Out("wood_sword", 1) });
             Recipe("craft_stone_path", StationType.Workbench,
                 new[] { In("stone", 2) }, new[] { Out("stone_path_item", 4) });
             Recipe("craft_wood_floor", StationType.Workbench,
@@ -312,10 +420,18 @@ namespace IsoCore.Foundation
                 new[] { In("wood", 2), In("stone", 3) }, new[] { Out("stone_axe", 1) });
             Recipe("craft_stone_pickaxe", StationType.Workbench,
                 new[] { In("wood", 2), In("stone", 3) }, new[] { Out("stone_pickaxe", 1) });
+            Recipe("craft_stone_shovel", StationType.Workbench,
+                new[] { In("wood", 2), In("stone", 2) }, new[] { Out("stone_shovel", 1) });
+            Recipe("craft_stone_sword", StationType.Workbench,
+                new[] { In("wood", 2), In("stone", 4) }, new[] { Out("stone_sword", 1) });
             Recipe("craft_copper_axe", StationType.Workbench,
                 new[] { In("wood", 2), In("copper_bar", 3) }, new[] { Out("copper_axe", 1) });
             Recipe("craft_copper_pickaxe", StationType.Workbench,
                 new[] { In("wood", 2), In("copper_bar", 3) }, new[] { Out("copper_pickaxe", 1) });
+            Recipe("craft_copper_shovel", StationType.Workbench,
+                new[] { In("wood", 2), In("copper_bar", 2) }, new[] { Out("copper_shovel", 1) });
+            Recipe("craft_copper_sword", StationType.Workbench,
+                new[] { In("wood", 2), In("copper_bar", 4) }, new[] { Out("copper_sword", 1) });
 
             // ---- LitRPG progression: skills, Callings, starter quests ----
             FoundationSkillDefinition Skill(string id, string name, FoundationProgressionActivity activity,
@@ -349,6 +465,8 @@ namespace IsoCore.Foundation
                 "Map routes, climb ridges, read landmarks, and find hidden resources.", "shortcuts", "landmarks", "hidden resources");
             Skill("creaturecraft", "Creaturecraft", FoundationProgressionActivity.Creature, FoundationSkillNodeKind.Harmony,
                 "Calm, lure, tame, relocate, and convert dens.", "calming", "lures", "den conversion");
+            Skill("combat", "Combat", FoundationProgressionActivity.Combat, FoundationSkillNodeKind.Utility,
+                "Read attack windows, swing weapons cleanly, dodge pressure, and finish dungeon threats.", "weapon timing", "dungeon tactics", "finisher cues");
             Skill("warding", "Warding", FoundationProgressionActivity.Combat, FoundationSkillNodeKind.Utility,
                 "Use lights, traps, patrol posts, and wards to shape threat.", "non-lethal defenses", "threat shaping", "patrol posts");
             Skill("trade", "Trade", FoundationProgressionActivity.Trade, FoundationSkillNodeKind.Ease,
@@ -407,7 +525,7 @@ namespace IsoCore.Foundation
                 "Protector, patrol fighter, shieldhand, and gloom-clearing defender.",
                 "Patrol Legend: patrol routes reduce threat and unlock heroic town events.",
                 new[] { Bonus(FoundationStatType.STR, 1), Bonus(FoundationStatType.DEF, 2) },
-                new[] { "patroller", "shieldhand", "gloombreaker" }, "warding", "exploration", "mining");
+                new[] { "patroller", "shieldhand", "gloombreaker" }, "combat", "warding", "exploration");
 
             FoundationQuestDefinition Quest(string id, string name, FoundationQuestType type, string act,
                 string description, FoundationQuestObjective[] objectives, FoundationQuestReward[] rewards)
@@ -699,6 +817,18 @@ namespace IsoCore.Foundation
                 new[] { X(FoundationXpChannel.SkillMastery, "farming", 4), X(FoundationXpChannel.Profession, "farmer", 2) },
                 new[] { T("trail_cook", 2), T("campfire_captain", 1) },
                 new[] { A("root", 2), A("hearth", 2) });
+            Evidence("cook_fire_meal", "Cook Fire Meal",
+                "Entry recorded: a cooked meal steadies the camp. Hearth progress rises.",
+                new[] { W(TrialEvidenceCategory.Survival, 2), W(TrialEvidenceCategory.Crafting, 1), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "cooking", 4), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("trail_cook", 2), T("campfire_captain", 1) },
+                new[] { A("hearth", 3), A("ember", 1) });
+            Evidence("rest_at_camp", "Rest at Camp",
+                "Entry recorded: you slept inside firelight. Survival and Hearth evidence rise.",
+                new[] { W(TrialEvidenceCategory.Survival, 3), W(TrialEvidenceCategory.Support, 1) },
+                new[] { X(FoundationXpChannel.Character, "character", 2), X(FoundationXpChannel.SkillMastery, "cooking", 1) },
+                new[] { T("first_night_survivor", 2), T("campfire_captain", 2) },
+                new[] { A("hearth", 3), A("ember", 1) });
             Evidence("mob_defeated", "Mob Defeated",
                 "Entry recorded: threat resolved by force. Combat evidence rises.",
                 new[] { W(TrialEvidenceCategory.Combat, 3), W(TrialEvidenceCategory.Survival, 1) },

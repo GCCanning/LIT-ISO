@@ -178,8 +178,9 @@ function Test-Png {
             $profile = $TerrainProfile
             if ($profile -eq "auto") {
                 $normalizedPath = $Path.Replace("\", "/").ToLowerInvariant()
-                $profile = if ($normalizedPath -match "height|raised|block|cliff|side") { "raised_block" } else { "flat" }
+                $profile = if ($normalizedPath -match "height|raised|block|cliff|side|_edge_") { "raised_block" } else { "flat" }
             }
+            $isNorthEdge = $Path.Replace("\", "/").ToLowerInvariant() -match "_north_edge_"
             if (($img.Width -ne 32 -or $img.Height -ne 32) -and ($img.Width -ne 64 -or $img.Height -ne 64)) {
                 $issues.Add("terrain_size_not_32x32_or_64x64")
             }
@@ -211,8 +212,11 @@ function Test-Png {
                 elseif ($coverage -gt 0.68) {
                     $warnings.Add("raised_block_high_coverage")
                 }
-                if ($topHalfCoverage -gt 0 -and ($bottomHalfCoverage / $topHalfCoverage) -lt 0.22) {
+                if ($topHalfCoverage -gt 0 -and ($bottomHalfCoverage / $topHalfCoverage) -lt 0.22 -and -not $isNorthEdge) {
                     $issues.Add("raised_block_too_flat_or_missing_sides")
+                }
+                elseif ($topHalfCoverage -gt 0 -and ($bottomHalfCoverage / $topHalfCoverage) -lt 0.22) {
+                    $warnings.Add("north_edge_has_shallow_back_face")
                 }
                 if ($sideWallRatio -lt 0.12) {
                     $issues.Add("raised_block_side_faces_too_weak")
@@ -356,7 +360,7 @@ function Test-Png {
             left_edge_coverage = [Math]::Round($leftEdgeCoverage, 4)
             right_edge_coverage = [Math]::Round($rightEdgeCoverage, 4)
             top_edge_coverage = [Math]::Round($topEdgeCoverage, 4)
-            terrain_profile = if ($categoryName -eq "terrain") { if ($TerrainProfile -eq "auto" -and $Path.Replace("\", "/").ToLowerInvariant() -match "height|raised|block|cliff|side") { "raised_block" } elseif ($TerrainProfile -eq "auto") { "flat" } else { $TerrainProfile } } else { "" }
+            terrain_profile = if ($categoryName -eq "terrain") { if ($TerrainProfile -eq "auto" -and $Path.Replace("\", "/").ToLowerInvariant() -match "height|raised|block|cliff|side|_edge_") { "raised_block" } elseif ($TerrainProfile -eq "auto") { "flat" } else { $TerrainProfile } } else { "" }
             top_half_coverage = [Math]::Round($topHalfCoverage, 4)
             bottom_half_coverage = [Math]::Round($bottomHalfCoverage, 4)
             side_wall_ratio = [Math]::Round($sideWallRatio, 4)

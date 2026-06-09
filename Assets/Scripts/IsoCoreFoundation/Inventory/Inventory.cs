@@ -43,7 +43,9 @@ namespace IsoCore.Foundation
                     var stack = slots[i];
                     if (stack.IsEmpty) continue;
                     if (_content.Items.Get(stack.itemId) == null) continue;
-                    _slots[i] = new ItemStack(stack.itemId, Mathf.Min(stack.count, MaxStack(stack.itemId)));
+                    _slots[i] = NormalizeStack(stack.itemId,
+                        Mathf.Min(stack.count, MaxStack(stack.itemId)),
+                        stack.durability);
                 }
             }
 
@@ -54,6 +56,22 @@ namespace IsoCore.Foundation
         {
             var def = _content.Items.Get(itemId);
             return def != null ? Mathf.Max(1, def.maxStack) : 99;
+        }
+
+        int MaxDurability(string itemId)
+        {
+            var def = _content.Items.Get(itemId);
+            return def != null ? Mathf.Max(0, def.maxDurability) : 0;
+        }
+
+        ItemStack NormalizeStack(string itemId, int count, int durability = 0)
+        {
+            int maxDurability = MaxDurability(itemId);
+            if (maxDurability > 0)
+                durability = durability > 0 ? Mathf.Clamp(durability, 1, maxDurability) : maxDurability;
+            else
+                durability = 0;
+            return new ItemStack(itemId, count, durability);
         }
 
         /// <summary>Adds count; returns leftover that did not fit.</summary>
@@ -76,7 +94,7 @@ namespace IsoCore.Foundation
                 if (_slots[i].IsEmpty)
                 {
                     int add = Mathf.Min(max, count);
-                    _slots[i] = new ItemStack(itemId, add);
+                    _slots[i] = NormalizeStack(itemId, add);
                     count -= add;
                 }
             }
@@ -211,6 +229,48 @@ namespace IsoCore.Foundation
             }
             OnChanged?.Invoke();
             return true;
+        }
+
+        public bool DamageSlot(int slot, int amount)
+        {
+            if (slot < 0 || slot >= _slots.Length || amount <= 0)
+                return false;
+
+            var stack = _slots[slot];
+            if (stack.IsEmpty)
+                return false;
+
+            int maxDurability = MaxDurability(stack.itemId);
+            if (maxDurability <= 0)
+                return false;
+
+            if (stack.durability <= 0)
+                stack.durability = maxDurability;
+
+            stack.durability -= amount;
+            if (stack.durability <= 0)
+            {
+                _slots[slot] = default;
+                OnChanged?.Invoke();
+                return true;
+            }
+
+            _slots[slot] = stack;
+            OnChanged?.Invoke();
+            return false;
+        }
+
+        public float Durability01(int slot)
+        {
+            if (slot < 0 || slot >= _slots.Length)
+                return 0f;
+
+            var stack = _slots[slot];
+            if (stack.IsEmpty)
+                return 0f;
+
+            int maxDurability = MaxDurability(stack.itemId);
+            return maxDurability > 0 ? Mathf.Clamp01(stack.durability / (float)maxDurability) : 0f;
         }
     }
 }

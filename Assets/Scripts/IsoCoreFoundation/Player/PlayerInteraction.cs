@@ -19,11 +19,17 @@ namespace IsoCore.Foundation
         Hotbar _hotbar;
         PlacementSystem _placement;
         FarmingSystem _farming;
-        FoundationHUD _hud;
         StorageSystem _storage;
         Camera _cam;
         FoundationInteractionOverlay _overlay;
         FoundationInstanceSystem _instances;
+        FoundationDungeonPortalSystem _dungeonPortals;
+        PlayerHeldTool _heldTool;
+        FoundationCampingSystem _camping;
+        ResourceNode _heldHarvestTarget;
+        float _nextHeldPrimaryTime;
+
+        const float HeldHarvestInterval = 0.30f;
 
         public event Action<ResourceNodeDefinition, IReadOnlyList<ItemStack>> ResourceHarvested;
         public event Action<StationType> CraftingRequested;
@@ -32,13 +38,16 @@ namespace IsoCore.Foundation
 
         public void Init(IsoFoundationPlayer player, IsoWorldController controller, FoundationContent content,
             FoundationConfig cfg, Inventory inv, Hotbar hotbar, PlacementSystem placement,
-            FarmingSystem farming, FoundationHUD hud, StorageSystem storage = null,
+            FarmingSystem farming, StorageSystem storage = null,
             Camera cam = null, FoundationInteractionOverlay overlay = null,
-            FoundationInstanceSystem instances = null)
+            FoundationInstanceSystem instances = null, FoundationDungeonPortalSystem dungeonPortals = null,
+            PlayerHeldTool heldTool = null, FoundationCampingSystem camping = null)
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
-            _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming; _hud = hud;
-            _storage = storage; _cam = cam; _overlay = overlay; _instances = instances;
+            _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming;
+            _storage = storage; _cam = cam; _overlay = overlay; _instances = instances; _dungeonPortals = dungeonPortals;
+            _heldTool = heldTool;
+            _camping = camping;
 
             var hi = new GameObject("TargetHighlight");
             hi.transform.SetParent(transform, false);
@@ -51,18 +60,63 @@ namespace IsoCore.Foundation
         void Update()
         {
             if (_player == null) return;
-            HandleHotbar();
-            UpdateHighlight();
+            bool blocked = WorldInputBlocked();
+            if (!blocked)
+                HandleHotbar();
+            UpdateHighlight(blocked);
 
-            if (Input.GetKeyDown(KeyCode.I)) _hud?.ToggleInventory();
-            if (Input.GetKeyDown(KeyCode.C)) _hud?.ToggleCrafting(StationType.Hand);
-            if (Input.GetMouseButtonDown(0)) HandlePrimaryClick();
+            if (blocked) return;
+            if (Input.GetMouseButtonDown(0))
+            {
+                _heldHarvestTarget = null;
+                _nextHeldPrimaryTime = Time.time + HeldHarvestInterval;
+                HandlePrimaryClick();
+            }
+            else if (Input.GetMouseButton(0) && Time.time >= _nextHeldPrimaryTime)
+            {
+                _nextHeldPrimaryTime = Time.time + HeldHarvestInterval;
+                TryHandleHeldHarvest();
+            }
+            else if (!Input.GetMouseButton(0))
+            {
+                _heldHarvestTarget = null;
+            }
             if (Input.GetMouseButtonDown(1)) HandleSecondaryClick();
         }
 
-        void UpdateHighlight()
+        void UpdateHighlight(bool inputBlocked)
         {
             if (_highlight == null) return;
+            if (inputBlocked)
+            {
+                _highlight.SetTarget(false, Vector3.zero);
+                return;
+            }
+
+            if (TryDecorationUnderCursor(out var decoration) && InRange(decoration.HighlightPosition))
+            {
+                _highlight.SetTarget(true, decoration.HighlightPosition);
+                return;
+            }
+
+            if (TryPortalUnderCursor(out var portal) && InRange(portal.HighlightPosition))
+            {
+                _highlight.SetTarget(true, portal.HighlightPosition);
+                return;
+            }
+
+            if (TryPlaceableUnderCursor(out var hoveredPlaceable) && InRange(hoveredPlaceable.HighlightPosition))
+            {
+                _highlight.SetTarget(true, hoveredPlaceable.HighlightPosition);
+                return;
+            }
+
+            if (TryNodeUnderCursor(out var hoveredNode) && InRange(hoveredNode.HighlightPosition))
+            {
+                _highlight.SetTarget(true, hoveredNode.HighlightPosition);
+                return;
+            }
+
             var c = CursorCell();
             var node = _controller.NodeAtCell(c.x, c.y);
             var placeable = _placement.PlaceableAtCell(c.x, c.y);
@@ -71,6 +125,36 @@ namespace IsoCore.Foundation
             Vector3 pos = showNode ? node.transform.position :
                 showPlaceable ? placeable.transform.position : Vector3.zero;
             _highlight.SetTarget(showNode || showPlaceable, pos);
+        }
+
+        Camera ActiveCamera() => _cam != null ? _cam : Camera.main;
+
+        bool TryDecorationUnderCursor(out FoundationInstanceDecoration decoration)
+        {
+            decoration = null;
+            return _instances != null &&
+                _instances.TryGetDecorationUnderCursor(ActiveCamera(), Input.mousePosition, out decoration);
+        }
+
+        bool TryNodeUnderCursor(out ResourceNode node)
+        {
+            node = null;
+            return _controller != null &&
+                _controller.TryGetNodeUnderCursor(ActiveCamera(), Input.mousePosition, out node);
+        }
+
+        bool TryPlaceableUnderCursor(out PlaceableInstance placeable)
+        {
+            placeable = null;
+            return _placement != null &&
+                _placement.TryGetPlaceableUnderCursor(ActiveCamera(), Input.mousePosition, out placeable);
+        }
+
+        bool TryPortalUnderCursor(out FoundationDungeonPortalInstance portal)
+        {
+            portal = null;
+            return _dungeonPortals != null &&
+                _dungeonPortals.TryGetPortalUnderCursor(ActiveCamera(), Input.mousePosition, out portal);
         }
 
         void HandleHotbar()
@@ -108,8 +192,11 @@ namespace IsoCore.Foundation
         }
 
         bool PointerOverUI() =>
-            (_hud != null && _hud.PointerOverUI) ||
             (_overlay != null && _overlay.PointerOverUI);
+
+        bool WorldInputBlocked() =>
+            PointerOverUI() ||
+            (FoundationUiCoordinator.Active != null && FoundationUiCoordinator.Active.BlocksWorldInput);
 
         bool InRange(Vector3 target) =>
             ((Vector2)(target - _player.transform.position)).sqrMagnitude <=
@@ -125,6 +212,46 @@ namespace IsoCore.Foundation
                  (def.category == ItemCategory.Tool && def.toolType == ToolType.Hoe));
         }
 
+        string SelectedActionFailureMessage()
+        {
+            var stack = _hotbar.SelectedStack;
+            if (stack.IsEmpty) return "Select a tool, seed, block, or station first";
+
+            var def = _content.Items.Get(stack.itemId);
+            if (def == null) return "Selected item is unavailable";
+            if (def.IsSeed) return "Seeds need tilled soil";
+            if (def.category == ItemCategory.Tool && def.toolType == ToolType.Hoe) return "Cannot till this tile";
+            if (def.IsPlaceable) return "Cannot place here";
+            return "Nothing to use";
+        }
+
+        bool TryHandleHeldHarvest()
+        {
+            if (PointerOverUI()) return false;
+
+            if (_heldHarvestTarget != null && InRange(_heldHarvestTarget.HighlightPosition))
+            {
+                HarvestNode(_heldHarvestTarget);
+                return true;
+            }
+
+            if (TryNodeUnderCursor(out var hoveredNode) && InRange(hoveredNode.HighlightPosition))
+            {
+                _heldHarvestTarget = hoveredNode;
+                HarvestNode(hoveredNode);
+                return true;
+            }
+
+            var c = CursorCell();
+            var node = _controller.NodeAtCell(c.x, c.y);
+            if (node == null || !InRange(node.transform.position))
+                return false;
+
+            _heldHarvestTarget = node;
+            HarvestNode(node);
+            return true;
+        }
+
         void HandlePrimaryClick()
         {
             if (PointerOverUI()) return;
@@ -133,8 +260,8 @@ namespace IsoCore.Foundation
             if (SelectedIsPlacementAction())
             {
                 string farmMsg = _farming.TryUseSelected();
-                if (farmMsg != null) { Flash(farmMsg); return; }
-                if (_placement.TryPlaceSelected()) { Flash("Placed"); SfxManager.Play("place", 0.8f); return; }
+                if (farmMsg != null) { if (!OnSelectedUseSucceeded(farmMsg)) Flash(farmMsg); return; }
+                if (_placement.TryPlaceSelected()) { _heldTool?.Swing(); Flash("Placed"); SfxManager.Play("place", 0.8f); return; }
             }
 
             var c = CursorCell();
@@ -145,9 +272,12 @@ namespace IsoCore.Foundation
             }
             if (cropFull) { Flash("Inventory full!"); return; }
 
-            var node = _controller.NodeAtCell(c.x, c.y);
+            var node = TryNodeUnderCursor(out var hoveredNode) && InRange(hoveredNode.HighlightPosition)
+                ? hoveredNode
+                : _controller.NodeAtCell(c.x, c.y);
             if (node != null && InRange(node.transform.position))
             {
+                _heldHarvestTarget = node;
                 HarvestNode(node);
                 return;
             }
@@ -155,26 +285,97 @@ namespace IsoCore.Foundation
             if (!SelectedIsPlacementAction())
             {
                 string farmMsg = _farming.TryUseSelected();
-                if (farmMsg != null) { Flash(farmMsg); return; }
-                if (_placement.TryPlaceSelected()) { Flash("Placed"); SfxManager.Play("place", 0.8f); return; }
+                if (farmMsg != null) { if (!OnSelectedUseSucceeded(farmMsg)) Flash(farmMsg); return; }
+                if (_placement.TryPlaceSelected()) { _heldTool?.Swing(); Flash("Placed"); SfxManager.Play("place", 0.8f); return; }
             }
 
-            Flash("Nothing to use");
+            Flash(SelectedIsPlacementAction() ? SelectedActionFailureMessage() : "Nothing to use");
         }
 
         void HandleSecondaryClick()
         {
             if (PointerOverUI()) return;
 
+            if (TryDecorationUnderCursor(out var decoration) && InRange(decoration.HighlightPosition))
+            {
+                if (decoration.IsDungeonExit && _dungeonPortals != null && _dungeonPortals.IsActiveDungeon)
+                {
+                    _overlay?.OpenContextMenu(decoration.DisplayName, Input.mousePosition,
+                        new[]
+                        {
+                            new FoundationContextAction("complete_dungeon", "Complete and exit dungeon",
+                                () =>
+                                {
+                                    ContextActionUsed?.Invoke("complete_dungeon", _dungeonPortals.PortalIdForActiveDungeon);
+                                    if (!_dungeonPortals.CompleteAndExit()) Flash("No exit found");
+                                })
+                        });
+                }
+                else if (_instances.IsExitDecoration(decoration))
+                {
+                    _overlay?.OpenContextMenu(_instances.ActiveDisplayName, Input.mousePosition,
+                        new[]
+                        {
+                            new FoundationContextAction("exit", $"Exit {_instances.ActiveDisplayName}",
+                                () =>
+                                {
+                                    ContextActionUsed?.Invoke("exit_instance", _instances.ActiveInstanceId);
+                                    if (!_instances.Exit()) Flash("No exit found");
+                                })
+                        });
+                }
+                else
+                {
+                    _overlay?.OpenContextMenu(decoration.DisplayName, Input.mousePosition,
+                        new[]
+                        {
+                            new FoundationContextAction("inspect", $"Inspect {decoration.DisplayName}",
+                                () =>
+                                {
+                                    ContextActionUsed?.Invoke("inspect_decoration", decoration.DisplayName);
+                                    Flash(decoration.DisplayName);
+                                })
+                        });
+                }
+                return;
+            }
+
             var c = CursorCell();
-            var placeable = _placement.PlaceableAtCell(c.x, c.y);
+            var portal = TryPortalUnderCursor(out var hoveredPortal) && InRange(hoveredPortal.HighlightPosition)
+                ? hoveredPortal
+                : (_dungeonPortals != null ? _dungeonPortals.PortalAtCell(c.x, c.y) : null);
+            if (portal != null && InRange(portal.transform.position))
+            {
+                string label = portal.Completed
+                    ? $"Re-enter cleared Tier {portal.Tier} dungeon"
+                    : portal.RewardOpened
+                        ? $"Enter claimed Tier {portal.Tier} dungeon"
+                        : $"Enter Tier {portal.Tier} dungeon";
+                _overlay?.OpenContextMenu(portal.DisplayName, Input.mousePosition,
+                    new[]
+                    {
+                        new FoundationContextAction("enter_dungeon", label,
+                            () =>
+                            {
+                                ContextActionUsed?.Invoke("enter_dungeon", portal.PortalId);
+                                if (!_dungeonPortals.Enter(portal)) Flash("Dungeon failed to open");
+                            })
+                    });
+                return;
+            }
+
+            var placeable = TryPlaceableUnderCursor(out var hoveredPlaceable) && InRange(hoveredPlaceable.HighlightPosition)
+                ? hoveredPlaceable
+                : _placement.PlaceableAtCell(c.x, c.y);
             if (placeable != null && InRange(placeable.transform.position))
             {
                 OpenPlaceableContext(placeable);
                 return;
             }
 
-            var node = _controller.NodeAtCell(c.x, c.y);
+            var node = TryNodeUnderCursor(out var hoveredNode) && InRange(hoveredNode.HighlightPosition)
+                ? hoveredNode
+                : _controller.NodeAtCell(c.x, c.y);
             if (node != null && InRange(node.transform.position))
             {
                 _overlay?.OpenContextMenu(node.Def.Display, Input.mousePosition,
@@ -226,6 +427,7 @@ namespace IsoCore.Foundation
             }
 
             var granted = new List<ItemStack>();
+            int beforeHits = node.RemainingHits;
             bool depleted = node.Harvest(_inv, tool, tier, out bool full, granted);
             if (full)
             {
@@ -233,8 +435,53 @@ namespace IsoCore.Foundation
                 return;
             }
 
+            bool toolBroke = false;
+            if (node.RemainingHits < beforeHits)
+                toolBroke = OnHarvestHitSucceeded(node.Def);
             if (depleted) ResourceHarvested?.Invoke(node.Def, granted);
-            Flash(depleted ? $"Harvested {node.Def.Display}" : $"Breaking {node.Def.Display}...");
+            if (depleted && _heldHarvestTarget == node)
+                _heldHarvestTarget = null;
+            if (!toolBroke)
+                Flash(depleted ? $"Harvested {node.Def.Display}" : $"Breaking {node.Def.Display}...");
+        }
+
+        bool OnHarvestHitSucceeded(ResourceNodeDefinition nodeDef)
+        {
+            _heldTool?.Swing();
+
+            var stack = _hotbar.SelectedStack;
+            if (stack.IsEmpty) return false;
+            var def = _content.Items.Get(stack.itemId);
+            if (def == null || !def.HasDurability) return false;
+
+            int loss = Mathf.Max(1, def.durabilityLossPerUse);
+            if (nodeDef != null && nodeDef.requiredTool != ToolType.None &&
+                def.toolType != nodeDef.requiredTool)
+                loss += 1;
+
+            if (_inv.DamageSlot(_hotbar.Selected, loss))
+            {
+                Flash($"{def.Display} broke");
+                return true;
+            }
+            return false;
+        }
+
+        bool OnSelectedUseSucceeded(string message)
+        {
+            _heldTool?.Swing();
+            var stack = _hotbar.SelectedStack;
+            if (stack.IsEmpty) return false;
+            var def = _content.Items.Get(stack.itemId);
+            if (def == null || !def.HasDurability) return false;
+
+            if (message == "Tilled soil" && def.toolType == ToolType.Hoe &&
+                _inv.DamageSlot(_hotbar.Selected, Mathf.Max(1, def.durabilityLossPerUse)))
+            {
+                Flash($"{def.Display} broke");
+                return true;
+            }
+            return false;
         }
 
         void OpenPlaceableContext(PlaceableInstance placeable)
@@ -248,6 +495,15 @@ namespace IsoCore.Foundation
             else if (def.interaction == InteractionKind.Container)
                 actions.Add(new FoundationContextAction("open", $"Open {def.Display}",
                     () => OpenContainer(placeable)));
+            else if (def.interaction == InteractionKind.Construction)
+            {
+                var result = _content.Placeables.Get(def.constructionResultPlaceableId);
+                string resultName = result != null ? result.Display : "building";
+                bool canBuild = result != null && HasConstructionMaterials(def);
+                string reason = result == null ? "missing result" : MissingConstructionMaterials(def);
+                actions.Add(new FoundationContextAction("build", $"Build {resultName} ({ConstructionCostText(def)})",
+                    () => CompleteConstruction(placeable, result), canBuild, reason));
+            }
             else if (def.interaction == InteractionKind.Entrance)
             {
                 bool hasDestination = !string.IsNullOrWhiteSpace(def.destinationId);
@@ -257,6 +513,10 @@ namespace IsoCore.Foundation
                     : def.destinationDisplayName;
                 actions.Add(new FoundationContextAction("enter", $"{label} {destination}",
                     () => RequestEntrance(def, destination), hasDestination, "not connected yet"));
+            }
+            else if (def.isCampsite)
+            {
+                AddCampsiteActions(actions, placeable);
             }
             else
             {
@@ -270,12 +530,116 @@ namespace IsoCore.Foundation
             _overlay?.OpenContextMenu(def.Display, Input.mousePosition, actions.ToArray());
         }
 
+        void AddCampsiteActions(List<FoundationContextAction> actions, PlaceableInstance placeable)
+        {
+            bool canRest = _camping != null && _camping.CanRestAt(placeable);
+            actions.Add(new FoundationContextAction("rest", "Rest until dawn",
+                () =>
+                {
+                    ContextActionUsed?.Invoke("rest_at_camp", placeable.Def.id);
+                    if (_camping == null || !_camping.RestAt(placeable))
+                        Flash("Stand closer to the fire");
+                },
+                canRest,
+                "stand inside the firelight"));
+
+            actions.Add(new FoundationContextAction("cook", "Cook at fire",
+                () => RequestCrafting(StationType.CookingPot, placeable.Def.id)));
+
+            actions.Add(new FoundationContextAction("inspect", "Inspect camp aura",
+                () =>
+                {
+                    ContextActionUsed?.Invoke("inspect_camp", placeable.Def.id);
+                    Flash(_camping != null ? _camping.DescribeCamp(placeable) : "A warm fire.");
+                }));
+        }
+
+        bool HasConstructionMaterials(PlaceableDefinition plot)
+        {
+            if (plot == null || plot.constructionCost == null)
+                return false;
+
+            foreach (var cost in plot.constructionCost)
+                if (cost.count > 0 && !_inv.Has(cost.itemId, cost.count))
+                    return false;
+            return true;
+        }
+
+        string MissingConstructionMaterials(PlaceableDefinition plot)
+        {
+            if (plot == null || plot.constructionCost == null || plot.constructionCost.Length == 0)
+                return "no plan";
+
+            var missing = new List<string>();
+            foreach (var cost in plot.constructionCost)
+            {
+                if (cost.count <= 0 || string.IsNullOrWhiteSpace(cost.itemId))
+                    continue;
+
+                int have = _inv.Count(cost.itemId);
+                if (have < cost.count)
+                    missing.Add($"{cost.count - have} {DisplayItem(cost.itemId)}");
+            }
+
+            return missing.Count == 0 ? "" : "needs " + string.Join(", ", missing);
+        }
+
+        string ConstructionCostText(PlaceableDefinition plot)
+        {
+            if (plot == null || plot.constructionCost == null || plot.constructionCost.Length == 0)
+                return "no materials";
+
+            var parts = new List<string>();
+            foreach (var cost in plot.constructionCost)
+            {
+                if (cost.count <= 0 || string.IsNullOrWhiteSpace(cost.itemId))
+                    continue;
+                parts.Add($"{cost.count} {DisplayItem(cost.itemId)}");
+            }
+            return parts.Count == 0 ? "no materials" : string.Join(", ", parts);
+        }
+
+        string DisplayItem(string itemId)
+        {
+            var item = _content != null ? _content.Items.Get(itemId) : null;
+            return item != null ? item.Display : itemId;
+        }
+
+        void CompleteConstruction(PlaceableInstance plot, PlaceableDefinition result)
+        {
+            if (plot == null || plot.Def == null || result == null)
+            {
+                Flash("Construction plan is incomplete");
+                return;
+            }
+
+            var def = plot.Def;
+            if (!HasConstructionMaterials(def))
+            {
+                Flash(MissingConstructionMaterials(def));
+                return;
+            }
+
+            if (!_placement.TryReplacePlaceableAtCell(plot.Wx, plot.Wy, result))
+            {
+                Flash("Cannot build here");
+                return;
+            }
+
+            foreach (var cost in def.constructionCost)
+                if (cost.count > 0)
+                    _inv.Remove(cost.itemId, cost.count);
+
+            ContextActionUsed?.Invoke("build_placeable", result.id);
+            Flash($"Built {result.Display}");
+            SfxManager.Play("place", 0.8f);
+        }
+
         void RequestCrafting(StationType station, string targetId)
         {
             ContextActionUsed?.Invoke("craft", targetId);
             CraftingRequested?.Invoke(station);
-            if (_hud != null) _hud.ToggleCrafting(station);
-            else Flash($"{station} crafting");
+            Flash($"{station} crafting");
         }
 
         void OpenContainer(PlaceableInstance placeable)
@@ -312,7 +676,7 @@ namespace IsoCore.Foundation
         void Flash(string message)
         {
             if (_overlay != null) _overlay.Flash(message);
-            else _hud?.Flash(message);
+            else Debug.Log(message);
         }
     }
 }

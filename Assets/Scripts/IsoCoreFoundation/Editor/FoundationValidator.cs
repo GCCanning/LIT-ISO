@@ -94,6 +94,17 @@ namespace IsoCore.Foundation.EditorTools
                 { placeReqOk = false; placeReqDetail += $"{p.id}->{p.requiredItemId} "; }
             Add("Placeable required-item references valid", placeReqOk, placeReqOk ? "all resolve" : placeReqDetail);
 
+            bool footprintOk = true; string footprintDetail = "";
+            foreach (var p in c.Placeables.All)
+            {
+                if (p.FootprintWidth < 1 || p.FootprintHeight < 1)
+                {
+                    footprintOk = false;
+                    footprintDetail += $"{p.id}:{p.FootprintWidth}x{p.FootprintHeight} ";
+                }
+            }
+            Add("Placeable footprints valid", footprintOk, footprintOk ? "all >= 1x1" : footprintDetail);
+
             bool entranceOk = true; string entranceDetail = "";
             int entranceCount = 0;
             foreach (var p in c.Placeables.All)
@@ -109,6 +120,41 @@ namespace IsoCore.Foundation.EditorTools
             Add("Entrance placeables have destinations",
                 entranceOk && entranceCount >= 1,
                 entranceOk ? $"{entranceCount} entrances" : entranceDetail);
+
+            bool constructionOk = true; string constructionDetail = "";
+            int constructionCount = 0;
+            foreach (var p in c.Placeables.All)
+            {
+                if (p.interaction != InteractionKind.Construction) continue;
+                constructionCount++;
+
+                if (string.IsNullOrWhiteSpace(p.constructionResultPlaceableId) ||
+                    !c.Placeables.Has(p.constructionResultPlaceableId))
+                {
+                    constructionOk = false;
+                    constructionDetail += $"{p.id}:result:{p.constructionResultPlaceableId} ";
+                }
+
+                if (p.constructionCost == null || p.constructionCost.Length == 0)
+                {
+                    constructionOk = false;
+                    constructionDetail += $"{p.id}:empty_cost ";
+                }
+                else
+                {
+                    foreach (var cost in p.constructionCost)
+                    {
+                        if (string.IsNullOrWhiteSpace(cost.itemId) || cost.count <= 0 || !c.Items.Has(cost.itemId))
+                        {
+                            constructionOk = false;
+                            constructionDetail += $"{p.id}:cost:{cost.itemId} ";
+                        }
+                    }
+                }
+            }
+            Add("Construction plots resolve result buildings and materials",
+                constructionOk && constructionCount >= 1,
+                constructionOk ? $"{constructionCount} plots" : constructionDetail);
 
             // ---- Seed / crop references ----
             bool seedOk = true; string seedDetail = "";

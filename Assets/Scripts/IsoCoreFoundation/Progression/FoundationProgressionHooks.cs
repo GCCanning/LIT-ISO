@@ -191,7 +191,7 @@ namespace IsoCore.Foundation
         void HandleMobDefeated(MobDefinition mob)
         {
             if (_progression == null) return;
-            Award(FoundationProgressionActivity.Combat, 12, "warding");
+            Award(FoundationProgressionActivity.Combat, 12, "combat", "warding");
             Evidence("mob_defeated", 1, mob != null ? mob.id : "mob");
         }
 
@@ -222,7 +222,21 @@ namespace IsoCore.Foundation
         {
             if (recipe == null) return "craft_workbench";
             if (recipe.id == "craft_campfire") return "craft_campfire";
+            if (recipe.station == StationType.CookingPot || OutputsFood(recipe)) return "cook_fire_meal";
             return "craft_workbench";
+        }
+
+        bool OutputsFood(RecipeDefinition recipe)
+        {
+            if (recipe?.outputs == null) return false;
+            foreach (var output in recipe.outputs)
+            {
+                if (output.IsEmpty) continue;
+                var item = _crafting?.Content?.Items.Get(output.itemId);
+                if (item != null && item.category == ItemCategory.Food)
+                    return true;
+            }
+            return false;
         }
 
         string EvidenceForPlacedItem(ItemDefinition item)

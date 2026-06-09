@@ -1,4 +1,4 @@
-# Asset Forge Self-Review
+﻿# Asset Forge Self-Review
 
 Date: 2026-06-05
 
@@ -11,7 +11,7 @@ Asset Forge has a working local review and dataset loop for the `CodexBiomeStart
   - `Assets/Generated/Tiles/<Biome>`
   - `Assets/Generated/Props/<Biome>`
 - Repo-local dataset capture:
-  - `Assets/Generated/_Datasets/lit_iso/review_packs/CodexBiomeStarter`
+  - `C:/Projects/Pixel Pipeline/datasets/lit_iso/review_packs/CodexBiomeStarter`
 - Experimental LoRA output:
   - `C:\Projects\LoRA-Training\outputs\litiso_tile_prop_v1\litiso_tile_prop_v1_final.safetensors`
 - Synced ComfyUI LoRA:

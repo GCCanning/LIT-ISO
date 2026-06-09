@@ -13,7 +13,7 @@ namespace IsoCore.Foundation
 
     public enum StationType { None, Hand, Workbench, Furnace, CookingPot }
 
-    public enum InteractionKind { None, CraftingStation, Container, Decoration, Entrance }
+    public enum InteractionKind { None, CraftingStation, Container, Decoration, Entrance, Construction }
 
     public enum MobBehavior { Passive, Skittish, Hostile }
 
@@ -74,6 +74,8 @@ namespace IsoCore.Foundation
 
     public enum FoundationClassRarity { Common, CommonPlus, Uncommon, Rare, Epic, Legendary, Mythic }
 
+    public enum FoundationLaunchMode { Standard, CreationInstance }
+
     // ---- Small serializable data structs ----
 
     [Serializable]
@@ -81,7 +83,13 @@ namespace IsoCore.Foundation
     {
         public string itemId;
         public int count;
-        public ItemStack(string itemId, int count) { this.itemId = itemId; this.count = count; }
+        public int durability;
+        public ItemStack(string itemId, int count, int durability = 0)
+        {
+            this.itemId = itemId;
+            this.count = count;
+            this.durability = durability;
+        }
         public bool IsEmpty => string.IsNullOrEmpty(itemId) || count <= 0;
     }
 

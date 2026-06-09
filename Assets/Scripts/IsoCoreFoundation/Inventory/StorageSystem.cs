@@ -219,8 +219,9 @@ namespace IsoCore.Foundation
                     if (stack.IsEmpty || !IsKnownItem(stack.itemId))
                         continue;
 
-                    _slots[i] = new ItemStack(stack.itemId,
-                        Mathf.Min(stack.count, MaxStack(stack.itemId)));
+                    _slots[i] = NormalizeStack(stack.itemId,
+                        Mathf.Min(stack.count, MaxStack(stack.itemId)),
+                        stack.durability);
                 }
             }
 
@@ -250,7 +251,7 @@ namespace IsoCore.Foundation
                 if (_slots[i].IsEmpty)
                 {
                     int add = Mathf.Min(max, count);
-                    _slots[i] = new ItemStack(itemId, add);
+                    _slots[i] = NormalizeStack(itemId, add);
                     count -= add;
                 }
             }
@@ -322,13 +323,29 @@ namespace IsoCore.Foundation
                 _slots[index] = default;
 
             Changed?.Invoke(this);
-            return new ItemStack(stack.itemId, take);
+            return NormalizeStack(stack.itemId, take, stack.durability);
         }
 
         int MaxStack(string itemId)
         {
             var def = _content?.Items.Get(itemId);
             return def != null ? Mathf.Max(1, def.maxStack) : 99;
+        }
+
+        int MaxDurability(string itemId)
+        {
+            var def = _content?.Items.Get(itemId);
+            return def != null ? Mathf.Max(0, def.maxDurability) : 0;
+        }
+
+        ItemStack NormalizeStack(string itemId, int count, int durability = 0)
+        {
+            int maxDurability = MaxDurability(itemId);
+            if (maxDurability > 0)
+                durability = durability > 0 ? Mathf.Clamp(durability, 1, maxDurability) : maxDurability;
+            else
+                durability = 0;
+            return new ItemStack(itemId, count, durability);
         }
 
         bool IsKnownItem(string itemId) => _content?.Items.Get(itemId) != null;

@@ -9,7 +9,7 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 5;
+        public const int CurrentVersion = 8;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -27,6 +27,9 @@ namespace IsoCore.Foundation
         public FoundationSavedStorageContainer[] storageContainers;
         public FoundationSavedCrop[] crops;
         public FoundationSavedInstance instance;
+        public FoundationSavedDungeon dungeon;
+        public FoundationSavedDungeonHistory[] dungeonHistory;
+        public FoundationSavedMapCell[] exploredMapCells;
         public float dayNightTime;
         public FoundationSavedMob[] mobs;
         public string[] regionShifts;
@@ -146,6 +149,46 @@ namespace IsoCore.Foundation
         public int returnCellY;
         public float returnGroundX;
         public float returnGroundY;
+    }
+
+    [Serializable]
+    public struct FoundationSavedDungeon
+    {
+        public bool active;
+        public string portalId;
+        public string dungeonId;
+        public string displayName;
+        public int tier;
+        public int layoutSeed;
+        public int portalX;
+        public int portalY;
+        public string resultId;
+        public bool rewardOpened;
+        public bool completed;
+    }
+
+    [Serializable]
+    public struct FoundationSavedDungeonHistory
+    {
+        public string portalId;
+        public string dungeonId;
+        public string resultId;
+        public int tier;
+        public bool rewardOpened;
+        public bool completed;
+    }
+
+    [Serializable]
+    public struct FoundationSavedMapCell
+    {
+        public int x;
+        public int y;
+
+        public FoundationSavedMapCell(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     [Serializable]

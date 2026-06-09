@@ -891,6 +891,7 @@ def main() -> int:
             prompt_id = queued.get("prompt_id")
             if not prompt_id:
                 raise RuntimeError(f"ComfyUI did not return prompt_id: {queued}")
+            output_record["prompt_id"] = prompt_id
             images = wait_for_outputs(comfy_url, prompt_id, args.timeout_seconds)
             if not images:
                 raise RuntimeError("ComfyUI completed but returned no images")

@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using EthraClone.TrialWeek;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Canonical entry points for the active LIT-ISO golden path.

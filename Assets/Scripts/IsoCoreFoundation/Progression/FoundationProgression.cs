@@ -419,6 +419,38 @@ namespace IsoCore.Foundation
             return changed;
         }
 
+        public bool ApplyDungeonResult(DungeonResultDefinition result, int multiplier = 1)
+        {
+            if (result == null || string.IsNullOrWhiteSpace(result.id))
+                return false;
+
+            multiplier = Math.Max(1, multiplier);
+            ApplyXpGrants(result.xpRewards, multiplier);
+            ApplyTitleProgress(result.titleProgress, multiplier);
+            ApplyAffinityProgress(result.affinityProgress, multiplier);
+
+            if (result.rewards != null)
+            {
+                foreach (var reward in result.rewards)
+                {
+                    if (reward.type == FoundationRewardType.Xp)
+                    {
+                        Stats.AddExperience(Math.Max(1, reward.amount * multiplier));
+                        continue;
+                    }
+
+                    UnlockReward(new FoundationQuestReward(reward.type, reward.id, reward.amount * multiplier));
+                }
+            }
+
+            RememberUnlock($"Dungeon result: {result.Display}");
+            SystemFeed.Queue(SystemMessageChannel.DungeonAlert,
+                string.IsNullOrWhiteSpace(result.summary) ? $"Dungeon cleared: {result.Display}." : result.summary,
+                result.id, 3);
+            Changed?.Invoke();
+            return true;
+        }
+
         void GrantRewards(FoundationQuestDefinition quest)
         {
             if (quest?.rewards == null) return;

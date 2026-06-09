@@ -9,11 +9,15 @@ namespace IsoCore.Foundation
     {
         MobDefinition _def;
         IsoWorld _world;
+        IsoFoundationPlayer _player;
+        FoundationPlayerStats _stats;
         SpriteRenderer _sr;
         Vector2 _ground;
         Vector2 _target;
         int _height;
         float _repathTimer;
+        float _attackTimer;
+        bool _aggressive;
 
         // Animation (optional): when a def has an animationKey with art under
         // Resources/Enemies/<Folder>/Individual Sprites/, the mob plays idle/move frames;
@@ -43,9 +47,18 @@ namespace IsoCore.Foundation
             LoadAnimation(def);
             if (_animated && _idle.Length > 0) _sr.sprite = _idle[0];
             else _sr.sprite = PlaceholderArt.Blob(def.color, def.sizeUnits);
+            FoundationDepthPolish.Attach(gameObject, fadeWhenOccluding: false, castLongShadow: false,
+                contactScale: Mathf.Clamp(def.sizeUnits, 0.45f, 1.2f), contactAlpha: 0.24f);
 
             PickTarget();
             Place();
+        }
+
+        public void SetCombatContext(IsoFoundationPlayer player, FoundationPlayerStats stats, bool aggressive)
+        {
+            _player = player;
+            _stats = stats;
+            _aggressive = aggressive || (_def != null && _def.behaviour == MobBehavior.Hostile);
         }
 
         public void MarkDefeated()
@@ -93,8 +106,16 @@ namespace IsoCore.Foundation
         void Update()
         {
             if (_world == null) return;
-            _repathTimer -= Time.deltaTime;
-            if (_repathTimer <= 0f || (_target - _ground).sqrMagnitude < 0.04f) PickTarget();
+            _attackTimer -= Time.deltaTime;
+            if (_aggressive && _player != null)
+            {
+                _target = _player.Ground;
+            }
+            else
+            {
+                _repathTimer -= Time.deltaTime;
+                if (_repathTimer <= 0f || (_target - _ground).sqrMagnitude < 0.04f) PickTarget();
+            }
 
             _moving = false;
             var dir = _target - _ground;
@@ -106,8 +127,27 @@ namespace IsoCore.Foundation
                 if (_world.IsWalkable(c.x, c.y)) { _ground = np; _moving = true; }
                 else PickTarget();
             }
+            TryAttack();
             Animate();
             Place();
+        }
+
+        void TryAttack()
+        {
+            if (!_aggressive || _player == null || _stats == null || _attackTimer > 0f)
+                return;
+            if (_def == null || _def.contactDamage <= 0f)
+                return;
+
+            float range = Mathf.Max(0.1f, _def.attackRange);
+            if ((_player.Ground - _ground).sqrMagnitude > range * range)
+                return;
+
+            _attackTimer = Mathf.Max(0.5f, _def.attackCooldownSeconds);
+            _stats.Damage(Mathf.Max(1f, _def.contactDamage));
+            FloatingText.Spawn(_player.transform.position + Vector3.up * 0.75f,
+                $"-{Mathf.CeilToInt(_def.contactDamage)} HP", new Color(1f, 0.35f, 0.25f));
+            SfxManager.Play("hit", 0.75f);
         }
 
         void Animate()

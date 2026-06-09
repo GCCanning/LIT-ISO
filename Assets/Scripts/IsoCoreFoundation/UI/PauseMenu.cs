@@ -14,13 +14,18 @@ namespace IsoCore.Foundation
     public class PauseMenu : MonoBehaviour
     {
         CanvasGroup _group;
+        RectTransform _panelRoot;
         bool _open;
         Font _font;
+        FoundationBootstrap _bootstrap;
+        FoundationInteractionOverlay _overlay;
 
         void Awake()
         {
             _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
                  ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            _bootstrap = GetComponent<FoundationBootstrap>();
+            _overlay = GetComponent<FoundationInteractionOverlay>();
 
             // Apply saved master volume immediately.
             AudioListener.volume = Mathf.Clamp01(PlayerPrefs.GetFloat("vol_master", 1f));
@@ -32,7 +37,15 @@ namespace IsoCore.Foundation
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape)) SetOpen(!_open);
+            if (!Input.GetKeyDown(KeyCode.Escape))
+                return;
+
+            var ui = FoundationUiCoordinator.Active;
+            if (!_open && ui != null && !ui.CanOpenPause())
+                return;
+
+            ui?.ConsumeInputThisFrame();
+            SetOpen(!_open);
         }
 
         void SetOpen(bool open)
@@ -44,6 +57,7 @@ namespace IsoCore.Foundation
                 _group.interactable = open;
                 _group.blocksRaycasts = open;
             }
+            FoundationUiCoordinator.Active?.SetModalOpen("pause", open);
             Time.timeScale = open ? 0f : 1f;
         }
 
@@ -76,9 +90,11 @@ namespace IsoCore.Foundation
             // Center panel.
             var panel = NewImage("Panel", canvasGo.transform, new Color(0.12f, 0.13f, 0.18f, 0.98f));
             var prt = panel.rectTransform;
+            _panelRoot = prt;
             prt.anchorMin = prt.anchorMax = new Vector2(0.5f, 0.5f);
             prt.pivot = new Vector2(0.5f, 0.5f);
-            prt.sizeDelta = new Vector2(560, 620);
+            prt.sizeDelta = new Vector2(560, 680);
+            ApplyUiScale(PlayerPrefs.GetFloat("ui.scale", 1f));
 
             float y = 250f;
             MakeLabel("PAUSED", panel.transform, new Vector2(0, y), 44, FontStyle.Bold,
@@ -91,19 +107,63 @@ namespace IsoCore.Foundation
                 v => AudioListener.volume = v); y -= 56f;
             MakeSlider("Music", "vol_music", 0.7f, panel.transform, new Vector2(0, y), null); y -= 56f;
             MakeSlider("SFX", "vol_sfx", 1f, panel.transform, new Vector2(0, y), null); y -= 80f;
+            MakeSlider("UI Scale", "ui.scale", 1f, panel.transform, new Vector2(0, y), ApplyUiScale, 0.75f, 1.5f); y -= 80f;
 
-            MakeButton("Quit to Menu", panel.transform, new Vector2(0, y), QuitToMenu); y -= 80f;
+            MakeButton("Save Game", panel.transform, new Vector2(0, y), SaveGame); y -= 64f;
+            MakeButton("Save & Quit to Menu", panel.transform, new Vector2(0, y), SaveAndQuitToMenu); y -= 80f;
 
-            MakeLabel("WASD / Arrows: move    E: interact    LMB: place    RMB: remove\n" +
-                      "I: inventory    C: craft    1-9 / scroll: hotbar    Esc: pause",
+            MakeLabel("WASD / Arrows: move    LMB: use/place/break    RMB: options/remove\n" +
+                      "I: inventory    C: craft    M: map    1-9 / scroll: hotbar    Ctrl +/-: zoom\n" +
+                      "Alt+drag HUD/map: move    Alt+corner drag: resize    Alt+Shift+R: reset layout    Esc: pause",
                       panel.transform, new Vector2(0, y), 18, FontStyle.Normal,
                       new Color(0.75f, 0.78f, 0.85f), 520);
+        }
+
+        void ApplyUiScale(float scale)
+        {
+            scale = Mathf.Clamp(scale, 0.75f, 1.5f);
+            PlayerPrefs.SetFloat("ui.scale", scale);
+            if (_panelRoot != null)
+                _panelRoot.localScale = Vector3.one * scale;
         }
 
         void QuitToMenu()
         {
             Time.timeScale = 1f;
+            FoundationUiCoordinator.Active?.SetModalOpen("pause", false);
             SceneManager.LoadScene("MenuScene");
+        }
+
+        void SaveGame()
+        {
+            if (_bootstrap == null)
+                _bootstrap = GetComponent<FoundationBootstrap>() ?? Object.FindFirstObjectByType<FoundationBootstrap>();
+            if (_overlay == null)
+                _overlay = GetComponent<FoundationInteractionOverlay>() ?? Object.FindFirstObjectByType<FoundationInteractionOverlay>();
+
+            if (_bootstrap != null && _bootstrap.Save(_bootstrap.DefaultSavePath))
+            {
+                Debug.Log($"[PauseMenu] Saved game to {_bootstrap.DefaultSavePath}");
+                _overlay?.Flash("Game saved.");
+            }
+            else
+            {
+                Debug.LogWarning("[PauseMenu] Save failed.");
+                _overlay?.Flash("Save failed.");
+            }
+        }
+
+        void SaveAndQuitToMenu()
+        {
+            SaveGame();
+            QuitToMenu();
+        }
+
+        void OnDestroy()
+        {
+            FoundationUiCoordinator.Active?.SetModalOpen("pause", false);
+            if (_open)
+                Time.timeScale = 1f;
         }
 
         // ---- uGUI builders ----
@@ -150,7 +210,7 @@ namespace IsoCore.Foundation
         }
 
         void MakeSlider(string label, string prefKey, float def, Transform parent, Vector2 pos,
-            UnityEngine.Events.UnityAction<float> extra)
+            UnityEngine.Events.UnityAction<float> extra, float min = 0f, float max = 1f)
         {
             // Label
             var lab = MakeLabel(label, parent, pos + new Vector2(-200, 0), 20, FontStyle.Normal,
@@ -178,8 +238,8 @@ namespace IsoCore.Foundation
 
             slider.targetGraphic = bg;
             slider.fillRect = fill.rectTransform;
-            slider.minValue = 0f; slider.maxValue = 1f;
-            slider.value = Mathf.Clamp01(PlayerPrefs.GetFloat(prefKey, def));
+            slider.minValue = min; slider.maxValue = max;
+            slider.value = Mathf.Clamp(PlayerPrefs.GetFloat(prefKey, def), min, max);
             slider.onValueChanged.AddListener(v =>
             {
                 PlayerPrefs.SetFloat(prefKey, v);

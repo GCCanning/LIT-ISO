@@ -43,11 +43,20 @@ def luminance(color: tuple[int, int, int]) -> float:
 
 
 MATERIAL_PALETTES: dict[str, list[tuple[int, int, int]]] = {
-    "grass": [(74, 78, 32), (111, 112, 39), (145, 145, 48), (166, 158, 66), (188, 178, 86)],
-    "forest_floor": [(64, 75, 49), (91, 105, 60), (118, 130, 72), (145, 150, 86), (168, 164, 102)],
-    "dirt": [(92, 53, 39), (134, 75, 49), (172, 101, 61), (207, 139, 82), (226, 169, 106)],
-    "stone": [(72, 68, 66), (99, 94, 89), (127, 119, 111), (154, 144, 132), (181, 169, 154)],
-    "path": [(124, 75, 38), (163, 99, 48), (199, 130, 65), (226, 167, 95), (239, 198, 126)],
+    # Bright readable isometric palette, tuned from open CC0/CC-BY tile references
+    # and the current LIT-ISO target screenshots. Keep the material families
+    # separated so tile recolors stay deterministic and training-safe.
+    "grass": [(34, 103, 42), (47, 133, 50), (68, 164, 55), (93, 195, 69), (132, 221, 88)],
+    "forest_floor": [(25, 72, 45), (34, 95, 53), (48, 122, 61), (69, 150, 71), (101, 179, 87)],
+    "dirt": [(86, 48, 36), (122, 68, 44), (158, 91, 54), (194, 125, 72), (224, 166, 98)],
+    "stone": [(72, 75, 82), (101, 105, 113), (132, 137, 146), (165, 171, 180), (204, 209, 216)],
+    "path": [(122, 86, 47), (158, 113, 58), (194, 146, 76), (222, 180, 105), (240, 210, 146)],
+}
+
+SIDE_MATERIAL_FOR_TOP: dict[str, str] = {
+    "grass": "dirt",
+    "forest_floor": "dirt",
+    "path": "dirt",
 }
 
 
@@ -82,6 +91,14 @@ def choose_palette_roles(palette: list[tuple[int, int, int]]) -> dict[str, tuple
         "light": ordered[min(len(ordered) - 1, len(ordered) * 3 // 4)],
         "bright": ordered[-1],
     }
+
+
+def mix_color(a: tuple[int, int, int], b: tuple[int, int, int], t: float) -> tuple[int, int, int]:
+    return (
+        int(a[0] + (b[0] - a[0]) * t),
+        int(a[1] + (b[1] - a[1]) * t),
+        int(a[2] + (b[2] - a[2]) * t),
+    )
 
 
 def inside_mask(mask: Image.Image, x: int, y: int) -> bool:
@@ -132,20 +149,23 @@ def procedural_top(master: Image.Image, material: str, size: int, seed: str) -> 
         else:
             color = palette["shadow"] if roll < 0.45 else palette["light"] if roll < 0.82 else palette["dark"]
         paint_cluster(draw, mask, x, y, color, rng)
-    # Subtle rim pixels keep the diamond readable without a thick border.
-    outline = mask.filter(ImageFilter.FIND_EDGES).point(lambda value: 62 if value else 0)
-    rim = Image.new("RGBA", (size, size), palette["shadow"] + (0,))
+    # Subtle rim pixels keep the diamond readable without a heavy black outline.
+    outline = mask.filter(ImageFilter.FIND_EDGES).point(lambda value: 28 if value else 0)
+    rim_color = mix_color(palette["shadow"], palette["base"], 0.38)
+    rim = Image.new("RGBA", (size, size), rim_color + (0,))
     rim.putalpha(outline)
     output.alpha_composite(rim)
     return quantize(output, colors=18)
 
 
 def procedural_side(master: Image.Image, material: str, size: int, direction: str) -> Image.Image:
-    palette = choose_palette_roles(extract_palette(master, material=material))
+    side_material = SIDE_MATERIAL_FOR_TOP.get(material, material)
+    palette = choose_palette_roles(extract_palette(master, material=side_material))
     mask = side_mask(size, direction)
     output = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(output)
-    draw.bitmap((0, 0), mask, fill=palette["shadow"] + (255,))
+    side_base = mix_color(palette["shadow"], palette["base"], 0.18)
+    draw.bitmap((0, 0), mask, fill=side_base + (255,))
     rng = random.Random(f"{material}:side:{direction}")
     for _ in range(26):
         x = rng.randint(4, size - 5)
@@ -161,7 +181,7 @@ def diamond_mask(size: int, vertical_scale: float = 0.5, y_offset: int = 0) -> I
     mask = Image.new("L", (size, size), 0)
     draw = ImageDraw.Draw(mask)
     cx = (size - 1) / 2
-    half_w = size / 2 - 2
+    half_w = size / 2 - 1
     half_h = size * vertical_scale / 2
     cy = size / 2 + y_offset
     points = [(cx, cy - half_h), (cx + half_w, cy), (cx, cy + half_h), (cx - half_w, cy)]
@@ -201,39 +221,47 @@ def side_mask(size: int, direction: str) -> Image.Image:
     mask = Image.new("L", (size, size), 0)
     draw = ImageDraw.Draw(mask)
     cx = (size - 1) / 2
+    # Match the top-mask geometry used by derive_edge so side faces share real
+    # pixel boundaries with the lower diamond edges.
     cy = size / 2 - 8
-    top_half_w = size * 0.44
+    top_half_w = size / 2 - 1
+    top_half_h = size * 0.42 / 2
     mid_half_w = size * 0.31
-    bottom_y = cy + size * 0.43
+    side_h = size * 0.34
+    top = (cx, cy - top_half_h)
+    right = (cx + top_half_w, cy)
+    bottom = (cx, cy + top_half_h)
+    left = (cx - top_half_w, cy)
     if direction == "south":
         points = [
-            (cx - top_half_w, cy),
-            (cx + top_half_w, cy),
-            (cx + mid_half_w, bottom_y - 5),
-            (cx, bottom_y + 3),
-            (cx - mid_half_w, bottom_y - 5),
+            left,
+            bottom,
+            right,
+            (cx + mid_half_w, cy + side_h),
+            (cx, cy + side_h + 8),
+            (cx - mid_half_w, cy + side_h),
         ]
     elif direction == "north":
         points = [
-            (cx - top_half_w, cy),
-            (cx, cy - size * 0.25),
-            (cx + top_half_w, cy),
-            (cx + mid_half_w, cy + 9),
-            (cx - mid_half_w, cy + 9),
+            left,
+            top,
+            right,
+            (cx + mid_half_w, cy + side_h * 0.55),
+            (cx - mid_half_w, cy + side_h * 0.55),
         ]
     elif direction == "east":
         points = [
-            (cx + top_half_w, cy),
-            (cx, cy + size * 0.21),
-            (cx, bottom_y + 2),
-            (cx + mid_half_w, bottom_y - 6),
+            right,
+            bottom,
+            (cx, cy + top_half_h + side_h),
+            (cx + mid_half_w, cy + side_h),
         ]
     elif direction == "west":
         points = [
-            (cx - top_half_w, cy),
-            (cx, cy + size * 0.21),
-            (cx, bottom_y + 2),
-            (cx - mid_half_w, bottom_y - 6),
+            left,
+            bottom,
+            (cx, cy + top_half_h + side_h),
+            (cx - mid_half_w, cy + side_h),
         ]
     else:
         points = []
@@ -372,10 +400,17 @@ def make_map_preview(items: list[dict], root: Path, output_path: Path) -> None:
         return Image.open(lookup[name]).convert("RGBA")
 
     tile = 64
-    canvas = Image.new("RGBA", (tile * 9, tile * 7), (29, 34, 33, 255))
+    canvas = Image.new("RGBA", (tile * 9, tile * 7), (33, 45, 34, 255))
+
+    if "greenwake_grass_flat_top_derived.png" in lookup:
+        grass = load("greenwake_grass_flat_top_derived.png")
+        for gy in range(6):
+            for gx in range(8):
+                x = (gx - gy) * tile // 2 + 220
+                y = (gx + gy) * tile // 4 + 28
+                canvas.alpha_composite(grass, (x, y))
+
     placements = [
-        ("greenwake_grass_flat_top_derived.png", 2, 0),
-        ("greenwake_grass_flat_top_derived.png", 3, 0),
         ("greenwake_grass_to_dirt_east_transition_derived.png", 4, 0),
         ("greenwake_dirt_flat_top_derived.png", 5, 0),
         ("greenwake_grass_south_edge_derived.png", 2, 1),

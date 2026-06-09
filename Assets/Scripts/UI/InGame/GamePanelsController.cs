@@ -1,93 +1,110 @@
+using IsoCore.Foundation;
 using UnityEngine;
 
 namespace LitIso.UI.InGame
 {
     /// <summary>
-    /// Owns the in-game panels (Inventory / Crafting / Character Sheet) and routes
-    /// keyboard toggles between them. Spawned by <see cref="GameHudInitializer"/>
-    /// alongside the HUD; one of each panel exists from session start, shown/hidden
-    /// on demand. Esc closes the topmost open panel (last-opened wins).
-    ///
-    /// Default bindings:
-    ///   I = Inventory · C = Crafting · K (or Tab) = Character Sheet · Esc = close
-    ///
-    /// Models default to placeholders until adapters are bound via Init*().
+    /// Routes all in-game panel keys to one canonical tabbed Character/System panel.
+    /// Default keys: I inventory, C crafting, K/Tab status, M remains map overlay.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class GamePanelsController : MonoBehaviour
     {
-        InventoryView _inv;
-        CraftingView _craft;
-        CharacterSheetView _char;
-        System.Collections.Generic.List<System.Action> _closeOrder; // LIFO close stack
+        CharacterPanelView _panel;
+        IInventoryViewModel _inventory;
+        ICraftingViewModel _crafting;
+        ICharacterSheetViewModel _character;
+        FoundationProgression _progression;
+        FoundationQoLService _qol;
 
-        public InventoryView Inventory => _inv;
-        public CraftingView Crafting => _craft;
-        public CharacterSheetView CharacterSheet => _char;
+        public bool AnyOpen => _panel != null && _panel.IsOpen;
 
         void Awake()
         {
-            _closeOrder = new System.Collections.Generic.List<System.Action>(4);
+            _inventory ??= new PlaceholderInventoryViewModel();
+            _crafting ??= new PlaceholderCraftingViewModel();
+            _character ??= new PlaceholderCharacterSheetViewModel();
 
-            _inv   = NewPanel<InventoryView>("InventoryPanel");
-            _craft = NewPanel<CraftingView>("CraftingPanel");
-            _char  = NewPanel<CharacterSheetView>("CharacterPanel");
-
-            // Default placeholder models — adapters replace these via Init*().
-            _inv.Init(new PlaceholderInventoryViewModel());
-            _craft.Init(new PlaceholderCraftingViewModel());
-            _char.Init(new PlaceholderCharacterSheetViewModel());
-
-            // Track close order so Esc dismisses the most recently opened panel.
-            _inv.Closed   += () => _closeOrder.Remove(_inv.Hide);
-            _craft.Closed += () => _closeOrder.Remove(_craft.Hide);
-            _char.Closed  += () => _closeOrder.Remove(_char.Hide);
+            _panel = gameObject.AddComponent<CharacterPanelView>();
+            _panel.Closed += RefreshCoordinatorState;
+            RebindPanel();
+            RefreshCoordinatorState();
         }
 
-        T NewPanel<T>(string name) where T : MonoBehaviour
+        public void BindInventory(IInventoryViewModel model)
         {
-            var go = new GameObject(name);
-            go.transform.SetParent(transform, false);
-            return go.AddComponent<T>();
+            _inventory = model ?? new PlaceholderInventoryViewModel();
+            RebindPanel();
         }
 
-        public void BindInventory(IInventoryViewModel m) => _inv.Init(m);
-        public void BindCrafting(ICraftingViewModel m)   => _craft.Init(m);
-        public void BindCharacter(ICharacterSheetViewModel m) => _char.Init(m);
+        public void BindCrafting(ICraftingViewModel model)
+        {
+            _crafting = model ?? new PlaceholderCraftingViewModel();
+            RebindPanel();
+        }
+
+        public void BindCharacter(ICharacterSheetViewModel model)
+        {
+            _character = model ?? new PlaceholderCharacterSheetViewModel();
+            RebindPanel();
+        }
+
+        public void BindProgression(FoundationProgression progression, FoundationQoLService qol)
+        {
+            _progression = progression;
+            _qol = qol;
+            RebindPanel();
+        }
+
+        public void OpenInventory() => Open(CharacterPanelTab.Inventory);
+        public void OpenCrafting() => Open(CharacterPanelTab.Crafting);
+        public void OpenCharacterSheet() => Open(CharacterPanelTab.Status);
+        public void OpenSkills() => Open(CharacterPanelTab.Skills);
+        public void OpenQuests() => Open(CharacterPanelTab.Quests);
+        public void OpenSystem() => Open(CharacterPanelTab.System);
+        public void OpenMapTab() => Open(CharacterPanelTab.Map);
 
         void Update()
         {
-            // Esc → close topmost open panel.
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape) && AnyOpen)
             {
-                if (_closeOrder.Count > 0)
-                {
-                    var top = _closeOrder[_closeOrder.Count - 1];
-                    _closeOrder.RemoveAt(_closeOrder.Count - 1);
-                    top();
-                    return;
-                }
+                _panel.Hide();
+                FoundationUiCoordinator.Active?.ConsumeInputThisFrame();
+                RefreshCoordinatorState();
+                return;
             }
-            // Toggle keys (don't fire while typing in a text input — uGUI input fields
-            // consume focus, so checking Input.GetKeyDown is fine here).
-            if (Input.GetKeyDown(KeyCode.I)) Toggle(_inv, _inv.Hide);
-            if (Input.GetKeyDown(KeyCode.C)) Toggle(_craft, _craft.Hide);
-            if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.Tab)) Toggle(_char, _char.Hide);
+
+            var ui = FoundationUiCoordinator.Active;
+            if (ui != null && ui.InputConsumedThisFrame)
+                return;
+
+            if (Input.GetKeyDown(KeyCode.I)) OpenInventory();
+            if (Input.GetKeyDown(KeyCode.C)) OpenCrafting();
+            if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.Tab)) OpenCharacterSheet();
         }
 
-        void Toggle<T>(T panel, System.Action hide) where T : MonoBehaviour
+        void Open(CharacterPanelTab tab)
         {
-            // Use reflection-free dispatch via duck typing on the concrete types.
-            if (panel is InventoryView i) {
-                if (i.IsOpen) { i.Hide(); }
-                else          { i.Show(); _closeOrder.Add(hide); }
-            } else if (panel is CraftingView c) {
-                if (c.IsOpen) { c.Hide(); }
-                else          { c.Show(); _closeOrder.Add(hide); }
-            } else if (panel is CharacterSheetView s) {
-                if (s.IsOpen) { s.Hide(); }
-                else          { s.Show(); _closeOrder.Add(hide); }
-            }
+            if (_panel == null)
+                return;
+
+            _panel.Show(tab);
+            FoundationUiCoordinator.Active?.ConsumeInputThisFrame();
+            RefreshCoordinatorState();
+        }
+
+        void RebindPanel()
+        {
+            if (_panel == null)
+                return;
+
+            _panel.Init(_inventory, _crafting, _character, _progression, _qol);
+            RefreshCoordinatorState();
+        }
+
+        void RefreshCoordinatorState()
+        {
+            FoundationUiCoordinator.Active?.SetModalOpen("panels", AnyOpen);
         }
     }
 }

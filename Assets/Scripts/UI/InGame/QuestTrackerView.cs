@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using IsoCore.Foundation;
 
 namespace LitIso.UI.InGame
 {
@@ -24,8 +25,8 @@ namespace LitIso.UI.InGame
         static readonly Color RewardCol      = new Color(0.85f, 0.75f, 0.95f, 1f);
 
         // Panel dimensions (in reference-resolution pixels, 1920×1080)
-        const float PanelW   = 280f;
-        const float PanelH   = 90f;
+        const float PanelW   = 356f;
+        const float PanelH   = 122f;
         const float PanelPad = 10f;
         const float BarH     = 8f;
 
@@ -40,6 +41,8 @@ namespace LitIso.UI.InGame
         Text  _objText;
         Image _progressBar;    // fill image scaled to [0,1]
         Text  _rewardText;
+        bool _hasQuest;
+        FoundationHudViewMode _hudMode = FoundationHudViewMode.Adventure;
 
         // ---- public API -----------------------------------------------------
 
@@ -56,6 +59,17 @@ namespace LitIso.UI.InGame
         void Awake()
         {
             BuildUI();
+        }
+
+        void OnEnable()
+        {
+            FoundationUiCoordinator.HudViewModeChanged += ApplyHudViewMode;
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
+        }
+
+        void OnDisable()
+        {
+            FoundationUiCoordinator.HudViewModeChanged -= ApplyHudViewMode;
         }
 
         void OnDestroy()
@@ -78,8 +92,9 @@ namespace LitIso.UI.InGame
             rt.anchorMin = new Vector2(1f, 1f);
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot     = new Vector2(1f, 1f);
-            rt.anchoredPosition = new Vector2(-16f, -16f);
+            rt.anchoredPosition = new Vector2(-36f, -244f);
             rt.sizeDelta        = new Vector2(PanelW, PanelH);
+            PlayerResizableUi.Attach(rt, "hud.quest_tracker", new Vector2(260f, 90f), new Vector2(640f, 280f));
 
             // Outline border
             var outline = _root.AddComponent<Outline>();
@@ -148,6 +163,7 @@ namespace LitIso.UI.InGame
             rewRt.pivot     = new Vector2(0f, 1f);
             rewRt.anchoredPosition = new Vector2(PanelPad, y);
             rewRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 14f);
+            ApplyHudViewMode(_hudMode);
         }
 
         // ---- model change ---------------------------------------------------
@@ -159,7 +175,8 @@ namespace LitIso.UI.InGame
             if (_root == null) return;
 
             var quest = _model?.PinnedQuest;
-            _root.SetActive(quest.HasValue);
+            _hasQuest = quest.HasValue;
+            ApplyHudViewMode(_hudMode);
             if (!quest.HasValue) return;
 
             var q = quest.Value;
@@ -185,6 +202,14 @@ namespace LitIso.UI.InGame
             _rewardText.text = string.IsNullOrEmpty(q.rewardText)
                 ? ""
                 : $"Reward: {q.rewardText}";
+        }
+
+        void ApplyHudViewMode(FoundationHudViewMode mode)
+        {
+            _hudMode = mode;
+            bool show = _hasQuest && mode == FoundationHudViewMode.Adventure;
+            if (_root != null && _root.activeSelf != show)
+                _root.SetActive(show);
         }
     }
 }

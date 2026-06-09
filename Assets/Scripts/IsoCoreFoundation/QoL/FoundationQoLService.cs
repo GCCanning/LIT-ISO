@@ -612,7 +612,7 @@ namespace IsoCore.Foundation
             var clean = new List<ItemStack>();
             for (int i = 0; i < stacks.Length; i++)
                 if (!stacks[i].IsEmpty)
-                    clean.Add(new ItemStack(stacks[i].itemId, Math.Max(1, stacks[i].count)));
+                    clean.Add(new ItemStack(stacks[i].itemId, Math.Max(1, stacks[i].count), stacks[i].durability));
             return clean.ToArray();
         }
 

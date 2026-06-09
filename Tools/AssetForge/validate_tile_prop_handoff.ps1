@@ -1,7 +1,8 @@
 param(
     [string]$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path,
     [string]$PackName = "CodexBiomeStarter",
-    [string]$ReportPath
+    [string]$ReportPath,
+    [switch]$IncludeUnapprovedGenerated
 )
 
 $ErrorActionPreference = "Stop"
@@ -23,42 +24,111 @@ foreach ($decision in $decisions.decisions) {
     }
 }
 
+function Format-InvariantNumber {
+    param([object]$Value)
+
+    if ($null -eq $Value -or [string]::IsNullOrWhiteSpace([string]$Value)) {
+        return "0"
+    }
+
+    $number = [double]$Value
+    return $number.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture)
+}
+
+function Get-DecisionUnitySettings {
+    param(
+        [object]$Decision,
+        [string]$Category
+    )
+
+    $expectedPpu = if ($Category -eq "decoration") { "128" } else { "32" }
+    $expectedPivot = if ($Category -eq "decoration") { "{x: 0.5, y: 0}" } else { "{x: 0.5, y: 0.75}" }
+
+    if ($null -ne $Decision -and $Decision.PSObject.Properties.Name.Contains("unity") -and $null -ne $Decision.unity) {
+        if ($Decision.unity.PSObject.Properties.Name.Contains("ppu") -and -not [string]::IsNullOrWhiteSpace([string]$Decision.unity.ppu)) {
+            $expectedPpu = [string]$Decision.unity.ppu
+        }
+        if ($Decision.unity.PSObject.Properties.Name.Contains("pivot") -and $null -ne $Decision.unity.pivot) {
+            $pivot = $Decision.unity.pivot
+            if ($pivot.PSObject.Properties.Name.Contains("x") -and $pivot.PSObject.Properties.Name.Contains("y")) {
+                $x = Format-InvariantNumber -Value $pivot.x
+                $y = Format-InvariantNumber -Value $pivot.y
+                $expectedPivot = "{x: $x, y: $y}"
+            }
+        }
+    }
+
+    return [PSCustomObject]@{
+        ppu = $expectedPpu
+        pivot = $expectedPivot
+    }
+}
+
 $items = @()
-$roots = @("Assets\Generated\Tiles", "Assets\Generated\Props")
-foreach ($root in $roots) {
-    $absoluteRoot = Join-Path $ProjectRoot $root
-    if (-not (Test-Path $absoluteRoot)) { continue }
 
-    foreach ($file in Get-ChildItem -Path $absoluteRoot -Recurse -Filter *.png -File) {
-        $relative = $file.FullName.Replace($ProjectRoot + "\", "").Replace("\", "/")
-        $metaPath = "$($file.FullName).meta"
-        $issues = New-Object System.Collections.Generic.List[string]
-        $warnings = New-Object System.Collections.Generic.List[string]
-        $category = if ($relative -match "^Assets/Generated/Props/") { "decoration" } else { "terrain" }
-        $expectedPpu = if ($category -eq "decoration") { "128" } else { "32" }
+function New-HandoffValidationItem {
+    param(
+        [string]$Relative,
+        [object]$Decision,
+        [bool]$Approved
+    )
 
-        if (-not $approved.ContainsKey($relative)) {
-            $issues.Add("not_approved_by_review_decisions")
-        }
-        if (-not (Test-Path $metaPath)) {
-            $issues.Add("missing_meta")
-            $meta = ""
-        }
-        else {
-            $meta = Get-Content -Raw -Path $metaPath
-        }
-        if ($meta -and $meta -notmatch "spritePixelsToUnits: $expectedPpu") { $issues.Add("ppu_not_$expectedPpu") }
-        if ($meta -and $meta -notmatch "filterMode: 0") { $issues.Add("filter_not_point") }
-        if ($meta -and $meta -notmatch "enableMipMap: 0") { $issues.Add("mipmaps_enabled") }
-        if ($meta -and $meta -notmatch "alphaIsTransparency: 1") { $warnings.Add("alpha_transparency_not_marked") }
+    $absolute = Join-Path $ProjectRoot ($Relative -replace "/", "\")
+    $metaPath = "$absolute.meta"
+    $issues = New-Object System.Collections.Generic.List[string]
+    $warnings = New-Object System.Collections.Generic.List[string]
+    $category = if ($Relative -match "^Assets/Generated/Props/") { "decoration" } else { "terrain" }
+    $unitySettings = Get-DecisionUnitySettings -Decision $Decision -Category $category
+    $expectedPpu = $unitySettings.ppu
+    $expectedPivot = $unitySettings.pivot
 
-        $items += [PSCustomObject]@{
-            path = $relative
-            category = $category
-            approved = $approved.ContainsKey($relative)
-            status = if ($issues.Count -eq 0) { "pass" } else { "review" }
-            issues = @($issues)
-            warnings = @($warnings)
+    if (-not $Approved) {
+        $issues.Add("not_approved_by_review_decisions")
+    }
+    if (-not (Test-Path $absolute)) {
+        $issues.Add("missing_generated_png")
+        $meta = ""
+    }
+    elseif (-not (Test-Path $metaPath)) {
+        $issues.Add("missing_meta")
+        $meta = ""
+    }
+    else {
+        $meta = Get-Content -Raw -Path $metaPath
+    }
+
+    if ($meta -and $meta -notmatch "spritePixelsToUnits: $expectedPpu") { $issues.Add("ppu_not_$expectedPpu") }
+    if ($meta -and $meta -notmatch [Regex]::Escape("spritePivot: $expectedPivot")) { $issues.Add("pivot_not_expected") }
+    if ($meta -and $meta -notmatch "filterMode: 0") { $issues.Add("filter_not_point") }
+    if ($meta -and $meta -notmatch "enableMipMap: 0") { $issues.Add("mipmaps_enabled") }
+    if ($meta -and $meta -notmatch "alphaIsTransparency: 1") { $warnings.Add("alpha_transparency_not_marked") }
+
+    return [PSCustomObject]@{
+        path = $Relative
+        category = $category
+        approved = $Approved
+        expected_ppu = $expectedPpu
+        expected_pivot = $expectedPivot
+        status = if ($issues.Count -eq 0) { "pass" } else { "review" }
+        issues = @($issues)
+        warnings = @($warnings)
+    }
+}
+
+foreach ($entry in $approved.GetEnumerator()) {
+    $items += New-HandoffValidationItem -Relative $entry.Key -Decision $entry.Value -Approved $true
+}
+
+if ($IncludeUnapprovedGenerated.IsPresent) {
+    $roots = @("Assets\Generated\Tiles", "Assets\Generated\Props")
+    foreach ($root in $roots) {
+        $absoluteRoot = Join-Path $ProjectRoot $root
+        if (-not (Test-Path $absoluteRoot)) { continue }
+
+        foreach ($file in Get-ChildItem -Path $absoluteRoot -Recurse -Filter *.png -File) {
+            $relative = $file.FullName.Replace($ProjectRoot + "\", "").Replace("\", "/")
+            if ($approved.ContainsKey($relative)) { continue }
+            $items += New-HandoffValidationItem -Relative $relative -Decision $null -Approved $false
         }
     }
 }

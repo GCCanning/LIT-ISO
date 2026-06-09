@@ -14,6 +14,9 @@ namespace IsoCore.Foundation
         FoundationContent _content;
         FoundationConfig _cfg;
         IsoFoundationPlayer _player;
+        FoundationPlayerStats _stats;
+        FoundationInstanceSystem _instances;
+        FoundationCampingSystem _camping;
         Transform _mobParent;
 
         readonly List<Mob> _mobs = new();
@@ -24,12 +27,23 @@ namespace IsoCore.Foundation
 
         public int Count => _mobs.Count;
 
-        public void Init(IsoWorld world, FoundationContent content, FoundationConfig cfg, IsoFoundationPlayer player)
+        public void Init(IsoWorld world, FoundationContent content, FoundationConfig cfg, IsoFoundationPlayer player,
+            FoundationPlayerStats stats = null)
         {
-            _world = world; _content = content; _cfg = cfg; _player = player;
+            _world = world; _content = content; _cfg = cfg; _player = player; _stats = stats;
             _mobParent = new GameObject("Mobs").transform;
             _mobParent.SetParent(transform, false);
             _timer = 1f;
+        }
+
+        public void SetInstanceSystem(FoundationInstanceSystem instances)
+        {
+            _instances = instances;
+        }
+
+        public void SetCampingSystem(FoundationCampingSystem camping)
+        {
+            _camping = camping;
         }
 
         void Update()
@@ -39,9 +53,22 @@ namespace IsoCore.Foundation
             if (_timer <= 0f)
             {
                 _timer = _cfg.mobSpawnInterval;
-                TrySpawn();
+                if (_instances == null || !_instances.IsInsideInstance)
+                    TrySpawn();
             }
             DespawnFar();
+        }
+
+        public Mob SpawnMobAt(MobDefinition def, Vector2 ground)
+        {
+            if (def == null || _world == null)
+                return null;
+
+            var c = IsoGrid.WorldToCell(new Vector3(ground.x, ground.y, 0f));
+            if (!_world.IsWalkable(c.x, c.y))
+                return null;
+
+            return SpawnMob(def, ground, def.behaviour == MobBehavior.Hostile);
         }
 
         void TrySpawn()
@@ -60,19 +87,23 @@ namespace IsoCore.Foundation
             var biome = _world.GetBiome(c.x, c.y);
             var def = PickMob(biome);
             if (def == null) return;
+            bool breachedWard = false;
+            if (_camping != null && _camping.RollMobSpawnWard(def, ground, out breachedWard)) return;
 
-            SpawnMob(def, ground);
+            SpawnMob(def, ground, breachedWard || def.behaviour == MobBehavior.Hostile);
         }
 
-        void SpawnMob(MobDefinition def, Vector2 ground)
+        Mob SpawnMob(MobDefinition def, Vector2 ground, bool aggressive = false)
         {
             var go = new GameObject($"Mob_{def.id}");
             go.transform.SetParent(_mobParent, false);
             var mob = go.AddComponent<Mob>();
             mob.Init(def, _world, ground);
+            mob.SetCombatContext(_player, _stats, aggressive);
             mob.Defeated += HandleMobDefeated;
             mob.Calmed += HandleMobCalmed;
             _mobs.Add(mob);
+            return mob;
         }
 
         MobDefinition PickMob(BiomeDefinition biome)
