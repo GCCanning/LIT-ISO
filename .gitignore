@@ -36,6 +36,12 @@ Thumbs.db
 .dotnet/
 TempEvalDryRun/
 TempEvalDryRunFreshOnly/
+TempEvalStrict/
+
+# One-off color swatch dumps from asset review sessions
+/0
+/74
+/95
 
 # Python cache
 __pycache__/
@@ -55,3 +61,13 @@ __pycache__/
 /Assets/Generated/_Review/_Requests.meta
 /Assets/Generated/_Datasets/
 /Assets/Generated/_Datasets.meta
+/Assets/Generated/_Review/
+/Assets/Generated/_Review.meta
+/Assets/Generated/_StyleProfiles/
+/Assets/Generated/_StyleProfiles.meta
+/Assets/Generated/_TrainingInbox/
+/Assets/Generated/_TrainingInbox.meta
+
+# Unity recovery scenes are editor crash/recovery output, not source assets
+/Assets/_Recovery/
+/Assets/_Recovery.meta
