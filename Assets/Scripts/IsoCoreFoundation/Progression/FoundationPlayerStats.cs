@@ -17,6 +17,8 @@ namespace IsoCore.Foundation
         public float MaxHealth { get; private set; }
         public float Mana { get; private set; }
         public float MaxMana { get; private set; }
+        public float Stamina { get; private set; }
+        public float MaxStamina { get; private set; }
 
         public int STR { get; private set; }
         public int DEX { get; private set; }
@@ -30,6 +32,7 @@ namespace IsoCore.Foundation
 
         public float Health01 => Ratio(Health, MaxHealth);
         public float Mana01 => Ratio(Mana, MaxMana);
+        public float Stamina01 => Ratio(Stamina, MaxStamina);
         public float Xp01 => Ratio(Experience, ExperienceToNextLevel);
 
         public FoundationPlayerStats()
@@ -37,6 +40,7 @@ namespace IsoCore.Foundation
             SetCoreStats(8, 8, 8, 10, 5, 5);
             Health = MaxHealth;
             Mana = MaxMana;
+            Stamina = MaxStamina;
         }
 
         public void ApplyCalling(FoundationCallingDefinition calling)
@@ -54,6 +58,7 @@ namespace IsoCore.Foundation
             RecalculateVitals();
             Health = MaxHealth;
             Mana = MaxMana;
+            Stamina = MaxStamina;
             Changed?.Invoke();
         }
 
@@ -85,6 +90,13 @@ namespace IsoCore.Foundation
             Changed?.Invoke();
         }
 
+        public void SetStamina(float stamina, float maxStamina)
+        {
+            MaxStamina = Math.Max(1f, maxStamina);
+            Stamina = Clamp(stamina, 0f, MaxStamina);
+            Changed?.Invoke();
+        }
+
         public void Damage(float amount)
         {
             if (amount <= 0f) return;
@@ -108,10 +120,26 @@ namespace IsoCore.Foundation
             return true;
         }
 
+        public bool TrySpendStamina(float amount)
+        {
+            if (amount <= 0f) return true;
+            if (Stamina < amount) return false;
+            Stamina -= amount;
+            Changed?.Invoke();
+            return true;
+        }
+
         public void RestoreMana(float amount)
         {
             if (amount <= 0f) return;
             Mana = Math.Min(MaxMana, Mana + amount);
+            Changed?.Invoke();
+        }
+
+        public void RestoreStamina(float amount)
+        {
+            if (amount <= 0f) return;
+            Stamina = Math.Min(MaxStamina, Stamina + amount);
             Changed?.Invoke();
         }
 
@@ -144,6 +172,8 @@ namespace IsoCore.Foundation
                 maxHealth = MaxHealth,
                 mana = Mana,
                 maxMana = MaxMana,
+                stamina = Stamina,
+                maxStamina = MaxStamina,
                 str = STR,
                 dex = DEX,
                 intelligence = INT,
@@ -174,8 +204,12 @@ namespace IsoCore.Foundation
 
             MaxHealth = Math.Max(1f, state.maxHealth);
             MaxMana = Math.Max(1f, state.maxMana);
+            MaxStamina = state.maxStamina > 0f
+                ? Math.Max(1f, state.maxStamina)
+                : Math.Max(1f, CalculatedMaxStamina());
             Health = Clamp(state.health, 0f, MaxHealth);
             Mana = Clamp(state.mana, 0f, MaxMana);
+            Stamina = state.maxStamina > 0f ? Clamp(state.stamina, 0f, MaxStamina) : MaxStamina;
             Changed?.Invoke();
         }
 
@@ -197,8 +231,15 @@ namespace IsoCore.Foundation
         {
             MaxHealth = 60f + VIT * 10f;
             MaxMana = 30f + INT * 5f;
+            MaxStamina = CalculatedMaxStamina();
             Health = Health <= 0f ? MaxHealth : Math.Min(Health, MaxHealth);
             Mana = Mana <= 0f ? MaxMana : Math.Min(Mana, MaxMana);
+            Stamina = Stamina <= 0f ? MaxStamina : Math.Min(Stamina, MaxStamina);
+        }
+
+        float CalculatedMaxStamina()
+        {
+            return 35f + DEX * 4f + VIT * 2f;
         }
 
         static float Ratio(float value, float max)

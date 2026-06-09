@@ -51,13 +51,14 @@ namespace IsoCore.Foundation.EditorTools
                 c.XPChannels.Count >= 8 &&
                 c.Titles.Count >= 6 &&
                 c.Affinities.Count >= 7 &&
+                c.Abilities.Count >= 6 &&
                 c.Classes.Count >= 8 &&
                 c.Professions.Count >= 8 &&
                 c.Dungeons.Count >= 1 &&
                 c.DungeonResults.Count >= 1 &&
                 c.GuildBoardEntries.Count >= 1 &&
                 c.WorldEvents.Count >= 4,
-                $"Evidence:{c.EvidenceEvents.Count} XP:{c.XPChannels.Count} Titles:{c.Titles.Count} Affinities:{c.Affinities.Count} Classes:{c.Classes.Count} Professions:{c.Professions.Count}");
+                $"Evidence:{c.EvidenceEvents.Count} XP:{c.XPChannels.Count} Titles:{c.Titles.Count} Affinities:{c.Affinities.Count} Abilities:{c.Abilities.Count} Classes:{c.Classes.Count} Professions:{c.Professions.Count}");
 
             // ---- Block groups have variants ----
             bool groupsOk = true; string groupDetail = "";
@@ -155,6 +156,52 @@ namespace IsoCore.Foundation.EditorTools
             Add("Construction plots resolve result buildings and materials",
                 constructionOk && constructionCount >= 1,
                 constructionOk ? $"{constructionCount} plots" : constructionDetail);
+
+            bool abilitiesOk = true; string abilityDetail = "";
+            bool hasStaminaSkill = false, hasNeutralSpell = false, hasElementSpell = false;
+            foreach (var ability in c.Abilities.All)
+            {
+                if (ability == null || string.IsNullOrWhiteSpace(ability.id))
+                {
+                    abilitiesOk = false;
+                    abilityDetail += "missing_id ";
+                    continue;
+                }
+
+                if (ability.kind == FoundationAbilityKind.Skill && ability.resource == FoundationAbilityResource.Stamina)
+                    hasStaminaSkill = true;
+                if (ability.kind == FoundationAbilityKind.Spell && ability.resource == FoundationAbilityResource.Mana &&
+                    ability.element == FoundationAbilityElement.Neutral && string.IsNullOrWhiteSpace(ability.affinityId))
+                    hasNeutralSpell = true;
+                if (ability.kind == FoundationAbilityKind.Spell && ability.resource == FoundationAbilityResource.Mana &&
+                    !string.IsNullOrWhiteSpace(ability.affinityId))
+                    hasElementSpell = true;
+
+                if (!string.IsNullOrWhiteSpace(ability.evidenceId) && !c.EvidenceEvents.Has(ability.evidenceId))
+                {
+                    abilitiesOk = false;
+                    abilityDetail += $"{ability.id}:evidence:{ability.evidenceId} ";
+                }
+
+                if (!string.IsNullOrWhiteSpace(ability.affinityId) && !c.Affinities.Has(ability.affinityId))
+                {
+                    abilitiesOk = false;
+                    abilityDetail += $"{ability.id}:affinity:{ability.affinityId} ";
+                }
+
+                if (ability.skillIds != null)
+                {
+                    foreach (var skillId in ability.skillIds)
+                    {
+                        if (string.IsNullOrWhiteSpace(skillId) || c.Skills.Has(skillId)) continue;
+                        abilitiesOk = false;
+                        abilityDetail += $"{ability.id}:skill:{skillId} ";
+                    }
+                }
+            }
+            Add("Ability definitions resolve evidence, skills, and affinities",
+                abilitiesOk && hasStaminaSkill && hasNeutralSpell && hasElementSpell,
+                abilitiesOk ? $"abilities {c.Abilities.Count}" : abilityDetail);
 
             // ---- Seed / crop references ----
             bool seedOk = true; string seedDetail = "";
@@ -303,6 +350,14 @@ namespace IsoCore.Foundation.EditorTools
             string summary = $"[ISO-Core] Validation: {passed}/{checks.Count} checks passed " +
                              $"({(allPass ? "ALL PASS" : "see report")}). " +
                              (writeReport ? "Report: Docs/IsoCoreFoundation/06_Validation_Report.md" : "Report writing skipped");
+            if (!allPass)
+            {
+                var failed = new StringBuilder();
+                foreach (var ch in checks)
+                    if (!ch.pass)
+                        failed.Append($" | FAIL: {ch.name} :: {ch.detail}");
+                summary += failed.ToString();
+            }
             if (showDialog) EditorUtility.DisplayDialog("ISO-Core Foundation - Validation",
                 $"{passed}/{checks.Count} checks passed.\n\n" +
                 (allPass ? "All editor-side checks passed." : "Some checks failed - see 06_Validation_Report.md."), "OK");

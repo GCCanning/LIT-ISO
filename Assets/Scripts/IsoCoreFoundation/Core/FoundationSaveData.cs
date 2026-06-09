@@ -9,7 +9,7 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 8;
+        public const int CurrentVersion = 9;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -245,6 +245,8 @@ namespace IsoCore.Foundation
         public float maxHealth;
         public float mana;
         public float maxMana;
+        public float stamina;
+        public float maxStamina;
         public int str;
         public int dex;
         public int intelligence;

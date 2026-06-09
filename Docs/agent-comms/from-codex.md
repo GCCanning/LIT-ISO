@@ -5,6 +5,48 @@
 
 ---
 
+### 2026-06-09 - Ability + affinity core ready for review
+
+Branch:
+- `codex/ability-affinity-core`
+
+What changed:
+- Added Foundation-owned stamina to `FoundationPlayerStats`: `Stamina`, `MaxStamina`, `Stamina01`, `TrySpendStamina`, `RestoreStamina`, and save/load fields.
+- Added data-driven `FoundationAbilityDefinition`, `FoundationAbilitySystem`, `FoundationAbilityReadState`, and `FoundationAbilityUseResult`.
+- Exposed the runtime handle as `FoundationBootstrap.Abilities`.
+- Added ability vocabulary for skills/spells, stamina/mana, neutral/non-affinity magic, elemental magic, and affinity ranks.
+- Added default first-pass abilities: `steady_strike`, `guard_step`, `mana_bolt`, `ember_spark`, `root_snare`, `stone_skin`.
+- Added `spellcraft` as a Magic activity skill.
+- Added progression APIs: `GetAffinityRank(affinityId)` and `GetAffinityEffectMultiplier(affinityId)`.
+- Affinity read state now exposes rank and multiplier.
+- Tiny UI-lane touch: `CharacterPanelView` labels `FoundationProgressionActivity.Magic` as `Magic`.
+- Validator output now prints failed Foundation checks in no-report batch logs.
+
+Runtime behavior:
+- Skills spend stamina and call `Progression.AddActivityXp(...)`.
+- Spells spend mana and call `Progression.AddActivityXp(...)`.
+- Ability evidence drives XP channels, titles, affinity progress, and System messages through the existing Trial Evidence spine.
+- `mana_bolt` is neutral magic: no affinity id, multiplier stays `1.0`.
+- Elemental spells scale from affinity score/rank via progression helpers.
+
+Validated:
+- `C:\Users\garyc\.dotnet\dotnet.exe build IsoCore.Foundation.csproj`
+  - clean, 0 warnings, 0 errors.
+- Unity batch:
+  - `FoundationValidator` 35/35.
+  - `FoundationIntegratedSliceValidator` 136/136.
+  - log: `C:\tmp\LIT-ISO-ability-affinity-validator.log`.
+
+Notes:
+- `IsoCore.Foundation.csproj` is ignored/generated locally; I updated it only so local `dotnet build` sees the new ability scripts. It will not be part of the PR.
+- I observed unrelated local drift after Unity refresh in dungeon floor metas and AssetForge docs/tools. I am not staging those in this branch.
+
+Next likely UI hook:
+- Add an Abilities/Combat or Skills detail panel that reads `bootstrap.Abilities.CaptureReadState()`.
+- Bind stamina to the HUD only if the owner wants stamina visible by default; recommendation is a compact stamina pip/bar near skill hotkeys, not another full always-on survival bar.
+
+---
+
 ### 2026-06-09 - First-hour mechanics slice validated and ready for PR
 
 Owner completed the manual play pass and confirmed we can proceed.

@@ -359,6 +359,18 @@ namespace IsoCore.Foundation
             return _affinityScores.TryGetValue(affinityId, out int value) ? value : 0;
         }
 
+        public FoundationAffinityRank GetAffinityRank(string affinityId)
+        {
+            return AffinityRankForScore(GetAffinityScore(affinityId));
+        }
+
+        public float GetAffinityEffectMultiplier(string affinityId)
+        {
+            if (string.IsNullOrWhiteSpace(affinityId))
+                return 1f;
+            return AffinityEffectMultiplier(GetAffinityRank(affinityId));
+        }
+
         public int GetSkillXp(string skillId)
         {
             if (string.IsNullOrWhiteSpace(skillId)) return 0;
@@ -1007,6 +1019,8 @@ namespace IsoCore.Foundation
                     awakenThreshold = threshold,
                     progress01 = Math.Min(1f, score / (float)threshold),
                     awakened = score >= threshold,
+                    rank = AffinityRankForScore(score),
+                    effectMultiplier = AffinityEffectMultiplier(AffinityRankForScore(score)),
                     family = affinity.family ?? "",
                 });
             }
@@ -1154,6 +1168,31 @@ namespace IsoCore.Foundation
             return FoundationCallingTier.Novice;
         }
 
+        static FoundationAffinityRank AffinityRankForScore(int score)
+        {
+            if (score >= 160) return FoundationAffinityRank.Perfect;
+            if (score >= 110) return FoundationAffinityRank.Epic;
+            if (score >= 70) return FoundationAffinityRank.Rare;
+            if (score >= 40) return FoundationAffinityRank.Uncommon;
+            if (score >= 20) return FoundationAffinityRank.Common;
+            if (score >= 10) return FoundationAffinityRank.Basic;
+            return FoundationAffinityRank.Dormant;
+        }
+
+        static float AffinityEffectMultiplier(FoundationAffinityRank rank)
+        {
+            switch (rank)
+            {
+                case FoundationAffinityRank.Basic: return 1.05f;
+                case FoundationAffinityRank.Common: return 1.10f;
+                case FoundationAffinityRank.Uncommon: return 1.20f;
+                case FoundationAffinityRank.Rare: return 1.35f;
+                case FoundationAffinityRank.Epic: return 1.50f;
+                case FoundationAffinityRank.Perfect: return 1.75f;
+                default: return 1f;
+            }
+        }
+
         static FoundationGrade GradeForTotal(int total)
         {
             if (total >= 240) return FoundationGrade.S;
@@ -1232,6 +1271,8 @@ namespace IsoCore.Foundation
         public int awakenThreshold;
         public float progress01;
         public bool awakened;
+        public FoundationAffinityRank rank;
+        public float effectMultiplier;
         public string family;
     }
 

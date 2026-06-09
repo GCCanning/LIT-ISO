@@ -1446,6 +1446,59 @@ namespace IsoCore.Foundation.EditorTools
                 dungeonProgression.SystemFeed.Messages.Count >= 1,
                 $"clearance {dungeonProgression.GetXpChannelValue("rootcellar_clearance")}, feed {dungeonProgression.SystemFeed.Messages.Count}");
 
+            var abilityProgression = new FoundationProgression(content);
+            float abilityNow = 0f;
+            var abilities = new FoundationAbilitySystem();
+            abilities.Init(content, abilityProgression, abilityProgression.Stats, () => abilityNow);
+            float staminaBefore = abilityProgression.Stats.Stamina;
+            bool staminaSkillUsed = abilities.TryUseAbility("steady_strike", "validator_skill", out var skillResult);
+            add("Ability system spends stamina for skills and records combat proof",
+                staminaSkillUsed &&
+                skillResult.success &&
+                skillResult.resource == FoundationAbilityResource.Stamina &&
+                abilityProgression.Stats.Stamina < staminaBefore &&
+                abilityProgression.GetSkillXp("combat") > 0 &&
+                abilityProgression.GetTrialScore(TrialEvidenceCategory.Combat) >= 2,
+                $"stamina {staminaBefore:0.0}->{abilityProgression.Stats.Stamina:0.0}, combat xp {abilityProgression.GetSkillXp("combat")}");
+
+            abilityNow += 2f;
+            float manaBefore = abilityProgression.Stats.Mana;
+            bool neutralSpellUsed = abilities.TryUseAbility("mana_bolt", "validator_neutral_magic", out var neutralResult);
+            add("Ability system supports non-affinity mana spells",
+                neutralSpellUsed &&
+                neutralResult.success &&
+                neutralResult.resource == FoundationAbilityResource.Mana &&
+                neutralResult.element == FoundationAbilityElement.Neutral &&
+                string.IsNullOrWhiteSpace(neutralResult.affinityId) &&
+                Mathf.Approximately(neutralResult.affinityMultiplier, 1f) &&
+                abilityProgression.Stats.Mana < manaBefore &&
+                abilityProgression.GetSkillXp("spellcraft") > 0 &&
+                abilityProgression.GetTrialScore(TrialEvidenceCategory.Magic) >= 2,
+                $"mana {manaBefore:0.0}->{abilityProgression.Stats.Mana:0.0}, spellcraft {abilityProgression.GetSkillXp("spellcraft")}");
+
+            abilityProgression.RecordEvidence("cast_ember_spark", 4, "validator_affinity_prep");
+            abilityNow += 2f;
+            bool emberSpellUsed = abilities.TryUseAbility("ember_spark", "validator_ember_magic", out var emberResult);
+            add("Elemental spell power scales from affinity rank",
+                emberSpellUsed &&
+                emberResult.success &&
+                emberResult.element == FoundationAbilityElement.Ember &&
+                emberResult.affinityId == "ember" &&
+                emberResult.affinityRank >= FoundationAffinityRank.Basic &&
+                emberResult.affinityMultiplier > 1f &&
+                emberResult.scaledPower > content.Abilities.Get("ember_spark").basePower,
+                $"ember {emberResult.affinityScore} {emberResult.affinityRank} x{emberResult.affinityMultiplier:0.00}");
+
+            abilityNow += 5f;
+            var abilityRead = abilities.CaptureReadState();
+            add("Ability read state exposes skills, spells, costs, and affinity multipliers",
+                abilityRead != null &&
+                abilityRead.Length >= content.Abilities.Count &&
+                HasAbilityReadState(abilityRead, "steady_strike", FoundationAbilityKind.Skill, FoundationAbilityResource.Stamina) &&
+                HasAbilityReadState(abilityRead, "mana_bolt", FoundationAbilityKind.Spell, FoundationAbilityResource.Mana) &&
+                HasAbilityReadState(abilityRead, "ember_spark", FoundationAbilityKind.Spell, FoundationAbilityResource.Mana),
+                $"abilities {abilityRead?.Length ?? 0}");
+
             var inv = new Inventory(12, content);
             inv.Add("wood", 5);
             var crafting = new CraftingSystem(content, inv);
@@ -1468,6 +1521,22 @@ namespace IsoCore.Foundation.EditorTools
                 $"craft score {hookedProgression.GetTrialScore(TrialEvidenceCategory.Crafting)}, messages {hookedProgression.SystemFeed.Messages.Count}");
 
             UnityEngine.Object.DestroyImmediate(hookGo);
+        }
+
+        static bool HasAbilityReadState(FoundationAbilityReadState[] states, string abilityId,
+            FoundationAbilityKind kind, FoundationAbilityResource resource)
+        {
+            if (states == null) return false;
+            for (int i = 0; i < states.Length; i++)
+            {
+                if (states[i].id == abilityId &&
+                    states[i].kind == kind &&
+                    states[i].resource == resource &&
+                    states[i].resourceCost > 0 &&
+                    states[i].basePower > 0f)
+                    return true;
+            }
+            return false;
         }
 
         static void WriteReport(List<Check> checks)
