@@ -20,7 +20,7 @@ def safe_name(value: str) -> str:
 
 
 CONTROL_TEMPLATE_BY_SHAPE = {
-    "flat_top": "flat_diamond",
+    "flat_top": "flat_grid",
     "raised_block": "raised_block_h1",
     "north_edge": "edge_north",
     "south_edge": "edge_south",
@@ -28,6 +28,14 @@ CONTROL_TEMPLATE_BY_SHAPE = {
     "west_edge": "edge_west",
     "outer_corner": "corner_ne",
     "inner_corner": "corner_sw",
+}
+
+CONTROL_STRENGTH_BY_SHAPE = {
+    "flat_top": 0.58,
+}
+
+CONTROL_END_BY_SHAPE = {
+    "flat_top": 0.78,
 }
 
 
@@ -41,6 +49,11 @@ def main() -> int:
     parser.add_argument("--control-template-root", default=r"C:\Projects\Pixel Pipeline\datasets\lit_iso\controlnet_templates\tile_geometry_v1")
     parser.add_argument("--control-net", default="control_v11p_sd15_canny_fp16.safetensors")
     parser.add_argument("--control-strength", type=float, default=0.72)
+    parser.add_argument("--checkpoint", default="DreamShaper_8_pruned.safetensors")
+    parser.add_argument("--lora", default="")
+    parser.add_argument("--lora-strength", type=float, default=0.0)
+    parser.add_argument("--steps", type=int, default=18)
+    parser.add_argument("--cfg", type=float, default=6.8)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -70,6 +83,8 @@ def main() -> int:
             terrain_profile = "flat" if shape_id == "flat_top" else "raised_block"
             control_template_id = CONTROL_TEMPLATE_BY_SHAPE.get(shape_id, "flat_diamond")
             control_template_path = Path(args.control_template_root) / f"{control_template_id}.png"
+            control_strength = CONTROL_STRENGTH_BY_SHAPE.get(shape_id, args.control_strength)
+            control_end = CONTROL_END_BY_SHAPE.get(shape_id, 0.85)
             request = {
                 "schema": "lit_iso.asset_forge.generation_request.v1",
                 "job_name": job_name,
@@ -106,6 +121,19 @@ def main() -> int:
                     "terrain_profile_qa",
                     "qa_report",
                 ],
+                "comfy_settings": {
+                    "checkpoint": args.checkpoint,
+                    "lora": args.lora,
+                    "lora_strength": args.lora_strength,
+                    "steps": args.steps,
+                    "cfg": args.cfg,
+                    "sampler": "dpmpp_2m",
+                    "scheduler": "karras",
+                    "width": 512,
+                    "height": 512,
+                    "denoise": 1.0,
+                    "timeout_seconds": 600,
+                },
                 "acceptance_checks": [
                     "matches selected master material",
                     "transparent background",
@@ -119,9 +147,9 @@ def main() -> int:
                     "control_image_path": str(control_template_path),
                     "control_template": control_template_id,
                     "control_net": args.control_net,
-                    "strength": args.control_strength,
+                    "strength": control_strength,
                     "start_percent": 0.0,
-                    "end_percent": 0.85,
+                    "end_percent": control_end,
                 },
             }
             path = request_root / job_name / "generation_request.json"
