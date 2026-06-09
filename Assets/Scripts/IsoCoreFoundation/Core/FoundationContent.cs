@@ -26,6 +26,7 @@ namespace IsoCore.Foundation
         public readonly XPChannelDatabase XPChannels = new();
         public readonly TitleDatabase Titles = new();
         public readonly AffinityDatabase Affinities = new();
+        public readonly FoundationAbilityDatabase Abilities = new();
         public readonly ClassDatabase Classes = new();
         public readonly ProfessionDatabase Professions = new();
         public readonly DungeonDatabase Dungeons = new();
@@ -469,6 +470,8 @@ namespace IsoCore.Foundation
                 "Read attack windows, swing weapons cleanly, dodge pressure, and finish dungeon threats.", "weapon timing", "dungeon tactics", "finisher cues");
             Skill("warding", "Warding", FoundationProgressionActivity.Combat, FoundationSkillNodeKind.Utility,
                 "Use lights, traps, patrol posts, and wards to shape threat.", "non-lethal defenses", "threat shaping", "patrol posts");
+            Skill("spellcraft", "Spellcraft", FoundationProgressionActivity.Magic, FoundationSkillNodeKind.Insight,
+                "Shape neutral mana and elemental affinities into clean, readable spell effects.", "mana forms", "element tuning", "spell circuits");
             Skill("trade", "Trade", FoundationProgressionActivity.Trade, FoundationSkillNodeKind.Ease,
                 "Handle requests, vendors, caravans, and special orders.", "better prices", "visitor schedules", "special orders");
             Skill("lorekeeping", "Lorekeeping", FoundationProgressionActivity.Lore, FoundationSkillNodeKind.Insight,
@@ -634,6 +637,32 @@ namespace IsoCore.Foundation
                 e.affinityProgress = affinities;
                 c.EvidenceEvents.Add(e);
                 return e;
+            }
+
+            FoundationAbilityDefinition Ability(string id, string name, FoundationAbilityKind kind,
+                FoundationAbilityResource resource, FoundationAbilityElement element,
+                FoundationProgressionActivity activity, int cost, float cooldown, float power, float range,
+                int activityXp, string evidenceId, string affinityId, string description, string message,
+                params string[] skillIds)
+            {
+                var a = New<FoundationAbilityDefinition>(id);
+                a.displayName = name;
+                a.kind = kind;
+                a.resource = resource;
+                a.element = element;
+                a.activity = activity;
+                a.resourceCost = cost;
+                a.cooldownSeconds = cooldown;
+                a.basePower = power;
+                a.range = range;
+                a.activityXp = activityXp;
+                a.evidenceId = evidenceId;
+                a.affinityId = affinityId;
+                a.description = description;
+                a.systemMessage = message;
+                a.skillIds = skillIds;
+                c.Abilities.Add(a);
+                return a;
             }
 
             ClassDefinition Class(string id, string name, FoundationClassRarity rarity, string description,
@@ -841,6 +870,79 @@ namespace IsoCore.Foundation
                 new[] { X(FoundationXpChannel.SkillMastery, "creaturecraft", 4), X(FoundationXpChannel.Character, "character", 1) },
                 new[] { T("returned_for_them", 1) },
                 new[] { A("root", 2), A("tide", 1) });
+            Evidence("use_steady_strike", "Use Steady Strike",
+                "Entry recorded: stamina shaped into a clean martial skill.",
+                new[] { W(TrialEvidenceCategory.Combat, 2), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "combat", 3), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("village_shield", 1) },
+                new[] { A("stone", 1) });
+            Evidence("use_guard_step", "Use Guard Step",
+                "Entry recorded: stamina carried through footwork and threat spacing.",
+                new[] { W(TrialEvidenceCategory.Combat, 1), W(TrialEvidenceCategory.Exploration, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "combat", 2), X(FoundationXpChannel.SkillMastery, "warding", 2) },
+                new[] { T("first_night_survivor", 1) },
+                new[] { A("gale", 1), A("stone", 1) });
+            Evidence("cast_mana_bolt", "Cast Mana Bolt",
+                "Entry recorded: neutral mana obeyed without elemental affinity.",
+                new[] { W(TrialEvidenceCategory.Magic, 2), W(TrialEvidenceCategory.Combat, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "spellcraft", 4), X(FoundationXpChannel.Character, "character", 1) },
+                new[] { T("village_shield", 1) },
+                System.Array.Empty<FoundationAffinityGrant>());
+            Evidence("cast_ember_spark", "Cast Ember Spark",
+                "Entry recorded: Ember mana flared through combat intent.",
+                new[] { W(TrialEvidenceCategory.Magic, 3), W(TrialEvidenceCategory.Combat, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "spellcraft", 4), X(FoundationXpChannel.Class, "class", 2) },
+                new[] { T("goblin_bane", 1), T("campfire_captain", 1) },
+                new[] { A("ember", 3) });
+            Evidence("cast_root_snare", "Cast Root Snare",
+                "Entry recorded: Root mana answered with restraint instead of waste.",
+                new[] { W(TrialEvidenceCategory.Magic, 2), W(TrialEvidenceCategory.Support, 1), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "spellcraft", 3), X(FoundationXpChannel.SkillMastery, "creaturecraft", 2) },
+                new[] { T("returned_for_them", 1) },
+                new[] { A("root", 3) });
+            Evidence("cast_stone_skin", "Cast Stone Skin",
+                "Entry recorded: Stone mana settled into defense.",
+                new[] { W(TrialEvidenceCategory.Magic, 2), W(TrialEvidenceCategory.Combat, 1), W(TrialEvidenceCategory.Building, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "spellcraft", 3), X(FoundationXpChannel.SkillMastery, "warding", 2) },
+                new[] { T("village_shield", 1) },
+                new[] { A("stone", 3) });
+
+            Ability("steady_strike", "Steady Strike", FoundationAbilityKind.Skill,
+                FoundationAbilityResource.Stamina, FoundationAbilityElement.None,
+                FoundationProgressionActivity.Combat, 10, 0.7f, 1.15f, 1.35f, 6,
+                "use_steady_strike", "",
+                "A clean weapon skill. Spends stamina and grows combat proof without elemental scaling.",
+                "Steady Strike lands on practiced breath.", "combat");
+            Ability("guard_step", "Guard Step", FoundationAbilityKind.Skill,
+                FoundationAbilityResource.Stamina, FoundationAbilityElement.None,
+                FoundationProgressionActivity.Combat, 8, 1.2f, 0.75f, 1.0f, 5,
+                "use_guard_step", "",
+                "A defensive footwork skill. Spends stamina and supports future dodge/block timing.",
+                "Guard Step resets your footing.", "combat", "warding");
+            Ability("mana_bolt", "Mana Bolt", FoundationAbilityKind.Spell,
+                FoundationAbilityResource.Mana, FoundationAbilityElement.Neutral,
+                FoundationProgressionActivity.Magic, 9, 0.9f, 1.0f, 4.5f, 7,
+                "cast_mana_bolt", "",
+                "Plain non-affinity magic. Reliable force, no elemental resonance required.",
+                "Mana Bolt snaps forward in plain light.", "spellcraft");
+            Ability("ember_spark", "Ember Spark", FoundationAbilityKind.Spell,
+                FoundationAbilityResource.Mana, FoundationAbilityElement.Ember,
+                FoundationProgressionActivity.Magic, 12, 1.1f, 1.25f, 4.0f, 8,
+                "cast_ember_spark", "ember",
+                "A starter fire spell. Ember affinity increases its output and future burn effects.",
+                "Ember Spark catches and remembers the heat.", "spellcraft", "combat");
+            Ability("root_snare", "Root Snare", FoundationAbilityKind.Spell,
+                FoundationAbilityResource.Mana, FoundationAbilityElement.Root,
+                FoundationProgressionActivity.Magic, 11, 1.4f, 0.85f, 3.75f, 8,
+                "cast_root_snare", "root",
+                "A restraint spell. Root affinity increases hold strength and calm/tame synergy.",
+                "Root Snare curls through the ground.", "spellcraft", "creaturecraft");
+            Ability("stone_skin", "Stone Skin", FoundationAbilityKind.Spell,
+                FoundationAbilityResource.Mana, FoundationAbilityElement.Stone,
+                FoundationProgressionActivity.Magic, 13, 2.0f, 0.95f, 0f, 8,
+                "cast_stone_skin", "stone",
+                "A defensive spell. Stone affinity increases mitigation and ward duration.",
+                "Stone Skin settles over your guard.", "spellcraft", "warding");
 
             Class("trailblade", "Trailblade", FoundationClassRarity.Uncommon,
                 "A practical scout-fighter shaped by routes, tools, and first danger.",

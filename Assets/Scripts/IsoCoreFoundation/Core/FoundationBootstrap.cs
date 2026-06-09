@@ -50,6 +50,7 @@ namespace IsoCore.Foundation
         public FoundationCampingSystem Camping { get; private set; }
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
+        public FoundationAbilitySystem Abilities { get; private set; }
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationQoLService QoL { get; private set; }
         public FoundationUiCoordinator Ui { get; private set; }
@@ -172,6 +173,8 @@ namespace IsoCore.Foundation
             Content = FoundationContent.BuildDefault();
             Progression = new FoundationProgression(Content);
             ApplyLaunchCalling();
+            Abilities = new FoundationAbilitySystem();
+            Abilities.Init(Content, Progression, Progression.Stats);
             var sampler = new IsoTerrainSampler(config, Content);
             World = new IsoWorld(sampler, Content, config.chunkSize);
             if (ActiveLaunchMode == FoundationLaunchMode.CreationInstance)
@@ -312,7 +315,7 @@ namespace IsoCore.Foundation
             Debug.Log($"[FoundationBootstrap] Ready. Blocks:{Content.Blocks.Count} Items:{Content.Items.Count} " +
                       $"Placeables:{Content.Placeables.Count} Recipes:{Content.Recipes.Count} " +
                       $"Nodes:{Content.Nodes.Count} Mobs:{Content.Mobs.Count} Biomes:{Content.Biomes.Count} " +
-                      $"Callings:{Content.Callings.Count} Skills:{Content.Skills.Count} Quests:{Content.Quests.Count} " +
+                      $"Callings:{Content.Callings.Count} Skills:{Content.Skills.Count} Abilities:{Content.Abilities.Count} Quests:{Content.Quests.Count} " +
                       $"World:'{ActiveWorldName}' Seed:{config.seed} Difficulty:{ActiveDifficulty} Calling:{ActiveCallingId}");
         }
 

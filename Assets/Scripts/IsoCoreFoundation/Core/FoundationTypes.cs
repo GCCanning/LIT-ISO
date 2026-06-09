@@ -27,7 +27,15 @@ namespace IsoCore.Foundation
 
     public enum FoundationRewardType { Recipe, Pattern, TraitSeed, LandmarkPermit, NeighborBond, RegionShift, MemoryPage, CallingToken, Item, Xp }
 
-    public enum FoundationProgressionActivity { Harvest, Craft, Build, Farm, Explore, Creature, Combat, Trade, Lore }
+    public enum FoundationProgressionActivity { Harvest, Craft, Build, Farm, Explore, Creature, Combat, Magic, Trade, Lore }
+
+    public enum FoundationAbilityKind { Skill, Spell }
+
+    public enum FoundationAbilityResource { Stamina, Mana }
+
+    public enum FoundationAbilityElement { None, Neutral, Ember, Tide, Root, Stone, Gale, Glimmer, Hearth }
+
+    public enum FoundationAffinityRank { Dormant, Basic, Common, Uncommon, Rare, Epic, Perfect }
 
     public enum SystemMessageChannel
     {

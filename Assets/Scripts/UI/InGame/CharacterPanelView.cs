@@ -709,6 +709,7 @@ namespace LitIso.UI.InGame
                 case FoundationProgressionActivity.Explore: return "Exploration";
                 case FoundationProgressionActivity.Creature: return "Creaturecraft";
                 case FoundationProgressionActivity.Combat: return "Combat";
+                case FoundationProgressionActivity.Magic: return "Magic";
                 case FoundationProgressionActivity.Trade: return "Trade";
                 case FoundationProgressionActivity.Lore: return "Lore";
                 default: return activity.ToString();

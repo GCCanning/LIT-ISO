@@ -18,7 +18,7 @@ namespace IsoCore.Foundation.EditorTools
             if (AssetDatabase.IsValidFolder(Root)) AssetDatabase.DeleteAsset(Root);
             EnsureFolder("Assets", "IsoCoreFoundation");
             EnsureFolder("Assets/IsoCoreFoundation", "GeneratedContent");
-            foreach (var sub in new[] { "Blocks", "BlockGroups", "Biomes", "Items", "Placeables", "Nodes", "Mobs", "Recipes", "Crops", "Callings", "Skills", "Quests", "SystemMessages", "EvidenceEvents", "XPChannels", "Titles", "Affinities", "Classes", "Professions", "Dungeons", "Expeditions", "DungeonResults", "GuildBoardEntries", "WorldEvents" })
+            foreach (var sub in new[] { "Blocks", "BlockGroups", "Biomes", "Items", "Placeables", "Nodes", "Mobs", "Recipes", "Crops", "Callings", "Skills", "Quests", "SystemMessages", "EvidenceEvents", "XPChannels", "Titles", "Affinities", "Abilities", "Classes", "Professions", "Dungeons", "Expeditions", "DungeonResults", "GuildBoardEntries", "WorldEvents" })
                 EnsureFolder(Root, sub);
 
             var c = FoundationContent.BuildDefault();
@@ -41,6 +41,7 @@ namespace IsoCore.Foundation.EditorTools
             foreach (var xp in c.XPChannels.All) Create(xp, $"{Root}/XPChannels/{xp.id}.asset");
             foreach (var title in c.Titles.All) Create(title, $"{Root}/Titles/{title.id}.asset");
             foreach (var affinity in c.Affinities.All) Create(affinity, $"{Root}/Affinities/{affinity.id}.asset");
+            foreach (var ability in c.Abilities.All) Create(ability, $"{Root}/Abilities/{ability.id}.asset");
             foreach (var cls in c.Classes.All) Create(cls, $"{Root}/Classes/{cls.id}.asset");
             foreach (var profession in c.Professions.All) Create(profession, $"{Root}/Professions/{profession.id}.asset");
             foreach (var dungeon in c.Dungeons.All) Create(dungeon, $"{Root}/Dungeons/{dungeon.id}.asset");
@@ -56,7 +57,7 @@ namespace IsoCore.Foundation.EditorTools
                         c.Placeables.Count + c.Nodes.Count + c.Mobs.Count + c.Recipes.Count + c.Crops.Count +
                         c.Callings.Count + c.Skills.Count + c.Quests.Count +
                         c.SystemMessages.Count + c.EvidenceEvents.Count + c.XPChannels.Count +
-                        c.Titles.Count + c.Affinities.Count + c.Classes.Count + c.Professions.Count +
+                        c.Titles.Count + c.Affinities.Count + c.Abilities.Count + c.Classes.Count + c.Professions.Count +
                         c.Dungeons.Count + c.Expeditions.Count + c.DungeonResults.Count +
                         c.GuildBoardEntries.Count + c.WorldEvents.Count;
             string log = $"[ISO-Core] Baked {total} content assets to {Root} (authoring convenience; runtime builds in code).";
