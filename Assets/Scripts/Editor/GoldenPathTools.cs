@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -13,16 +15,14 @@ using EthraClone.TrialWeek;
 public static class GoldenPathTools
 {
     private const string GoldenPathDocument = "GOLDEN_PATH.md";
+    private const string LpcGoldenPathSetupType = "LITISO.LPC.EditorTools.LPCGoldenPathSetup";
 
     [MenuItem("Tools/LIT-ISO/Golden Path/Run Current Golden Path", false, -100)]
     public static void RunCurrentGoldenPath()
     {
         string setupLog = QuickPlayTestSetup.RunSetup(showDialog: false);
 
-        // After the standard golden-path setup, wire the LPC layered character
-        // onto the player. Safe and idempotent: if no LPC assets exist yet it
-        // just adds the empty components, ready for sheet assignment.
-        string lpcLog = LITISO.LPC.EditorTools.LPCGoldenPathSetup.WireLPCPlayer();
+        string lpcLog = TryWireOptionalLpcPlayer();
         Debug.Log("[Golden Path -> LPC]\n" + lpcLog);
 
         string validationLog = ValidateCurrentSceneInternal();
@@ -77,7 +77,7 @@ public static class GoldenPathTools
         EditorUtility.DisplayDialog(
             "LIT-ISO Golden Path",
             "Run Current Golden Path is the synced one-click setup for the active prototype.\n\n" +
-            "It delegates to QuickPlayTestSetup, wires the LPC player, then validates the active scene.\n\n" +
+            "It delegates to QuickPlayTestSetup, wires the optional LPC player when present, then validates the active scene.\n\n" +
             "Use Rebuild Full Playtest Scene only when you want a clean generated scene.",
             "OK");
     }
@@ -125,7 +125,14 @@ public static class GoldenPathTools
             report.AppendLine($"- Player cached height: {player.CurrentGroundHeight}");
 
             Transform lpcRoot = player.transform.Find("LPCRoot");
-            AppendStatus(report, lpcRoot != null, "LPC player root present");
+            if (OptionalLpcPackagePresent())
+            {
+                AppendStatus(report, lpcRoot != null, "Optional LPC player root present");
+            }
+            else
+            {
+                report.AppendLine("INFO  Optional LPC package absent");
+            }
         }
 
         if (camera != null)
@@ -149,5 +156,48 @@ public static class GoldenPathTools
     private static void AppendStatus(StringBuilder report, bool ok, string label)
     {
         report.AppendLine($"{(ok ? "OK" : "WARN")}  {label}");
+    }
+
+    private static string TryWireOptionalLpcPlayer()
+    {
+        Type setupType = FindType(LpcGoldenPathSetupType);
+        if (setupType == null)
+        {
+            return "Optional LPC package absent; skipped.";
+        }
+
+        MethodInfo method = setupType.GetMethod("WireLPCPlayer", BindingFlags.Public | BindingFlags.Static);
+        if (method == null)
+        {
+            return "Optional LPC package present, but WireLPCPlayer() was not found.";
+        }
+
+        try
+        {
+            return method.Invoke(null, null) as string ?? "Optional LPC player wire completed.";
+        }
+        catch (Exception ex)
+        {
+            return "Optional LPC player wire failed: " + (ex.InnerException?.Message ?? ex.Message);
+        }
+    }
+
+    private static bool OptionalLpcPackagePresent()
+    {
+        return FindType(LpcGoldenPathSetupType) != null;
+    }
+
+    private static Type FindType(string fullName)
+    {
+        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type type = assembly.GetType(fullName, throwOnError: false);
+            if (type != null)
+            {
+                return type;
+            }
+        }
+
+        return null;
     }
 }
