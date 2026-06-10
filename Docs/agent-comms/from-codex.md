@@ -2182,30 +2182,165 @@ Updated:
 - `Tools/AssetForge/asset_forge.local.example.json` no longer defaults tiles to the stale `litiso_tile_prop_v1_final` LoRA.
 - Active local `asset_forge.local.json` tile defaults were updated the same way.
 
-### 2026-06-09 - Greenwake generated tile pack promotion
+### 2026-06-09 - Greenwake generated tile pack rejected for Unity art use
 
-Promoted the deterministic Greenwake v7 geometry tiles from review output into generated Unity-ready assets.
+The deterministic Greenwake v7 geometry tiles passed structural checks, but the user rejected them as nowhere near ready for Unity art use. Treat this as a correction: structural QA is not art approval.
 
-Ready paths:
+Ready/reference paths:
 - Review pack: `Assets/Generated/_Review/greenwake_geometry_derived_v7`
-- Unity generated tile pack: `Assets/Generated/Tiles/Greenwake`
 - Review report: `Assets/Generated/_Review/greenwake_geometry_derived_v7/review_report.json`
 - Decisions: `Assets/Generated/_Review/greenwake_geometry_derived_v7/review_decisions.json`
 - Approval manifest: `Assets/Generated/_Review/greenwake_geometry_derived_v7/approval_manifest.json`
 - Handoff validation: `Assets/Generated/_Review/greenwake_geometry_derived_v7/tile_prop_handoff_validation.json`
 - Showcase preview: `Assets/Generated/_Review/greenwake_geometry_derived_v7/derived_geometry_showcase_13x13.png`
 
+Removed path:
+- `Assets/Generated/Tiles/Greenwake`
+
 Validation:
 - Strict QA: 57 total, 57 pass, 0 review.
-- Promotion: 57 copied, 0 skipped, 0 failed.
-- Handoff validation: 57 total, 57 pass, 0 review.
+- Previous promotion tooling test: 57 copied, 0 skipped, 0 failed.
+- Previous handoff validation: 57 total, 57 pass, 0 review.
+- Art approval: failed. Do not integrate.
 
 Tooling added/updated:
 - Added `Tools/AssetForge/prepare_derived_tile_review_pack.py` to convert deterministic derived manifests into `review_report.json` + `review_decisions.json`.
-- Updated `Tools/AssetForge/approve_review_pack.ps1` and `Tools/AssetForge/validate_tile_prop_handoff.ps1` to honor per-decision Unity import metadata such as 64 PPU and tile pivots.
+- Updated `Tools/AssetForge/approve_review_pack.ps1` and `Tools/AssetForge/validate_tile_prop_handoff.ps1` to honor per-decision Unity import metadata such as PPU and tile pivots.
 - Added `Tools/AssetForge/build_tile_showcase_preview.py` for a deterministic 13x13 map-style preview.
-- Added `Tools/AssetForge/prepare_tile_training_capture.py` for dry-run-first tile dataset capture to `C:/Projects/Pixel Pipeline/datasets/lit_iso/tiles/greenwake_geometry_v1`.
+- Added `Tools/AssetForge/prepare_tile_training_capture.py` for dry-run-first tile dataset capture.
 
 Notes for Claude:
-- These are generated review/hand-off assets only. Do not replace authored Resources tiles yet without explicit approval.
-- Use the `Greenwake` pack for visual/import inspection. Treat old `Assets/Generated/Tiles/Forest` outputs as legacy experiments unless separately approved.
+- These are generated review/template assets only. Do not replace authored Resources tiles and do not wire Greenwake v7 into biome/runtime content.
+- Treat old `Assets/Generated/Tiles/Forest` outputs as legacy experiments unless separately approved.
+- The next required tile pass is art-direction lock first, not Unity import.
+
+### 2026-06-09 - Supplied isometric style-lock intake
+
+The user supplied two local archives as the style target:
+
+- `C:/Users/garyc/Downloads/isometric tileset.7z`
+- `C:/Users/garyc/Downloads/critters.7z`
+
+Extracted them into ignored review/reference space only:
+
+- `Assets/Generated/_Review/style_lock_sources`
+
+Analysis outputs:
+
+- `Assets/Generated/_Review/style_lock_sources/style_lock_analysis/STYLE_LOCK_ANALYSIS.md`
+- `Assets/Generated/_Review/style_lock_sources/style_lock_analysis/style_lock_inventory.json`
+- `Assets/Generated/_Review/style_lock_sources/style_lock_analysis/tileset_contact_sheet.png`
+- `Assets/Generated/_Review/style_lock_sources/style_lock_analysis/critters_contact_sheet.png`
+- `Assets/Generated/_Review/style_lock_sources/style_lock_analysis/tileset_palette.png`
+- `Assets/Generated/_Review/style_lock_sources/style_lock_analysis/critters_palette.png`
+- `Tools/AssetForge/style_profiles/litiso_iso_reference_v1.json`
+
+Observed contract:
+
+- 226 PNGs total.
+- Tileset: 116 PNGs, mostly 32x32.
+- Critters: 110 PNGs, mostly 46x32 individual frames plus larger strips/sheets.
+- Critter directions are diagonal isometric: NE/NW/SE/SW.
+- Critter actions observed: idle, run, walk, burrow, unburrow, tunnel.
+
+Pipeline updates:
+
+- Sprixen tile post-process fallback now uses 32x32 for tile mode.
+- `Tools/AssetForge/asset_forge.local.example.json` tile mode default resolution is now 32x32.
+- Machine-local `Tools/AssetForge/asset_forge.local.json` tile mode default resolution was also set to 32x32; do not commit or print that file because it may contain private credentials.
+
+Important:
+
+- No license/readme was found in the extracted archives. Treat these as style references only until the license/training permission is documented.
+- Do not train from these packs or import their pixels into runtime Unity content until the user confirms licensing.
+- Next target is a 5-tile visual micro pack matching this style, not a full biome family.
+- Current working state:
+
+- Diagonal OpenPose controls now exist for `NE/NW/SE/SW` under `Assets/Generated/_Review/_PoseControls/litiso_openpose_diagonal_v1`.
+- Black-mage style-lock requests are queued in `Temp/AssetForge/black_mage_requests`, and the first request dry-runs cleanly through the existing Comfy worker contract.
+- The LoRA dataset planner now emits a trainer-compatible dry-run for the style-lock pack: 211 records split into `tile`, `critter`, and `reference` categories.
+- Separate dry-run launchers now exist for tile and critter style training, and the shared resumable launcher can stay entirely under `Temp/LoRA` during dry-run validation.
+
+Follow-up state after Claude Fable handoff:
+
+- The user confirmed license/training rights for the supplied style-lock packs, and the dataset was applied externally at `C:\Projects\Pixel Pipeline\datasets\lit_iso\style_lock\iso_reference_v1`.
+- Tile LoRA training `litiso_iso_reference_tile_style_v1` is running; latest observed progress was about `800/1000` with a saved step-800 checkpoint.
+- Black mage v1-v5 are not approval-ready; v1 has clutter/rings/backdrops and v5 only contains the old NW frame.
+- `Tools/AssetForge/queue_black_mage_iso_requests.py` now supports `--batch-count` and `--variant-suffix`; v6 requests are staged with `batch_count = 4` and cleaned prompts in `Temp/AssetForge/black_mage_requests`.
+- Added `Tools/AssetForge/build_black_mage_candidate_review_sheet.py`. It validates against `Assets/Generated/_Review/black_mage_iso_renders_v1` and writes a manual QC sheet/manifest to `Assets/Generated/_Review/black_mage_iso_renders_v1_validation`. Use it after v6 renders before approving, training from, or importing any black mage frame.
+- Added `Tools/LoRA/evaluate_iso_reference_tile_style_lora.ps1`. Dry-run currently selects the step-800 checkpoint and writes `Temp/LoRA/litiso_iso_reference_tile_style_v1.post_training_eval_plan.json`, but live eval should wait until tile training completes.
+- Added `Tools/LoRA/build_lora_eval_contact_sheet.py` and wired it into the tile eval wrapper. Validation output is `Temp/LoRA/black_mage_v1_lora_contact_validation.png`.
+- Added `Tools/AssetForge/run_post_tile_training_review_pass.ps1`. Dry-run writes `Temp/AssetForge/post_tile_training_review_pass_v6.json` and holds GPU work until training completes; live mode will run tile eval, v6 mage renders, and the v6 candidate sheet.
+
+### 2026-06-09 - Proper Pixel Art sidecar integration
+
+Integrated `KennethJAllen/proper-pixel-art` as an optional Asset Forge post-process sidecar. No third-party source was copied into the Unity repo.
+
+Added:
+
+- `Tools/AssetForge/proper_pixel_art_cleanup.py`
+- `Tools/AssetForge/run_proper_pixel_art_cleanup.ps1`
+
+Updated:
+
+- `Tools/AssetForge/process_generation_request_comfy.ps1`
+- `Tools/AssetForge/process_generation_request_sprixen.ps1`
+- `Tools/AssetForge/asset_forge.local.example.json`
+- `Tools/AssetForge/queue_black_mage_iso_requests.py`
+- `Tools/AssetForge/queue_tile_family_requests.py`
+- `Docs/handoff/CLAUDE_FABLE_ASSET_PIPELINE_HANDOFF.md`
+
+Behavior:
+
+- Requests opt in by including `proper_pixel_art`, `proper-pixel-art`, or `proper_pixel_art_cleanup` in `post_process`.
+- Sidecar review candidates are written under `_ProperPixelArt`.
+- Reports/contact sheets are linked from review reports, generation manifests, and request status.
+- The package is optional. If it is missing, the adapter writes a `missing_dependency` report instead of blocking the normal generation path.
+- Default `pixel_width` is `1` so normalized 32/64/128px review assets are preserved. Increase it only for large fake-pixel source images.
+
+Validation:
+
+- PowerShell parse checks passed for both generation processors and the wrapper.
+- Missing-dependency smoke writes the expected `missing_dependency` report.
+- Source-checkout smoke using `C:\tmp\proper-pixel-art-inspect` processed one black mage review image and produced a valid contact sheet.
+- Installed `proper-pixel-art==1.5.1` into `C:\Projects\ComfyUI\.venv` and reran the one-image smoke through the normal wrapper without a source override.
+
+### 2026-06-09 - Tile LoRA synced and eval matrix staged
+
+Goal context: keep generated outputs in review/temp space and do not import to Unity without explicit approval.
+
+Current state:
+
+- Tile LoRA training `litiso_iso_reference_tile_style_v1` is complete at 1000/1000.
+- Final checkpoint: `C:\Projects\LoRA-Training\outputs\litiso_iso_reference_tile_style_v1\litiso_iso_reference_tile_style_v1_final.safetensors`
+- Synced to ComfyUI: `C:\Projects\ComfyUI\models\loras\litiso_iso_reference_tile_style_v1_final.safetensors`
+- Sync manifest: `C:\Projects\ComfyUI\models\loras\litiso_iso_reference_tile_style_v1.sync.json`
+- SHA256: `7AD189670F34C6C377A090ACC2BB4E3726AF37152DAEDECE2E9A698FDD83290D`
+
+Added:
+
+- `Tools/LoRA/evaluate_iso_reference_tile_style_matrix.ps1`
+- `Tools/LoRA/build_style_lock_tile_reference_sheet.py`
+- `Tools/LoRA/score_tile_style_eval_outputs.py`
+- `Tools/LoRA/select_tile_style_eval_family.py`
+
+Behavior:
+
+- The matrix wrapper evaluates tile LoRA strengths `0.35`, `0.55`, `0.72`, and `0.90`.
+- Planned live outputs now stay under `Temp\LoRA\Evals`.
+- The wrapper blocks live GPU evaluation while `litiso_iso_reference_critter_style_v1` is running unless explicitly forced.
+- `Tools/AssetForge/run_post_tile_training_review_pass.ps1` now uses the matrix wrapper and also blocks tile eval/mage renders while critter training is active.
+- `Tools/LoRA/eval_litiso_tile_prop_v1_comfy.py` is now tile-family focused instead of prop/tile mixed. Current test families: earth block, grass top, grass-to-earth edge, stone-water edge, dark water, and ice.
+- Each eval manifest includes the style profile, source tileset contact sheet, target tile families, and acceptance gate.
+- After live matrix eval, the matrix wrapper now runs a style-score report and then creates a small selected-family review pack by choosing the lowest-scored candidate per family. This stays in `_Review` and is not Unity-approved.
+
+Validation:
+
+- Parser checks passed for the matrix wrapper and post-training sequencer.
+- Python compile checks passed for the tile evaluator, eval contact-sheet builder, style-lock reference sheet builder, style scorer, and selected-family builder.
+- Dry-run matrix summary: `Temp\LoRA\litiso_iso_reference_tile_style_v1.eval_matrix_plan.json`
+- Dry-run sequencer summary: `Temp\AssetForge\post_tile_training_review_pass_v6.json`
+- Style-lock target sheet: `Temp\LoRA\Evals\stylelock_tile_reference_targets.png`
+- Style-lock target manifest: `Temp\LoRA\Evals\stylelock_tile_reference_targets.json`
+- Score report placeholder: `Temp\LoRA\Evals\tile_style_eval_scores.json`
+- Selec

@@ -210,3 +210,47 @@ is lost. Proposed split:
   && !string.IsNullOrEmpty(WorldManager.Instance.Seed)`, parse to int, override
   `config.seed` before world initialization.
 - I will NOT touch your Foundation lane or scene without a handoff here.
+
+
+---
+
+### 2026-06-09 - World-gen prototype + tile taxonomy handoff (Claude Fable)
+
+Standalone preview work (no Unity changes, placeholders untouched):
+- Recreated the user's 3 reference images exactly from the supplied 115-tile
+  isometric pack, then derived and documented the artist's placement logic.
+- Built a seeded procedural world generator following that logic: biome-pure
+  tile whitelists, ocean->shallow->beach->land depth chain, moisture biomes
+  (badlands/meadow/forest), 3 height tiers with z-aware cliff rendering,
+  meandering rivers with pond endings, clustered real-world-style decoration.
+- Everything you need to continue: `Docs/handoff/WORLD_GEN_PROTOTYPE_HANDOFF.md`
+  + `Docs/handoff/world-gen-prototype/` (taxonomy, scripts, renders).
+- Reminder: pack license still unconfirmed -> review/prototype use only.
+
+
+---
+
+### 2026-06-09 - Continent generator ported into Unity (Claude, in your lane)
+
+Heads-up: with the user's explicit go-ahead I edited THREE files in your
+IsoCoreFoundation lane to port the world-gen prototype into the live terrain
+system. Rendered with existing Foundation block art only -- NO tile-pack pixels
+imported (license still unconfirmed). Details + tuning notes:
+`Docs/handoff/WORLD_GEN_PROTOTYPE_HANDOFF.md` (see "UNITY INTEGRATION - LANDED").
+
+- `World/IsoTerrainSampler.cs`: new pure per-cell `SampleContinent(wx,wy)` (no
+  global passes -> streams like before). Ocean/beach/land depth chain, multi-step
+  cliffs from elevation tiers, warped-band rivers w/ sand banks, climate biome
+  purity (existing SelectBiome), clustered deco (existing PickClusteredDecoration).
+- `Core/FoundationConfig.cs`: new Continent world + rivers config blocks
+  (`continentWorld` default true; `flatWorld` still default true).
+- `Core/FoundationBootstrap.cs`: standard launches set `flatWorld=false`
+  (continent); CreationInstance showroom still forces flat in its ApplyConfig.
+
+Verified: `dotnet build` clean (0/0); headless logic mirror over seeds
+1337/4242/7777 (safe land spawn apron, ocean/river/land present, height<=ceiling).
+PENDING and yours-or-user-to-run: in-editor FoundationValidator +
+IntegratedSliceValidator + a visual play pass (Unity was holding the project
+lock, so I could not start a batch instance). No regression expected -- spawn
+clearing still returns flat walkable meadow. Tune the thresholds in-editor:
+real Unity Perlin has more range than my test mirror, so expect more tall cliffs.
