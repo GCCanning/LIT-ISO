@@ -289,18 +289,69 @@ namespace IsoCore.Foundation
             cell.Water = false;
 
             // Clustered decoration (groves / outcrops / flower patches), reusing the
-            // shared grouping logic so nothing scatters uniformly.
+            // shared grouping logic so nothing scatters uniformly. Vegetation respects
+            // the terrain: crag tops (tier 3+) are bare stone with only rock outcrops,
+            // and trees never stand on a cliff lip where their canopy would float
+            // over the stone face below.
             if (biome != null && biome.nodes != null)
             {
-                var picked = PickClusteredDecoration(wx, wy, biome, 1f);
-                if (picked.node != null)
+                if (height >= 3)
                 {
-                    cell.NodeId = picked.node.id;
-                    cell.NodeBlocks = picked.node.blocksMovement;
+                    // Bare crag: rock outcrops only - no trees/bushes on stone.
+                    var crag = PickRockOutcrop(wx, wy, biome);
+                    if (crag.node != null)
+                    {
+                        cell.NodeId = crag.node.id;
+                        cell.NodeBlocks = crag.node.blocksMovement;
+                    }
+                }
+                else
+                {
+                    var picked = PickClusteredDecoration(wx, wy, biome, 1f);
+                    if (picked.node != null &&
+                        (picked.node.id == "tree" || picked.node.id == "pine"))
+                    {
+                        // Cliff-lip check (lazy: only when a tree was actually rolled,
+                        // so the extra neighbour sampling stays rare). A neighbour one
+                        // or more steps down means this is a ledge - swap the tree for
+                        // a bush so the lip still reads vegetated, never overhanging.
+                        bool lip = ContinentTier(wx + 1, wy) < height ||
+                                   ContinentTier(wx - 1, wy) < height ||
+                                   ContinentTier(wx, wy + 1) < height ||
+                                   ContinentTier(wx, wy - 1) < height;
+                        if (lip)
+                            picked = FindArtNode(biome, "bush");
+                    }
+                    if (picked.node != null)
+                    {
+                        cell.NodeId = picked.node.id;
+                        cell.NodeBlocks = picked.node.blocksMovement;
+                    }
                 }
             }
 
             return cell;
+        }
+
+        /// <summary>Continent height tier from elevation alone (no river/beach carve)
+        /// - cheap neighbour probe used to detect cliff lips when gating tall
+        /// vegetation. Mirrors the tier thresholds in SampleContinent.</summary>
+        int ContinentTier(int wx, int wy)
+        {
+            int clearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
+            if (clearing <= _cfg.spawnClearingRadius)
+                return Mathf.Clamp(_cfg.spawnHeight, 0, 7);
+            float eBase = Perlin(wx, wy, _cfg.continentFrequency, 11, 12);
+            float eDetail = Perlin(wx, wy, _cfg.continentFrequency * 3f, 13, 14);
+            float e = eBase * 0.80f + eDetail * 0.20f;
+            e += Mathf.Clamp01(1f - clearing / Mathf.Max(1f, _cfg.continentSpawnLandRadius))
+                 * _cfg.continentSpawnLandBias;
+            if (e < _cfg.continentBeachLevel) return 0;
+            int h = 1;
+            if (e > _cfg.continentTier2Level) h = 2;
+            if (e > _cfg.continentTier3Level) h = 3;
+            if (e > _cfg.continentTier4Level) h = 4;
+            return Mathf.Clamp(h, 0, Mathf.Min(_cfg.maxHeight, 7));
         }
 
         /// <summary>Picks a surface-block id from a biome's surface group (seeded variant),
@@ -363,59 +414,4 @@ namespace IsoCore.Foundation
                         if (wantPine) return pine;
                         if (tree.node != null) return tree;
                         return pine; // only pine available in this biome
-                    }
-                    // Rare stump on grove ground (thinned-out look).
-                    var stumpN = FindArtNode(biome, "stump");
-                    if (stumpN.node != null && Hash01(wx, wy, 73) < 0.02f * density) return stumpN;
-                    var logN = FindArtNode(biome, "log");
-                    if (logN.node != null && Hash01(wx, wy, 74) < 0.015f * density) return logN;
-                }
-            }
-
-            // 2. Bushes — light, even scatter on open ground.
-            var bush = FindArtNode(biome, "bush");
-            if (bush.node != null && Hash01(wx, wy, 81) < _cfg.decoBushChance * density)
-                return bush;
-
-            // 2b. Flowers — gentle ground-cover patches via mid-frequency noise so they form
-            //     little meadOws rather than uniform speckle.
-            var flower = FindArtNode(biome, "flower");
-            if (flower.node != null)
-            {
-                float patch = Perlin(wx, wy, _cfg.decoForestFrequency * 2.3f, 41, 42);
-                if (patch > 0.5f && Hash01(wx, wy, 82) < 0.10f * density) return flower;
-            }
-
-            // 3. Rocks — rare clumps where a separate coarse noise peaks.
-            var rock = FindArtNode(biome, "rock");
-            if (rock.node != null)
-            {
-                float rockNoise = Perlin(wx, wy, _cfg.decoForestFrequency * 1.7f, 31, 32);
-                if (rockNoise > _cfg.decoRockClusterThreshold &&
-                    Hash01(wx, wy, 91) < _cfg.decoRockChanceInCluster * density)
-                    return rock;
-            }
-
-            return default;
-        }
-
-        /// <summary>Rock-only decoration for sand cells (beach ring, river banks):
-        /// rare coarse-noise outcrop clumps, no vegetation — coasts read as mostly
-        /// clean sand with occasional stone. Mirrors the rock branch of
-        /// PickClusteredDecoration but at half density and with its own noise salts
-        /// so beach outcrops don't correlate with inland ones.</summary>
-        BiomeNodeSpawn PickRockOutcrop(int wx, int wy, BiomeDefinition biome)
-        {
-            if (biome == null) return default;
-            var rock = FindArtNode(biome, "rock");
-            if (rock.node == null) return default;
-            float rockNoise = Perlin(wx, wy, _cfg.decoForestFrequency * 1.7f, 33, 34);
-            if (rockNoise > _cfg.decoRockClusterThreshold &&
-                Hash01(wx, wy, 92) < _cfg.decoRockChanceInCluster * 0.5f)
-                return rock;
-            return default;
-        }
-
-        /// <summary>Finds a biome node by id, but only if it has art in Resources/Decorations
-        /// (otherwise it would render as an ugly placeholder box). Result is cached by the resolver.</summary>
-        BiomeNodeSpawn FindArtNod
+       
