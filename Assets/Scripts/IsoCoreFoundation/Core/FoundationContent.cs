@@ -81,6 +81,12 @@ namespace IsoCore.Foundation
             var canopy3 = Block("canopy_3", "canopy_blocks", new Color(0.17f, 0.37f, 0.19f), CollisionMode.Walkable);
             Block("water", "water_blocks", new Color(0.20f, 0.45f, 0.75f), CollisionMode.Water);
             Block("water_deep", "water_blocks", new Color(0.10f, 0.22f, 0.45f), CollisionMode.Water);
+            // Ocean texture per the rulebook: sparse speckled variants (<= 15% of cells)
+            // and wave-swell blocks on the rim band facing the shore.
+            Block("water_deep_2", "water_blocks", new Color(0.11f, 0.23f, 0.46f), CollisionMode.Water);
+            Block("water_deep_3", "water_blocks", new Color(0.10f, 0.21f, 0.44f), CollisionMode.Water);
+            Block("water_swell_1", "water_blocks", new Color(0.14f, 0.28f, 0.52f), CollisionMode.Water);
+            Block("water_swell_2", "water_blocks", new Color(0.13f, 0.27f, 0.50f), CollisionMode.Water);
             Block("dirt", "dirt_blocks", new Color(0.45f, 0.32f, 0.20f), CollisionMode.Walkable);
             Block("stone_block", "stone_blocks", new Color(0.55f, 0.55f, 0.58f), CollisionMode.Solid);
             Block("stone_path", "path_blocks", new Color(0.62f, 0.62f, 0.64f), CollisionMode.Decorative);
@@ -371,8 +377,9 @@ namespace IsoCore.Foundation
                 new BiomeNodeSpawn { node = n, chancePerCell = chance };
             BiomeMobSpawn MS(MobDefinition m, float w) => new BiomeMobSpawn { mob = m, weight = w };
 
+            // Rulebook: meadow carries no ore - copper lives in forest cover and badlands.
             Biome("meadow", 0.55f, 0.55f, grassGroup, 1, 2,
-                new[] { NS(tree, 0.05f), NS(rock, 0.02f), NS(bush, 0.05f), NS(copperVein, 0.008f),
+                new[] { NS(tree, 0.05f), NS(rock, 0.02f), NS(bush, 0.05f),
                         NS(flower, 0.03f), NS(tulip, 0.012f), NS(tuft, 0.03f),
                         NS(log, 0.005f), NS(stump, 0.005f) },
                 new[] { MS(deer, 1f), MS(slime, 1f) }, new Color(0.4f, 0.7f, 0.4f));
@@ -385,8 +392,9 @@ namespace IsoCore.Foundation
             Biome("desert", 0.88f, 0.15f, badlandsGroup, 1, 1,
                 new[] { NS(rock, 0.05f), NS(copperVein, 0.015f) },
                 new[] { MS(slime, 1f) }, new Color(0.85f, 0.78f, 0.45f));
+            // Rulebook: beaches carry only sparse rock - no vegetation on sand.
             Biome("beach", 0.70f, 0.45f, sandGroup, 1, 1,
-                new[] { NS(rock, 0.02f), NS(bush, 0.02f) },
+                new[] { NS(rock, 0.02f) },
                 new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.90f, 0.84f, 0.55f));
             // Cold biome is a TAIGA: pine-heavy forest on grass ground (Minecraft-style
             // rule - trees grow on grass, never on bare stone/snow plates). The pack has
@@ -1010,4 +1018,40 @@ namespace IsoCore.Foundation
                 "Floors, paths, civic footprints, shelter scoring, and expansion.", "building", "woodcraft");
             Profession("trader", "Trader", FoundationProgressionActivity.Trade,
                 "Orders, prices, routes, reputation, and economic quests.", "trade", "lorekeeping");
-            Profession("farmer", "Farmer", FoundationProgressi
+            Profession("farmer", "Farmer", FoundationProgressionActivity.Farm,
+                "Soil, seed memory, crop traits, and reliable food.", "farming", "foraging");
+            Profession("miner", "Miner", FoundationProgressionActivity.Harvest,
+                "Ore, stone, tunnels, durability, and delver preparation.", "mining", "warding");
+            Profession("fisher", "Fisher", FoundationProgressionActivity.Harvest,
+                "Water routes, fish, weather, and Tide-aligned food work.", "foraging", "cooking");
+
+            DungeonResult("rootcellar_first_return", "Rootcellar First Return", "rootcellar_starter",
+                "Returned with proof from the old food stores beneath Mosswake.",
+                new[] { X(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", 20), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 8) },
+                new[] { T("first_night_survivor", 1), T("returned_for_them", 1) },
+                new[] { A("root", 2), A("glimmer", 1) },
+                new[] { Reward(FoundationRewardType.MemoryPage, "old_lamps_01"), Reward(FoundationRewardType.Xp, "character", 50) });
+            Dungeon("rootcellar_starter", "Mosswake Rootcellar", "Root Cellar", 1, 2, "rootcellar_first_return",
+                "An old cellar where roots, pests, and stale System hums gather under the first fields.",
+                "apple", "carrot", "wood_axe");
+            Expedition("rootcellar_day_two_probe", "Day Two Rootcellar Probe", "rootcellar_starter", 4, 2,
+                "apple", "wood_axe");
+
+            WorldEvent("goblin_raid_chain", "Goblin Raid Chain", 2, "ignored_road_threat", "settlement_pressure",
+                "World event: tracks suggest a raid chain forming beyond the safe road.");
+            WorldEvent("dangerous_mob_sighting", "Dangerous Mob Sighting", 1, "night_noise", "local_warning",
+                "World event: something large crossed the outer meadow after dusk.");
+            WorldEvent("resource_bloom", "Resource Bloom", 1, "rain_after_clear", "rare_nodes",
+                "World event: fresh rain has woken rare sprouts and exposed stone seams.");
+            WorldEvent("rival_npc_party", "Rival NPC Party", 1, "guild_board_day_two", "social_pressure",
+                "World event: another Unwritten party accepted a nearby contract.");
+
+            BoardEntry("board_rootcellar_probe", "Rootcellar Probe", "the_rootcellar_below", "resource_bloom", 0, 3,
+                "Bring back proof from the old cellar before pests chew through the stores.");
+            BoardEntry("board_south_path", "South Path Repair", "fixing_the_south_path", "dangerous_mob_sighting", 0, 4,
+                "Clear and mark the south path so visitors stop losing half a day in brambles.");
+
+            return c;
+        }
+    }
+}

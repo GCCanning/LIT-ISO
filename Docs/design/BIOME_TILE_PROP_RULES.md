@@ -34,30 +34,27 @@ script's BOARDS table is the machine-readable form of this document.
 
 | Biome | Field tiles | Accent tiles | Props (allowed ONLY these) | Forbidden |
 |---|---|---|---|---|
-| **Meadow** | 037 | lush 040 patches | flowers 041/042/046/047 + tulips 044 (patches near shrubs/water), shrubs 043/045, logs 048-052 (near forest edge), grey boulders 065/067 (cliff bases only) | water props, strata, canopy blocks, brown rocks |
-| **Forest** | 040 floor | canopy mass 029 (dominant) + 027/028 (accents); root-cliff 025/026 at low edges | mossy logs 050-052, stumps 052, shrubs 043/045, tufts 045 - in clearings only; canopy cells carry NO props | field flowers in canopy, foam stones, strata |
-| **Taiga** (cold) | 037 | - | pines (non-pack art), tufts 045, logs, rocks 065 | flowers (too cold), water props |
+| **Meadow** | 037 | lush 040 patches | trees (oak art), flowers 041/042/046/047 + tulips 044 (patches near shrubs/water), shrubs 043/045, logs 048-052 (near forest edge), grey boulders 065/067 (cliff bases only) | water props, strata, canopy blocks, brown rocks, ORE |
+| **Forest** | 040 floor | canopy mass 029 (dominant) + 027/028 (accents); root-cliff 025/026 at low edges | trees (oak art), mossy logs 050-052, stumps 052, shrubs 043/045, tufts 045 - in clearings only; copper veins ride rock outcrop clusters (~1 in 6 rock rolls); canopy cells carry NO props | field flowers in canopy, foam stones, strata |
+| **Taiga** (cold) | 037 | - | pines + oaks (non-pack art, pine-dominant), tufts 045, logs, rocks 065, copper in outcrops | flowers (too cold), water props |
 | **Badlands/Desert** | 017/018 | dark dirt 003, rubble 011-013 | brown rocks 053-060 (clusters), copper veins | ALL vegetation, grey wet stones, foam stones |
 | **Beach** | 000/010/021 | - | sparse brown rocks 053-056; foam stones at the waterline cell only | vegetation (trees/bushes/flowers), strata |
 | **River** | 104 stream | wash 106-108 against banks, rapids 114 (rare) | foam stones 069-081 in lowland streams only | swells, sparkles (ocean-only) |
 | **Ocean** | 092 navy (seamless) | speckled 093/094/102/103 <= 15%, slab 100/101 | foam stones on the land edge; sparkles 082-085 deep & open only; swells 086-099 near the shallow rim | light 104-114 family (grid seams; rivers only) |
 | **Crag (h>=3)** | cobble 061 / slab 062 caps | strata 014-016 (badlands mesas) | grey boulders 064/065/067/068, pinnacles 064 at the back of clusters | ALL vegetation |
 
+## Non-pack props (current placeholders, replaced by the LoRA later)
+
+Oak tree, pine, and the copper vein are not pack art. They obey the same
+rules: trees on grass floors only (meadow/forest clearings/taiga), pine
+dominant in taiga and minority elsewhere; copper veins spawn ONLY inside
+rock-outcrop clusters (forest, taiga, badlands - never meadow/beach). The
+copper vein temporarily wears pack brown-rock art (tile_058) so it stops
+rendering as a placeholder box; swap when LoRA ore art lands.
+
 ## Adjacency / chain rules
 
 - Depth chain, never skipped: deep ocean -> shallow rim -> beach dirt or
   foam-stone shoreline -> land. Deep water never touches land.
 - Rivers: light water, grass banks meeting the stream directly (pond-style)
-  with occasional sand bank patches; river surface sits one height step below
-  the local terrain; mouths widen into the shallow rim.
-- Cliff faces: every raised tile is backed by a dirt body (renderer stacks
-  them); badlands tiers use strata 014-016 so mesas read banded.
-- Biome regions are large and coherent (low-frequency climate noise); a biome
-  never appears as single-cell islands inside another.
-
-## Sample grids
-
-Regenerate the visual: `python3 Tools/WorldGenPreview/render_biome_samples.py`
-The six boards (meadow, forest, badlands+border, coast chain, river, crag)
-are authored in the script as ASCII grids - edit those to evolve the rules,
-re-render, and update this doc in the same commit.
+  with occasional sand bank patches; river surface sits one heigh
