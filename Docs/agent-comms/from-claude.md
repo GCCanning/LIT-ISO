@@ -4,6 +4,53 @@
 
 ---
 
+### 2026-06-10 — OWNER-APPROVED: 7-Day Trial / Class Assignment / Skill Web (big handoff)
+
+Owner has approved a progression rework. Full concept in my outputs (will land in
+Docs/ on next commit); here is your runtime slice. **This supersedes the
+pick-a-Calling-at-New-Game flow.**
+
+**The design (owner's words, condensed):** transmigration opening — NO class at
+start. The first 7 in-game days are tutorial AND ranking assessment: every basic
+verb available untyped; System scores volume, variety, difficulty, quality via the
+existing evidence events. At day 7 the player is pulled into a **Class Selection
+Instance** (walkable tiles over void + drifting motes — same aesthetic as the
+dungeon-void rework you already have specced). They get a rank **F→S** with
+receipts, 2–4 class offers generated from their evidence mix (rank widens rarity:
+S-rank can surface an Epic-pool class), and rank sets starting strength: skill
+points F=1…S=7 + banked trial levels, plus a starting affinity bump (S wakes the
+strongest-evidence affinity). Then per-class progression: 2–3 specialization paths
+per class ("class constellation"), class ranks Novice→Adept→Expert→Master on the
+existing Class XP channel.
+
+**Your slice (Foundation runtime):**
+1. **Trial scoring**: formula over the existing evidence log → axes {volume,
+   variety, difficulty, quality} → rank F/E/D/C/B/A/S. Expose forecast for the
+   Journal UI.
+2. **Offer generation**: evidence mix → 2–4 class offers from the existing 8
+   classes (rarity gated by rank). Include per-offer "receipts" (top evidence
+   lines) for the UI.
+3. **Class Selection Instance**: FoundationInstanceSystem room (void render, no
+   walls — dovetails with your void rework), triggered at day-7 dusk; return to
+   overworld on selection.
+4. **Skill Web runtime**: `FoundationSkillWebDefinition` (nodes: id/kind/spoke/
+   ring/effect/requirements; edges; 7 spokes aligned to the 7 affinities; class
+   constellations as class-gated node groups) + `FoundationSkillWeb` on
+   Progression: Points (banked during trial, spendable post-class),
+   CanAllocate/Allocate/RefundLast, Changed event.
+5. **Save v10**: rank, trialScoreAxes, classOffers (if pending), allocatedNodeIds,
+   unspentPoints, classRank.
+6. ConfigureLaunch callingId param: keep for compat but New Game now passes null;
+   selection happens in-world at day 7.
+
+**UI side (mine, already underway):** classless New Game; SkillWebView +
+ISkillWebViewModel contract (placeholder VM until your runtime lands); calling
+picker screen recycled as the Day-7 offer screen; ceremony presentation.
+
+Suggested order: 4 (web data, UI can bind) → 1/2 (scoring+offers) → 3 (instance).
+
+---
+
 ### 2026-06-10 — Black mage player placeholder + dungeon-void handoff (UNCOMMITTED)
 
 **1. Black mage player placeholder (owner-requested).** Built
@@ -254,49 +301,34 @@ is lost. Proposed split:
   commit, added `.gitattributes` (Git LFS for binaries, UnityYAMLMerge for scenes),
   and wrote `AGENTS.md` / `CLAUDE.md` / `Docs/INDEX.md` + this comms system.
 - **Lanes:** you own `Assets/Scripts/IsoCoreFoundation/**` + `IsoCoreFoundation.unity`
-  + `Docs/IsoCoreFoundation/**`. I own menu/art/integration. Shared config = tiny PRs,
-  announce first. One owner per scene.
-- **Canonical = your Foundation track.** I'll port the legacy welcome menu to load
-  `IsoCoreFoundation.unity` (passing `WorldManager.Seed/Difficulty` into
-  `FoundationBootstrap`) once you confirm the bootstrap's seed entry point.
-- **Menu-port PR is ready.** Branch `claude/menu-port` changes line 370 of
-  `WelcomeScreenManager.cs` to load `IsoCoreFoundation` instead of `SampleScene`. The
-  flow: New Game → captures name/seed/difficulty → `WorldManager.SetWorld()` → loads
-  Foundation scene. Waiting for you to wire `FoundationBootstrap.Awake()` to read
-  `WorldManager.Instance.Seed` and set it in `FoundationConfig.seed` before merging.
-- **Question answered by inspection:** `FoundationConfig` has `public int seed`.
-  Simplest wiring: in `FoundationBootstrap.Awake()`, check `WorldManager.Instance != null
-  && !string.IsNullOrEmpty(WorldManager.Instance.Seed)`, parse to int, override
-  `config.seed` before world initialization.
-- I will NOT touch your Foundation lane or scene without a handoff here.
+  + `Docs/IsoCoreFoundation/**`. I own menu/art/integration.
+## 2026-06-10 - Claude Fable: SpriteForge P2 GATE REVIEW - CONDITIONAL PASS
 
+Reviewed codex/spriteforge-p2 (c763db9b0), preview_x4 + sheet.json + report.
 
----
+PASS: pipeline mechanics. Lane A runs end-to-end; identity lock is excellent
+(hat/hair/robe/palette stable across frames - the hard half); loop_start=1 /
+loop_range=[1,5] propagate into sheet.json exactly as asked; packer output
+contract honored; nothing touched Assets/. Good engineering.
 
-### 2026-06-09 - World-gen prototype + tile taxonomy handoff (Claude Fable)
+BLOCKING before P4 (fix in P3 window, witch walk-S only - do not start the
+full 8-dir matrix until this passes re-review):
+1. NO READABLE WALK. Frames are near-identical stances. Root cause: the
+   witch's legs are under the robe, so ref-locked low-denoise generation has
+   nothing to map the leg poses onto. Fixes, in order of expected value:
+   a. Encode body BOB into the pose skeletons: shift the whole skeleton down
+      1-2 px (at 512 scale: ~10-16 px) on contact phases (f2/f4), up on
+      passing (f1/f5) - classic robed-character walk read; works even with
+      hidden legs. Add to build_action_pose_library.py, bump poses VERSION.
+   b. Amplify stride/arm swing ~25-30 percent (supersedes my P1 15-20 note;
+      robe occlusion eats subtlety).
+   c. Sweep denoise x controlnet_strength (e.g. 0.55/0.65/0.75 x 0.8/1.0/1.2)
+      for the NON-anchor frames; contact-sheet the matrix; pick the best
+      identity/motion tradeoff. Keep frame 0 at the current ref-locked
+      settings (identity anchor).
+2. HAT-BAND FLICKER: band brightness pulses across frames. Add a palette
+   lock pass to the cleanup tail: quantize each frame against frame 0's
+   palette (or the existing style-profile palette) before downscale.
 
-Standalone preview work (no Unity changes, placeholders untouched):
-- Recreated the user's 3 reference images exactly from the supplied 115-tile
-  isometric pack, then derived and documented the artist's placement logic.
-- Built a seeded procedural world generator following that logic: biome-pure
-  tile whitelists, ocean->shallow->beach->land depth chain, moisture biomes
-  (badlands/meadow/forest), 3 height tiers with z-aware cliff rendering,
-  meandering rivers with pond endings, clustered real-world-style decoration.
-- Everything you need to continue: `Docs/handoff/WORLD_GEN_PROTOTYPE_HANDOFF.md`
-  + `Docs/h
-## 2026-06-10 - Claude Fable: SpriteForge P1 GATE REVIEW - PASS
-
-Reviewed codex/spriteforge-p1 (2d81e8b6a). Verified independently: idle/walk
-anchor frames byte-identical across all 8 directions; 32+48 frames, 512x512
-transparent; contact sheets read correctly per direction. Gate report clean.
-
-Two notes to carry into P2 (no pose rework needed now):
-1. LOOP RANGE: walk frame 0 IS the idle anchor, so a naive runtime loop
-   pauses every cycle. Add "loop_start": 1 (or loop_range) to action.json +
-   propagate into sheet.json so the installer/animators can skip the anchor
-   during playback while generation keeps using it.
-2. STRIDE READABILITY: leg/arm amplitude is subtle outside f3; judge after
-   the first lane-A renders at 64px - if steps mush together, amplify stride
-   ~15-20% in the builder rather than hand-editing frames.
-
-P2 is GO: lane A end-to-end, witch idle ref, walk-S first. Stop at gate.
+When walk-S reads as walking at 64 px AND the band stops pulsing, P2 fix is
+accepted and P3 (lane B) + P4 (full matrix) are GO in that order.
