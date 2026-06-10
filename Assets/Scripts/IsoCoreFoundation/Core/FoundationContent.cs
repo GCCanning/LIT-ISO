@@ -70,6 +70,8 @@ namespace IsoCore.Foundation
             var sand2 = Block("sand_2", "sand_blocks", new Color(0.82f, 0.74f, 0.40f), CollisionMode.Walkable);
             var snow1 = Block("snow_1", "snow_blocks", new Color(0.91f, 0.94f, 0.97f), CollisionMode.Walkable);
             var snow2 = Block("snow_2", "snow_blocks", new Color(0.85f, 0.88f, 0.93f), CollisionMode.Walkable);
+            var badlands1 = Block("badlands_1", "badlands_blocks", new Color(0.36f, 0.24f, 0.16f), CollisionMode.Walkable);
+            var badlands2 = Block("badlands_2", "badlands_blocks", new Color(0.32f, 0.21f, 0.14f), CollisionMode.Walkable);
             Block("water", "water_blocks", new Color(0.20f, 0.45f, 0.75f), CollisionMode.Water);
             Block("water_deep", "water_blocks", new Color(0.10f, 0.22f, 0.45f), CollisionMode.Water);
             Block("dirt", "dirt_blocks", new Color(0.45f, 0.32f, 0.20f), CollisionMode.Walkable);
@@ -93,6 +95,7 @@ namespace IsoCore.Foundation
             var grassGroup = Group("grass_blocks", grass1, grass2, grass3);
             var sandGroup = Group("sand_blocks", sand1, sand2);
             var snowGroup = Group("snow_blocks", snow1, snow2);
+            var badlandsGroup = Group("badlands_blocks", badlands1, badlands2);
             var dungeonFloorGroup = Group("dungeon_floor_blocks", dungeonFloor1, dungeonFloor2, dungeonFloor3, dungeonFloor4, dungeonFloor5);
 
             // ---- Items ----
@@ -368,14 +371,20 @@ namespace IsoCore.Foundation
                 new[] { NS(tree, 0.14f), NS(bush, 0.06f), NS(rock, 0.02f), NS(copperVein, 0.01f),
                         NS(flower, 0.012f), NS(tuft, 0.02f), NS(log, 0.01f), NS(stump, 0.01f) },
                 new[] { MS(deer, 1f), MS(fox, 1f), MS(slime, 0.5f) }, new Color(0.25f, 0.55f, 0.30f));
-            Biome("desert", 0.88f, 0.15f, sandGroup, 1, 1,
+            // Desert renders as pack badlands (dark cracked floor) - the pack has no
+            // sandy-desert family; sand stays reserved for beaches and river banks.
+            Biome("desert", 0.88f, 0.15f, badlandsGroup, 1, 1,
                 new[] { NS(rock, 0.05f), NS(copperVein, 0.015f) },
                 new[] { MS(slime, 1f) }, new Color(0.85f, 0.78f, 0.45f));
             Biome("beach", 0.70f, 0.45f, sandGroup, 1, 1,
                 new[] { NS(rock, 0.02f), NS(bush, 0.02f) },
                 new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.90f, 0.84f, 0.55f));
-            Biome("snow", 0.12f, 0.45f, snowGroup, 1, 2,
-                new[] { NS(tree, 0.04f), NS(pine, 0.05f), NS(rock, 0.03f), NS(copperVein, 0.008f) },
+            // Cold biome is a TAIGA: pine-heavy forest on grass ground (Minecraft-style
+            // rule - trees grow on grass, never on bare stone/snow plates). The pack has
+            // no snow family, so snowGroup stays unused until real snow art exists.
+            Biome("snow", 0.12f, 0.45f, grassGroup, 1, 2,
+                new[] { NS(tree, 0.04f), NS(pine, 0.05f), NS(rock, 0.03f), NS(copperVein, 0.008f),
+                        NS(tuft, 0.02f), NS(log, 0.008f), NS(stump, 0.008f) },
                 new[] { MS(deer, 1f), MS(fox, 0.5f) }, new Color(0.9f, 0.93f, 0.97f));
 
             // ---- Recipes ----
@@ -1002,15 +1011,4 @@ namespace IsoCore.Foundation
             DungeonResult("rootcellar_first_return", "Rootcellar First Return", "rootcellar_starter",
                 "Returned with proof from the old food stores beneath Mosswake.",
                 new[] { X(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", 20), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 8) },
-                new[] { T("first_night_survivor", 1), T("returned_for_them", 1) },
-                new[] { A("root", 2), A("glimmer", 1) },
-                new[] { Reward(FoundationRewardType.MemoryPage, "old_lamps_01"), Reward(FoundationRewardType.Xp, "character", 50) });
-            Dungeon("rootcellar_starter", "Mosswake Rootcellar", "Root Cellar", 1, 2, "rootcellar_first_return",
-                "An old cellar where roots, pests, and stale System hums gather under the first fields.",
-                "apple", "carrot", "wood_axe");
-            Expedition("rootcellar_day_two_probe", "Day Two Rootcellar Probe", "rootcellar_starter", 4, 2,
-                "apple", "wood_axe");
-
-            WorldEvent("goblin_raid_chain", "Goblin Raid Chain", 2, "ignored_road_threat", "settlement_pressure",
-                "World event: tracks suggest a raid chain forming beyond the safe road.");
-      
+                new[] { T("first_night_survivor", 1),

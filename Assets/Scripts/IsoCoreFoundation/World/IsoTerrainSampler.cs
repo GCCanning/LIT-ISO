@@ -224,7 +224,9 @@ namespace IsoCore.Foundation
                 bool deep = e < _cfg.continentDeepLevel;
                 cell.Height = 0;
                 cell.BiomeIndex = (byte)Mathf.Max(0, _beachIndex);
-                cell.SurfaceBlockId = deep ? "water_deep" : "water";
+                // One seamless navy field for the whole ocean (the light family's edge
+                // highlights read as a grid when tiled - it stays reserved for rivers).
+                cell.SurfaceBlockId = "water_deep";
                 cell.Water = true;
                 // Shore stones: only in the shallow ring, only against land, sparse.
                 // Hash gate first so the 4-neighbour elevation probe stays rare.
@@ -294,6 +296,10 @@ namespace IsoCore.Foundation
 
             // ---- land: climate picks the biome region; elevation steps the cliff height ----
             int biomeIndex = SelectBiome(temp, moist);
+            // Minecraft-style rule: beach/sand exists only against water (the beach ring
+            // and river banks above). If climate picks "beach" for an interior cell,
+            // it becomes meadow instead - no sand patches popping up inland.
+            if (biomeIndex == _beachIndex) biomeIndex = _meadowIndex;
             var biome = (biomeIndex >= 0 && biomeIndex < _biomes.Count) ? _biomes[biomeIndex] : null;
 
             int height = 1;
@@ -409,13 +415,4 @@ namespace IsoCore.Foundation
                     cell.NodeBlocks = ns.node.blocksMovement;
                     return;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Chooses a decoration for a cell using noise-driven GROUPING rather than uniform
-        /// random scatter:
-        ///   • Trees cluster into forest groves (low-frequency noise) — dense in the middle,
-        ///     thinning toward the grove edges.
-        ///   • Bushes are a light, even ground-cover scatter on the open ground between groves.
-        ///   • Rocks appear only inside rare coarse-noise clumps (outcrop
+     
