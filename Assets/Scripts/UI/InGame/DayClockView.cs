@@ -43,16 +43,21 @@ namespace LitIso.UI.InGame
         void OnEnable()
         {
             FoundationUiCoordinator.HudViewModeChanged += ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
             ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
         void OnDisable()
         {
             FoundationUiCoordinator.HudViewModeChanged -= ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
         }
 
         void BuildUI()
         {
+            if (_canvas != null)
+                Destroy(_canvas.gameObject);
+
             _canvas = UiBuilder.NewCanvas(transform, "DayClockCanvas", sortingOrder: 25);
 
             _panel = UiBuilder.NewImage(_canvas.transform, "DayClockPanel", null, DayTint);
@@ -104,6 +109,13 @@ namespace LitIso.UI.InGame
             bool show = mode == FoundationHudViewMode.Adventure;
             if (_canvas != null && _canvas.gameObject.activeSelf != show)
                 _canvas.gameObject.SetActive(show);
+        }
+
+        void HandleTextScaleChanged(float _)
+        {
+            BuildUI();
+            Refresh();
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
     }
 }

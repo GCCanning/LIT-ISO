@@ -133,12 +133,14 @@ namespace LitIso.UI.InGame
         void OnEnable()
         {
             FoundationUiCoordinator.HudViewModeChanged += ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
             ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
         void OnDisable()
         {
             FoundationUiCoordinator.HudViewModeChanged -= ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
         }
 
         void OnDestroy() => Unsubscribe();
@@ -425,6 +427,15 @@ namespace LitIso.UI.InGame
                         durability);
                 }
             }
+        }
+
+        void HandleTextScaleChanged(float _)
+        {
+            Unsubscribe();
+            Build();
+            Subscribe();
+            Refresh();
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
         void ApplyHudViewMode(FoundationHudViewMode mode)

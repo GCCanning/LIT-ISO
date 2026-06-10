@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +9,10 @@ using UnityEngine.UI;
 public static class LitIsoFont
 {
     private const string FontResourcePath = "Fonts/antiquity-print";
+    public const string TextScalePrefKey = "ui.textScale";
 
     private static Font cachedFont;
+    private static float lastBroadcastScale = float.NaN;
 
     public static Font UI
     {
@@ -30,7 +33,32 @@ public static class LitIsoFont
 
     public static int SnapSize(int requestedSize)
     {
-        return Mathf.Max(16, Mathf.RoundToInt(requestedSize * 1.2f));
+        return Mathf.Max(12, Mathf.RoundToInt(requestedSize * 1.2f * TextScale));
+    }
+
+    public static float TextScale => Mathf.Clamp(PlayerPrefs.GetFloat(TextScalePrefKey, 1.08f), 0.8f, 1.45f);
+
+    public static event Action<float> TextScaleChanged;
+
+    public static void SetTextScale(float scale)
+    {
+        scale = Mathf.Clamp(scale, 0.8f, 1.45f);
+        if (Mathf.Abs(TextScale - scale) < 0.001f)
+            return;
+
+        PlayerPrefs.SetFloat(TextScalePrefKey, scale);
+        PlayerPrefs.Save();
+        NotifyTextScaleChanged(scale);
+    }
+
+    internal static void NotifyTextScaleChanged(float scale)
+    {
+        scale = Mathf.Clamp(scale, 0.8f, 1.45f);
+        if (!float.IsNaN(lastBroadcastScale) && Mathf.Abs(lastBroadcastScale - scale) < 0.001f)
+            return;
+
+        lastBroadcastScale = scale;
+        TextScaleChanged?.Invoke(scale);
     }
 
     public static void Apply(Text text, int requestedSize, FontStyle style = FontStyle.Normal)

@@ -96,6 +96,8 @@ namespace LitIso.UI.InGame
         }
 
         void OnDestroy() => Unsubscribe();
+        void OnEnable() => LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
+        void OnDisable() => LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
 
         void Subscribe()
         {
@@ -883,6 +885,19 @@ namespace LitIso.UI.InGame
                 case CharacterPanelTab.Map: return "Map";
                 default: return tab.ToString();
             }
+        }
+
+        void HandleTextScaleChanged(float _)
+        {
+            bool wasOpen = IsOpen;
+            var activeTab = _activeTab;
+            Unsubscribe();
+            Build();
+            Subscribe();
+            if (wasOpen)
+                Show(activeTab);
+            else if (_root != null)
+                _root.SetActive(false);
         }
     }
 }

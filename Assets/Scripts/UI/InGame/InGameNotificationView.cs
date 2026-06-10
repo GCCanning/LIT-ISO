@@ -55,6 +55,7 @@ namespace LitIso.UI.InGame
         {
             SystemNotifier.OnMessage += HandleMessage;
             FoundationUiCoordinator.HudViewModeChanged += ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
             ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
@@ -62,12 +63,16 @@ namespace LitIso.UI.InGame
         {
             SystemNotifier.OnMessage -= HandleMessage;
             FoundationUiCoordinator.HudViewModeChanged -= ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
         }
 
         // ---- construction ----------------------------------------------------
 
         void BuildUI()
         {
+            if (_canvas != null)
+                Destroy(_canvas.gameObject);
+
             _canvas = UiBuilder.NewCanvas(transform, "NotificationCanvas", sortingOrder: 30);
 
             // Upper-left column below vitals, growing downward. Newest toast is inserted at the top.
@@ -122,6 +127,14 @@ namespace LitIso.UI.InGame
             bool show = mode != FoundationHudViewMode.Hidden;
             if (_canvas != null && _canvas.gameObject.activeSelf != show)
                 _canvas.gameObject.SetActive(show);
+        }
+
+        void HandleTextScaleChanged(float _)
+        {
+            StopAllCoroutines();
+            _live.Clear();
+            BuildUI();
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
         GameObject BuildToast(string text, Color accent)

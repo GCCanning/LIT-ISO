@@ -63,6 +63,8 @@ namespace LitIso.UI.InGame
         }
 
         void OnDestroy() => Unsubscribe();
+        void OnEnable() => LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
+        void OnDisable() => LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
         void Subscribe()   { if (_model != null) _model.Changed += Refresh; }
         void Unsubscribe() { if (_model != null) _model.Changed -= Refresh; }
 
@@ -166,6 +168,20 @@ namespace LitIso.UI.InGame
                 if (_counts[i] != null) _counts[i].text = s.count > 1 ? s.count.ToString() : "";
                 if (_highlights[i] != null) _highlights[i].gameObject.SetActive(s.selected);
             }
+        }
+
+        void HandleTextScaleChanged(float _)
+        {
+            if (_model == null)
+                return;
+
+            bool wasOpen = IsOpen;
+            Unsubscribe();
+            Build();
+            Subscribe();
+            Refresh();
+            if (_root != null)
+                _root.SetActive(wasOpen);
         }
     }
 }

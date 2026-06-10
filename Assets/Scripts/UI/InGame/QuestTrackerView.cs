@@ -64,12 +64,14 @@ namespace LitIso.UI.InGame
         void OnEnable()
         {
             FoundationUiCoordinator.HudViewModeChanged += ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
             ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
 
         void OnDisable()
         {
             FoundationUiCoordinator.HudViewModeChanged -= ApplyHudViewMode;
+            LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
         }
 
         void OnDestroy()
@@ -81,6 +83,9 @@ namespace LitIso.UI.InGame
 
         void BuildUI()
         {
+            if (_canvas != null)
+                Destroy(_canvas.gameObject);
+
             _canvas = UiBuilder.NewCanvas(transform, "QuestTrackerCanvas", sortingOrder: 20);
 
             // Anchor root panel to top-right corner with a small margin.
@@ -210,6 +215,15 @@ namespace LitIso.UI.InGame
             bool show = _hasQuest && mode == FoundationHudViewMode.Adventure;
             if (_root != null && _root.activeSelf != show)
                 _root.SetActive(show);
+        }
+
+        void HandleTextScaleChanged(float _)
+        {
+            var hasQuest = _hasQuest;
+            BuildUI();
+            _hasQuest = hasQuest;
+            Refresh();
+            ApplyHudViewMode(FoundationUiCoordinator.CurrentHudViewMode);
         }
     }
 }
