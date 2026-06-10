@@ -133,7 +133,32 @@ def hard_alpha(image: Image.Image, threshold: int = 80) -> Image.Image:
     return rgba
 
 
-def normalize_frame(source: Path, target: Path, target_size: int, max_fill: float = 0.86) -> dict[str, Any]:
+def palette_from_frame(frame: Image.Image, colors: int = 48) -> Image.Image:
+    rgba = hard_alpha(frame)
+    alpha = rgba.getchannel("A")
+    rgb = Image.new("RGB", rgba.size, (0, 0, 0))
+    rgb.paste(rgba.convert("RGB"), mask=alpha)
+    return rgb.quantize(colors=colors, method=Image.Quantize.FASTOCTREE)
+
+
+def lock_to_palette(frame: Image.Image, palette: Image.Image) -> Image.Image:
+    rgba = hard_alpha(frame)
+    alpha = rgba.getchannel("A")
+    rgb = Image.new("RGB", rgba.size, (0, 0, 0))
+    rgb.paste(rgba.convert("RGB"), mask=alpha)
+    locked = rgb.quantize(palette=palette).convert("RGBA")
+    locked.putalpha(alpha)
+    return locked
+
+
+def normalize_frame(
+    source: Path,
+    target: Path,
+    target_size: int,
+    max_fill: float = 0.86,
+    palette: Image.Image | None = None,
+    vertical_offset: int = 0,
+) -> dict[str, Any]:
     image = hard_alpha(Image.open(source))
     bbox = image.getbbox()
     if bbox is None:
@@ -146,9 +171,11 @@ def normalize_frame(source: Path, target: Path, target_size: int, max_fill: floa
     resized = crop.resize(new_size, Image.Resampling.NEAREST)
     canvas = Image.new("RGBA", (target_size, target_size), (0, 0, 0, 0))
     x = (target_size - resized.width) // 2
-    y = target_size - resized.height - max(2, target_size // 16)
+    y = target_size - resized.height - max(2, target_size // 16) + vertical_offset
     canvas.alpha_composite(resized, (x, max(0, y)))
     canvas = hard_alpha(canvas)
+    if palette is not None:
+        canvas = lock_to_palette(canvas, palette)
     target.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(target)
     return {
@@ -156,8 +183,17 @@ def normalize_frame(source: Path, target: Path, target_size: int, max_fill: floa
         "target": str(target),
         "source_bbox": list(bbox),
         "target_size": [target_size, target_size],
+        "vertical_offset": vertical_offset,
         "content_bbox": list(canvas.getbbox() or (0, 0, 0, 0)),
     }
+
+
+def phase_output_bob_pixels(phase: str) -> int:
+    if phase in {"near_contact", "far_contact"}:
+        return 2
+    if phase in {"near_forward", "far_forward", "recover"}:
+        return -2
+    return 0
 
 
 def make_review_scale(source: Path, target: Path, scale: int = 4) -> None:
@@ -223,7 +259,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--template-denoise", type=float, default=0.55)
     parser.add_argument("--style-weight", type=float, default=0.58)
     parser.add_argument("--control-strength", type=float, default=0.86)
+    parser.add_argument("--anchor-template-denoise", type=float, default=None)
+    parser.add_argument("--anchor-style-weight", type=float, default=None)
+    parser.add_argument("--anchor-control-strength", type=float, default=None)
     parser.add_argument("--control-net", default="control_v11p_sd15_openpose.pth")
+    parser.add_argument("--palette-lock", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
@@ -259,9 +299,13 @@ def main() -> int:
     python_exe = args.python or default_python(project_root)
     frame_results: list[dict[str, Any]] = []
     failures: list[str] = []
+    cleaned_outputs: dict[int, Path] = {}
     frame_count = len(records)
     for record in records:
         frame_index = int(record["frame_index"])
+        frame_template_denoise = args.anchor_template_denoise if frame_index == 0 and args.anchor_template_denoise is not None else args.template_denoise
+        frame_style_weight = args.anchor_style_weight if frame_index == 0 and args.anchor_style_weight is not None else args.style_weight
+        frame_control_strength = args.anchor_control_strength if frame_index == 0 and args.anchor_control_strength is not None else args.control_strength
         pose_png = project_root / "Tools" / "SpriteForge" / "poses" / record["pose_png"]
         job_name = f"spriteforge_{args.character}_{args.action}_{args.direction.lower()}_f{frame_index:03d}"
         request_path = request_dir / f"frame_{frame_index:03d}.json"
@@ -281,10 +325,10 @@ def main() -> int:
             "batch_count": 1,
             "reference_image": rel(project_root, character_ref),
             "style_reference_image": rel(project_root, character_ref),
-            "template_guidance": {"enabled": True, "denoise": args.template_denoise},
+            "template_guidance": {"enabled": True, "denoise": frame_template_denoise},
             "style_guidance": {
                 "enabled": True,
-                "weight": args.style_weight,
+                "weight": frame_style_weight,
                 "start_at": 0.0,
                 "end_at": 0.72,
                 "weight_type": "style transfer",
@@ -294,14 +338,16 @@ def main() -> int:
                 "type": "openpose",
                 "control_image_path": rel(project_root, pose_png),
                 "control_net": args.control_net,
-                "strength": args.control_strength,
+                "strength": frame_control_strength,
                 "start_percent": 0.0,
                 "end_percent": 0.86,
             },
         }
         write_json(request_path, request)
         worker_manifest = worker_manifest_dir / f"frame_{frame_index:03d}.json"
-        cmd = worker_command(python_exe, project_root, request_path, raw_root, worker_clean_root, worker_manifest, defaults, args.dry_run)
+        frame_defaults = dict(defaults)
+        frame_defaults["denoise"] = frame_template_denoise
+        cmd = worker_command(python_exe, project_root, request_path, raw_root, worker_clean_root, worker_manifest, frame_defaults, args.dry_run)
         completed = run_command(cmd, project_root)
         frame_result: dict[str, Any] = {
             "frame_index": frame_index,
@@ -310,6 +356,11 @@ def main() -> int:
             "request_path": rel(project_root, request_path),
             "worker_manifest": rel(project_root, worker_manifest),
             "worker_returncode": completed.returncode,
+            "settings": {
+                "template_denoise": frame_template_denoise,
+                "style_weight": frame_style_weight,
+                "control_strength": frame_control_strength,
+            },
         }
         if completed.returncode != 0:
             error = completed.stderr.strip() or completed.stdout.strip() or f"worker failed for frame {frame_index}"
@@ -324,12 +375,32 @@ def main() -> int:
                 failures.append(error)
             else:
                 cleaned_path = project_root / output["cleaned_path"]
-                frame_path = frames_dir / f"frame_{frame_index:03d}.png"
-                frame_result.update(normalize_frame(cleaned_path, frame_path, args.target_size))
+                cleaned_outputs[frame_index] = cleaned_path
+                frame_result["source"] = str(cleaned_path)
         frame_results.append(frame_result)
 
     pack_result: dict[str, Any] = {}
     if not args.dry_run and not failures:
+        palette: Image.Image | None = None
+        for frame_result in sorted(frame_results, key=lambda item: int(item["frame_index"])):
+            frame_index = int(frame_result["frame_index"])
+            cleaned_path = cleaned_outputs[frame_index]
+            frame_path = frames_dir / f"frame_{frame_index:03d}.png"
+            if frame_index == 0:
+                frame_result.update(normalize_frame(cleaned_path, frame_path, args.target_size))
+                if args.palette_lock:
+                    palette = palette_from_frame(Image.open(frame_path).convert("RGBA"))
+            else:
+                frame_result.update(
+                    normalize_frame(
+                        cleaned_path,
+                        frame_path,
+                        args.target_size,
+                        palette=palette,
+                        vertical_offset=phase_output_bob_pixels(str(frame_result.get("phase", ""))),
+                    )
+                )
+
         pack_cmd = [
             python_exe,
             str(project_root / "Tools" / "SpriteForge" / "spriteforge_pack.py"),
@@ -375,7 +446,11 @@ def main() -> int:
             "template_denoise": args.template_denoise,
             "style_weight": args.style_weight,
             "control_strength": args.control_strength,
+            "anchor_template_denoise": args.anchor_template_denoise,
+            "anchor_style_weight": args.anchor_style_weight,
+            "anchor_control_strength": args.anchor_control_strength,
             "control_net": args.control_net,
+            "palette_lock": args.palette_lock,
         },
         "frames": frame_results,
         "pack": pack_result,

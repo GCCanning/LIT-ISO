@@ -33,7 +33,7 @@
     512
   ],
   "background": "transparent",
-  "pose_library_version": "0.2.0-p1-idle-walk",
+  "pose_library_version": "0.2.1-p2-walk-readability",
   "source": {
     "method": "deterministic_body18_openpose_skeletons",
     "derived_from": "Tools/AssetForge/build_litiso_openpose_direction_library.py geometry conventions",

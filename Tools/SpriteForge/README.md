@@ -29,6 +29,15 @@ C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_lane_a_o
 The human review image for the P2 gate is
 `Tools/SpriteForge/out/witch/walk/S/preview_x4.png`.
 
+For the P2 conditional-pass fix sweep:
+
+```powershell
+.\Tools\SpriteForge\run_lane_a_walk_s_witch_fix_sweep.ps1
+```
+
+The selected fix artifact is
+`Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/preview_x4.png`.
+
 ## Output contract (per character/action/direction)
 
 ```

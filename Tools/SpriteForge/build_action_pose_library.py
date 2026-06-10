@@ -98,11 +98,11 @@ ACTION_PHASES = {
     ],
     "walk": [
         Phase("anchor"),
-        Phase("near_forward", bob=-2, torso_sway=2, head_sway=1, near_leg=34, far_leg=-22, near_arm=-12, far_arm=10, lift_near=8),
-        Phase("near_contact", bob=1, torso_sway=1, head_sway=0, near_leg=18, far_leg=-12, near_arm=-6, far_arm=5),
-        Phase("far_forward", bob=-2, torso_sway=-2, head_sway=-1, near_leg=-22, far_leg=34, near_arm=10, far_arm=-12, lift_far=8),
-        Phase("far_contact", bob=1, torso_sway=-1, head_sway=0, near_leg=-12, far_leg=18, near_arm=5, far_arm=-6),
-        Phase("recover", bob=0, torso_sway=0, head_sway=0, near_leg=8, far_leg=-8, near_arm=-2, far_arm=2),
+        Phase("near_forward", bob=-14, torso_sway=3, head_sway=2, near_leg=44, far_leg=-29, near_arm=-16, far_arm=13, lift_near=12),
+        Phase("near_contact", bob=12, torso_sway=2, head_sway=0, near_leg=24, far_leg=-16, near_arm=-8, far_arm=7),
+        Phase("far_forward", bob=-14, torso_sway=-3, head_sway=-2, near_leg=-29, far_leg=44, near_arm=13, far_arm=-16, lift_far=12),
+        Phase("far_contact", bob=12, torso_sway=-2, head_sway=0, near_leg=-16, far_leg=24, near_arm=7, far_arm=-8),
+        Phase("recover", bob=-8, torso_sway=0, head_sway=0, near_leg=11, far_leg=-11, near_arm=-3, far_arm=3),
     ],
 }
 
@@ -456,7 +456,7 @@ def build_library(poses_root: Path, version: str, replace: bool) -> dict:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build SpriteForge P1 action pose library.")
     parser.add_argument("--poses-root", type=Path, default=Path(__file__).resolve().parent / "poses")
-    parser.add_argument("--version", default="0.2.0-p1-idle-walk")
+    parser.add_argument("--version", default="0.2.1-p2-walk-readability")
     parser.add_argument("--replace", action="store_true")
     return parser.parse_args()
 

@@ -1,8 +1,8 @@
 {
   "schema": "lit-iso.spriteforge.p1-gate-report.v1",
-  "checked_utc": "2026-06-10T18:37:25.511973+00:00",
+  "checked_utc": "2026-06-10T19:55:12.674454+00:00",
   "poses_root": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses",
-  "version": "0.2.0-p1-idle-walk",
+  "version": "0.2.1-p2-walk-readability",
   "status": "pass",
   "issues": [],
   "warnings": [],
