@@ -14,6 +14,15 @@ namespace IsoCore.Foundation
 
         public int SortingOrder => _renderer != null ? _renderer.sortingOrder : 0;
         public Vector3 HighlightPosition => transform.position;
+        public float HoverHighlightScale => Def != null
+            ? Mathf.Clamp(Mathf.Max(Def.FootprintWidth, Def.FootprintHeight) * 0.95f, 1f, 3.5f)
+            : 1f;
+        public float HoverLift => Def != null
+            ? Mathf.Clamp(0.06f + Def.heightUnits * 0.04f, 0.06f, 0.24f)
+            : 0.08f;
+        public Color HoverHighlightColor => Def != null && Def.interaction == InteractionKind.Entrance
+            ? new Color(0.60f, 0.82f, 1f, 0.82f)
+            : new Color(1f, 0.94f, 0.62f, 0.82f);
 
         public void Init(PlaceableDefinition def, IsoWorld world, int wx, int wy)
         {

@@ -540,7 +540,7 @@ namespace IsoCore.Foundation
             go.transform.position = pos;
             sr.sortingOrder = IsoGrid.SortingOrder(wx, wy, h, IsoGrid.LayerProp) + sortingOffset;
             var deco = go.AddComponent<FoundationInstanceDecoration>();
-            deco.Init(label, wx, wy, sr, exitPortal);
+            deco.Init(label, wx, wy, sr, exitPortal, false, false, Mathf.Max(1, footprintW), Mathf.Max(1, footprintH), Mathf.Abs(yOffset) + 0.06f);
             if (exitPortal)
                 AttachPortalVisual(go, sr, _activeDungeonTier > 0 ? _activeDungeonTier : 1, 0.92f);
             bool isWall = !string.IsNullOrWhiteSpace(label) &&
@@ -591,7 +591,7 @@ namespace IsoCore.Foundation
                 go.transform.position = pos;
                 sr.sortingOrder = IsoGrid.SortingOrder(d.x, d.y, h, IsoGrid.LayerProp);
                 var deco = go.AddComponent<FoundationInstanceDecoration>();
-                deco.Init(isExit ? "Dungeon Exit" : "Dungeon Decoration", d.x, d.y, sr, false, isExit, false);
+                deco.Init(isExit ? "Dungeon Exit" : "Dungeon Decoration", d.x, d.y, sr, false, isExit, false, 1, 1, Mathf.Abs(d.yOffset) + 0.08f);
                 if (isExit)
                     AttachPortalVisual(go, sr, _activeDungeonTier > 0 ? _activeDungeonTier : 1, 0.98f);
                 FoundationDepthPolish.Attach(go,

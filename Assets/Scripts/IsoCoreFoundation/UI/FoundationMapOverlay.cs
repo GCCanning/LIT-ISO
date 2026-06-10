@@ -28,6 +28,8 @@ namespace IsoCore.Foundation
         bool _panningLarge;
         Vector2 _panStartMouse;
         Vector2 _panStart;
+        GUISkin _readableSkin;
+        float _readableSkinTextScale = -1f;
 
         const int ExploreRadius = 11;
         const float ScanInterval = 0.20f;
@@ -116,6 +118,8 @@ namespace IsoCore.Foundation
                 return;
 
             var oldMatrix = GUI.matrix;
+            var oldSkin = GUI.skin;
+            GUI.skin = ReadableSkin();
             float scale = FoundationUiCoordinator.UiScale;
             if (Mathf.Abs(scale - 1f) > 0.01f)
                 GUIUtility.ScaleAroundPivot(new Vector2(scale, scale), Vector2.zero);
@@ -136,6 +140,7 @@ namespace IsoCore.Foundation
                 DrawLargeMap(_largeRect);
             }
 
+            GUI.skin = oldSkin;
             GUI.matrix = oldMatrix;
         }
 
@@ -275,13 +280,13 @@ namespace IsoCore.Foundation
         void DrawLargeMap(Rect r)
         {
             DrawPanel(r, new Color(0.025f, 0.025f, 0.032f, 0.96f));
-            GUI.Label(new Rect(r.x + 18f, r.y + 10f, r.width - 36f, 24f),
+            GUI.Label(new Rect(r.x + 18f, r.y + 10f, r.width - 36f, 44f),
                 IsDungeonMap
-                    ? $"Dungeon Map - {_instances.ActiveDisplayName} T{_instances.ActiveDungeonTier}   M close | drag map to pan | wheel zoom | Alt drag/resize"
-                    : "Explored Map   M close | drag map to pan | wheel zoom | Alt drag/resize HUD/map | Alt+Shift+R reset layout");
+                    ? $"Dungeon Map - {_instances.ActiveDisplayName} T{_instances.ActiveDungeonTier}\nM close | drag map to pan | wheel zoom | Alt drag/resize"
+                    : "Explored Map\nM close | drag map to pan | wheel zoom | Alt drag/resize HUD/map | Alt+Shift+R reset layout");
 
-            Rect body = new Rect(r.x + 18f, r.y + 42f, r.width - 220f, r.height - 62f);
-            Rect legend = new Rect(body.xMax + 16f, body.y, 184f, body.height);
+            Rect body = new Rect(r.x + 18f, r.y + 60f, r.width - 252f, r.height - 82f);
+            Rect legend = new Rect(body.xMax + 16f, body.y, 216f, body.height);
             if (IsDungeonMap)
                 DrawDungeonMapCells(body);
             else
@@ -305,6 +310,7 @@ namespace IsoCore.Foundation
                     continue;
                 var rect = CellRect(x, y, minX, maxY, cell, ox, oy);
                 DrawRect(rect, CellColor(x, y));
+                DrawCellBorder(rect, new Color(0f, 0f, 0f, 0.16f));
                 DrawCellMarkers(x, y, rect, cell, false);
             }
 
@@ -330,6 +336,7 @@ namespace IsoCore.Foundation
 
                 var rect = CellRect(c.x, c.y, minX, maxY, cell, ox, oy);
                 DrawRect(rect, CellColor(c.x, c.y));
+                DrawCellBorder(rect, new Color(0f, 0f, 0f, 0.16f));
                 DrawCellMarkers(c.x, c.y, rect, cell, false);
             }
 
@@ -362,6 +369,7 @@ namespace IsoCore.Foundation
                 if (!Overlaps(rect, r))
                     continue;
                 DrawRect(rect, CellColor(x, y));
+                DrawCellBorder(rect, new Color(0f, 0f, 0f, 0.20f));
                 DrawCellMarkers(x, y, rect, cell, true);
             }
 
@@ -396,6 +404,7 @@ namespace IsoCore.Foundation
                     continue;
 
                 DrawRect(rect, CellColor(c.x, c.y));
+                DrawCellBorder(rect, new Color(0f, 0f, 0f, 0.20f));
                 DrawCellMarkers(c.x, c.y, rect, cell, true);
             }
 
@@ -509,8 +518,10 @@ namespace IsoCore.Foundation
         void DrawLegend(Rect r)
         {
             DrawPanel(r, new Color(0.035f, 0.04f, 0.052f, 0.92f));
+            float textScale = Mathf.Clamp(PlayerPrefs.GetFloat("ui.textScale", 1.08f), 0.8f, 1.45f);
             float y = r.y + 12f;
-            GUI.Label(new Rect(r.x + 12f, y, r.width - 24f, 20f), "Legend"); y += 28f;
+            GUI.Label(new Rect(r.x + 12f, y, r.width - 24f, Mathf.Max(20f, 20f * textScale)), "Legend");
+            y += Mathf.Max(28f, 28f * textScale);
             LegendRow(r.x + 12f, ref y, new Color(1f, 0.88f, 0.25f, 1f), "Player");
             LegendRow(r.x + 12f, ref y, Color.white, "Spawn/Home");
             LegendRow(r.x + 12f, ref y, new Color(0.55f, 0.65f, 1f, 1f), "Portal");
@@ -525,8 +536,8 @@ namespace IsoCore.Foundation
             }
             LegendRow(r.x + 12f, ref y, new Color(0.18f, 0.38f, 0.72f, 1f), "Water");
             LegendRow(r.x + 12f, ref y, new Color(0.42f, 0.74f, 0.34f, 1f), "Biome");
-            y += 16f;
-            GUI.Label(new Rect(r.x + 12f, y, r.width - 24f, 78f),
+            y += Mathf.Max(12f, 12f * textScale);
+            GUI.Label(new Rect(r.x + 12f, y, r.width - 24f, Mathf.Max(78f, 78f * textScale)),
                 IsDungeonMap
                     ? $"Dungeon cells: {_activeInstanceCells.Count}\nRooms: {_instances.SnapshotActiveDungeonRoomMarkers().Length}\nZoom: {_largeZoom:0.00}x"
                     : $"Explored cells: {_explored.Count}\nZoom: {_largeZoom:0.00}x\nAlt+drag panels to author your layout.");
@@ -535,8 +546,8 @@ namespace IsoCore.Foundation
         void LegendRow(float x, ref float y, Color color, string label)
         {
             DrawRect(new Rect(x, y + 4f, 14f, 14f), color);
-            GUI.Label(new Rect(x + 22f, y, 140f, 22f), label);
-            y += 24f;
+            GUI.Label(new Rect(x + 22f, y, 184f, 22f), label);
+            y += 25f;
         }
 
         void GetExploredBounds(out int minX, out int minY, out int maxX, out int maxY)
@@ -615,6 +626,31 @@ namespace IsoCore.Foundation
             GUI.color = color;
             GUI.DrawTexture(r, _pixel);
             GUI.color = old;
+        }
+
+        void DrawCellBorder(Rect rect, Color color)
+        {
+            DrawRect(new Rect(rect.x, rect.y, rect.width, 1f), color);
+            DrawRect(new Rect(rect.x, rect.yMax - 1f, rect.width, 1f), color);
+            DrawRect(new Rect(rect.x, rect.y, 1f, rect.height), color);
+            DrawRect(new Rect(rect.xMax - 1f, rect.y, 1f, rect.height), color);
+        }
+
+        GUISkin ReadableSkin()
+        {
+            float textScale = Mathf.Clamp(PlayerPrefs.GetFloat("ui.textScale", 1.08f), 0.8f, 1.45f);
+            if (_readableSkin != null && Mathf.Abs(_readableSkinTextScale - textScale) < 0.001f)
+                return _readableSkin;
+
+            _readableSkin = Instantiate(GUI.skin);
+            _readableSkinTextScale = textScale;
+            int scale = Mathf.Max(12, Mathf.RoundToInt(17f * textScale));
+            _readableSkin.label.fontSize = scale;
+            _readableSkin.label.normal.textColor = new Color(0.96f, 0.94f, 0.80f, 1f);
+            _readableSkin.button.fontSize = Mathf.Max(12, Mathf.RoundToInt(16f * textScale));
+            _readableSkin.window.fontSize = Mathf.Max(12, Mathf.RoundToInt(18f * textScale));
+            _readableSkin.box.fontSize = Mathf.Max(12, Mathf.RoundToInt(15f * textScale));
+            return _readableSkin;
         }
 
         static void GetActiveInstanceBounds(List<Vector2Int> cells, out int minX, out int minY, out int maxX, out int maxY)

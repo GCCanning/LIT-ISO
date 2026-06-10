@@ -9,31 +9,72 @@ namespace IsoCore.Foundation
     /// </summary>
     public class TargetHighlight : MonoBehaviour
     {
-        SpriteRenderer _sr;
+        SpriteRenderer _outline;
+        SpriteRenderer _glow;
         bool _active;
+        float _scale = 1f;
+        float _lift;
+        Color _color = new Color(1f, 0.95f, 0.5f, 0.72f);
         static Sprite _sprite;
 
         public void Build()
         {
-            _sr = gameObject.AddComponent<SpriteRenderer>();
-            _sr.sprite = _sprite != null ? _sprite : (_sprite = MakeDiamond());
-            _sr.sortingOrder = 8500;
-            _sr.color = new Color(1f, 0.95f, 0.5f, 0.6f);
+            _outline = gameObject.AddComponent<SpriteRenderer>();
+            _outline.sprite = _sprite != null ? _sprite : (_sprite = MakeDiamond());
+            _outline.sortingOrder = 8500;
+            _outline.color = _color;
+
+            var glowGo = new GameObject("TargetGlow");
+            glowGo.transform.SetParent(transform, false);
+            _glow = glowGo.AddComponent<SpriteRenderer>();
+            _glow.sprite = _outline.sprite;
+            _glow.sortingOrder = 8499;
+            _glow.color = new Color(_color.r, _color.g, _color.b, 0.18f);
+            _glow.transform.localScale = Vector3.one * 1.35f;
             gameObject.SetActive(false);
         }
 
         public void SetTarget(bool active, Vector3 worldPos)
         {
-            if (active != _active) { _active = active; gameObject.SetActive(active); }
-            if (active) transform.position = worldPos;
+            SetTarget(active, worldPos, 1f, new Color(1f, 0.95f, 0.5f, 0.72f), 0f);
+        }
+
+        public void SetTarget(bool active, Vector3 worldPos, float scale, Color color, float lift = 0f)
+        {
+            _active = active;
+            _scale = Mathf.Max(0.75f, scale);
+            _lift = Mathf.Max(0f, lift);
+            _color = color;
+            if (_outline != null)
+                _outline.color = _color;
+            if (_glow != null)
+                _glow.color = new Color(_color.r, _color.g, _color.b, 0.18f);
+
+            if (active)
+            {
+                transform.position = worldPos + Vector3.up * _lift;
+                transform.localScale = Vector3.one * _scale;
+            }
+            gameObject.SetActive(active);
         }
 
         void Update()
         {
-            if (!_active || _sr == null) return;
-            var c = _sr.color;
-            c.a = 0.35f + 0.30f * (0.5f + 0.5f * Mathf.Sin(Time.time * 6f));
-            _sr.color = c;
+            if (!_active || _outline == null) return;
+
+            float pulse = 1f + Mathf.Sin(Time.time * 6f) * 0.03f;
+            transform.localScale = Vector3.one * _scale * pulse;
+
+            float alpha = 0.30f + 0.25f * (0.5f + 0.5f * Mathf.Sin(Time.time * 6f));
+            var outline = _outline.color;
+            outline.a = alpha;
+            _outline.color = outline;
+            if (_glow != null)
+            {
+                var glow = _glow.color;
+                glow.a = alpha * 0.38f;
+                _glow.color = glow;
+            }
         }
 
         // 2:1 iso diamond outline, warm yellow, transparent fill.

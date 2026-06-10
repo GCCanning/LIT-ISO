@@ -41,6 +41,9 @@ namespace IsoCore.Foundation
         FoundationContextAction[] _contextActions = Array.Empty<FoundationContextAction>();
         Rect _contextRect;
         GUISkin _readableSkin;
+        float _readableSkinTextScale = -1f;
+
+        static float TextScale => Mathf.Clamp(PlayerPrefs.GetFloat("ui.textScale", 1.08f), 0.8f, 1.45f);
 
         public bool PointerOverUI
         {
@@ -74,10 +77,12 @@ namespace IsoCore.Foundation
             _contextActions = actions ?? Array.Empty<FoundationContextAction>();
 
             float scale = FoundationUiCoordinator.UiScale;
+            float textScale = TextScale;
             float sw = Screen.width / scale;
             float sh = Screen.height / scale;
-            float width = 310f;
-            float height = 46f + Mathf.Max(1, _contextActions.Length) * 44f;
+            float width = Mathf.Clamp(310f + (textScale - 1f) * 120f, 310f, 460f);
+            float rowHeight = Mathf.Max(36f, 36f * textScale);
+            float height = 50f + Mathf.Max(1, _contextActions.Length) * (rowHeight + 8f);
             float x = Mathf.Clamp(screenPosition.x / scale, 8f, sw - width - 8f);
             float y = Mathf.Clamp((Screen.height - screenPosition.y) / scale, 8f, sh - height - 8f);
             _contextRect = new Rect(x, y, width, height);
@@ -110,6 +115,7 @@ namespace IsoCore.Foundation
 
             float sw = Screen.width / scale;
             float sh = Screen.height / scale;
+            float textScale = TextScale;
             var oldSkin = GUI.skin;
             GUI.skin = ReadableSkin();
             bool showPassiveHud = showPassiveMessages &&
@@ -120,13 +126,13 @@ namespace IsoCore.Foundation
 
             if (showPassiveHud && !string.IsNullOrEmpty(_tutorial))
             {
-                var r = new Rect(20, 62, Mathf.Min(720f, sw - 40f), 76f);
+                var r = new Rect(20, 62, Mathf.Min(780f, sw - 40f), Mathf.Max(76f, 72f * textScale));
                 GUI.Box(r, GUIContent.none);
                 GUI.Label(new Rect(r.x + 12f, r.y + 8f, r.width - 24f, r.height - 16f), _tutorial);
             }
 
             if (showPassiveHud && !string.IsNullOrEmpty(_flash))
-                GUI.Label(new Rect(sw / 2f - 220f, sh - 160f, 440f, 32f), _flash);
+                GUI.Label(new Rect(sw / 2f - 240f, sh - 170f, 480f, Mathf.Max(32f, 30f * textScale)), _flash);
 
             GUI.skin = oldSkin;
             GUI.matrix = oldMatrix;
@@ -134,11 +140,14 @@ namespace IsoCore.Foundation
 
         void DrawContextWindow(int id)
         {
+            float textScale = TextScale;
+            float buttonHeight = Mathf.Max(34f, 34f * textScale);
+            float rowStep = buttonHeight + Mathf.Max(6f, 6f * textScale);
             float y = 30f;
             if (_contextActions.Length == 0)
             {
                 GUI.enabled = false;
-                GUI.Button(new Rect(10f, y, _contextRect.width - 20f, 36f), "No actions");
+                GUI.Button(new Rect(10f, y, _contextRect.width - 20f, buttonHeight), "No actions");
                 GUI.enabled = true;
             }
 
@@ -150,27 +159,31 @@ namespace IsoCore.Foundation
                     label += $" ({action.disabledReason})";
 
                 GUI.enabled = canClick;
-                if (GUI.Button(new Rect(10f, y, _contextRect.width - 20f, 36f), label))
+                if (GUI.Button(new Rect(10f, y, _contextRect.width - 20f, buttonHeight), label))
                 {
                     _contextOpen = false;
                     action.execute();
                 }
                 GUI.enabled = true;
-                y += 44f;
+                y += rowStep;
             }
 
-            GUI.DragWindow(new Rect(0, 0, 10000, 22));
+            GUI.DragWindow(new Rect(0, 0, 10000, Mathf.Max(22f, 22f * textScale)));
         }
 
         GUISkin ReadableSkin()
         {
-            if (_readableSkin != null) return _readableSkin;
+            float textScale = Mathf.Clamp(PlayerPrefs.GetFloat("ui.textScale", 1.08f), 0.8f, 1.45f);
+            if (_readableSkin != null && Mathf.Abs(_readableSkinTextScale - textScale) < 0.001f)
+                return _readableSkin;
+
             _readableSkin = Instantiate(GUI.skin);
-            _readableSkin.label.fontSize = 18;
+            _readableSkinTextScale = textScale;
+            _readableSkin.label.fontSize = Mathf.Max(12, Mathf.RoundToInt(18f * textScale));
             _readableSkin.label.normal.textColor = new Color(1f, 0.96f, 0.78f);
-            _readableSkin.button.fontSize = 17;
-            _readableSkin.window.fontSize = 18;
-            _readableSkin.box.fontSize = 17;
+            _readableSkin.button.fontSize = Mathf.Max(12, Mathf.RoundToInt(17f * textScale));
+            _readableSkin.window.fontSize = Mathf.Max(12, Mathf.RoundToInt(18f * textScale));
+            _readableSkin.box.fontSize = Mathf.Max(12, Mathf.RoundToInt(17f * textScale));
             return _readableSkin;
         }
     }

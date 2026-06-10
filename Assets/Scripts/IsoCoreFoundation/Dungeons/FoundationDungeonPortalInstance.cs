@@ -14,6 +14,9 @@ namespace IsoCore.Foundation
         public bool Completed { get; private set; }
         public int SortingOrder => _renderer != null ? _renderer.sortingOrder : 0;
         public Vector3 HighlightPosition => transform.position;
+        public float HoverHighlightScale => 1.25f;
+        public float HoverLift => 0.14f;
+        public Color HoverHighlightColor => FoundationPortalVisual.ColorForTier(Tier);
 
         SpriteRenderer _renderer;
         FoundationPortalVisual _visual;

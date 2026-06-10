@@ -95,25 +95,29 @@ namespace IsoCore.Foundation
 
             if (TryDecorationUnderCursor(out var decoration) && InRange(decoration.HighlightPosition))
             {
-                _highlight.SetTarget(true, decoration.HighlightPosition);
+                _highlight.SetTarget(true, decoration.HighlightPosition,
+                    decoration.HoverHighlightScale, decoration.HoverHighlightColor, decoration.HoverLift);
                 return;
             }
 
             if (TryPortalUnderCursor(out var portal) && InRange(portal.HighlightPosition))
             {
-                _highlight.SetTarget(true, portal.HighlightPosition);
+                _highlight.SetTarget(true, portal.HighlightPosition,
+                    portal.HoverHighlightScale, portal.HoverHighlightColor, portal.HoverLift);
                 return;
             }
 
             if (TryPlaceableUnderCursor(out var hoveredPlaceable) && InRange(hoveredPlaceable.HighlightPosition))
             {
-                _highlight.SetTarget(true, hoveredPlaceable.HighlightPosition);
+                _highlight.SetTarget(true, hoveredPlaceable.HighlightPosition,
+                    hoveredPlaceable.HoverHighlightScale, hoveredPlaceable.HoverHighlightColor, hoveredPlaceable.HoverLift);
                 return;
             }
 
             if (TryNodeUnderCursor(out var hoveredNode) && InRange(hoveredNode.HighlightPosition))
             {
-                _highlight.SetTarget(true, hoveredNode.HighlightPosition);
+                _highlight.SetTarget(true, hoveredNode.HighlightPosition,
+                    hoveredNode.HoverHighlightScale, hoveredNode.HoverHighlightColor, hoveredNode.HoverLift);
                 return;
             }
 

@@ -20,6 +20,8 @@ namespace IsoCore.Foundation
         FoundationBootstrap _bootstrap;
         FoundationInteractionOverlay _overlay;
 
+        const string TextScalePrefKey = "ui.textScale";
+
         void Awake()
         {
             _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
@@ -69,6 +71,8 @@ namespace IsoCore.Foundation
             go.AddComponent<StandaloneInputModule>();
         }
 
+        static float CurrentTextScale() => Mathf.Clamp(PlayerPrefs.GetFloat(TextScalePrefKey, 1.08f), 0.8f, 1.45f);
+
         void Build()
         {
             // Canvas (drawn above the HUD).
@@ -93,7 +97,7 @@ namespace IsoCore.Foundation
             _panelRoot = prt;
             prt.anchorMin = prt.anchorMax = new Vector2(0.5f, 0.5f);
             prt.pivot = new Vector2(0.5f, 0.5f);
-            prt.sizeDelta = new Vector2(560, 680);
+            prt.sizeDelta = new Vector2(560, 840);
             ApplyUiScale(PlayerPrefs.GetFloat("ui.scale", 1f));
 
             float y = 250f;
@@ -107,24 +111,28 @@ namespace IsoCore.Foundation
                 v => AudioListener.volume = v); y -= 56f;
             MakeSlider("Music", "vol_music", 0.7f, panel.transform, new Vector2(0, y), null); y -= 56f;
             MakeSlider("SFX", "vol_sfx", 1f, panel.transform, new Vector2(0, y), null); y -= 80f;
-            MakeSlider("UI Scale", "ui.scale", 1f, panel.transform, new Vector2(0, y), ApplyUiScale, 0.75f, 1.5f); y -= 80f;
+            MakeSlider("UI Scale", "ui.scale", 1f, panel.transform, new Vector2(0, y), ApplyUiScale, 0.75f, 1.75f); y -= 80f;
+            MakeSlider("Text Scale", TextScalePrefKey, 1.08f, panel.transform, new Vector2(0, y), ApplyTextScale, 0.8f, 1.45f); y -= 80f;
+            MakeSlider("Zoom Sensitivity", FoundationBootstrap.CameraZoomSensitivityPrefKey, 1f, panel.transform, new Vector2(0, y), null, 0.35f, 2.5f); y -= 80f;
 
             MakeButton("Save Game", panel.transform, new Vector2(0, y), SaveGame); y -= 64f;
             MakeButton("Save & Quit to Menu", panel.transform, new Vector2(0, y), SaveAndQuitToMenu); y -= 80f;
-
-            MakeLabel("WASD / Arrows: move    LMB: use/place/break    RMB: options/remove\n" +
-                      "I: inventory    C: craft    M: map    1-9 / scroll: hotbar    Ctrl +/-: zoom\n" +
-                      "Alt+drag HUD/map: move    Alt+corner drag: resize    Alt+Shift+R: reset layout    Esc: pause",
-                      panel.transform, new Vector2(0, y), 18, FontStyle.Normal,
-                      new Color(0.75f, 0.78f, 0.85f), 520);
         }
 
         void ApplyUiScale(float scale)
         {
-            scale = Mathf.Clamp(scale, 0.75f, 1.5f);
+            scale = Mathf.Clamp(scale, 0.75f, 1.75f);
             PlayerPrefs.SetFloat("ui.scale", scale);
+            PlayerPrefs.Save();
             if (_panelRoot != null)
                 _panelRoot.localScale = Vector3.one * scale;
+        }
+
+        void ApplyTextScale(float scale)
+        {
+            scale = Mathf.Clamp(scale, 0.8f, 1.45f);
+            PlayerPrefs.SetFloat(TextScalePrefKey, scale);
+            PlayerPrefs.Save();
         }
 
         void QuitToMenu()
@@ -187,13 +195,15 @@ namespace IsoCore.Foundation
             var go = new GameObject("Label");
             go.transform.SetParent(parent, false);
             var t = go.AddComponent<Text>();
-            t.font = _font; t.text = text; t.fontSize = size; t.fontStyle = style;
+            t.font = _font; t.text = text; t.fontStyle = style;
+            t.fontSize = Mathf.Max(12, Mathf.RoundToInt(size * CurrentTextScale()));
             t.alignment = TextAnchor.MiddleCenter; t.color = color;
             t.horizontalOverflow = HorizontalWrapMode.Wrap;
             var rt = t.rectTransform;
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = pos; rt.sizeDelta = new Vector2(width, size + 40);
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = new Vector2(width, Mathf.Max(size + 40, Mathf.RoundToInt(size * CurrentTextScale()) + 28));
             return t;
         }
 
@@ -231,8 +241,8 @@ namespace IsoCore.Foundation
 
             var fillArea = new GameObject("Fill Area");
             fillArea.transform.SetParent(sliderGo.transform, false);
-            var fart = fillArea.AddComponent<RectTransform>();
-            Stretch(fart);
+            var fillRt = fillArea.AddComponent<RectTransform>();
+            Stretch(fillRt);
             var fill = NewImage("Fill", fillArea.transform, new Color(0.45f, 0.75f, 0.55f, 1f));
             Stretch(fill.rectTransform);
 
@@ -244,6 +254,7 @@ namespace IsoCore.Foundation
             {
                 PlayerPrefs.SetFloat(prefKey, v);
                 extra?.Invoke(v);
+                PlayerPrefs.Save();
             });
         }
     }

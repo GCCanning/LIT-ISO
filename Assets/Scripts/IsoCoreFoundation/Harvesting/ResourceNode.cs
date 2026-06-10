@@ -24,6 +24,9 @@ namespace IsoCore.Foundation
         public float BreakProgress01 => _maxHits <= 0 ? 1f : 1f - _remainingHits / (float)_maxHits;
         public int SortingOrder => _renderer != null ? _renderer.sortingOrder : 0;
         public Vector3 HighlightPosition => transform.position;
+        public float HoverHighlightScale => Mathf.Clamp(Mathf.Max(1f, Def != null ? Def.widthUnits : 1f) * 1.08f, 1f, 1.9f);
+        public float HoverLift => Mathf.Clamp((Def != null ? Def.heightUnits : 1f) * 0.04f + 0.04f, 0.04f, 0.22f);
+        public Color HoverHighlightColor => new Color(0.55f, 0.98f, 0.58f, 0.82f);
 
         // Down-screen nudge (world units) that seats a prop into the front-centre of its
         // tile instead of on the tile's widest line (the 4-tile meeting points).
