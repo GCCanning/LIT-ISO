@@ -254,36 +254,3 @@ IntegratedSliceValidator + a visual play pass (Unity was holding the project
 lock, so I could not start a batch instance). No regression expected -- spawn
 clearing still returns flat walkable meadow. Tune the thresholds in-editor:
 real Unity Perlin has more range than my test mirror, so expect more tall cliffs.
-
-## 2026-06-10 - Claude Fable: Python world-gen preview landed in Tools/WorldGenPreview
-
-The PowerShell prototype is now a versioned Python tool:
-`Tools/WorldGenPreview/world_preview.py` (runs in ~0.8s vs ~30s for the PS1;
-needs only python3+Pillow). Same taxonomy contract, plus the polish backlog
-from WORLD_GEN_PROTOTYPE_HANDOFF.md is now implemented:
-
-- River deltas at the mouth + one-side widening for mature (2-cell) rivers.
-- Beach-only coves (noise-pocketed wider beaches).
-- Badlands mesas draw strata-block underlay stacks (banded sides, 014-016 x N).
-- Lush 040 patches use a smoothed cellular mask - no lone-speckle edges.
-- NEW: height tiers are quantile-relative to each landmass (top 20% = lvl1,
-  top 6% = lvl2), so EVERY seed gets highlands and sourced rivers - no more
-  flat-world fallback dependence on absolute elevation.
-- NEW: deep/shallow boundary de-speckled with an 8-neighbour majority filter
-  (3 passes); remaining 2x2+ navy patches read as reefs and are intentional.
-
-QA: seeds 1207 / 4242 / 7777 rendered and visually inspected (continent w/
-mesa+river-to-sea-delta; compact continent w/ pond system; archipelago w/
-lagoons). Render: `python3 world_preview.py --seed N --out DIR [--crops]`.
-Tile root defaults to the in-repo pack copy under Docs/handoff/tile-pack-for-codex.
-PNG renders are NOT committed (LFS unavailable in my environment).
-
-Run-state note for next session: workspace git index writes are flaky on the
-session mount - if you see "index file corrupt", rm .git/index + git reset,
-and use GIT_INDEX_FILE=/tmp/litiso-index for staging. Never git add binaries
-from the sandbox (git-lfs missing; text paths only).
-
-Next up (not started): Phase 1 play-damaging bug fixes from
-Optimization_Redundancy_Security_Bug_Review.md (#4 refund deletion, #5 harvest
-overflow, #23 dead-player revive, #22 scene overwrite, #8 duplicate notifier
-buses, #27 starter-quest double-start).

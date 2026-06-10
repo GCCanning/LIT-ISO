@@ -70,10 +70,7 @@ namespace IsoCore.Foundation
             var sand2 = Block("sand_2", "sand_blocks", new Color(0.82f, 0.74f, 0.40f), CollisionMode.Walkable);
             var snow1 = Block("snow_1", "snow_blocks", new Color(0.91f, 0.94f, 0.97f), CollisionMode.Walkable);
             var snow2 = Block("snow_2", "snow_blocks", new Color(0.85f, 0.88f, 0.93f), CollisionMode.Walkable);
-            var badlands1 = Block("badlands_1", "badlands_blocks", new Color(0.36f, 0.24f, 0.16f), CollisionMode.Walkable);
-            var badlands2 = Block("badlands_2", "badlands_blocks", new Color(0.32f, 0.21f, 0.14f), CollisionMode.Walkable);
             Block("water", "water_blocks", new Color(0.20f, 0.45f, 0.75f), CollisionMode.Water);
-            Block("water_deep", "water_blocks", new Color(0.10f, 0.22f, 0.45f), CollisionMode.Water);
             Block("dirt", "dirt_blocks", new Color(0.45f, 0.32f, 0.20f), CollisionMode.Walkable);
             Block("stone_block", "stone_blocks", new Color(0.55f, 0.55f, 0.58f), CollisionMode.Solid);
             Block("stone_path", "path_blocks", new Color(0.62f, 0.62f, 0.64f), CollisionMode.Decorative);
@@ -95,7 +92,6 @@ namespace IsoCore.Foundation
             var grassGroup = Group("grass_blocks", grass1, grass2, grass3);
             var sandGroup = Group("sand_blocks", sand1, sand2);
             var snowGroup = Group("snow_blocks", snow1, snow2);
-            var badlandsGroup = Group("badlands_blocks", badlands1, badlands2);
             var dungeonFloorGroup = Group("dungeon_floor_blocks", dungeonFloor1, dungeonFloor2, dungeonFloor3, dungeonFloor4, dungeonFloor5);
 
             // ---- Items ----
@@ -302,15 +298,6 @@ namespace IsoCore.Foundation
                 new[] { new ItemDrop("wood", 1, 2) });
             var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 4, 0.4f,
                 new[] { new ItemDrop("wood", 2, 3) });
-            // Pack props: foam-footed shore stone (water edges), grass tuft, and a pink
-            // tulip cluster as a flower variant (art in Resources/Decorations).
-            var shoreStone = Node("shore_stone", new Color(0.55f, 0.58f, 0.60f), ToolType.Pickaxe, false, 5, 0.7f,
-                new[] { new ItemDrop("stone", 1, 2) });
-            shoreStone.blocksMovement = true;
-            var tuft = Node("tuft", new Color(0.30f, 0.55f, 0.28f), ToolType.None, false, 2, 0.3f,
-                new[] { new ItemDrop("fiber", 1, 2) });
-            var tulip = Node("flower_tulip", new Color(0.80f, 0.40f, 0.70f), ToolType.None, false, 2, 0.3f,
-                new[] { new ItemDrop("fiber", 1, 1) });
 
             // ---- Mobs ----
             MobDefinition Mob(string id, Color col, MobBehavior beh, float speed, float wander, ItemDrop[] drops)
@@ -363,28 +350,19 @@ namespace IsoCore.Foundation
             BiomeMobSpawn MS(MobDefinition m, float w) => new BiomeMobSpawn { mob = m, weight = w };
 
             Biome("meadow", 0.55f, 0.55f, grassGroup, 1, 2,
-                new[] { NS(tree, 0.05f), NS(rock, 0.02f), NS(bush, 0.05f), NS(copperVein, 0.008f),
-                        NS(flower, 0.03f), NS(tulip, 0.012f), NS(tuft, 0.03f),
-                        NS(log, 0.005f), NS(stump, 0.005f) },
+                new[] { NS(tree, 0.05f), NS(rock, 0.02f), NS(bush, 0.05f), NS(copperVein, 0.008f) },
                 new[] { MS(deer, 1f), MS(slime, 1f) }, new Color(0.4f, 0.7f, 0.4f));
             Biome("forest", 0.45f, 0.85f, grassGroup, 1, 3,
-                new[] { NS(tree, 0.14f), NS(bush, 0.06f), NS(rock, 0.02f), NS(copperVein, 0.01f),
-                        NS(flower, 0.012f), NS(tuft, 0.02f), NS(log, 0.01f), NS(stump, 0.01f) },
+                new[] { NS(tree, 0.14f), NS(bush, 0.06f), NS(rock, 0.02f), NS(copperVein, 0.01f) },
                 new[] { MS(deer, 1f), MS(fox, 1f), MS(slime, 0.5f) }, new Color(0.25f, 0.55f, 0.30f));
-            // Desert renders as pack badlands (dark cracked floor) - the pack has no
-            // sandy-desert family; sand stays reserved for beaches and river banks.
-            Biome("desert", 0.88f, 0.15f, badlandsGroup, 1, 1,
+            Biome("desert", 0.88f, 0.15f, sandGroup, 1, 1,
                 new[] { NS(rock, 0.05f), NS(copperVein, 0.015f) },
                 new[] { MS(slime, 1f) }, new Color(0.85f, 0.78f, 0.45f));
             Biome("beach", 0.70f, 0.45f, sandGroup, 1, 1,
                 new[] { NS(rock, 0.02f), NS(bush, 0.02f) },
                 new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.90f, 0.84f, 0.55f));
-            // Cold biome is a TAIGA: pine-heavy forest on grass ground (Minecraft-style
-            // rule - trees grow on grass, never on bare stone/snow plates). The pack has
-            // no snow family, so snowGroup stays unused until real snow art exists.
-            Biome("snow", 0.12f, 0.45f, grassGroup, 1, 2,
-                new[] { NS(tree, 0.04f), NS(pine, 0.05f), NS(rock, 0.03f), NS(copperVein, 0.008f),
-                        NS(tuft, 0.02f), NS(log, 0.008f), NS(stump, 0.008f) },
+            Biome("snow", 0.12f, 0.45f, snowGroup, 1, 2,
+                new[] { NS(tree, 0.04f), NS(pine, 0.05f), NS(rock, 0.03f), NS(copperVein, 0.008f) },
                 new[] { MS(deer, 1f), MS(fox, 0.5f) }, new Color(0.9f, 0.93f, 0.97f));
 
             // ---- Recipes ----
@@ -1011,4 +989,30 @@ namespace IsoCore.Foundation
             DungeonResult("rootcellar_first_return", "Rootcellar First Return", "rootcellar_starter",
                 "Returned with proof from the old food stores beneath Mosswake.",
                 new[] { X(FoundationXpChannel.DungeonClearance, "rootcellar_clearance", 20), X(FoundationXpChannel.AdventurerRank, "adventurer_rank", 8) },
-                new[] { T("first_night_survivor", 1),
+                new[] { T("first_night_survivor", 1), T("returned_for_them", 1) },
+                new[] { A("root", 2), A("glimmer", 1) },
+                new[] { Reward(FoundationRewardType.MemoryPage, "old_lamps_01"), Reward(FoundationRewardType.Xp, "character", 50) });
+            Dungeon("rootcellar_starter", "Mosswake Rootcellar", "Root Cellar", 1, 2, "rootcellar_first_return",
+                "An old cellar where roots, pests, and stale System hums gather under the first fields.",
+                "apple", "carrot", "wood_axe");
+            Expedition("rootcellar_day_two_probe", "Day Two Rootcellar Probe", "rootcellar_starter", 4, 2,
+                "apple", "wood_axe");
+
+            WorldEvent("goblin_raid_chain", "Goblin Raid Chain", 2, "ignored_road_threat", "settlement_pressure",
+                "World event: tracks suggest a raid chain forming beyond the safe road.");
+            WorldEvent("dangerous_mob_sighting", "Dangerous Mob Sighting", 1, "night_noise", "local_warning",
+                "World event: something large crossed the outer meadow after dusk.");
+            WorldEvent("resource_bloom", "Resource Bloom", 1, "rain_after_clear", "rare_nodes",
+                "World event: fresh rain has woken rare sprouts and exposed stone seams.");
+            WorldEvent("rival_npc_party", "Rival NPC Party", 1, "guild_board_day_two", "social_pressure",
+                "World event: another Unwritten party accepted a nearby contract.");
+
+            BoardEntry("board_rootcellar_probe", "Rootcellar Probe", "the_rootcellar_below", "resource_bloom", 0, 3,
+                "Bring back proof from the old cellar before pests chew through the stores.");
+            BoardEntry("board_south_path", "South Path Repair", "fixing_the_south_path", "dangerous_mob_sighting", 0, 4,
+                "Clear and mark the south path so visitors stop losing half a day in brambles.");
+
+            return c;
+        }
+    }
+}
