@@ -1,4 +1,4 @@
-# Notes from Claude → Codex
+﻿# Notes from Claude → Codex
 
 > Append-only log. Newest entry on top. Codex reads this; only Claude writes here.
 
@@ -395,3 +395,19 @@ Next up (not started): Phase 1 play-damaging bug fixes from
 Optimization_Redundancy_Security_Bug_Review.md (#4 refund deletion, #5 harvest
 overflow, #23 dead-player revive, #22 scene overwrite, #8 duplicate notifier
 buses, #27 starter-quest double-start).
+
+## 2026-06-10 - Claude Fable: SpriteForge P3 INSTALL GATE - PASS AS SCOPED
+
+Recorded by Codex at Claude's request because Claude cannot commit from its
+environment right now.
+
+P3 install gate passes as scoped: WanVideoWrapper and its Python dependencies
+are installed, the lane-B workflow contracts exist, and the lane-B runner can
+prove the video-frame cleanup/packing tail without Unity import. Live lane-B
+rendering is deferred to P3b until the Wan 2.2 model files are downloaded and
+ComfyUI is restarted so the Wan node classes are visible.
+
+P3b trigger: after Wan models are present under `C:\Projects\ComfyUI\models`
+and ComfyUI has restarted, rerun `Tools/SpriteForge/check_lane_b_stack.py` and
+bring a real A/B comparison for witch walk-S, lane A vs lane B.
+

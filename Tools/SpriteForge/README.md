@@ -56,6 +56,19 @@ C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\check_lane_b_stac
 .\Tools\SpriteForge\run_lane_b_walk_s_witch.ps1 -FromLaneAFrames
 ```
 
+Preferred Wan 2.2 5B model install:
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\download_wan22_models.py
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\check_lane_b_stack.py
+```
+
+Default model set:
+
+- `C:\Projects\ComfyUI\models\text_encoders\umt5-xxl-enc-bf16.safetensors`
+- `C:\Projects\ComfyUI\models\diffusion_models\Wan2_2-TI2V-5B-FastWanFullAttn_bf16.safetensors`
+- `C:\Projects\ComfyUI\models\vae\Wan2_2_VAE_bf16.safetensors`
+
 P3 review artifacts:
 
 - `Tools/SpriteForge/out/lane_b/p3_stack_report.json`

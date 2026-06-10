@@ -56,6 +56,27 @@ MODEL_BUCKETS = {
     "clip_vision": "CLIP vision/reference encoder",
 }
 
+PREFERRED_WAN22_5B_FASTWAN_FILES = {
+    "text_encoder": {
+        "bucket": "text_encoders",
+        "name": "umt5-xxl-enc-bf16.safetensors",
+        "expected_size": 11_361_845_464,
+        "source_url": "https://huggingface.co/Kijai/WanVideo_comfy/blob/main/umt5-xxl-enc-bf16.safetensors",
+    },
+    "diffusion_model": {
+        "bucket": "diffusion_models",
+        "name": "Wan2_2-TI2V-5B-FastWanFullAttn_bf16.safetensors",
+        "expected_size": 9_999_659_744,
+        "source_url": "https://huggingface.co/Kijai/WanVideo_comfy/blob/main/FastWan/Wan2_2-TI2V-5B-FastWanFullAttn_bf16.safetensors",
+    },
+    "vae": {
+        "bucket": "vae",
+        "name": "Wan2_2_VAE_bf16.safetensors",
+        "expected_size": 1_409_401_152,
+        "source_url": "https://huggingface.co/Kijai/WanVideo_comfy/blob/main/Wan2_2_VAE_bf16.safetensors",
+    },
+}
+
 PLACEHOLDER_PREFIXES = ("put_", "README", ".gitkeep")
 MODEL_EXTENSIONS = {".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".gguf"}
 
@@ -103,6 +124,38 @@ def model_files(root: Path, bucket: str) -> list[dict[str, Any]]:
     return hits
 
 
+def preferred_wan22_status(root: Path) -> dict[str, Any]:
+    files: dict[str, Any] = {}
+    missing: list[str] = []
+    wrong_size: list[str] = []
+    for role, data in PREFERRED_WAN22_5B_FASTWAN_FILES.items():
+        path = root / "models" / str(data["bucket"]) / str(data["name"])
+        exists = path.exists()
+        size = path.stat().st_size if exists else 0
+        expected_size = int(data["expected_size"])
+        status = "ok" if exists and size == expected_size else "missing"
+        if exists and size != expected_size:
+            status = "wrong_size"
+            wrong_size.append(role)
+        elif not exists:
+            missing.append(role)
+        files[role] = {
+            **data,
+            "path": str(path),
+            "exists": exists,
+            "size": size,
+            "size_mb": round(size / (1024 * 1024), 2) if exists else 0,
+            "status": status,
+        }
+    return {
+        "model_set": "wan22_5b_fastwan_bf16",
+        "files": files,
+        "missing": missing,
+        "wrong_size": wrong_size,
+        "ready": not missing and not wrong_size,
+    }
+
+
 def build_report(
     project_root: Path,
     comfy_root: Path,
@@ -132,6 +185,8 @@ def build_report(
         bucket for bucket in ("text_encoders", "diffusion_models", "vae")
         if not models[bucket]["files"]
     ]
+    preferred_models = preferred_wan22_status(comfy_root)
+    missing_preferred_models = preferred_models["missing"] + preferred_models["wrong_size"]
 
     vram_total_gb = None
     vram_free_gb = None
@@ -146,12 +201,12 @@ def build_report(
         status = "blocked_missing_python_dependencies"
     elif object_info is None:
         status = "installed_comfy_not_reachable"
-    elif missing_nodes and missing_model_buckets:
-        status = "installed_restart_required_missing_models"
+    elif missing_nodes and missing_preferred_models:
+        status = "installed_restart_required_missing_preferred_models"
     elif missing_nodes:
         status = "installed_restart_required"
-    elif missing_model_buckets:
-        status = "installed_missing_models"
+    elif missing_preferred_models:
+        status = "installed_missing_preferred_models"
     else:
         status = "ready_low_vram_risk" if (vram_total_gb or 0) < 12 else "ready"
 
@@ -184,6 +239,7 @@ def build_report(
         },
         "models": models,
         "missing_model_buckets": missing_model_buckets,
+        "preferred_wan22_5b_fastwan": preferred_models,
         "local_workflows": {
             "one_to_all_pose_i2v": {
                 "path": str(local_one_to_all),
