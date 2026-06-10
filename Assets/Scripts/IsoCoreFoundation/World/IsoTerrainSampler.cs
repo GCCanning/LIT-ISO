@@ -399,34 +399,23 @@ namespace IsoCore.Foundation
             return default;
         }
 
-        /// <summary>Finds a biome node by id, but only if it has art in Resources/Decorations
-        /// (otherwise it would render as an ugly placeholder box). Result is cached by the resolver.</summary>
-        BiomeNodeSpawn FindArtNode(BiomeDefinition biome, string id)
+        /// <summary>Rock-only decoration for sand cells (beach ring, river banks):
+        /// rare coarse-noise outcrop clumps, no vegetation — coasts read as mostly
+        /// clean sand with occasional stone. Mirrors the rock branch of
+        /// PickClusteredDecoration but at half density and with its own noise salts
+        /// so beach outcrops don't correlate with inland ones.</summary>
+        BiomeNodeSpawn PickRockOutcrop(int wx, int wy, BiomeDefinition biome)
         {
-            if (biome.nodes == null) return default;
-            foreach (var ns in biome.nodes)
-            {
-                if (ns.node == null || ns.node.id != id) continue;
-                if (DecorationSpriteResolver.Resolve(id) == null) return default;
-                return ns;
-            }
+            if (biome == null) return default;
+            var rock = FindArtNode(biome, "rock");
+            if (rock.node == null) return default;
+            float rockNoise = Perlin(wx, wy, _cfg.decoForestFrequency * 1.7f, 33, 34);
+            if (rockNoise > _cfg.decoRockClusterThreshold &&
+                Hash01(wx, wy, 92) < _cfg.decoRockChanceInCluster * 0.5f)
+                return rock;
             return default;
         }
 
-        int SelectBiome(float t, float m)
-        {
-            if (_biomes.Count == 0) return 0;
-            int best = 0;
-            float bestDist = float.MaxValue;
-            for (int i = 0; i < _biomes.Count; i++)
-            {
-                float d = _biomes[i].ClimateDistance(t, m);
-                if (d < bestDist) { bestDist = d; best = i; }
-            }
-            return best;
-        }
-
-        public BiomeDefinition BiomeAt(int index) =>
-            (index >= 0 && index < _biomes.Count) ? _biomes[index] : null;
-    }
-}
+        /// <summary>Finds a biome node by id, but only if it has art in Resources/Decorations
+        /// (otherwise it would render as an ugly placeholder box). Result is cached by the resolver.</summary>
+        BiomeNodeSpawn FindArtNod
