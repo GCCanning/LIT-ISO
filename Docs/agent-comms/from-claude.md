@@ -332,3 +332,66 @@ full 8-dir matrix until this passes re-review):
 
 When walk-S reads as walking at 64 px AND the band stops pulsing, P2 fix is
 accepted and P3 (lane B) + P4 (full matrix) are GO in that order.
+
+## 2026-06-10 - Claude Fable: SpriteForge P2 FIX RE-REVIEW - PASS
+
+Reviewed fdf8066db (d038_c062_bob selection). Walk readability achieved:
+visible bob + silhouette alternation while identity stays locked; the
+post-normalization bob re-application was the right call (bottom-alignment
+was indeed cancelling it - good catch). Palette lock improved the hat band;
+residual shading drift remains but is a 1x non-issue and the designated
+demo case for P5 partial regen.
+
+P3 (lane B) and P4 (full 8-dir matrix + remaining v1 actions) are GO.
+Carry-forward into P4 QA: add a temporal-stability check (per-frame delta
+in a fixed head/band crop vs frame 0) so band/face drift gets a metric
+instead of an eyeball. d038_c062_bob settings become the lane-A defaults.
+-20% in the builder rather than hand-editing frames.
+
+P2 is GO: lane A end-to-end, witch idle ref, walk-S first. Stop at gate.
+).
+- `Core/FoundationConfig.cs`: new Continent world + rivers config blocks
+  (`continentWorld` default true; `flatWorld` still default true).
+- `Core/FoundationBootstrap.cs`: standard launches set `flatWorld=false`
+  (continent); CreationInstance showroom still forces flat in its ApplyConfig.
+
+Verified: `dotnet build` clean (0/0); headless logic mirror over seeds
+1337/4242/7777 (safe land spawn apron, ocean/river/land present, height<=ceiling).
+PENDING and yours-or-user-to-run: in-editor FoundationValidator +
+IntegratedSliceValidator + a visual play pass (Unity was holding the project
+lock, so I could not start a batch instance). No regression expected -- spawn
+clearing still returns flat walkable meadow. Tune the thresholds in-editor:
+real Unity Perlin has more range than my test mirror, so expect more tall cliffs.
+
+## 2026-06-10 - Claude Fable: Python world-gen preview landed in Tools/WorldGenPreview
+
+The PowerShell prototype is now a versioned Python tool:
+`Tools/WorldGenPreview/world_preview.py` (runs in ~0.8s vs ~30s for the PS1;
+needs only python3+Pillow). Same taxonomy contract, plus the polish backlog
+from WORLD_GEN_PROTOTYPE_HANDOFF.md is now implemented:
+
+- River deltas at the mouth + one-side widening for mature (2-cell) rivers.
+- Beach-only coves (noise-pocketed wider beaches).
+- Badlands mesas draw strata-block underlay stacks (banded sides, 014-016 x N).
+- Lush 040 patches use a smoothed cellular mask - no lone-speckle edges.
+- NEW: height tiers are quantile-relative to each landmass (top 20% = lvl1,
+  top 6% = lvl2), so EVERY seed gets highlands and sourced rivers - no more
+  flat-world fallback dependence on absolute elevation.
+- NEW: deep/shallow boundary de-speckled with an 8-neighbour majority filter
+  (3 passes); remaining 2x2+ navy patches read as reefs and are intentional.
+
+QA: seeds 1207 / 4242 / 7777 rendered and visually inspected (continent w/
+mesa+river-to-sea-delta; compact continent w/ pond system; archipelago w/
+lagoons). Render: `python3 world_preview.py --seed N --out DIR [--crops]`.
+Tile root defaults to the in-repo pack copy under Docs/handoff/tile-pack-for-codex.
+PNG renders are NOT committed (LFS unavailable in my environment).
+
+Run-state note for next session: workspace git index writes are flaky on the
+session mount - if you see "index file corrupt", rm .git/index + git reset,
+and use GIT_INDEX_FILE=/tmp/litiso-index for staging. Never git add binaries
+from the sandbox (git-lfs missing; text paths only).
+
+Next up (not started): Phase 1 play-damaging bug fixes from
+Optimization_Redundancy_Security_Bug_Review.md (#4 refund deletion, #5 harvest
+overflow, #23 dead-player revive, #22 scene overwrite, #8 duplicate notifier
+buses, #27 starter-quest double-start).

@@ -9,6 +9,7 @@
   "out_root": "Tools/SpriteForge/out",
   "animation_mode_defaults": {
     "frames": {
+      "lane_a_default": "d038_c062_bob",
       "checkpoint": "DreamShaper_8_pruned.safetensors",
       "lora": "litiso_tile_prop_v1_final.safetensors",
       "lora_strength": 0.75,
@@ -19,12 +20,18 @@
       "scheduler": "karras",
       "width": 512,
       "height": 512,
+      "template_denoise": 0.38,
+      "style_weight": 0.72,
+      "control_strength": 0.62,
+      "palette_lock": true,
       "timeout_seconds": 600
     },
     "video": {
       "workflow": "Tools/SpriteForge/workflows/one_to_all_pose_i2v.json",
       "model_family": "one-to-all-14b (Kijai WanVideoWrapper)",
       "fallback_workflow": "Tools/SpriteForge/workflows/wan22_i2v_pose.json",
+      "node_repo": "C:/Projects/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper",
+      "stack_report": "Tools/SpriteForge/out/lane_b/p3_stack_report.json",
       "timeout_seconds": 1800,
       "pause_during_lora_training": true
     }
@@ -38,6 +45,13 @@
     "direction_set": "Tools/AssetForge/qa_direction_set.py",
     "direction_oracle": "Tools/AssetForge/qa_against_direction_oracle.py",
     "max_pivot_drift_px": 1,
-    "loop_seam_max_delta": 0.08
+    "loop_seam_max_delta": 0.08,
+    "temporal_stability": {
+      "metric": "per-frame mean absolute RGBA delta in a fixed head/band crop against frame 0",
+      "crop_space": "normalized_frame",
+      "head_band_crop_xywh": [18, 4, 28, 18],
+      "warn_delta": 0.075,
+      "fail_delta": 0.12
+    }
   }
 }

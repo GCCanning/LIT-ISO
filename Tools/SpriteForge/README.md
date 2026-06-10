@@ -38,6 +38,36 @@ For the P2 conditional-pass fix sweep:
 The selected fix artifact is
 `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/preview_x4.png`.
 
+`d038_c062_bob` is the Lane A default after the P2 fix gate:
+
+- `template_denoise`: `0.38`
+- `style_weight`: `0.72`
+- `control_strength`: `0.62`
+- `palette_lock`: `true`
+
+## P3 lane-B command
+
+Lane B is the pose-driven video path. P3 installs/checks the
+WanVideoWrapper/One-to-All stack and proves the video-frames -> cleanup ->
+packer tail without importing anything into Unity.
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\check_lane_b_stack.py
+.\Tools\SpriteForge\run_lane_b_walk_s_witch.ps1 -FromLaneAFrames
+```
+
+P3 review artifacts:
+
+- `Tools/SpriteForge/out/lane_b/p3_stack_report.json`
+- `Tools/SpriteForge/out/lane_b/witch/walk/S/lane_b_manifest.json`
+- `Tools/SpriteForge/out/lane_b/p3_ab_comparison.png`
+
+The current gate is allowed to report `installed_restart_required`,
+`installed_missing_models`, or `installed_restart_required_missing_models`;
+live Wan video rendering is not enabled until the node classes are visible
+after ComfyUI restart and the Wan model files exist under
+`C:\Projects\ComfyUI\models`.
+
 ## Output contract (per character/action/direction)
 
 ```

@@ -1,0 +1,43 @@
+{
+  "schema": "lit-iso.spriteforge.workflow-template.v1",
+  "template_status": "binding-required",
+  "engine": "video",
+  "lane": "B-fallback",
+  "name": "wan22_i2v_pose",
+  "upstream_node_pack": "C:/Projects/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper",
+  "upstream_reference_workflows": [
+    "C:/Projects/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/example_workflows/wanvideo_2_2_5B_I2V_controlnet_example.json",
+    "C:/Projects/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/example_workflows/wanvideo_2_2_5B_I2V_example_WIP.json"
+  ],
+  "purpose": "Fallback Wan 2.2 I2V path when One-to-All is unavailable or too heavy.",
+  "required_nodes": [
+    "WanVideoModelLoader",
+    "WanVideoVAELoader",
+    "LoadWanVideoT5TextEncoder",
+    "WanVideoTextEncode",
+    "WanVideoSampler",
+    "WanVideoDecode"
+  ],
+  "placeholders": {
+    "__PROMPT__": "positive prompt",
+    "__NEGATIVE__": "negative prompt",
+    "__REFERENCE_IMAGE__": "absolute or ComfyUI input path to the character reference",
+    "__POSE_SEQUENCE_DIR__": "optional control frame folder",
+    "__SEED__": "integer seed",
+    "__FRAME_COUNT__": "number of output frames",
+    "__WIDTH__": "generation width",
+    "__HEIGHT__": "generation height",
+    "__OUTPUT_PREFIX__": "ComfyUI output prefix"
+  },
+  "model_contract": {
+    "text_encoder_folder": "C:/Projects/ComfyUI/models/text_encoders",
+    "diffusion_model_folder": "C:/Projects/ComfyUI/models/diffusion_models",
+    "vae_folder": "C:/Projects/ComfyUI/models/vae",
+    "clip_vision_folder": "C:/Projects/ComfyUI/models/clip_vision",
+    "preferred_family": "Wan 2.2 5B I2V low-vram or quantized variant"
+  },
+  "notes": [
+    "Fallback is expected to be less pose-locked than One-to-All.",
+    "Use only for 96px+ targets unless the A/B gate proves it beats lane A."
+  ]
+}

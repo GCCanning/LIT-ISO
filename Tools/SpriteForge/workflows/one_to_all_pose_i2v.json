@@ -1,0 +1,51 @@
+{
+  "schema": "lit-iso.spriteforge.workflow-template.v1",
+  "template_status": "binding-required",
+  "engine": "video",
+  "lane": "B",
+  "name": "one_to_all_pose_i2v",
+  "upstream_node_pack": "C:/Projects/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper",
+  "upstream_reference_workflow": "C:/Projects/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/example_workflows/wanvideo_2_1_14B_OneToAllAnimation_pose_control_example_01.json",
+  "purpose": "Reference image + pose sequence to video frames for SpriteForge cleanup/packing.",
+  "required_nodes": [
+    "WanVideoModelLoader",
+    "WanVideoVAELoader",
+    "LoadWanVideoT5TextEncoder",
+    "WanVideoTextEncode",
+    "WanVideoSampler",
+    "WanVideoDecode",
+    "WanVideoAddOneToAllPoseEmbeds",
+    "WanVideoAddOneToAllReferenceEmbeds",
+    "PoseDetectionOneToAllAnimation",
+    "VHS_VideoCombine"
+  ],
+  "placeholders": {
+    "__PROMPT__": "positive prompt",
+    "__NEGATIVE__": "negative prompt",
+    "__REFERENCE_IMAGE__": "absolute or ComfyUI input path to the character reference",
+    "__POSE_SEQUENCE_DIR__": "folder containing frame_### pose images",
+    "__SEED__": "integer seed",
+    "__FRAME_COUNT__": "number of output frames",
+    "__WIDTH__": "generation width",
+    "__HEIGHT__": "generation height",
+    "__OUTPUT_PREFIX__": "ComfyUI output prefix"
+  },
+  "model_contract": {
+    "text_encoder_folder": "C:/Projects/ComfyUI/models/text_encoders",
+    "diffusion_model_folder": "C:/Projects/ComfyUI/models/diffusion_models",
+    "vae_folder": "C:/Projects/ComfyUI/models/vae",
+    "clip_vision_folder": "C:/Projects/ComfyUI/models/clip_vision",
+    "preferred_family": "WanVideo One-to-All pose-control, quantized/low-vram variant if available"
+  },
+  "spriteforge_postprocess": {
+    "extract_frames": true,
+    "cleanup": "Tools/SpriteForge/run_lane_b_animation.py",
+    "packer": "Tools/SpriteForge/spriteforge_pack.py",
+    "target_sizes": [64, 96]
+  },
+  "notes": [
+    "This is a SpriteForge binding contract, not yet a directly submitted ComfyUI graph.",
+    "Use the upstream_reference_workflow as the source graph once model file names are selected on this machine.",
+    "P3 gate records node/dependency/model readiness before live video submission is enabled."
+  ]
+}

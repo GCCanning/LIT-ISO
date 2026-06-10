@@ -5,6 +5,263 @@
 
 ---
 
+### 2026-06-10 - SpriteForge P1 action pose library ready for review
+
+Branch:
+- `codex/spriteforge-p1`
+
+Commit:
+- `2d81e8b6a` — `feat(spriteforge): add P1 action pose library`
+
+Scope:
+- Built the P1 Action Pose Library v1 subset only: `idle` and `walk`.
+- No Unity import.
+- No ComfyUI render.
+- No LoRA/training work.
+- Stopped at the P1 gate for pose-sheet review.
+
+Coordination note:
+- `git pull --rebase` was attempted first but was blocked by the pre-existing dirty/staged tree on `claude/land-session-drift`. I did not stash, reset, or revert those changes.
+- The requested branch was created from the current checkout and commits were kept to explicit P1 paths only.
+
+New/rebuilt SpriteForge files:
+- `Tools\SpriteForge\build_action_pose_library.py`
+- `Tools\SpriteForge\validate_action_pose_library.py`
+- `Tools\SpriteForge\poses\VERSION` -> `0.2.0-p1-idle-walk`
+- `Tools\SpriteForge\poses\pose_library_manifest.json`
+- `Tools\SpriteForge\poses\p1_gate_report.json`
+- `Tools\SpriteForge\poses\idle\action.json`
+- `Tools\SpriteForge\poses\walk\action.json`
+- `Tools\SpriteForge\poses\idle\<direction>\frame_000..003.png`
+- `Tools\SpriteForge\poses\walk\<direction>\frame_000..005.png`
+
+Review sheets:
+- `Tools\SpriteForge\poses\idle\idle_pose_contact_sheet.png`
+- `Tools\SpriteForge\poses\walk\walk_pose_contact_sheet.png`
+
+Automated gate:
+- Command: `C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_action_pose_library.py`
+- Result: pass, 0 issues.
+- Gate guarantees:
+  - `idle`: 4 frames x 8 directions.
+  - `walk`: 6 frames x 8 directions.
+  - all pose PNGs are transparent RGBA 512x512.
+  - all pose frames have nonempty foreground and transparent corners.
+  - every `walk/<direction>/frame_000.png` matches the matching `idle/<direction>/frame_000.png` anchor by hash.
+
+Packer compatibility smoke:
+- Command: `C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\spriteforge_pack.py --frames Tools\SpriteForge\poses\walk\S --out Temp\SpriteForgeP1PackSmoke\walk-S --action-json Tools\SpriteForge\poses\walk\action.json --character pose-smoke --action walk --direction S`
+- Result: pass.
+- Output: `Temp\SpriteForgeP1PackSmoke\walk-S\sheet.png`, `sheet.json`, `preview.png`.
+
+Review ask:
+- Please eyeball the two contact sheets for direction readability and gait usefulness before P2.
+- If approved, P2 can wire lane A frame fan-out against these pose templates.
+- If not approved, the correct next change is editing the P1 skeleton shapes, not moving into animation generation yet.
+
+---
+
+### 2026-06-10 - Screenshot-tuned tile baseline + mage direction coverage
+
+Asset Forge review-only work, no Unity import:
+
+- Added `Tools\AssetForge\analyze_litiso_screenshot_palette.py`.
+- Palette source screenshots:
+  - `C:\Users\garyc\OneDrive\Pictures\Screenshots\Screenshot 2026-05-18 125733.png`
+  - `C:\Users\garyc\OneDrive\Pictures\Screenshots\Screenshot 2026-05-18 125701.png`
+  - `C:\Users\garyc\OneDrive\Pictures\Screenshots\Screenshot 2026-05-15 102234.png`
+  - `C:\Users\garyc\OneDrive\Pictures\Screenshots\Screenshot 2026-05-15 100522.png`
+- Palette output:
+  - `Assets\Generated\_Review\litiso_screenshot_palette_v1\litiso_screenshot_material_palette.json`
+  - `Assets\Generated\_Review\litiso_screenshot_palette_v1\litiso_screenshot_material_palette.png`
+- Updated `Tools\AssetForge\build_reference32_mask_locked_texture_variants.py` with screenshot-tuned variants.
+- Current best local no-credit tile review pack:
+  - `Assets\Generated\_Review\reference32_mask_locked_texture_family_screenshot_balanced_v1\selected_tile_family_contact_sheet.png`
+  - `Assets\Generated\_Review\reference32_mask_locked_texture_family_screenshot_balanced_v1\selected_tile_family_map_preview.png`
+  - Style-lock score: 6/6 pass, mean `85.162`.
+- Added `Tools\AssetForge\build_black_mage_direction_coverage_report.py`.
+- Black mage v11 coverage output:
+  - `Assets\Generated\_Review\black_mage_iso_selected_v11\direction_coverage_report.json`
+  - `Assets\Generated\_Review\black_mage_iso_selected_v11\black_mage_direction_coverage_sheet.png`
+- Current black mage v11 direction state:
+  - present: `SE`, `NE`, `NW`, `SW`
+  - missing: `S`, `E`, `N`, `W`
+  - not 4D-ready, not 8D-ready, not animation-ready, not training-ready.
+- Updated `Tools\AssetForge\run_litiso_asset_pipeline_review_golden_path.ps1` so status now includes screenshot palette, screenshot-balanced tile family, and mage direction coverage.
+- Status-only validation passed:
+  - `powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\run_litiso_asset_pipeline_review_golden_path.ps1 -SkipRebuild`
+  - status: `Temp\AssetForge\litiso_asset_pipeline_review_golden_path_status.json`
+
+Current recommendation:
+
+- For tiles, use `reference32_mask_locked_texture_family_screenshot_balanced_v1` as the current review baseline. It preserves supplied 32x32 geometry while moving color closer to the LIT-ISO screenshot target.
+- For black mage, generate true cardinal templates next. North must show the back. East/West must be true side views. Do not start animation loops from the diagonal-only v11 pack.
+
+---
+
+### 2026-06-10 - Black mage 8D v12 preflight staged
+
+Asset Forge review/temp work only, no ComfyUI render started:
+
+- Added `Tools\AssetForge\build_black_mage_direction_templates_v3.py`.
+- Added `Tools\AssetForge\queue_black_mage_v12_8d_direction_template_requests.ps1`.
+- Patched `Tools\AssetForge\queue_black_mage_iso_requests.py` so queued request provenance records the actual pose manifest instead of the old diagonal-only source string.
+- Built 8-direction OpenPose controls:
+  - manifest: `Assets\Generated\_Review\_PoseControls\litiso_openpose_8d_v1\idle_manifest.json`
+  - sheet: `Assets\Generated\_Review\_PoseControls\litiso_openpose_8d_v1\idle_8d_contact.png`
+- Built 8-direction black mage scaffold controls:
+  - manifest: `Assets\Generated\_Review\black_mage_direction_templates_v3\black_mage_direction_templates_v3_manifest.json`
+  - sheet: `Assets\Generated\_Review\black_mage_direction_templates_v3\black_mage_direction_templates_v3_sheet.png`
+- Staged request JSON only for v12 idle directions:
+  - root: `Temp\AssetForge\black_mage_requests`
+  - directions: `S`, `SE`, `E`, `NE`, `N`, `NW`, `W`, `SW`
+  - settings: style weight `0.52`, ControlNet `0.82`, template denoise `0.48`, batch count `3`.
+- Verified north request points at:
+  - reference scaffold: `Assets/Generated/_Review/black_mage_direction_templates_v3/black_mage_N_template_v3.png`
+  - pose: `Assets/Generated/_Review/_PoseControls/litiso_openpose_8d_v1/idle_n_openpose.json`
+  - prompt contract: back view only, no face visible.
+- Golden status now includes `black_mage_v12_preflight`.
+
+Recommendation:
+
+- When GPU time is available, render only the missing cardinal subset first: `S`, `E`, `N`, `W`.
+- If those pass direction/style QC, render the full v12 8D set, then rerun the coverage report and selected review gate.
+
+---
+
+### 2026-06-10 - Black mage v12 cardinal render + mixed 8D review pack
+
+Asset Forge review/temp work only, no Unity import:
+
+- Verified training was not active before rendering:
+  - `litiso_reference32_clean_tile_geometry_v1`: complete `1000/1000`
+  - `litiso_iso_reference_critter_style_v1`: complete `1000/1000`
+- ComfyUI was reachable at `http://127.0.0.1:8188/system_stats`.
+- Rendered only the missing cardinal directions from the v12 request set:
+  - `S`, `E`, `N`, `W`
+  - 3 candidates each, 12 total.
+- Generated review packs:
+  - `Assets\Generated\_Review\black_mage_iso_idle_s_v12`
+  - `Assets\Generated\_Review\black_mage_iso_idle_e_v12`
+  - `Assets\Generated\_Review\black_mage_iso_idle_n_v12`
+  - `Assets\Generated\_Review\black_mage_iso_idle_w_v12`
+- Generalized candidate review/scoring/selection tools to support canonical 8D:
+  - `Tools\AssetForge\build_black_mage_candidate_review_sheet.py`
+  - `Tools\AssetForge\score_black_mage_candidates.py`
+  - `Tools\AssetForge\select_black_mage_best_candidates.py`
+- Cardinal review outputs:
+  - candidate sheet: `Assets\Generated\_Review\black_mage_iso_renders_v12_cardinals\_v12_cardinals_candidate_review_sheet.png`
+  - candidate manifest: `Assets\Generated\_Review\black_mage_iso_renders_v12_cardinals\_v12_cardinals_candidate_manifest.json`
+  - strict QC report: `Assets\Generated\_Review\black_mage_iso_renders_v12_cardinals\_v12_cardinals_strict_qc_report.json`
+  - strict QC sheet: `Assets\Generated\_Review\black_mage_iso_renders_v12_cardinals\_v12_cardinals_strict_qc_sheet.png`
+  - result: 12 candidates, 0 structural rejects, 12 review candidates.
+- Selected cardinal pack:
+  - `Assets\Generated\_Review\black_mage_iso_selected_v12_cardinals\black_mage_selected_v12_cardinals_contact_sheet.png`
+  - `Assets\Generated\_Review\black_mage_iso_selected_v12_cardinals\black_mage_selected_v12_cardinals_manifest.json`
+- Added `Tools\AssetForge\combine_black_mage_8d_review_pack.py`.
+- Mixed current-best 8D pack:
+  - cardinals from v12 + diagonals from v11
+  - contact sheet: `Assets\Generated\_Review\black_mage_iso_selected_v12_mixed_8d\black_mage_selected_v12_mixed_8d_contact_sheet.png`
+  - manifest: `Assets\Generated\_Review\black_mage_iso_selected_v12_mixed_8d\black_mage_selected_v12_mixed_8d_manifest.json`
+  - coverage report: `Assets\Generated\_Review\black_mage_iso_selected_v12_mixed_8d\direction_coverage_report.json`
+  - coverage sheet: `Assets\Generated\_Review\black_mage_iso_selected_v12_mixed_8d\black_mage_direction_coverage_sheet.png`
+  - coverage: complete `S, SE, E, NE, N, NW, W, SW`.
+- Golden status now exposes:
+  - `tile_screenshot_balanced_contact_sheet`
+  - `black_mage_v12_cardinals_sheet`
+  - `black_mage_v12_mixed_8d_sheet`
+
+Visual judgment:
+
+- S and N are directionally credible enough for review evidence.
+- E and W still read too front-facing. They are structurally clean but not production-accepted as true side views.
+- Do not train from the mixed 8D pack until the user manually approves E/W or we rerender side views with stronger side-profile scaffolds/lower denoise.
+
+Recommended next step:
+
+- Rerender only `E` and `W` with stricter side-profile templates and probably lower template denoise before spending GPU time on full 8D animation loops.
+
+---
+
+### 2026-06-10 - Black mage v13 side-view refinement
+
+Asset Forge review/temp work only, no Unity import:
+
+- Queued and rendered a focused E/W-only side-view pass:
+  - variant: `v13_side`
+  - directions: `E`, `W`
+  - batch count: `4` each
+  - style weight: `0.42`
+  - ControlNet strength: `0.88`
+  - template denoise: `0.34`
+  - seed start: `132300`
+- Generated review packs:
+  - `Assets\Generated\_Review\black_mage_iso_idle_e_v13_side`
+  - `Assets\Generated\_Review\black_mage_iso_idle_w_v13_side`
+- Side-view comparison outputs:
+  - candidate sheet: `Assets\Generated\_Review\black_mage_iso_renders_v13_side\_v13_side_candidate_review_sheet.png`
+  - candidate manifest: `Assets\Generated\_Review\black_mage_iso_renders_v13_side\_v13_side_candidate_manifest.json`
+  - strict QC report: `Assets\Generated\_Review\black_mage_iso_renders_v13_side\_v13_side_strict_qc_report.json`
+  - strict QC sheet: `Assets\Generated\_Review\black_mage_iso_renders_v13_side\_v13_side_strict_qc_sheet.png`
+  - result: 8 candidates, 0 structural rejects, 8 review candidates.
+- Selected side-view pack:
+  - `Assets\Generated\_Review\black_mage_iso_selected_v13_side\black_mage_selected_v13_side_contact_sheet.png`
+  - `Assets\Generated\_Review\black_mage_iso_selected_v13_side\black_mage_selected_v13_side_manifest.json`
+- Rebuilt mixed 8D pack using:
+  - `S`, `N` from v12 cardinals
+  - `E`, `W` from v13 side pass
+  - `SE`, `NE`, `NW`, `SW` from v11 diagonals
+- Current best mixed 8D review pack:
+  - contact sheet: `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\black_mage_selected_v13_mixed_8d_contact_sheet.png`
+  - manifest: `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\black_mage_selected_v13_mixed_8d_manifest.json`
+  - coverage report: `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\direction_coverage_report.json`
+  - coverage sheet: `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\black_mage_direction_coverage_sheet.png`
+  - coverage: complete `S, SE, E, NE, N, NW, W, SW`.
+- Golden status now exposes `black_mage_v13_side_sheet` and `black_mage_v13_mixed_8d_sheet`.
+
+Visual judgment:
+
+- v13 E/W are cleaner side-view evidence than v12 E/W because lower denoise kept the scaffold shape more strongly.
+- They are still not automatically training-approved; the user should manually approve/reject them.
+- Do not start animation loops until the 8D idle direction set is approved or side views are repainted/rerendered again.
+
+---
+
+### 2026-06-10 - Asset pipeline readiness audit
+
+Asset Forge review/temp work only, no Unity import:
+
+- Patched `Tools\AssetForge\build_black_mage_selected_review_gate.py` so review/training capture gates work for any selected mage pack, not just v11.
+- Built v13 mixed 8D review gate:
+  - `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\review_report.json`
+  - `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\review_decisions.json`
+  - `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\training_capture_plan.json`
+  - all 8 decisions are pending manual approval.
+- Added `Tools\AssetForge\build_litiso_asset_pipeline_readiness_report.py`.
+- Golden path now writes:
+  - `Temp\AssetForge\litiso_asset_pipeline_readiness_audit.json`
+- Latest audit status:
+  - `overall_status`: `review_ready_not_production_ready`
+  - blockers:
+    - `black_mage_8d_manual_approval_pending`
+    - `tile_manual_art_and_license_approval_pending`
+    - `black_mage_animation_sequences_not_generated`
+- The audit proves current state against the active goal:
+  - tile/critter LoRAs complete and synced,
+  - screenshot-balanced 32x32 tile family exists in review space,
+  - v13 mixed black mage 8D direction coverage is complete,
+  - no Unity import occurred,
+  - review decisions/training capture are intentionally blocked until manual approval.
+
+Next practical gate:
+
+- User reviews:
+  - `Assets\Generated\_Review\reference32_mask_locked_texture_family_screenshot_balanced_v1\selected_tile_family_contact_sheet.png`
+  - `Assets\Generated\_Review\black_mage_iso_selected_v13_mixed_8d\black_mage_selected_v13_mixed_8d_contact_sheet.png`
+- After explicit approvals, capture approved examples into the external dataset. If side directions are rejected, rerender only E/W.
+
+---
+
 ### 2026-06-09 - Ability + affinity core ready for review
 
 Branch:
@@ -2343,4 +2600,672 @@ Validation:
 - Style-lock target sheet: `Temp\LoRA\Evals\stylelock_tile_reference_targets.png`
 - Style-lock target manifest: `Temp\LoRA\Evals\stylelock_tile_reference_targets.json`
 - Score report placeholder: `Temp\LoRA\Evals\tile_style_eval_scores.json`
-- Selec
+- Selected-family placeholder manifest: `Assets\Generated\_Review\tile_style_eval_selected_family_v1\selected_tile_family_manifest.json`
+- Current critter training blocker observed around 640/1000 in live log during validation.
+
+Next gate:
+
+- Wait for `C:\Projects\LoRA-Training\control\litiso_iso_reference_critter_style_v1\status.json` to become `complete`.
+- Then run `powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\run_post_tile_training_review_pass.ps1` to generate tile LoRA strength contact sheets and the black mage v6 review batch in review/temp space.
+
+### 2026-06-10 - Reference32 geometry-locked tile family
+
+Goal context: supplied style-lock tiles must become the geometry/style target for the local generator; outputs remain review-only.
+
+Current state:
+
+- Critter LoRA training `litiso_iso_reference_critter_style_v1` completed at 1000/1000.
+- Final checkpoint: `C:\Projects\LoRA-Training\outputs\litiso_iso_reference_critter_style_v1\litiso_iso_reference_critter_style_v1_final.safetensors`
+- Tile LoRA matrix completed for strengths `0.35`, `0.55`, `0.72`, `0.90`.
+- Tile matrix selected-family pack exists at `Assets\Generated\_Review\tile_style_eval_selected_family_v1`.
+- Black mage v6 diagonal review batch exists at `Assets\Generated\_Review\black_mage_iso_renders_v6`.
+
+Added:
+
+- `Tools/AssetForge/build_reference32_tile_family.py`
+
+Behavior:
+
+- Builds a review-only six-tile family from the supplied extracted 32x32 tileset:
+  - `grass_flat`
+  - `dirt_flat`
+  - `grass_cliff_edge`
+  - `stone_flat`
+  - `water_flat`
+  - `water_shore_stone`
+- Writes normalized source-locked PNGs, 512px alpha masks, 512px edge hints, 512px nearest-color hints, a contact sheet, a map preview, and a manifest.
+- Output root: `Assets\Generated\_Review\reference32_geometry_locked_tile_family_v1`
+- Contact sheet: `Assets\Generated\_Review\reference32_geometry_locked_tile_family_v1\reference32_tile_family_contact_sheet.png`
+- Map preview: `Assets\Generated\_Review\reference32_geometry_locked_tile_family_v1\reference32_tile_family_map_preview.png`
+- Manifest: `Assets\Generated\_Review\reference32_geometry_locked_tile_family_v1\reference32_tile_family_manifest.json`
+
+Conclusion:
+
+- The prompt-only tile LoRA matrix produced object-like 512px blocks and is not a production tile path.
+- The next AI pass should use the new `reference32_geometry_locked_tile_family_v1/control/*_edge_hint_512.png` and/or `*_nearest_color_hint_512.png` as ControlNet/img2img inputs, with low denoise (`0.22-0.42`) and `litiso_iso_reference_tile_style_v1_final.safetensors` around strength `0.35`.
+- Do not promote any of these review assets to Unity runtime until manually approved.
+
+Follow-up implementation:
+
+- Added `Tools/AssetForge/queue_reference32_controlnet_tile_requests.py`.
+- Patched `Tools/AssetForge/comfy_generation_worker.py` so tile requests can use `template_guidance.enabled=true` with a tile-safe template canvas instead of the character chroma-canvas path.
+- Patched tile prompt contracts so the worker no longer forbids raised/cliff terrain globally.
+- Patched `Tools/AssetForge/process_generation_request_comfy.ps1` so dry-runs write `comfy_generation_manifest.dry_run.json` instead of overwriting live `comfy_generation_manifest.json` evidence.
+- Staged six ControlNet/img2img requests under `Temp\AssetForge\reference32_controlnet_tile_requests`.
+- Dry-run validation passed for all six staged requests.
+
+Live smoke results:
+
+- Edge-only smoke `reference32_controlnet_grass_flat_v1` worked technically but produced yellow emblem-like terrain and failed art QA.
+- Img2img + ControlNet smoke at denoise `0.32`, LoRA `0.35`, ControlNet `0.92` preserved footprint but lost too much texture.
+- Img2img + ControlNet smoke at denoise `0.42`, LoRA `0.55`, ControlNet `0.82` preserved footprint and recovered some surface speckles. Still review-only and QA marks it weak, but this is the current best direction.
+- Review sheet for the better smoke: `Assets\Generated\_Review\reference32_controlnet_d042_grass_flat_v1\_ProperPixelArt\proper_pixel_art_contact_sheet.png`
+
+Next gate:
+
+- Run a small denoise/LoRA/control-strength matrix around `denoise=0.38-0.48`, `lora=0.45-0.65`, `control=0.75-0.90` for `grass_flat`.
+- Only after grass is visually acceptable, apply the same setting band to dirt, cliff, stone, water, and shore.
+
+Grass matrix result:
+
+- Ran the four-setting grass matrix and built `Assets\Generated\_Review\reference32_grass_matrix_v1\reference32_grass_matrix_contact_sheet.png`.
+- Numeric best was `d048_l065_c075` variant 2 by palette distance, but manual review shows the AI path still over-simplifies the tile and loses the supplied tileset texture language.
+- Patched `Tools/AssetForge/build_reference32_grass_matrix_sheet.py` to avoid Pillow deprecation warnings without writing bytecode cache files.
+
+Deterministic style-locked variant result:
+
+- Added `Tools/AssetForge/build_reference32_style_locked_variants.py`.
+- Output root: `Assets\Generated\_Review\reference32_style_locked_variants_v1`
+- Contact sheet: `Assets\Generated\_Review\reference32_style_locked_variants_v1\reference32_style_locked_variants_contact_sheet.png`
+- Map preview: `Assets\Generated\_Review\reference32_style_locked_variants_v1\reference32_style_locked_variants_map_preview.png`
+- Manifest: `Assets\Generated\_Review\reference32_style_locked_variants_v1\reference32_style_locked_variants_manifest.json`
+- This pack preserves the supplied 32x32 tile geometry and pixel clusters, then produces controlled local variants: source, LIT-ISO green, deep forest, rainy, and autumn.
+
+Current recommendation:
+
+- For tiles, use the deterministic Reference32 variant path as the immediate style-lock and dataset-augmentation bridge.
+- Keep ComfyUI/LoRA tile generation behind this: template/img2img only, low denoise, and reject any candidate that cannot match the deterministic pack's silhouette, color count, and pixel-cluster density.
+- Do not promote any Reference32 review output to Unity runtime until art rights and final art direction are explicitly approved.
+
+### 2026-06-10 - Reference32 catalog, training seed pack, and black mage strict QC
+
+Added:
+
+- `Tools/AssetForge/build_reference32_source_catalog.py`
+- `Tools/AssetForge/build_reference32_training_seed_pack.py`
+- `Tools/AssetForge/score_black_mage_candidates.py`
+
+Reference32 source catalog:
+
+- Output root: `Assets\Generated\_Review\reference32_source_catalog_v1`
+- Manifest: `Assets\Generated\_Review\reference32_source_catalog_v1\reference32_source_catalog_manifest.json`
+- Total cataloged 32x32 source tiles: 115
+- Role counts:
+  - `dirt_height_block`: 11
+  - `dirt_surface_detail`: 11
+  - `grass_height_block`: 7
+  - `grey_stone_shore_tile`: 21
+  - `dark_water_tile`: 18
+  - `ice_water_tile`: 11
+  - `green_groundcover_asset`: 15
+  - `wood_log_asset`: 9
+  - `brown_rock_asset`: 8
+  - `water_sparkle_detail`: 4
+- Clean terrain subset sheet: `Assets\Generated\_Review\reference32_source_catalog_v1\forest_plains_terrain_clean_core_contact_sheet.png`
+- Secondary terrain/detail sheet: `Assets\Generated\_Review\reference32_source_catalog_v1\forest_plains_terrain_detail_secondary_contact_sheet.png`
+- Prop/deco subset sheet: `Assets\Generated\_Review\reference32_source_catalog_v1\forest_plains_prop_core_contact_sheet.png`
+
+Training seed pack:
+
+- Output root: `Assets\Generated\_Review\reference32_training_seed_pack_v1`
+- Manifest: `Assets\Generated\_Review\reference32_training_seed_pack_v1\reference32_training_seed_pack_manifest.json`
+- Contact sheet: `Assets\Generated\_Review\reference32_training_seed_pack_v1\reference32_training_seed_pack_contact_sheet.png`
+- Records: 45
+  - 21 clean source terrain tiles
+  - 24 deterministic palette variants
+- Each staged PNG has a `.txt` sidecar caption.
+- Recommended future LoRA target name: `litiso_reference32_clean_tile_geometry_v1`.
+- Important rule: do not mix `forest_plains_prop_core` into the tile LoRA; train prop/deco style separately.
+
+Black mage strict QC:
+
+- Input sheet remains `Assets\Generated\_Review\black_mage_iso_renders_v6\_v6_candidate_review_sheet.png`
+- New strict QC report: `Assets\Generated\_Review\black_mage_iso_renders_v6\_v6_strict_qc_report.json`
+- New strict QC sheet: `Assets\Generated\_Review\black_mage_iso_renders_v6\_v6_strict_qc_sheet.png`
+- Candidate count: 16
+- Automatic rejects: 7
+- Rough review candidates: 9
+- Conclusion: v6 is not training-ready. It contains too many floor/background/effect artifacts and wrong-width silhouettes. The next mage pass needs a tighter silhouette/template ControlNet path and stricter no-effects/no-floor generation contract.
+
+Next gate:
+
+- Tile side: when ready to train again, use `reference32_training_seed_pack_v1/tile_lora_core` as the clean tile LoRA input, not the mixed full tileset.
+- Mage side: queue a v7 black mage pass with stricter no-effects prompts and a silhouette/control template. Do not train from v6 wholesale.
+
+### 2026-06-10 - Reference32 dry-run training launcher and black mage v7 queue
+
+Reference32 clean tile dataset:
+
+- Regenerated `Assets\Generated\_Review\reference32_training_seed_pack_v1`.
+- Trainer-ready dataset now exists at `Assets\Generated\_Review\reference32_training_seed_pack_v1\training_dataset`.
+- Dataset contains `images`, `captions`, `metadata.jsonl`, `train.txt`, and `dataset_readiness_summary.json`.
+- Record count remains 45: 21 clean source terrain tiles and 24 deterministic variants.
+
+Reference32 clean tile LoRA launcher:
+
+- Added `Tools\LoRA\start_reference32_clean_tile_training.ps1`.
+- Dry-run passed for target `litiso_reference32_clean_tile_geometry_v1`.
+- Dry-run launcher manifest: `Temp\LoRA\litiso_reference32_clean_tile_geometry_v1.reference32_dataset_manifest.json`.
+- Existing resumable trainer manifest: `Temp\LoRA\litiso_reference32_clean_tile_geometry_v1.launch_manifest.json`.
+- No live training was started.
+
+Black mage v7:
+
+- Added `Tools\AssetForge\queue_black_mage_v7_requests.ps1`.
+- Updated `Tools\AssetForge\queue_black_mage_iso_requests.py` with `--strict-sprite-contract`.
+- Queued NE/NW/SE/SW v7 requests under `Temp\AssetForge\black_mage_requests`.
+- v7 defaults: style weight `0.44`, ControlNet strength `0.92`, batch count `4`, strict no-floor/no-effects/no-environment prompt contract.
+- No ComfyUI render was started.
+
+### 2026-06-10 - Black mage v7/v8 render results
+
+Black mage v7:
+
+- Rendered NE/NW/SE/SW through ComfyUI, 4 candidates per direction.
+- Combined sheet: `Assets\Generated\_Review\black_mage_iso_renders_v7\_v7_candidate_review_sheet.png`.
+- Strict QC: `Assets\Generated\_Review\black_mage_iso_renders_v7\_v7_strict_qc_report.json`.
+- Result: 16 candidates, 10 strict rejects, 6 rough review candidates.
+- Conclusion: v7 reduced some noise but still produced magic circles, floor/effect blobs, duplicate figures, and scene props. Do not train from v7 wholesale.
+
+Black mage v8:
+
+- Added direction-scaffold template support to `Tools\AssetForge\queue_black_mage_iso_requests.py`.
+- Added `Tools\AssetForge\queue_black_mage_v8_template_requests.ps1`.
+- Rendered NE/NW/SE/SW through ComfyUI using scaffold-template img2img + original mage style reference + OpenPose.
+- Combined sheet: `Assets\Generated\_Review\black_mage_iso_renders_v8\_v8_candidate_review_sheet.png`.
+- Strict QC: `Assets\Generated\_Review\black_mage_iso_renders_v8\_v8_strict_qc_report.json`.
+- Result: 16 candidates, 0 strict rejects, 16 review candidates.
+- Selected best-by-score pack: `Assets\Generated\_Review\black_mage_iso_selected_v8`.
+- Selected sheet: `Assets\Generated\_Review\black_mage_iso_selected_v8\black_mage_selected_v8_contact_sheet.png`.
+
+Important limitation:
+
+- v8 solves the floor/effect/duplicate artifact problem much better than v7, but it still does not solve true directionality. The directions remain too similar because the available scaffolds are derived from the front-facing mage.
+- Next real gate is true direction template art for NE/NW/SE/SW, then rerun the same v8 scaffold-template method as v9.
+
+### 2026-06-10 - Black mage v9/v10/v11 direction-template pass
+
+Direction templates:
+
+- Added `Tools\AssetForge\build_black_mage_direction_templates_v2.py`.
+- Output root: `Assets\Generated\_Review\black_mage_direction_templates_v2`.
+- Template sheet: `Assets\Generated\_Review\black_mage_direction_templates_v2\black_mage_direction_templates_v2_sheet.png`.
+- Manifest: `Assets\Generated\_Review\black_mage_direction_templates_v2\black_mage_direction_templates_v2_manifest.json`.
+- Key difference from earlier scaffolds: NE/NW are deterministic back/side-facing templates, not shifted or mirrored front-facing sprites.
+
+Black mage v9:
+
+- Added `Tools\AssetForge\queue_black_mage_v9_direction_template_requests.ps1`.
+- Rendered NE/NW/SE/SW using v2 direction templates, original mage style reference, and OpenPose.
+- Combined sheet: `Assets\Generated\_Review\black_mage_iso_renders_v9\_v9_candidate_review_sheet.png`.
+- Strict QC: `Assets\Generated\_Review\black_mage_iso_renders_v9\_v9_strict_qc_report.json`.
+- Selected pack: `Assets\Generated\_Review\black_mage_iso_selected_v9`.
+- Result: 16 candidates, 0 strict rejects. Directionality improved substantially, but source-style detail was still simplified.
+
+Black mage v10 NE matrix:
+
+- Added `Tools\AssetForge\run_black_mage_v10_ne_matrix.ps1`.
+- Added `Tools\AssetForge\build_black_mage_settings_matrix_sheet.py`.
+- Matrix sheet: `Assets\Generated\_Review\black_mage_v10_ne_matrix\black_mage_v10_ne_matrix_contact_sheet.png`.
+- Best setting from manual review: style weight `0.52`, ControlNet `0.82`, template denoise `0.48`.
+
+Black mage v11:
+
+- Rendered NE/NW/SE/SW using the v10 best setting.
+- Combined sheet: `Assets\Generated\_Review\black_mage_iso_renders_v11\_v11_candidate_review_sheet.png`.
+- Strict QC: `Assets\Generated\_Review\black_mage_iso_renders_v11\_v11_strict_qc_report.json`.
+- Selected pack: `Assets\Generated\_Review\black_mage_iso_selected_v11`.
+- Selected sheet: `Assets\Generated\_Review\black_mage_iso_selected_v11\black_mage_selected_v11_contact_sheet.png`.
+- Result: 12 candidates, 0 strict rejects, 4 selected candidates.
+
+Current recommendation:
+
+- v11 is the best black mage evidence so far. Use it as the manual review gate for direction/style approval.
+- If approved, capture the selected v11 set as training/reference evidence, not Unity runtime art yet.
+- If rejected, the next change should be better hand-authored direction templates, not more prompt-only tuning.
+
+### 2026-06-10 - Reference32 clean tile LoRA started
+
+Training:
+
+- Started live training target `litiso_reference32_clean_tile_geometry_v1`.
+- Dataset: `Assets\Generated\_Review\reference32_training_seed_pack_v1\training_dataset`.
+- Dataset size: 45 image/caption records.
+- Training root: `C:\Projects\LoRA-Training`.
+- Status/control: `C:\Projects\LoRA-Training\control\litiso_reference32_clean_tile_geometry_v1`.
+- Logs: `C:\Projects\LoRA-Training\logs\litiso_reference32_clean_tile_geometry_v1.err.log`.
+- First checkpoint observed: `C:\Projects\LoRA-Training\outputs\litiso_reference32_clean_tile_geometry_v1\litiso_reference32_clean_tile_geometry_v1_step00100.safetensors`.
+
+Evaluation path:
+
+- Added `Tools\LoRA\evaluate_reference32_clean_tile_lora_matrix.ps1`.
+- Updated `Tools\LoRA\evaluate_iso_reference_tile_style_matrix.ps1` so eval score/selection outputs can be scoped per output name.
+- Dry-run eval plan: `Temp\LoRA\litiso_reference32_clean_tile_geometry_v1.eval_matrix_plan.json`.
+- The eval wrapper correctly refuses live evaluation while `litiso_reference32_clean_tile_geometry_v1` is running.
+
+Pause command if the machine is needed:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Tools\LoRA\pause_litiso_training.ps1 -OutputName litiso_reference32_clean_tile_geometry_v1
+```
+
+Current rule:
+
+- Do not run ComfyUI image generation or tile evaluation while this training job is active.
+
+### 2026-06-10 - Reference32 clean tile LoRA completed and evaluated
+
+Training completion:
+
+- Completed live training target `litiso_reference32_clean_tile_geometry_v1`.
+- Final checkpoint: `C:\Projects\LoRA-Training\outputs\litiso_reference32_clean_tile_geometry_v1\litiso_reference32_clean_tile_geometry_v1_final.safetensors`.
+- Synced LoRA into ComfyUI as `C:\Projects\ComfyUI\models\loras\litiso_reference32_clean_tile_geometry_v1_final.safetensors`.
+- Sync manifest: `C:\Projects\ComfyUI\models\loras\litiso_reference32_clean_tile_geometry_v1.sync.json`.
+
+Prompt-only eval:
+
+- Ran `Tools\LoRA\run_post_reference32_clean_tile_review.ps1`.
+- Matrix outputs: `Temp\LoRA\Evals\litiso_reference32_clean_tile_geometry_v1`.
+- Ranked sheet: `Temp\LoRA\Evals\litiso_reference32_clean_tile_geometry_v1\_Scores\tile_style_eval_ranked_sheet.png`.
+- Selected-family review pack: `Assets\Generated\_Review\reference32_clean_tile_eval_selected_family_v1`.
+- Selected-family sheet: `Assets\Generated\_Review\reference32_clean_tile_eval_selected_family_v1\selected_tile_family_contact_sheet.png`.
+- Result: useful as a signal only. Prompt-only diffusion still creates object-like 512px blocks, opaque backgrounds, too many colors, and non-shippable tile geometry.
+
+ControlNet/img2img tile passes:
+
+- Updated `Tools\AssetForge\run_reference32_grass_matrix.ps1` to use `litiso_reference32_clean_tile_geometry_v1_final.safetensors` and isolated output paths.
+- Added `Tools\AssetForge\run_reference32_clean_tile_family_controlnet.ps1`.
+- Added `Tools\AssetForge\build_reference32_controlnet_family_sheet.py`.
+- Medium-denoise family sheet: `Assets\Generated\_Review\reference32_clean_tile_family_controlnet_v1\reference32_clean_tile_family_contact_sheet.png`.
+- Low-denoise family sheet: `Assets\Generated\_Review\reference32_clean_tile_family_lowdenoise_v1\reference32_clean_tile_family_contact_sheet.png`.
+- Result: grass/dirt/water are structurally closer, but stone/shore/cliff still collapse into partial fragments. The failure is in generation fidelity, not Proper Pixel Art cleanup.
+
+Current tile decision:
+
+- Do not promote the AI tile outputs to Unity.
+- Use deterministic style-locked tile variants as the current tile quality baseline:
+  - Pack: `Assets\Generated\_Review\reference32_style_locked_variants_v2`.
+  - Contact sheet: `Assets\Generated\_Review\reference32_style_locked_variants_v2\reference32_style_locked_variants_contact_sheet.png`.
+  - Map preview: `Assets\Generated\_Review\reference32_style_locked_variants_v2\reference32_style_locked_variants_map_preview.png`.
+- Reason: deterministic variants preserve the supplied 32x32 tile silhouettes, stone clusters, shore structure, alpha footprint, and palette discipline. The AI path should be used next for controlled local deviations from these locked templates, not freehand reconstruction.
+
+### 2026-06-10 - Selected tile families and black mage review gate
+
+Selected tile review packs:
+
+- Added `Tools\AssetForge\select_reference32_style_locked_family.py`.
+- Source/exact-style selected pack:
+  - Root: `Assets\Generated\_Review\reference32_selected_tile_family_source_v1`.
+  - Contact sheet: `Assets\Generated\_Review\reference32_selected_tile_family_source_v1\selected_tile_family_contact_sheet.png`.
+  - Map preview: `Assets\Generated\_Review\reference32_selected_tile_family_source_v1\selected_tile_family_map_preview.png`.
+  - Manifest: `Assets\Generated\_Review\reference32_selected_tile_family_source_v1\selected_tile_family_manifest.json`.
+  - Review gate: `review_report.json` and `review_decisions.json`, all decisions pending.
+- LIT-ISO-green selected pack:
+  - Root: `Assets\Generated\_Review\reference32_selected_tile_family_litiso_green_v1`.
+  - Contact sheet: `Assets\Generated\_Review\reference32_selected_tile_family_litiso_green_v1\selected_tile_family_contact_sheet.png`.
+  - Map preview: `Assets\Generated\_Review\reference32_selected_tile_family_litiso_green_v1\selected_tile_family_map_preview.png`.
+  - Manifest: `Assets\Generated\_Review\reference32_selected_tile_family_litiso_green_v1\selected_tile_family_manifest.json`.
+  - Review gate: `review_report.json` and `review_decisions.json`, all decisions pending.
+
+Current tile recommendation:
+
+- Use `reference32_selected_tile_family_source_v1` as the exact style-lock baseline.
+- Use `reference32_selected_tile_family_litiso_green_v1` as the first candidate LIT-ISO palette shift.
+- Do not train or import either pack until manual art approval and license verification are explicit.
+
+Black mage v11 review gate:
+
+- Added `Tools\AssetForge\build_black_mage_selected_review_gate.py`.
+- Created review files in `Assets\Generated\_Review\black_mage_iso_selected_v11`:
+  - `review_report.json`.
+  - `review_decisions.json`.
+  - `training_capture_plan.json`.
+- Status: all four selected diagonal candidates remain pending manual approval.
+- Caption plan covers NE/NW/SE/SW idle direction records with bottom-center anchor language.
+- Next gate: approve/reject each selected direction visually; only then run dataset capture.
+
+### 2026-06-10 - Asset pipeline golden review path
+
+Training and sync state:
+
+- Tile LoRA `litiso_reference32_clean_tile_geometry_v1` is complete at 1000/1000.
+- Tile final checkpoint is synced to ComfyUI:
+  - `C:\Projects\ComfyUI\models\loras\litiso_reference32_clean_tile_geometry_v1_final.safetensors`.
+- Critter LoRA `litiso_iso_reference_critter_style_v1` is complete at 1000/1000.
+- Critter final checkpoint is synced to ComfyUI:
+  - `C:\Projects\ComfyUI\models\loras\litiso_iso_reference_critter_style_v1_final.safetensors`.
+
+Repeatable no-credit review command:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\run_litiso_asset_pipeline_review_golden_path.ps1
+```
+
+Status-only command:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\run_litiso_asset_pipeline_review_golden_path.ps1 -SkipRebuild
+```
+
+Generated status manifest:
+
+- `Temp\AssetForge\litiso_asset_pipeline_review_golden_path_status.json`.
+
+Review packs rebuilt/verified:
+
+- Exact/source tile family:
+  - `Assets\Generated\_Review\reference32_selected_tile_family_source_v1\selected_tile_family_contact_sheet.png`.
+  - `Assets\Generated\_Review\reference32_selected_tile_family_source_v1\style_lock_score_sheet.png`.
+  - Style-lock score: 6/6 pass, mean 100.0.
+  - 6 pending manual decisions.
+- LIT-ISO-green tile family:
+  - `Assets\Generated\_Review\reference32_selected_tile_family_litiso_green_v1\selected_tile_family_contact_sheet.png`.
+  - `Assets\Generated\_Review\reference32_selected_tile_family_litiso_green_v1\style_lock_score_sheet.png`.
+  - Style-lock score: 6/6 pass, mean 95.479.
+  - 6 pending manual decisions.
+- Black mage v11 selected pack:
+  - `Assets\Generated\_Review\black_mage_iso_selected_v11\black_mage_selected_v11_contact_sheet.png`.
+  - 4 pending manual decisions.
+
+Current decision:
+
+- No Unity import has happened.
+- The exact/source deterministic tile family remains the current quality baseline.
+- The LIT-ISO-green variant is geometry-locked and passes the style score gate, but the shift is intentionally conservative; use it as a first palette proof, not final biome art.
+- The black mage v11 pack is useful review evidence but not a complete character set; cardinal directions and stronger camera consistency are still needed.
+- Next technical step is tighter image-to-image/reference-copy generation against these approved templates, not more prompt-only tile generation.
+
+### 2026-06-10 - AI tile candidate gate and copy-lock queue
+
+AI candidate gate:
+
+- Added `Tools\AssetForge\gate_reference32_ai_tile_candidates.py`.
+- The golden path now runs this gate when the existing ControlNet family reports are present.
+- Gate output:
+  - `Assets\Generated\_Review\reference32_ai_candidate_gate_v1\candidate_gate_report.json`.
+  - `Assets\Generated\_Review\reference32_ai_candidate_gate_v1\reference32_ai_candidate_gate_sheet.png`.
+  - `Assets\Generated\_Review\reference32_ai_candidate_gate_v1\review_decisions.json`.
+- Result from the existing medium/low-denoise ControlNet packs:
+  - 24 AI candidates scored.
+  - 6 best attempts selected, one per tile role.
+  - 0 accepted.
+  - 6 rejected because geometry/alpha footprint/coverage drift from the supplied source tiles.
+
+Conclusion:
+
+- Current AI tile output is not training-ready and not Unity-ready.
+- The failure mode is not palette. It is footprint collapse and source-shape drift.
+
+Next queued generation recipe:
+
+- Updated `Tools\AssetForge\run_reference32_clean_tile_family_controlnet.ps1` with:
+  - `-QueueOnly`.
+  - `-ControlHint edge|color`.
+  - `-ControlEnd`.
+  - `-Steps`.
+  - `-Cfg`.
+- Staged queue-only copy-lock batch:
+  - Manifest: `Temp\AssetForge\reference32_copylock_tile_family_d012_l018_c100_color_v1.json`.
+  - Request root: `Temp\AssetForge\reference32_controlnet_tile_requests`.
+  - Settings: denoise `0.12`, LoRA strength `0.18`, control strength `1.0`, color control hint, control end `1.0`, steps `16`, CFG `4.5`.
+- Validated dry-run processor for grass:
+  - `Temp\AssetForge\reference32_controlnet_tile_requests\reference32_clean_family_d012_l018_c100_grass_flat_v1\comfy_generation_manifest.dry_run.json`.
+
+Recommended next live test:
+
+- Run only the grass copy-lock request live, then rerun the AI gate before rendering the other five tiles.
+- Do not run the full copy-lock batch until grass passes the style-lock gate or clearly improves over the previous rejected candidates.
+
+Live copy-lock grass result:
+
+- Ran one live local Comfy smoke for:
+  - `Temp\AssetForge\reference32_controlnet_tile_requests\reference32_clean_family_d012_l018_c100_grass_flat_v1\generation_request.json`.
+- Review pack:
+  - `Assets\Generated\_Review\reference32_clean_family_d012_l018_c100_grass_flat_v1`.
+- Batch sheet/report:
+  - `Assets\Generated\_Review\reference32_copylock_tile_family_d012_l018_c100_color_v1\reference32_clean_tile_family_contact_sheet.png`.
+  - `Assets\Generated\_Review\reference32_copylock_tile_family_d012_l018_c100_color_v1\reference32_clean_tile_family_report.json`.
+- Gate result:
+  - `Assets\Generated\_Review\reference32_copylock_ai_gate_d012_l018_c100_color_v1\reference32_ai_candidate_gate_sheet.png`.
+  - `Assets\Generated\_Review\reference32_copylock_ai_gate_d012_l018_c100_color_v1\candidate_gate_report.json`.
+  - 2 candidates scored, 0 accepted, 1 best rejected.
+
+Updated tile-generation conclusion:
+
+- Even low denoise (`0.12`) and strong color control (`1.0`) still shrink the source footprint and lose the raised side mass.
+- Do not run the remaining five copy-lock jobs yet.
+- Next tile work should switch to deterministic geometry masks plus generated/recolored texture detail, or a stronger inpainting/reference-copy workflow that cannot alter alpha silhouette.
+
+### 2026-06-10 - Mask-locked local tile generator
+
+Implemented the current practical no-credit tile-generation path:
+
+- Added `Tools\AssetForge\build_reference32_mask_locked_texture_variants.py`.
+- Purpose: preserve the exact 32x32 alpha footprint/mass from the supplied Reference32 source tiles, then generate material-ramp texture and palette variations inside that fixed mask.
+- This prevents the failure seen in pure diffusion where the tile shrinks, loses side mass, or becomes a detached object.
+
+Generated variant pack:
+
+- Root: `Assets\Generated\_Review\reference32_mask_locked_texture_variants_v3`.
+- Contact sheet: `Assets\Generated\_Review\reference32_mask_locked_texture_variants_v3\reference32_mask_locked_texture_variants_contact_sheet.png`.
+- Map preview: `Assets\Generated\_Review\reference32_mask_locked_texture_variants_v3\reference32_mask_locked_texture_variants_map_preview.png`.
+- Manifest: `Assets\Generated\_Review\reference32_mask_locked_texture_variants_v3\reference32_mask_locked_texture_variants_manifest.json`.
+
+Selected review families:
+
+- Forest moss:
+  - Root: `Assets\Generated\_Review\reference32_mask_locked_texture_family_forest_moss_v1`.
+  - Contact sheet: `Assets\Generated\_Review\reference32_mask_locked_texture_family_forest_moss_v1\selected_tile_family_contact_sheet.png`.
+  - Map preview: `Assets\Generated\_Review\reference32_mask_locked_texture_family_forest_moss_v1\selected_tile_family_map_preview.png`.
+  - Style-lock score: 6/6 pass, mean 82.494.
+- Plains sun:
+  - Root: `Assets\Generated\_Review\reference32_mask_locked_texture_family_plains_sun_v1`.
+  - Contact sheet: `Assets\Generated\_Review\reference32_mask_locked_texture_family_plains_sun_v1\selected_tile_family_contact_sheet.png`.
+  - Map preview: `Assets\Generated\_Review\reference32_mask_locked_texture_family_plains_sun_v1\selected_tile_family_map_preview.png`.
+  - Style-lock score: 6/6 pass, mean 78.558.
+
+Current judgment:
+
+- These are not final approved Unity art, but they are now the best local generator path for tiles because they preserve geometry by construction.
+- Palette still needs art tuning: forest grass is bright, plains is high-key, water is slightly cyan.
+- Next local step should tune ramps against the screenshot target, not return to freehand diffusion for whole tiles.
+
+### 2026-06-10 - Asset pipeline dataset capture gate
+
+Added the dry-run capture layer for the current local asset pipeline goal.
+
+New tooling:
+
+- `Tools\AssetForge\build_tile_selected_training_capture_plan.py`
+  - Builds `training_capture_plan.json` for the selected screenshot-balanced Reference32 tile family.
+  - Captions explicitly say terrain-only, no props, no characters, no trees, no buildings, no clutter.
+- `Tools\AssetForge\capture_approved_review_pack.py`
+  - Generic dry-run-first review-pack capture planner.
+  - Reads `review_decisions.json`, `review_report.json`, and optional `training_capture_plan.json`.
+  - Default behavior writes only a temp report and copies nothing.
+  - `--apply` exists for later, but should only be used after explicit approval for external dataset writes.
+
+Current refreshed status:
+
+- Golden path command:
+  - `powershell -NoProfile -ExecutionPolicy Bypass -File Tools\AssetForge\run_litiso_asset_pipeline_review_golden_path.ps1 -SkipRebuild`
+- Main status:
+  - `Temp\AssetForge\litiso_asset_pipeline_review_golden_path_status.json`
+- Readiness audit:
+  - `Temp\AssetForge\litiso_asset_pipeline_readiness_audit.json`
+- Tile capture dry run:
+  - `Temp\AssetForge\dataset_capture_plans\reference32_mask_locked_texture_family_screenshot_balanced_v1_capture_dry_run.json`
+  - 0 planned records, 6 skipped pending review.
+- Black mage capture dry run:
+  - `Temp\AssetForge\dataset_capture_plans\black_mage_iso_selected_v13_mixed_8d_capture_dry_run.json`
+  - 0 planned records, 8 skipped pending review.
+
+Important gate:
+
+- Do not train or copy these packs into the external dataset until the user explicitly approves entries in `review_decisions.json`.
+- The current audit status remains `review_ready_not_production_ready`.
+- Remaining blockers:
+  - `black_mage_8d_manual_approval_pending`
+  - `tile_manual_art_and_license_approval_pending`
+  - `dataset_capture_waiting_for_manual_approval`
+  - `black_mage_animation_sequences_not_generated`
+
+### 2026-06-10 - Visual delta report for tile/mage review
+
+Added `Tools\AssetForge\build_litiso_pipeline_visual_delta_report.py`.
+
+Purpose:
+
+- Put supplied/source tile geometry beside the current generated tile family.
+- Show alpha-delta evidence so geometry drift is obvious.
+- Put the black mage source reference beside the current 8D selected direction evidence.
+- Emit metrics and recommendations in JSON so future passes do not rely only on subjective memory.
+
+Current outputs:
+
+- Board:
+  - `Assets\Generated\_Review\litiso_pipeline_visual_delta_v1\litiso_pipeline_visual_delta_board.png`
+- Report:
+  - `Assets\Generated\_Review\litiso_pipeline_visual_delta_v1\litiso_pipeline_visual_delta_report.json`
+- Golden path status now includes both paths.
+- Readiness audit now has a dedicated requirement: `Visual delta board compares source style lock against current outputs`.
+
+Current metric conclusion:
+
+- Tile geometry is solved for this six-tile review family: all six have `alpha_iou=1.0`.
+- Current tile problem is palette/outline/detail tuning, not shape. `dirt_flat` and `grass_cliff_edge` need stronger dark edge pixels.
+- Mage has all 8 directions in the review pack, but semantic direction correctness is still manual-review only. Metrics can flag scale/palette drift; they cannot prove a back-facing sprite is semantically correct.
+
+### 2026-06-10 - SpriteForge P2 gate: lane A witch walk-S
+
+P2 branch: `codex/spriteforge-p2`.
+
+Implemented:
+
+- Propagated the P1 review loop note:
+  - `Tools/SpriteForge/poses/walk/action.json` now has `loop_start: 1`, `loop_end: 5`, and `loop_range: [1, 5]`.
+  - `Tools/SpriteForge/spriteforge_pack.py` now copies loop metadata into `sheet.json` and writes `playback_frame_indices`.
+- Added lane A tooling:
+  - `Tools/SpriteForge/run_lane_a_animation.py`
+  - `Tools/SpriteForge/run_lane_a_walk_s_witch.ps1`
+  - `Tools/SpriteForge/validate_lane_a_output.py`
+
+Rendered outputs:
+
+- Primary ref-locked P2 gate output:
+  - Root: `Tools/SpriteForge/out/p2_ref_lock/witch/walk/S`
+  - Review image: `Tools/SpriteForge/out/p2_ref_lock/witch/walk/S/preview_x4.png`
+  - Sheet: `Tools/SpriteForge/out/p2_ref_lock/witch/walk/S/sheet.png`
+  - Sheet metadata: `Tools/SpriteForge/out/p2_ref_lock/witch/walk/S/sheet.json`
+  - Manifest: `Tools/SpriteForge/out/p2_ref_lock/witch/walk/S/lane_a_manifest.json`
+  - Gate report: `Tools/SpriteForge/out/p2_ref_lock/witch/walk/S/p2_gate_report.json`
+- First looser-control output retained for comparison:
+  - Root: `Tools/SpriteForge/out/witch/walk/S`
+  - Review image: `Tools/SpriteForge/out/witch/walk/S/preview_x4.png`
+
+Validation:
+
+- `C:\Projects\ComfyUI\.venv\Scripts\python.exe -m py_compile Tools\SpriteForge\build_action_pose_library.py Tools\SpriteForge\spriteforge_pack.py Tools\SpriteForge\run_lane_a_animation.py Tools\SpriteForge\validate_lane_a_output.py`
+- `C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_action_pose_library.py` -> pass.
+- `C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_lane_a_output.py --root Tools\SpriteForge\out\p2_ref_lock\witch\walk\S` -> pass.
+
+Review notes:
+
+- The ref-locked output is structurally valid and keeps the witch identity/orientation much better than the looser first pass.
+- Stride readability is subtle. This is the expected tradeoff from lower denoise and stronger reference lock. If Claude/Gary wants a more readable walk, the next change should amplify the P1 walk pose stride or run a controlled settings matrix, not hand-edit frames.
+- Nothing was imported into Unity.
+
+### 2026-06-10 - SpriteForge P2 conditional fix resubmission
+
+Branch: `codex/spriteforge-p2`.
+
+Fixes applied against Claude's P2 conditional-pass notes:
+
+- Walk readability:
+  - Bumped pose library to `0.2.1-p2-walk-readability`.
+  - Increased walk pose body bob at 512px scale: contact phases move down; passing/recover phases move up.
+  - Amplified leg/arm swing in `Tools/SpriteForge/build_action_pose_library.py`.
+  - Added final per-phase post-bob in `Tools/SpriteForge/run_lane_a_animation.py` because the previous normalizer bottom-aligned every frame and visually cancelled the bob signal.
+- Palette flicker:
+  - Added palette lock in the lane-A cleanup tail.
+  - Frame 0 builds the palette; non-anchor frames quantize to that palette before packing.
+- Settings sweep:
+  - Added `Tools/SpriteForge/run_lane_a_walk_s_witch_fix_sweep.ps1` and `Tools/SpriteForge/build_lane_a_sweep_sheet.py`.
+  - Rendered focused candidates:
+    - `d038_c062_bob`
+    - `d045_c070_bob`
+    - `d055_c080`
+    - `d065_c100`
+  - Stopped before full 3x3 because the higher denoise/control candidates visibly break identity/direction; the useful range is the stricter end.
+
+Selected resubmission artifact:
+
+- Root: `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S`
+- Review image: `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/preview_x4.png`
+- Sheet: `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/sheet.png`
+- Sheet metadata: `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/sheet.json`
+- Manifest: `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/lane_a_manifest.json`
+- Gate report: `Tools/SpriteForge/out/p2_fix_sweep/d038_c062_bob/witch/walk/S/p2_gate_report.json`
+- Sweep sheet: `Tools/SpriteForge/out/p2_fix_sweep/lane_a_sweep_contact_sheet.png`
+
+Validation:
+
+- `C:\Projects\ComfyUI\.venv\Scripts\python.exe -m py_compile Tools\SpriteForge\build_action_pose_library.py Tools\SpriteForge\run_lane_a_animation.py Tools\SpriteForge\build_lane_a_sweep_sheet.py Tools\SpriteForge\validate_lane_a_output.py` -> pass.
+- `C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_action_pose_library.py` -> pass.
+- `C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_lane_a_output.py --root Tools\SpriteForge\out\p2_fix_sweep\d038_c062_bob\witch\walk\S` -> pass.
+
+Review note:
+
+- `d038_c062_bob` is the selected tradeoff: it keeps the witch identity/direction best, stabilizes the palette, and adds visible bob. It still relies more on bob than leg silhouette because the robe hides most leg motion.
+- Nothing was imported into Unity.
+
+---
+
+## 2026-06-10 - Codex: SpriteForge P3 Lane B install gate
+
+P3 status: CONDITIONAL GATE READY for review.
+
+Implemented under `Tools/SpriteForge`:
+
+- `check_lane_b_stack.py` writes an auditable WanVideoWrapper/One-to-All stack report.
+- `run_lane_b_animation.py` implements the video/input-frame -> normalize/palette-lock -> `spriteforge_pack.py` tail.
+- `build_lane_ab_comparison.py` builds the P3 A/B comparison sheet.
+- `run_lane_b_walk_s_witch.ps1` is the one-command P3 review wrapper.
+- `workflows/one_to_all_pose_i2v.json` and `workflows/wan22_i2v_pose.json` are binding contracts pointing at the upstream Kijai example workflows.
+
+Local install result:
+
+- `C:\Projects\ComfyUI\custom_nodes\ComfyUI-WanVideoWrapper` exists.
+- WanVideoWrapper Python dependencies are installed in `C:\Projects\ComfyUI\.venv`.
+- Running ComfyUI is reachable, but it was started before install, so Wan node classes are not visible until restart.
+- Wan model buckets are still missing: `text_encoders`, `diffusion_models`, `vae`.
+- Machine has 8GB VRAM; One-to-All 14B is high-risk/likely blocked for live rendering. Lane A remains default below 96px until a real Lane B render beats it.
+
+P3 review artifacts:
+
+- `Tools/SpriteForge/out/lane_b/p3_stack_report.json`
+- `Tools/SpriteForge/out/lane_b/witch/walk/S/lane_b_manifest.json`
+- `Tools/SpriteForge/out/lane_b/p3_ab_comparison.png`
+
+Gate command used:
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\run_lane_b_animation.py --project-root C:\Projects\Unity-Projects\LIT-ISO --character witch --action walk --direction S --target-size 64 --input-frames Tools\SpriteForge\out\p2_fix_sweep\d038_c062_bob\witch\walk\S\frames
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\build_lane_ab_comparison.py --project-root C:\Projects\Unity-Projects\LIT-ISO
+```
+
+Carry-forward into P4:
+
+- `d038_c062_bob` is now the Lane A default in `spriteforge.config.example.json`.
+- Temporal stability QA is configured as a fixed head/band crop delta against frame 0; implementation still needs to be wired into the P4 QA scripts.
+- Do not start full P4 generation until this P3 gate is reviewed.
