@@ -1,0 +1,43 @@
+{
+  "schema": "lit-iso.spriteforge.p1-gate-report.v1",
+  "checked_utc": "2026-06-10T18:37:25.511973+00:00",
+  "poses_root": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses",
+  "version": "0.2.0-p1-idle-walk",
+  "status": "pass",
+  "issues": [],
+  "warnings": [],
+  "actions": [
+    {
+      "action": "idle",
+      "expected_frames": 4,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\idle\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\idle\\idle_pose_contact_sheet.png"
+    },
+    {
+      "action": "walk",
+      "expected_frames": 6,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\walk\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\walk\\walk_pose_contact_sheet.png"
+    }
+  ]
+}

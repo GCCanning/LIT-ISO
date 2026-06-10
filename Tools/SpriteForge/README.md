@@ -12,6 +12,8 @@ Codex handoff/state: `Docs/handoff/SPRITEFORGE_CODEX_HANDOFF.md`.
 - `out/` — generated jobs (GITIGNORED — nothing here enters git; approved
   assets are installed into Assets/ from Gary's machine only).
 - `spriteforge_pack.py` — frames → sheet.png + sheet.json (+ preview strip).
+- `build_action_pose_library.py` — deterministic P1 pose library builder.
+- `validate_action_pose_library.py` — P1 gate validator for pose frames.
 - `spriteforge.config.example.json` — SpriteForge-specific config; merge into
   asset_forge.local.json conventions is Codex P0 work.
 
@@ -32,3 +34,16 @@ out/<character>/<action>/<direction>/
 3. Pose skeletons may derive from LPC/OGA oracle datasets; their PIXELS may
    never ship (license hygiene).
 4. `out/` stays out of git.
+
+## P1 pose-library commands
+
+Use the project-local Python that has Pillow available.
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\build_action_pose_library.py --replace
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_action_pose_library.py
+```
+
+The validator writes `poses/p1_gate_report.json`. The P1 review gate is human
+eyeballing of `poses/idle/idle_pose_contact_sheet.png` and
+`poses/walk/walk_pose_contact_sheet.png` after the automated report passes.

@@ -12,5 +12,18 @@ canned OpenPose skeleton sequences, all anchored on one shared idle pose.
 - Derivation: start from `Tools/AssetForge/build_litiso_openpose_direction_library.py`
   and the LPC/OGA oracle builders (skeletons only — never oracle pixels).
 
-v1 actions (priority order): idle(4f), walk(6f), run(6f), attack_swing(6f),
-cast(6f), hurt(3f), death(5f). All start from the idle anchor frame.
+P1 ships the first versioned subset:
+
+- `idle` — 4 frames, 8 directions, frame 0 = shared anchor.
+- `walk` — 6 frames, 8 directions, frame 0 = byte-identical to the matching
+  `idle/<direction>/frame_000.png` anchor.
+
+P1 gate artifacts:
+
+- `idle/idle_pose_contact_sheet.png`
+- `walk/walk_pose_contact_sheet.png`
+- `pose_library_manifest.json`
+- `p1_gate_report.json`
+
+Future v1 actions (priority order): run(6f), attack_swing(6f), cast(6f),
+hurt(3f), death(5f). All must start from the idle anchor frame.

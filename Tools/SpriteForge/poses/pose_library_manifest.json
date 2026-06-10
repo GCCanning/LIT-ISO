@@ -1,0 +1,53 @@
+{
+  "schema": "lit-iso.spriteforge.pose-library.v1",
+  "generated_utc": "2026-06-10T18:35:46.200391+00:00",
+  "version": "0.2.0-p1-idle-walk",
+  "directions": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N",
+    "NW",
+    "W",
+    "SW"
+  ],
+  "actions": [
+    {
+      "action": "idle",
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "contact_sheet": "idle/idle_pose_contact_sheet.png"
+    },
+    {
+      "action": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "contact_sheet": "walk/walk_pose_contact_sheet.png"
+    }
+  ],
+  "requirements": {
+    "canvas": [
+      512,
+      512
+    ],
+    "background": "transparent",
+    "frame_0_contract": "Every action frame_000 matches idle frame_000 for the same direction."
+  },
+  "source": {
+    "method": "deterministic skeleton controls",
+    "license": "project-internal skeleton controls; no source/oracle art pixels included"
+  },
+  "idle_anchor_hashes": {
+    "S": "da8701100168566dba88cb2318ce09c18a301774e7771cd983932e88ea9ab4d3",
+    "SE": "3c5417c0dca39b7cf1deba0c62accef8b311f44e67fbfdc1e72cdb545486f144",
+    "E": "ad2ba817667dac97d53f000ca376c4e92e5fd46e810645098ff3396fe2d68f04",
+    "NE": "da6a9da382c22ae5d40d2d04e38b8aedef5568d36b2def8dd35f4e3ddf1b6214",
+    "N": "8a329757c3aabc1d2502e3b78f5de3deb21a837cd94b7c32c48e4e34fe6f9668",
+    "NW": "989f3d5cf525b0db462167906d3093336bf3007bbdc8289fd7ce45420f4c9380",
+    "W": "df7361c916921801f40e75ff63bbd38e17de684751173822adfe61fd05ec55f2",
+    "SW": "db3b43d8fec3830ab06094b5969e21a58bd83292e887dfff2d2eadd2f5f71bd6"
+  }
+}
