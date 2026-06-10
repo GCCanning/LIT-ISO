@@ -4,6 +4,13 @@
   "frames": 4,
   "fps": 4,
   "loop": true,
+  "loop_start": 0,
+  "loop_end": 3,
+  "loop_range": [
+    0,
+    3
+  ],
+  "loop_note": "Playback should loop loop_range; frame 0 remains available as the generation/idle anchor.",
   "anchor_frame": 0,
   "anchor_note": "frame 0 is byte-identical to the shared idle anchor pose for each direction.",
   "weapon_hand": "none",

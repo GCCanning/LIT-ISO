@@ -107,8 +107,8 @@ ACTION_PHASES = {
 }
 
 ACTION_DEFAULTS = {
-    "idle": {"frames": 4, "fps": 4, "loop": True, "weapon_hand": "none"},
-    "walk": {"frames": 6, "fps": 10, "loop": True, "weapon_hand": "none"},
+    "idle": {"frames": 4, "fps": 4, "loop": True, "loop_start": 0, "loop_end": 3, "weapon_hand": "none"},
+    "walk": {"frames": 6, "fps": 10, "loop": True, "loop_start": 1, "loop_end": 5, "weapon_hand": "none"},
 }
 
 
@@ -349,6 +349,10 @@ def write_action_json(action_root: Path, action: str, frame_records: list[dict],
         "frames": defaults["frames"],
         "fps": defaults["fps"],
         "loop": defaults["loop"],
+        "loop_start": defaults["loop_start"],
+        "loop_end": defaults["loop_end"],
+        "loop_range": [defaults["loop_start"], defaults["loop_end"]],
+        "loop_note": "Playback should loop loop_range; frame 0 remains available as the generation/idle anchor.",
         "anchor_frame": 0,
         "anchor_note": "frame 0 is byte-identical to the shared idle anchor pose for each direction.",
         "weapon_hand": defaults["weapon_hand"],

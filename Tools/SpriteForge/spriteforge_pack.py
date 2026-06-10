@@ -49,8 +49,18 @@ def content_bbox(img: Image.Image):
     return img.getbbox()  # respects alpha for RGBA
 
 
+def clamp_loop_range(frame_count: int, loop_start: int, loop_end: int | None) -> tuple[int, int]:
+    if frame_count <= 0:
+        return 0, 0
+    start = max(0, min(loop_start, frame_count - 1))
+    end = frame_count - 1 if loop_end is None else loop_end
+    end = max(start, min(end, frame_count - 1))
+    return start, end
+
+
 def pack(frames_dir: str, out_dir: str, fps: int, loop: bool,
-         meta: dict | None = None, pad: int = 1) -> dict:
+         meta: dict | None = None, pad: int = 1,
+         loop_start: int = 0, loop_end: int | None = None) -> dict:
     paths = find_frames(frames_dir)
     frames = [Image.open(p).convert("RGBA") for p in paths]
 
@@ -111,12 +121,19 @@ def pack(frames_dir: str, out_dir: str, fps: int, loop: bool,
     preview_path = os.path.join(out_dir, "preview.png")
     preview.save(preview_path)
 
+    loop_start, loop_end = clamp_loop_range(len(frames), loop_start, loop_end)
+    playback_frame_indices = list(range(loop_start, loop_end + 1)) if loop else list(range(len(frames)))
+
     sidecar = {
         "schema": "lit-iso.spriteforge.sheet.v1",
         "frames": len(frames),
         "cell": [cell_w, cell_h],
         "fps": fps,
         "loop": loop,
+        "loop_start": loop_start,
+        "loop_end": loop_end,
+        "loop_range": [loop_start, loop_end],
+        "playback_frame_indices": playback_frame_indices,
         "padding": pad,
         "frame_canvas": list(sizes.pop()),
         "frame_meta": frame_meta,
@@ -146,11 +163,18 @@ def main():
     args = ap.parse_args()
 
     fps, loop = 10, True
+    loop_start, loop_end = 0, None
     if args.action_json:
         with open(args.action_json) as fh:
             aj = json.load(fh)
         fps = aj.get("fps", fps)
         loop = aj.get("loop", loop)
+        if "loop_range" in aj and isinstance(aj["loop_range"], list) and len(aj["loop_range"]) == 2:
+            loop_start = int(aj["loop_range"][0])
+            loop_end = int(aj["loop_range"][1])
+        loop_start = int(aj.get("loop_start", loop_start))
+        if "loop_end" in aj:
+            loop_end = int(aj["loop_end"])
     if args.fps is not None:
         fps = args.fps
     if args.loop is not None:
@@ -165,7 +189,7 @@ def main():
         meta["pose_library_version"] = open(ver_path).read().strip()
 
     out_dir = args.out or os.path.dirname(os.path.abspath(args.frames))
-    result = pack(args.frames, out_dir, fps, loop, meta, args.pad)
+    result = pack(args.frames, out_dir, fps, loop, meta, args.pad, loop_start, loop_end)
     print(json.dumps(result, indent=2))
 
 

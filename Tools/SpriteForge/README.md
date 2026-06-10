@@ -17,6 +17,18 @@ Codex handoff/state: `Docs/handoff/SPRITEFORGE_CODEX_HANDOFF.md`.
 - `spriteforge.config.example.json` — SpriteForge-specific config; merge into
   asset_forge.local.json conventions is Codex P0 work.
 
+## P2 lane-A command
+
+This command writes review output only under `Tools/SpriteForge/out/witch/walk/S`.
+
+```powershell
+.\Tools\SpriteForge\run_lane_a_walk_s_witch.ps1
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_lane_a_output.py --character witch --action walk --direction S
+```
+
+The human review image for the P2 gate is
+`Tools/SpriteForge/out/witch/walk/S/preview_x4.png`.
+
 ## Output contract (per character/action/direction)
 
 ```
