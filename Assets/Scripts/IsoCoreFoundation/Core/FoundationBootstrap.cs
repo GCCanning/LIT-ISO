@@ -30,6 +30,7 @@ namespace IsoCore.Foundation
         public float cameraMaxSize = 9f;
         public float cameraZoomUnitsPerSecond = 5f;
         public float cameraZoomTapStep = 0.75f;
+        public const string CameraZoomSensitivityPrefKey = "camera.zoom.sensitivity";
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
         public int ActiveDifficulty { get; private set; } = 1;
@@ -325,6 +326,11 @@ namespace IsoCore.Foundation
                 config = new FoundationConfig();
             config.viewRadiusChunks = Mathf.Max(3, config.viewRadiusChunks);
             config.moveSpeed = Mathf.Clamp(config.moveSpeed <= 0f ? 2.8f : config.moveSpeed, 1.5f, 2.8f);
+
+            // The standard play/test world uses the continent generator (oceans, beaches,
+            // biome regions, multi-step cliffs, rivers). The CreationInstance showroom
+            // overrides this back to a flat review grid in its own ApplyConfig below.
+            config.flatWorld = false;
 
             ActiveWorldName = DefaultWorldName;
             ActiveDifficulty = 1;
@@ -682,6 +688,10 @@ namespace IsoCore.Foundation
             if (_cam == null || !_cam.orthographic)
                 return;
 
+            float zoomSensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(CameraZoomSensitivityPrefKey, 1f), 0.35f, 2.5f);
+            float zoomSpeed = cameraZoomUnitsPerSecond * zoomSensitivity;
+            float zoomStep = cameraZoomTapStep * zoomSensitivity;
+
             bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
             if (!ctrl)
                 return;
@@ -704,9 +714,9 @@ namespace IsoCore.Foundation
 
             float delta = 0f;
             if (zoomIn)
-                delta -= cameraZoomUnitsPerSecond * Time.unscaledDeltaTime;
+                delta -= zoomSpeed * Time.unscaledDeltaTime;
             if (zoomOut)
-                delta += cameraZoomUnitsPerSecond * Time.unscaledDeltaTime;
+                delta += zoomSpeed * Time.unscaledDeltaTime;
 
             bool zoomInTap =
                 Input.GetKeyDown(KeyCode.Equals) ||
@@ -717,9 +727,9 @@ namespace IsoCore.Foundation
                 Input.GetKeyDown(KeyCode.KeypadMinus);
 
             if (zoomInTap)
-                delta -= cameraZoomTapStep;
+                delta -= zoomStep;
             if (zoomOutTap)
-                delta += cameraZoomTapStep;
+                delta += zoomStep;
 
             float next = _cam.orthographicSize + delta;
             _cam.orthographicSize = Mathf.Clamp(next, cameraMinSize, cameraMaxSize);

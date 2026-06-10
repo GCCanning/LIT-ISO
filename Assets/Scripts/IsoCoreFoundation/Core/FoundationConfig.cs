@@ -66,6 +66,47 @@ namespace IsoCore.Foundation
         public float climateFrequency = 0.02f;
         public float heightFrequency = 0.06f;
 
+        [Header("Continent world (non-flat)")]
+        [Tooltip("When true (and flatWorld is off), the terrain sampler generates a " +
+                 "continent: oceans, beaches, moisture/temperature biome regions, " +
+                 "multi-step cliffs, and winding rivers — all as one deterministic " +
+                 "per-cell function. When false, the legacy simple non-flat path is used.")]
+        public bool continentWorld = true;
+        [Tooltip("Frequency of the base landmass elevation noise. Lower = larger " +
+                 "continents and oceans; higher = broken, islandy terrain.")]
+        public float continentFrequency = 0.012f;
+        [Tooltip("Elevation below this is deep ocean (water).")]
+        [Range(0f, 1f)] public float continentDeepLevel = 0.34f;
+        [Tooltip("Elevation below this (but above deep) is shallow coastal water.")]
+        [Range(0f, 1f)] public float continentShoreLevel = 0.42f;
+        [Tooltip("Land below this elevation renders as a beach (sand) ring at the coast.")]
+        [Range(0f, 1f)] public float continentBeachLevel = 0.46f;
+        [Tooltip("Land elevation thresholds at which the height column steps up one level " +
+                 "(stacked dirt body + surface cap). Three thresholds = up to 4 tiers.")]
+        [Range(0f, 1f)] public float continentTier2Level = 0.62f;
+        [Range(0f, 1f)] public float continentTier3Level = 0.74f;
+        [Range(0f, 1f)] public float continentTier4Level = 0.85f;
+        [Tooltip("Elevation added near the world origin so the spawn region is always " +
+                 "solid land, fading to 0 over continentSpawnLandRadius cells.")]
+        [Range(0f, 1f)] public float continentSpawnLandBias = 0.34f;
+        [Tooltip("Radius (cells) over which the spawn land bias fades to zero.")]
+        public float continentSpawnLandRadius = 48f;
+        [Header("Continent rivers")]
+        [Tooltip("Frequency of the winding river band noise. Lower = longer, broader rivers.")]
+        public float riverFrequency = 0.025f;
+        [Tooltip("Half-width of a river in noise units — larger = wider rivers.")]
+        [Range(0f, 0.1f)] public float riverHalfWidth = 0.014f;
+        [Tooltip("Extra width past the water where the bank is sand/dirt.")]
+        [Range(0f, 0.1f)] public float riverBankWidth = 0.012f;
+        [Tooltip("Coordinate-warp amplitude (cells) that makes rivers meander instead of " +
+                 "running straight.")]
+        public float riverWarpAmplitude = 22f;
+        [Tooltip("Frequency of the river coordinate-warp noise.")]
+        public float riverWarpFrequency = 0.02f;
+        [Tooltip("Rivers only carve land below this elevation, so they sit in valleys " +
+                 "and never run across the highest peaks.")]
+        [Range(0f, 1f)] public float riverMaxElevation = 0.72f;
+
         [Header("Rendering")]
         [Tooltip("Add a Pixel Perfect Camera so the pixel-art tiles stay crisp and the " +
                  "grid does not shimmer as the player moves.")]
