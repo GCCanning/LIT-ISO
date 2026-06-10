@@ -4,6 +4,65 @@
 
 ---
 
+### 2026-06-10 — Black mage player placeholder + dungeon-void handoff (UNCOMMITTED)
+
+**1. Black mage player placeholder (owner-requested).** Built
+`Assets/Resources/Characters/Player/BlackMage_Idle_512x1024.png` (+ authored .meta,
+new GUID) from the owner's PixelArt poses: same contract as the ReferenceKnight sheet
+(512x1024, 8 rows x 4 frames, 128px cells, row 0 = S clockwise, bottom-center pivots,
+PPU 100, multi-sprite `_0.._31`). UPDATE (same day): regenerated from owner-supplied true walk loops
+(`PixelArt/BlackMageWalkingLoopSW.png` + `...NE.png`, 7-phase loops, gray bg keyed
+out via border flood). Rows now: S/W/SW = SW loop, SE/E = mirrored SW, NE/N = NE
+back-view loop, NW = mirrored NE; 4 of 7 phases per row, uniform scale (no gait
+pulse). PNG only changed — meta/slicing/code untouched.
+**One-line edit in YOUR lane** (sorry — owner asked for immediate import):
+`PlayerAnimator.sheetResource` default now points at the BlackMage sheet; swap the
+string to revert. Note: source poses carry a tiny "preview" watermark — this art is
+placeholder-only, never ship. Your Track-4 8D pipeline replaces it.
+
+**2. Dungeon/instance rework spec (owner directive — your lane, please pick up):**
+Goal: NO wall rendering anywhere in instances. Only the tiles the player can walk on
+are rendered; everything else is void with subtle particles.
+- Remove tavern/library/guild visible wall sprites (tavern still stacks N/W/E wall
+  sprites); keep invisible collision blockers only.
+- One code path for all instance types (dungeon, tavern, library, showroom): render
+  exactly the explicit walkable-cell list (your rows 77/78 work is the foundation).
+- Void: near-black camera background inside instances + drifting particle motes
+  (AmbientParticles variant, low alpha, tinted to portal tier hue).
+- Keep exit-portal marker, invisible blockers, explicit renderCells in saves.
+- Optional polish: dark rim/gradient on walkable edge cells for boundary readability.
+
+**3. FYI:** menu background concepts (`Docs/handoff/menu_concepts/` per ledger rows
+63–64) are no longer in the working tree — if they live in the C:\tmp quarantine or
+an unmerged branch, please restore or regenerate so the menu background can be
+promoted to `Resources/UI/Menu/background.png` (loader already prefers that path).
+The AI Toolkit / GeneratedAssets gitignore decisions (rows 37/38) are already done
+in `.gitignore`.
+
+---
+
+### 2026-06-10 — UI scroll-list visibility fix (UNCOMMITTED — working tree, UI lane)
+
+**Bug (user-reported with screenshot):** Crafting tab shows "Recipes (29)" and the
+details pane works, but the recipe LIST renders empty. Calling-select cards also
+render empty. Root cause hypothesis: the only three `Mask` users in the codebase are
+exactly the broken surfaces — a stencil `Mask` over a (near-)fully-transparent
+`Image` was culling every masked child.
+
+**Fix applied (3 files, Claude lane, no Foundation changes):** replaced
+`Mask` with `RectMask2D` (keeps the transparent Image as scroll-drag raycast target):
+- `Assets/Scripts/UI/InGame/CharacterPanelView.cs` (CreateScrollView)
+- `Assets/Scripts/UI/InGame/CraftingView.cs` (recipe list viewport)
+- `Assets/Scripts/UI/WelcomeScreenManager.cs` (CreateScrollList — callings + world list)
+
+**NOT committed** — git index was locked by an active session on
+`claude/land-session-drift` when this was applied. Whoever ends that session: please
+commit these three files as `claude/ui-scrollmask-fix` (or fold into the active
+branch with a separate commit). Needs a play check: open Crafting tab → 29 rows
+visible; New Game → 7 Calling cards visible; Load Game → world rows visible.
+
+---
+
 ### 2026-06-05 — Foundation progression adapters + quest tracker done
 
 PR `claude/foundation-progression-adapters` is ready. **Merge `codex/litrpg-foundation-systems` first** — this branch compiles against `FoundationPlayerStats`, `FoundationProgression`, and the new `FoundationBootstrap.Stats`/`Progression` properties from that branch.
@@ -224,33 +283,20 @@ Standalone preview work (no Unity changes, placeholders untouched):
   (badlands/meadow/forest), 3 height tiers with z-aware cliff rendering,
   meandering rivers with pond endings, clustered real-world-style decoration.
 - Everything you need to continue: `Docs/handoff/WORLD_GEN_PROTOTYPE_HANDOFF.md`
-  + `Docs/handoff/world-gen-prototype/` (taxonomy, scripts, renders).
-- Reminder: pack license still unconfirmed -> review/prototype use only.
+  + `Docs/h
+## 2026-06-10 - Claude Fable: SpriteForge P1 GATE REVIEW - PASS
 
+Reviewed codex/spriteforge-p1 (2d81e8b6a). Verified independently: idle/walk
+anchor frames byte-identical across all 8 directions; 32+48 frames, 512x512
+transparent; contact sheets read correctly per direction. Gate report clean.
 
----
+Two notes to carry into P2 (no pose rework needed now):
+1. LOOP RANGE: walk frame 0 IS the idle anchor, so a naive runtime loop
+   pauses every cycle. Add "loop_start": 1 (or loop_range) to action.json +
+   propagate into sheet.json so the installer/animators can skip the anchor
+   during playback while generation keeps using it.
+2. STRIDE READABILITY: leg/arm amplitude is subtle outside f3; judge after
+   the first lane-A renders at 64px - if steps mush together, amplify stride
+   ~15-20% in the builder rather than hand-editing frames.
 
-### 2026-06-09 - Continent generator ported into Unity (Claude, in your lane)
-
-Heads-up: with the user's explicit go-ahead I edited THREE files in your
-IsoCoreFoundation lane to port the world-gen prototype into the live terrain
-system. Rendered with existing Foundation block art only -- NO tile-pack pixels
-imported (license still unconfirmed). Details + tuning notes:
-`Docs/handoff/WORLD_GEN_PROTOTYPE_HANDOFF.md` (see "UNITY INTEGRATION - LANDED").
-
-- `World/IsoTerrainSampler.cs`: new pure per-cell `SampleContinent(wx,wy)` (no
-  global passes -> streams like before). Ocean/beach/land depth chain, multi-step
-  cliffs from elevation tiers, warped-band rivers w/ sand banks, climate biome
-  purity (existing SelectBiome), clustered deco (existing PickClusteredDecoration).
-- `Core/FoundationConfig.cs`: new Continent world + rivers config blocks
-  (`continentWorld` default true; `flatWorld` still default true).
-- `Core/FoundationBootstrap.cs`: standard launches set `flatWorld=false`
-  (continent); CreationInstance showroom still forces flat in its ApplyConfig.
-
-Verified: `dotnet build` clean (0/0); headless logic mirror over seeds
-1337/4242/7777 (safe land spawn apron, ocean/river/land present, height<=ceiling).
-PENDING and yours-or-user-to-run: in-editor FoundationValidator +
-IntegratedSliceValidator + a visual play pass (Unity was holding the project
-lock, so I could not start a batch instance). No regression expected -- spawn
-clearing still returns flat walkable meadow. Tune the thresholds in-editor:
-real Unity Perlin has more range than my test mirror, so expect more tall cliffs.
+P2 is GO: lane A end-to-end, witch idle ref, walk-S first. Stop at gate.
