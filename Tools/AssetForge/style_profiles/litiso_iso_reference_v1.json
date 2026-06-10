@@ -1,0 +1,68 @@
+{
+  "schema": "lit_iso.asset_forge.style_profile.v1",
+  "id": "litiso_iso_reference_v1",
+  "name": "LIT-ISO isometric reference style v1",
+  "status": "style_lock_reference_only",
+  "license_status": "unknown_user_supplied_reference_until_documented",
+  "source_archives": [
+    "C:/Users/garyc/Downloads/isometric tileset.7z",
+    "C:/Users/garyc/Downloads/critters.7z"
+  ],
+  "source_review_root": "Assets/Generated/_Review/style_lock_sources",
+  "analysis": {
+    "summary": "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/STYLE_LOCK_ANALYSIS.md",
+    "inventory": "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/style_lock_inventory.json",
+    "tileset_contact_sheet": "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/tileset_contact_sheet.png",
+    "critters_contact_sheet": "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/critters_contact_sheet.png",
+    "tileset_palette": "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/tileset_palette.png",
+    "critters_palette": "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/critters_palette.png"
+  },
+  "tile_contract": {
+    "cell_width": 32,
+    "cell_height": 32,
+    "projection": "compact_isometric_pixel_tile",
+    "terrain_rule": "terrain tiles are single 32x32 cells with transparent corners unless authored as a sheet/source reference",
+    "height_rule": "raised/side tiles use dark underside ramps and hand-authored dither clusters; avoid procedural outlines",
+    "forbidden": [
+      "64x64 greenwake geometry output",
+      "procedural repeated grass marks",
+      "large hard diamond border",
+      "object on top of terrain tile",
+      "AI diorama scene for a terrain tile"
+    ]
+  },
+  "mob_contract": {
+    "frame_width_observed": 46,
+    "frame_height_observed": 32,
+    "directions": [
+      "NE",
+      "NW",
+      "SE",
+      "SW"
+    ],
+    "observed_actions": [
+      "idle",
+      "run",
+      "walk",
+      "burrow",
+      "unburrow",
+      "tunnel"
+    ],
+    "direction_note": "This reference pack is diagonal-isometric first. Do not force S/E/N/W cardinal sprites unless a separate character reference style requires it."
+  },
+  "generation_policy": {
+    "prompt_only": "blocked_for_tiles",
+    "comfy_sd15_controlnet": "allowed_for_experiments_only",
+    "sprixen": "allowed_as_optional_source_material",
+    "training": "blocked_until_license_documented",
+    "unity_import": "blocked_until_art_approved"
+  },
+  "acceptance_gate": [
+    "matches 32x32 tile scale",
+    "matches compact palette and dark underside ramps",
+    "no procedural-looking repeated texture marks",
+    "terrain transitions look hand-authored",
+    "passes structural QA",
+    "passes human art approval before Unity promotion"
+  ]
+}

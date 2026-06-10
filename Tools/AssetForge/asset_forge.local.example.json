@@ -134,7 +134,7 @@
       "mode_defaults": {
         "tile": {
           "project_id": "",
-          "resolution": "64x64",
+          "resolution": "32x32",
           "pixel_perfect": "on",
           "timeout_seconds": 180
         },
@@ -187,6 +187,28 @@
     "handoff_root": "Assets/Generated",
     "default_pack_name": "CodexBiomeStarter",
     "default_export_name": "CodexBiomeStarter"
+  },
+  "proper_pixel_art": {
+    "enabled_by_default": false,
+    "package": "proper-pixel-art",
+    "install_command": "C:/Projects/ComfyUI/.venv/Scripts/python.exe -m pip install proper-pixel-art",
+    "source": "https://github.com/KennethJAllen/proper-pixel-art",
+    "license": "MIT",
+    "python_module": "proper_pixel_art",
+    "notes": [
+      "Optional cleanup backend for noisy AI pixel-art-style outputs.",
+      "Enable per request by adding proper_pixel_art to post_process.",
+      "Asset Forge writes sidecar candidates under _ProperPixelArt instead of replacing approved outputs automatically.",
+      "Default pixel_width is conservative at 1 because Asset Forge already normalizes most review outputs before this sidecar runs. Increase pixel_width only for large fake-pixel source images that need true grid recovery."
+    ],
+    "mode_defaults": {
+      "tile": { "colors": 16, "target_size": "32x32", "transparent": true, "pixel_width": 1 },
+      "prop": { "colors": 32, "target_size": "128x128", "transparent": true, "pixel_width": 1 },
+      "item": { "colors": 24, "target_size": "64x64", "transparent": true, "pixel_width": 1 },
+      "character": { "colors": 48, "target_size": "128x128", "transparent": true, "pixel_width": 1 },
+      "npc": { "colors": 48, "target_size": "128x128", "transparent": true, "pixel_width": 1 },
+      "mob": { "colors": 48, "target_size": "128x128", "transparent": true, "pixel_width": 1 }
+    }
   },
   "provenance": {
     "project": "LIT-ISO",

@@ -118,6 +118,7 @@ def main() -> int:
                     "sprite_fusion_snap",
                     "palette_cap",
                     "nearest_neighbor_resize",
+                    "proper_pixel_art",
                     "terrain_profile_qa",
                     "qa_report",
                 ],

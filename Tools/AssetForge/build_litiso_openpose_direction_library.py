@@ -12,8 +12,18 @@ from PIL import Image, ImageDraw, ImageFont
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
 
-CANONICAL_DIRECTIONS = ["S", "E", "N", "W"]
-DIRECTION_WORD = {"S": "south", "E": "east", "N": "north", "W": "west"}
+CANONICAL_DIRECTIONS = ["S", "SE", "E", "NE", "N", "NW", "W", "SW"]
+DEFAULT_DIRECTIONS = ["S", "E", "N", "W"]
+DIRECTION_WORD = {
+    "S": "south",
+    "SE": "south-east",
+    "E": "east",
+    "NE": "north-east",
+    "N": "north",
+    "NW": "north-west",
+    "W": "west",
+    "SW": "south-west",
+}
 
 
 def now_utc() -> str:
@@ -33,9 +43,9 @@ def pose_points(direction: str, action: str) -> list[tuple[int, int, int]]:
     neck_y = 200
     hip_y = 312
     ankle_y = 424
-    lean = {"S": 0, "N": 0, "E": 18, "W": -18}[direction]
-    shoulder_span = {"S": 92, "N": 82, "E": 52, "W": 52}[direction]
-    hip_span = {"S": 62, "N": 56, "E": 38, "W": 38}[direction]
+    lean = {"S": 0, "SE": 12, "E": 18, "NE": 10, "N": 0, "NW": -10, "W": -18, "SW": -12}[direction]
+    shoulder_span = {"S": 92, "SE": 76, "E": 52, "NE": 66, "N": 82, "NW": 66, "W": 52, "SW": 76}[direction]
+    hip_span = {"S": 62, "SE": 52, "E": 38, "NE": 46, "N": 56, "NW": 46, "W": 38, "SW": 52}[direction]
     arm_drop = 88 if action.lower() == "idle" else 96
     stride = 0
     if action.lower() in {"walk", "run"}:
@@ -64,6 +74,20 @@ def pose_points(direction: str, action: str) -> list[tuple[int, int, int]]:
         l_elbow, l_wrist = (cx + 56, 278, 1), (cx + 64, 350, 1)
         r_knee, r_ankle = (cx - 22 - stride // 2, 368, 1), (cx - 30 - stride, ankle_y, 1)
         l_knee, l_ankle = (cx + 30 + stride // 2, 362, 1), (cx + 42 + stride, ankle_y, 1)
+    elif direction == "SE":
+        r_shoulder, l_shoulder = (cx - 32, neck_y + 10, 1), (cx + 44, neck_y + 6, 1)
+        r_hip, l_hip = (cx - 20, hip_y + 2, 1), (cx + 32, hip_y - 2, 1)
+        r_elbow, r_wrist = (cx - 42, 280, 1), (cx - 46, 352, 1)
+        l_elbow, l_wrist = (cx + 58, 278, 1), (cx + 66, 350, 1)
+        r_knee, r_ankle = (cx - 28 - stride // 2, 368, 1), (cx - 34 - stride, ankle_y, 1)
+        l_knee, l_ankle = (cx + 36 + stride // 2, 364, 1), (cx + 48 + stride, ankle_y, 1)
+    elif direction == "NE":
+        r_shoulder, l_shoulder = (cx - 26, neck_y + 4, 1), (cx + 40, neck_y + 10, 1)
+        r_hip, l_hip = (cx - 18, hip_y - 2, 1), (cx + 28, hip_y + 2, 1)
+        r_elbow, r_wrist = (cx - 38, 276, 1), (cx - 44, 346, 1)
+        l_elbow, l_wrist = (cx + 52, 284, 1), (cx + 58, 354, 1)
+        r_knee, r_ankle = (cx - 24 - stride // 2, 362, 1), (cx - 30 - stride, ankle_y, 1)
+        l_knee, l_ankle = (cx + 34 + stride // 2, 370, 1), (cx + 44 + stride, ankle_y, 1)
     elif direction == "W":
         r_shoulder, l_shoulder = (cx - 38, neck_y + 4, 1), (cx + 14, neck_y + 10, 1)
         r_hip, l_hip = (cx - 24, hip_y - 4, 1), (cx + 12, hip_y, 1)
@@ -71,13 +95,27 @@ def pose_points(direction: str, action: str) -> list[tuple[int, int, int]]:
         l_elbow, l_wrist = (cx + 18, 278, 1), (cx + 18, 350, 1)
         r_knee, r_ankle = (cx - 30 - stride // 2, 362, 1), (cx - 42 - stride, ankle_y, 1)
         l_knee, l_ankle = (cx + 22 + stride // 2, 368, 1), (cx + 30 + stride, ankle_y, 1)
+    elif direction == "SW":
+        r_shoulder, l_shoulder = (cx - 44, neck_y + 6, 1), (cx + 32, neck_y + 10, 1)
+        r_hip, l_hip = (cx - 32, hip_y - 2, 1), (cx + 20, hip_y + 2, 1)
+        r_elbow, r_wrist = (cx - 58, 278, 1), (cx - 66, 350, 1)
+        l_elbow, l_wrist = (cx + 42, 280, 1), (cx + 46, 352, 1)
+        r_knee, r_ankle = (cx - 36 - stride // 2, 364, 1), (cx - 48 - stride, ankle_y, 1)
+        l_knee, l_ankle = (cx + 28 + stride // 2, 368, 1), (cx + 34 + stride, ankle_y, 1)
+    elif direction == "NW":
+        r_shoulder, l_shoulder = (cx - 40, neck_y + 10, 1), (cx + 26, neck_y + 4, 1)
+        r_hip, l_hip = (cx - 28, hip_y + 2, 1), (cx + 18, hip_y - 2, 1)
+        r_elbow, r_wrist = (cx - 52, 284, 1), (cx - 58, 354, 1)
+        l_elbow, l_wrist = (cx + 38, 276, 1), (cx + 44, 346, 1)
+        r_knee, r_ankle = (cx - 34 - stride // 2, 370, 1), (cx - 44 - stride, ankle_y, 1)
+        l_knee, l_ankle = (cx + 24 + stride // 2, 362, 1), (cx + 30 + stride, ankle_y, 1)
 
     eyes_y = head_y - 14
     right_eye = (cx + lean - 12, eyes_y, 1)
     left_eye = (cx + lean + 12, eyes_y, 1)
     right_ear = (cx + lean - 24, head_y, 1)
     left_ear = (cx + lean + 24, head_y, 1)
-    if direction == "N":
+    if direction in {"N", "NE", "NW"}:
         # Keep head landmarks compact so ControlNet reads "back of head".
         right_eye = left_eye = right_ear = left_ear = (0, 0, 0)
 
@@ -181,7 +219,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     parser.add_argument("--out-root", type=Path, default=Path(r"Assets\Generated\_Review\_PoseControls\litiso_openpose_v1"))
     parser.add_argument("--action", default="Idle")
-    parser.add_argument("--directions", nargs="+", default=CANONICAL_DIRECTIONS)
+    parser.add_argument("--directions", nargs="+", default=DEFAULT_DIRECTIONS)
     parser.add_argument("--replace", action="store_true")
     return parser.parse_args()
 
@@ -214,11 +252,11 @@ def main() -> int:
                 "preview_path": str(preview_path),
                 "source": "handauthored_litiso_openpose_v1",
                 "license": "project-internal",
-                "notes": "Minimal body-only OpenPose control for 4D isometric direction smoke tests.",
+                "notes": "Minimal body-only OpenPose control for isometric direction smoke tests. Diagonals are starter controls and should be visually reviewed before training.",
             }
         )
 
-    contact = out_root / f"{args.action.lower()}_4d_contact.png"
+    contact = out_root / f"{args.action.lower()}_{len(entries)}d_contact.png"
     make_contact_sheet(entries, contact)
     manifest = {
         "schema": "lit_iso.asset_forge.openpose_direction_library.v1",

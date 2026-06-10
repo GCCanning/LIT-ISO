@@ -27,7 +27,8 @@ SCHEDULER = "karras"
 NEGATIVE = (
     "photorealistic, 3d render, soft blur, antialiasing haze, text, watermark, logo, "
     "large scene, background, character, person, animal, extra object, duplicate, floor base, "
-    "isometric diorama, building, tree on terrain tile, prop baked into tile, cropped, cut off"
+    "isometric diorama, building, tree on terrain tile, prop baked into tile, cropped, cut off, "
+    "large diamond border, smooth vector art, procedural repeated marks, floating object, full scene"
 )
 
 PRODUCTION_GUIDANCE = (
@@ -38,70 +39,105 @@ PRODUCTION_GUIDANCE = (
     "ComfyUI locally with the configured checkpoint and LoRA installed."
 )
 
+STYLE_LOCK_PROFILE = "Tools/AssetForge/style_profiles/litiso_iso_reference_v1.json"
+STYLE_LOCK_REFERENCE_SHEET = "Assets/Generated/_Review/style_lock_sources/style_lock_analysis/tileset_contact_sheet.png"
+STYLE_LOCK_TARGETS = [
+    {"family": "earth_block", "reference_tiles": ["tile_000", "tile_001", "tile_004", "tile_008", "tile_017", "tile_018"]},
+    {"family": "grass_top", "reference_tiles": ["tile_022", "tile_023", "tile_024", "tile_037", "tile_038", "tile_039", "tile_040"]},
+    {"family": "stone_water", "reference_tiles": ["tile_061", "tile_066", "tile_070", "tile_071", "tile_077", "tile_078"]},
+    {"family": "dark_water", "reference_tiles": ["tile_086", "tile_087", "tile_088", "tile_089", "tile_090", "tile_095"]},
+    {"family": "ice", "reference_tiles": ["tile_104", "tile_105", "tile_106", "tile_107", "tile_108", "tile_109", "tile_114"]},
+]
+
+STYLE_LOCK_PHRASE = (
+    "match the supplied LIT-ISO isometric tileset style: compact 32x32 pixel art cell, "
+    "dark warm outline, hand-authored cluster dithering, limited palette, transparent corners, "
+    "no baked decoration on top"
+)
+
 PROMPT_PRESETS = [
     {
-        "name": "forest_grass_tile",
-        "seed": 50101,
+        "name": "stylelock_earth_flat_top",
+        "seed": 60101,
         "category": "terrain",
-        "subcategory": "forest",
+        "subcategory": "earth",
         "asset_kind": "tile_top",
-        "review_focus": ["transparent_background", "diamond_32x32_readability", "no_baked_props"],
+        "style_target_family": "earth_block",
+        "review_focus": ["transparent_background", "32x32_scale", "earth_palette", "no_baked_props"],
         "prompt": (
-            "LIT-ISO isometric terrain tile, forest biome, single 32x32 diamond grass top tile only, "
-            "no trees, no rocks, no flowers, no props, transparent background, clean pixel art, "
-            "small readable grass texture, dark pixel outline, limited palette"
+            "LIT-ISO isometric terrain tile, single 32x32 earth top block tile only, "
+            "brown dirt top with dark underside lip, compact walkable tile, "
+            f"{STYLE_LOCK_PHRASE}"
         ),
     },
     {
-        "name": "plains_dirt_tile",
-        "seed": 50102,
+        "name": "stylelock_grass_flat_top",
+        "seed": 60102,
         "category": "terrain",
-        "subcategory": "plains",
+        "subcategory": "grass",
         "asset_kind": "tile_top",
-        "review_focus": ["transparent_background", "diamond_32x32_readability", "clean_walkable_surface"],
+        "style_target_family": "grass_top",
+        "review_focus": ["transparent_background", "32x32_scale", "grass_palette", "no_baked_props"],
         "prompt": (
-            "LIT-ISO isometric terrain tile, plains biome, single 32x32 diamond packed dirt top tile only, "
-            "no props, no grass clumps, no trees, transparent background, clean pixel art, dark outline, "
-            "limited warm earth palette"
+            "LIT-ISO isometric terrain tile, single 32x32 bright grass top tile only, "
+            "chunky organic grass edge, small hand-dithered grass surface, "
+            f"{STYLE_LOCK_PHRASE}"
         ),
     },
     {
-        "name": "forest_oak_prop",
-        "seed": 50103,
-        "category": "props",
-        "subcategory": "forest",
-        "asset_kind": "tree",
-        "review_focus": ["transparent_background", "bottom_center_anchor", "no_ground_tile"],
+        "name": "stylelock_grass_to_earth_edge",
+        "seed": 60103,
+        "category": "terrain",
+        "subcategory": "transition",
+        "asset_kind": "edge_transition",
+        "style_target_family": "grass_top",
+        "review_focus": ["transparent_background", "32x32_scale", "organic_edge", "no_baked_props"],
         "prompt": (
-            "LIT-ISO pixel prop, forest biome oak tree, single separate decoration sprite only, "
-            "bottom-center anchored, transparent background, no ground tile, no base plate, clean pixel art, "
-            "compact readable silhouette, dark outline, limited green brown palette"
+            "LIT-ISO isometric terrain tile, single 32x32 grass over brown earth edge tile only, "
+            "green top surface with dark brown underside and organic pixel edge, "
+            f"{STYLE_LOCK_PHRASE}"
         ),
     },
     {
-        "name": "plains_bush_prop",
-        "seed": 50104,
-        "category": "props",
-        "subcategory": "plains",
-        "asset_kind": "foliage",
-        "review_focus": ["transparent_background", "bottom_center_anchor", "compact_silhouette"],
+        "name": "stylelock_stone_water_edge",
+        "seed": 60104,
+        "category": "terrain",
+        "subcategory": "stone_water",
+        "asset_kind": "edge_transition",
+        "style_target_family": "stone_water",
+        "review_focus": ["transparent_background", "32x32_scale", "stone_palette", "water_rim"],
         "prompt": (
-            "LIT-ISO pixel prop, plains biome low bush, single separate decoration sprite only, "
-            "bottom-center anchored, transparent background, no ground tile, no base plate, clean pixel art, "
-            "small readable silhouette, dark outline, muted green palette"
+            "LIT-ISO isometric terrain tile, single 32x32 gray stone tile with blue water rim only, "
+            "compact stone cluster, dark outline, small blue water highlights, "
+            f"{STYLE_LOCK_PHRASE}"
         ),
     },
     {
-        "name": "shared_rock_prop",
-        "seed": 50105,
-        "category": "props",
-        "subcategory": "shared",
-        "asset_kind": "obstacle",
-        "review_focus": ["transparent_background", "bottom_center_anchor", "readable_obstacle_shape"],
+        "name": "stylelock_dark_water_tile",
+        "seed": 60105,
+        "category": "terrain",
+        "subcategory": "water",
+        "asset_kind": "water_tile",
+        "style_target_family": "dark_water",
+        "review_focus": ["transparent_background", "32x32_scale", "dark_blue_palette", "subtle_ripple"],
         "prompt": (
-            "LIT-ISO pixel prop, gray rock obstacle, single separate decoration sprite only, "
-            "bottom-center anchored, transparent background, no ground tile, no base plate, clean pixel art, "
-            "readable compact silhouette, dark outline, limited gray brown palette"
+            "LIT-ISO isometric terrain tile, single 32x32 dark blue water diamond tile only, "
+            "subtle hand-placed ripple pixels, dark navy depth, no shore props, "
+            f"{STYLE_LOCK_PHRASE}"
+        ),
+    },
+    {
+        "name": "stylelock_ice_tile",
+        "seed": 60106,
+        "category": "terrain",
+        "subcategory": "ice",
+        "asset_kind": "ice_tile",
+        "style_target_family": "ice",
+        "review_focus": ["transparent_background", "32x32_scale", "ice_palette", "clean_edge"],
+        "prompt": (
+            "LIT-ISO isometric terrain tile, single 32x32 pale blue ice tile only, "
+            "crisp cold palette, small hand-authored highlight clusters, clean edge, "
+            f"{STYLE_LOCK_PHRASE}"
         ),
     },
 ]
@@ -109,13 +145,9 @@ PROMPT_PRESETS = [
 PROMPTS = PROMPT_PRESETS
 PROMPT_CATEGORIES = {
     "terrain": {
-        "description": "Walkable isometric top tiles. Review as tilemap surfaces, not decorative sprites.",
+        "description": "Walkable or transition isometric terrain cells. Review as 32x32 tilemap pieces, not decorative sprites.",
         "presets": [item["name"] for item in PROMPT_PRESETS if item["category"] == "terrain"],
-    },
-    "props": {
-        "description": "Separate bottom-anchored sprites. Review as placeable decorations or blockers.",
-        "presets": [item["name"] for item in PROMPT_PRESETS if item["category"] == "props"],
-    },
+    }
 }
 
 
@@ -193,6 +225,18 @@ def manifest_base(status: str) -> dict:
             "scheduler": SCHEDULER,
             "comfy_url": COMFY_URL,
             "out_dir": str(OUT_DIR),
+        },
+        "style_lock": {
+            "profile": STYLE_LOCK_PROFILE,
+            "reference_sheet": STYLE_LOCK_REFERENCE_SHEET,
+            "target_families": STYLE_LOCK_TARGETS,
+            "acceptance_gate": [
+                "32x32 compact tile scale",
+                "transparent corners/background",
+                "no baked props or trees on terrain tiles",
+                "matches dark outline and clustered hand-authored dithering",
+                "matches the selected target family palette before any Unity promotion",
+            ],
         },
         "prompt_categories": PROMPT_CATEGORIES,
     }

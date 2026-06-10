@@ -382,7 +382,7 @@ def main() -> int:
     prompt = str(get_value(request, "prompt", default="")).strip()
     negative = str(get_value(request, "negative_prompt", "negativePrompt", default="")).strip()
     batch_count = max(1, min(3, int(get_value(request, "batch_count", "batchCount", default=1))))
-    tile_size = parse_square_resolution(args.resolution, 64)
+    tile_size = parse_square_resolution(args.resolution, 32 if mode == "tile" else 64)
     tile_shape = tile_shape_from_spec(spec)
 
     manifest = {

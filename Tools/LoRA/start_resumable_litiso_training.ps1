@@ -14,9 +14,10 @@ param(
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $python = Join-Path $TrainingRoot ".venv\Scripts\python.exe"
 $trainer = Join-Path $projectRoot "Tools\LoRA\train_litiso_lora_resumable.py"
-$outputDir = Join-Path $TrainingRoot "outputs\$OutputName"
-$controlDir = Join-Path $TrainingRoot "control\$OutputName"
-$logDir = Join-Path $TrainingRoot "logs"
+$dryRunRoot = Join-Path $projectRoot "Temp\LoRA"
+$outputDir = if ($DryRun.IsPresent) { Join-Path $dryRunRoot "outputs\$OutputName" } else { Join-Path $TrainingRoot "outputs\$OutputName" }
+$controlDir = if ($DryRun.IsPresent) { Join-Path $dryRunRoot "control\$OutputName" } else { Join-Path $TrainingRoot "control\$OutputName" }
+$logDir = if ($DryRun.IsPresent) { Join-Path $dryRunRoot "logs" } else { Join-Path $TrainingRoot "logs" }
 New-Item -ItemType Directory -Force -Path $outputDir, $controlDir, $logDir | Out-Null
 
 $args = @(
@@ -49,10 +50,12 @@ if ($ResumeLatest.IsPresent) {
         if ($latest.BaseName -match "step(\d+)") {
             $step = [int]$Matches[1]
         }
-        $args += @("--resume_lora", $latest.FullName, "--resume_step", $step)
+    $args += @("--resume_lora", $latest.FullName, "--resume_step", $step)
     }
 }
 
+$dryRunManifestPath = Join-Path $projectRoot "Temp\LoRA\$OutputName.launch_manifest.json"
+$manifestPath = if ($DryRun.IsPresent) { $dryRunManifestPath } else { Join-Path $controlDir "launch_manifest.json" }
 $manifest = [ordered]@{
     output_name = $OutputName
     output_dir = $outputDir
@@ -65,7 +68,6 @@ $manifest = [ordered]@{
     save_every = $SaveEvery
     command = @($python) + $args
 }
-$manifestPath = Join-Path $controlDir "launch_manifest.json"
 $manifest | ConvertTo-Json -Depth 8 | Set-Content -Path $manifestPath -Encoding UTF8
 
 if ($DryRun.IsPresent) {

@@ -270,6 +270,24 @@ $strictExitCode = $LASTEXITCODE
 if ($strictExitCode -ne 0) { throw "Strict QA failed to run: $strictReport Output: $($strictOutput -join "`n")" }
 $strictByPath = Get-StrictByPath -StrictReportPath $strictReport
 
+$postProcessList = @((Get-PropValue $request "post_process" (Get-PropValue $request "postProcess" @())) | ForEach-Object { ([string]$_).ToLowerInvariant() })
+$properPixelArtRequested = $postProcessList -contains "proper_pixel_art" -or $postProcessList -contains "proper-pixel-art" -or $postProcessList -contains "proper_pixel_art_cleanup"
+$properPixelArtReportPath = ""
+$properPixelArtContactSheetPath = ""
+if ($properPixelArtRequested) {
+    $properPixelArtRoot = Join-Path $reviewRoot "_ProperPixelArt"
+    $properScript = Join-Path $PSScriptRoot "run_proper_pixel_art_cleanup.ps1"
+    $properOutput = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $properScript -ProjectRoot $ProjectRoot -InputPath $reviewRoot -OutputRoot $properPixelArtRoot -Mode $mode -Transparent -PythonExe $PythonExe 2>&1
+    $properExitCode = $LASTEXITCODE
+    if ($properExitCode -ne 0) {
+        throw "Proper Pixel Art cleanup failed: $properPixelArtRoot Output: $($properOutput -join "`n")"
+    }
+    $candidateReport = Join-Path $properPixelArtRoot "proper_pixel_art_report.json"
+    $candidateSheet = Join-Path $properPixelArtRoot "proper_pixel_art_contact_sheet.png"
+    if (Test-Path -LiteralPath $candidateReport) { $properPixelArtReportPath = Convert-ToRepoPath $candidateReport }
+    if (Test-Path -LiteralPath $candidateSheet) { $properPixelArtContactSheetPath = Convert-ToRepoPath $candidateSheet }
+}
+
 $items = @()
 foreach ($copy in $copied) {
     $facts = Read-PngFacts -Path $copy.path
@@ -308,7 +326,7 @@ $generatedUtc = (Get-Date).ToUniversalTime().ToString("o")
 $qualityContract = [ordered]@{
     provider = "comfyui"
     supported_modes = @("tile", "prop", "item", "character", "npc", "mob")
-    post_process = @("edge_background_removal", "nearest_neighbor_normalize", "tile_diamond_mask_or_asset_fit", "strict_asset_quality_scan")
+    post_process = @("edge_background_removal", "nearest_neighbor_normalize", "tile_diamond_mask_or_asset_fit", "strict_asset_quality_scan") + $(if ($properPixelArtReportPath) { @("proper_pixel_art_sidecar_review") } else { @() })
     note = "First production worker path. Character directions and animation sheets are intentionally deferred."
 }
 
@@ -330,6 +348,8 @@ $report = [ordered]@{
     quality_contract = $qualityContract
     comfy_manifest = Convert-ToRepoPath $manifestPath
     style_provenance = $styleProvenanceRepoPath
+    proper_pixel_art_report = $properPixelArtReportPath
+    proper_pixel_art_contact_sheet = $properPixelArtContactSheetPath
     items = @($items)
 }
 $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $reviewRoot "review_report.json") -Encoding UTF8
@@ -390,6 +410,8 @@ $manifest = [ordered]@{
     cleaned_output_root = Convert-ToRepoPath $cleanRoot
     comfy_generation_manifest = Convert-ToRepoPath $manifestPath
     style_provenance = $styleProvenanceRepoPath
+    proper_pixel_art_report = $properPixelArtReportPath
+    proper_pixel_art_contact_sheet = $properPixelArtContactSheetPath
     generated_files = @($items | ForEach-Object { $_.path })
     summary = [ordered]@{ pass = $passCount; review = $reviewCount; total = $items.Count }
 }
@@ -405,6 +427,8 @@ Update-RequestStatus -StatusPath $statusPath -Fields @{
     review_decisions = "Assets/Generated/_Review/$job/review_decisions.json"
     comfy_generation_manifest = Convert-ToRepoPath $manifestPath
     style_provenance = $styleProvenanceRepoPath
+    proper_pixel_art_report = $properPixelArtReportPath
+    proper_pixel_art_contact_sheet = $properPixelArtContactSheetPath
 }
 
 [PSCustomObject]@{
@@ -421,4 +445,6 @@ Update-RequestStatus -StatusPath $statusPath -Fields @{
     review_decisions = "Assets/Generated/_Review/$job/review_decisions.json"
     comfy_generation_manifest = Convert-ToRepoPath $manifestPath
     style_provenance = $styleProvenanceRepoPath
+    proper_pixel_art_report = $properPixelArtReportPath
+    proper_pixel_art_contact_sheet = $properPixelArtContactSheetPath
 } | ConvertTo-Json -Depth 10
