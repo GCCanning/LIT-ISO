@@ -212,26 +212,31 @@ namespace IsoCore.Foundation
 
             // ---- elevation: base landmass + medium detail, lifted near the origin so
             //      the spawn region is always solid land (apron around the clearing) ----
-            // Smooth elevation: base landmass dominates, a light detail octave adds shape.
-            // Keeping the detail weight low means adjacent cells stay close in elevation, so
-            // height steps between neighbours are gentle (no sudden multi-level cliff walls).
-            float eBase = Perlin(wx, wy, _cfg.continentFrequency, 11, 12);
-            float eDetail = Perlin(wx, wy, _cfg.continentFrequency * 3f, 13, 14);
-            float e = eBase * 0.80f + eDetail * 0.20f;
-            float bias = Mathf.Clamp01(1f - clearing / Mathf.Max(1f, _cfg.continentSpawnLandRadius))
-                         * _cfg.continentSpawnLandBias;
-            e += bias;
+            float e = ContinentElevation(wx, wy);
 
             float temp = Perlin(wx, wy, _cfg.climateFrequency, 1, 2);
             float moist = Perlin(wx, wy, _cfg.climateFrequency, 3, 4);
 
-            // ---- deep / shallow ocean ----
+            // ---- deep / shallow ocean (pack palette: navy deep field, light shallow
+            //      ring) with foam-footed shore stones hugging the land edge ----
             if (e < _cfg.continentShoreLevel)
             {
+                bool deep = e < _cfg.continentDeepLevel;
                 cell.Height = 0;
                 cell.BiomeIndex = (byte)Mathf.Max(0, _beachIndex);
-                cell.SurfaceBlockId = "water";
+                cell.SurfaceBlockId = deep ? "water_deep" : "water";
                 cell.Water = true;
+                // Shore stones: only in the shallow ring, only against land, sparse.
+                // Hash gate first so the 4-neighbour elevation probe stays rare.
+                if (!deep && Hash01(wx, wy, 95) < 0.07f &&
+                    (ContinentElevation(wx + 1, wy) >= _cfg.continentShoreLevel ||
+                     ContinentElevation(wx - 1, wy) >= _cfg.continentShoreLevel ||
+                     ContinentElevation(wx, wy + 1) >= _cfg.continentShoreLevel ||
+                     ContinentElevation(wx, wy - 1) >= _cfg.continentShoreLevel))
+                {
+                    cell.NodeId = "shore_stone";
+                    cell.NodeBlocks = true;
+                }
                 return cell;
             }
 
@@ -247,10 +252,24 @@ namespace IsoCore.Foundation
 
             if (isRiver)
             {
-                cell.Height = 0;
+                // The river surface sits ONE step below the local terrain tier instead
+                // of at sea level, so a stream crossing higher ground reads as water in
+                // a shallow channel rather than a black slot under the cliff edge.
+                int landH = 1;
+                if (e > _cfg.continentTier2Level) landH = 2;
+                if (e > _cfg.continentTier3Level) landH = 3;
+                if (e > _cfg.continentTier4Level) landH = 4;
+                landH = Mathf.Clamp(landH, 1, Mathf.Min(_cfg.maxHeight, 7));
+                cell.Height = (byte)(landH - 1);
                 cell.BiomeIndex = (byte)Mathf.Max(0, _beachIndex);
                 cell.SurfaceBlockId = "water";
                 cell.Water = true;
+                // Occasional foam-footed stone breaking the stream surface.
+                if (Hash01(wx, wy, 96) < 0.05f)
+                {
+                    cell.NodeId = "shore_stone";
+                    cell.NodeBlocks = true;
+                }
                 return cell;
             }
 
@@ -333,6 +352,20 @@ namespace IsoCore.Foundation
             return cell;
         }
 
+        /// <summary>Continent elevation at a cell (base landmass + light detail octave
+        /// + spawn-apron lift). Shared by SampleContinent and its neighbour probes so
+        /// every caller sees the exact same field.</summary>
+        float ContinentElevation(int wx, int wy)
+        {
+            int clearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
+            float eBase = Perlin(wx, wy, _cfg.continentFrequency, 11, 12);
+            float eDetail = Perlin(wx, wy, _cfg.continentFrequency * 3f, 13, 14);
+            float e = eBase * 0.80f + eDetail * 0.20f;
+            e += Mathf.Clamp01(1f - clearing / Mathf.Max(1f, _cfg.continentSpawnLandRadius))
+                 * _cfg.continentSpawnLandBias;
+            return e;
+        }
+
         /// <summary>Continent height tier from elevation alone (no river/beach carve)
         /// - cheap neighbour probe used to detect cliff lips when gating tall
         /// vegetation. Mirrors the tier thresholds in SampleContinent.</summary>
@@ -341,11 +374,7 @@ namespace IsoCore.Foundation
             int clearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
             if (clearing <= _cfg.spawnClearingRadius)
                 return Mathf.Clamp(_cfg.spawnHeight, 0, 7);
-            float eBase = Perlin(wx, wy, _cfg.continentFrequency, 11, 12);
-            float eDetail = Perlin(wx, wy, _cfg.continentFrequency * 3f, 13, 14);
-            float e = eBase * 0.80f + eDetail * 0.20f;
-            e += Mathf.Clamp01(1f - clearing / Mathf.Max(1f, _cfg.continentSpawnLandRadius))
-                 * _cfg.continentSpawnLandBias;
+            float e = ContinentElevation(wx, wy);
             if (e < _cfg.continentBeachLevel) return 0;
             int h = 1;
             if (e > _cfg.continentTier2Level) h = 2;
@@ -389,29 +418,4 @@ namespace IsoCore.Foundation
         ///   • Trees cluster into forest groves (low-frequency noise) — dense in the middle,
         ///     thinning toward the grove edges.
         ///   • Bushes are a light, even ground-cover scatter on the open ground between groves.
-        ///   • Rocks appear only inside rare coarse-noise clumps (outcrops), never blanketing.
-        /// Returns the chosen node (or default with node == null for an empty cell). Only
-        /// considers nodes that have art in Resources/Decorations so placeholders never spawn.
-        /// </summary>
-        BiomeNodeSpawn PickClusteredDecoration(int wx, int wy, BiomeDefinition biome, float density)
-        {
-            // 1. Trees — forest groves via low-frequency noise. Inside a grove a cell may be
-            //    a regular tree or (for variety) a pine; near grove edges an occasional stump
-            //    suggests old logging.
-            var tree = FindArtNode(biome, "tree");
-            var pine = FindArtNode(biome, "pine");
-            if (tree.node != null || pine.node != null)
-            {
-                float forest = Perlin(wx, wy, _cfg.decoForestFrequency, 21, 22);
-                if (forest > _cfg.decoForestThreshold)
-                {
-                    float depth = Mathf.InverseLerp(_cfg.decoForestThreshold, 1f, forest);
-                    float chance = _cfg.decoTreeDensityInForest * (0.35f + 0.65f * depth) * density;
-                    if (Hash01(wx, wy, 71) < chance)
-                    {
-                        // Pine appears as a minority species; otherwise a normal tree.
-                        bool wantPine = pine.node != null && Hash01(wx, wy, 72) < 0.35f;
-                        if (wantPine) return pine;
-                        if (tree.node != null) return tree;
-                        return pine; // only pine available in this biome
-       
+        ///   • Rocks appear only inside rare coarse-noise clumps (outcrop
