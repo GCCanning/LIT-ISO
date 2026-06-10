@@ -1,0 +1,43 @@
+{
+  "schema": "lit-iso.spriteforge.config.v1",
+  "notes": [
+    "Copy to spriteforge.config.json for machine-local use (uncommitted).",
+    "Codex P0: merge these blocks into the asset_forge.local.json convention",
+    "so the comfy worker reads one config; until then tools read this file."
+  ],
+  "poses_root": "Tools/SpriteForge/poses",
+  "out_root": "Tools/SpriteForge/out",
+  "animation_mode_defaults": {
+    "frames": {
+      "checkpoint": "DreamShaper_8_pruned.safetensors",
+      "lora": "litiso_tile_prop_v1_final.safetensors",
+      "lora_strength": 0.75,
+      "controlnet": "openpose",
+      "steps": 22,
+      "cfg": 6.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "width": 512,
+      "height": 512,
+      "timeout_seconds": 600
+    },
+    "video": {
+      "workflow": "Tools/SpriteForge/workflows/one_to_all_pose_i2v.json",
+      "model_family": "one-to-all-14b (Kijai WanVideoWrapper)",
+      "fallback_workflow": "Tools/SpriteForge/workflows/wan22_i2v_pose.json",
+      "timeout_seconds": 1800,
+      "pause_during_lora_training": true
+    }
+  },
+  "postprocess": {
+    "pixel_cleanup": "Tools/AssetForge/proper_pixel_art_cleanup.py",
+    "target_sizes": [32, 48, 64, 96],
+    "default_target_size": 64
+  },
+  "qa": {
+    "direction_set": "Tools/AssetForge/qa_direction_set.py",
+    "direction_oracle": "Tools/AssetForge/qa_against_direction_oracle.py",
+    "max_pivot_drift_px": 1,
+    "loop_seam_max_delta": 0.08
+  }
+}
