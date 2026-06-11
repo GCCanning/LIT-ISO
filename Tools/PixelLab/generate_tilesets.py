@@ -8,8 +8,12 @@ Families run one at a time with a contact sheet each:
   py -3 generate_tilesets.py --family snow
   py -3 generate_tilesets.py --family dungeon_stone
   py -3 generate_tilesets.py --family mountain_stone
-  py -3 generate_tilesets.py --family transitions     (the Wang-idea edge tiles)
+  py -3 generate_tilesets.py --family farming
   py -3 generate_tilesets.py --list
+
+NOTE: directional transition tiles via PixelLab FAILED (2026-06-11) — model
+ignores edge semantics and materials. Transitions are now generated locally:
+Tools/BiomeSketch/make_blends.py
 """
 
 import argparse, json, os, sys, time
@@ -18,6 +22,7 @@ from pixellab_common import token, call, wait_job, b64_file, save_b64, find_imag
 OUT_ROOT = r"C:\Users\garyc\OneDrive\Desktop\PixelArt\Tilesets"
 REPO_TILES = r"C:\Projects\Unity-Projects\LIT-ISO\Assets\Generated\Tiles"
 RES_TILES = r"C:\Projects\Unity-Projects\LIT-ISO\Assets\Resources\Tiles"
+BIOMESKETCH_TILES = r"C:\Projects\Unity-Projects\LIT-ISO\Tools\BiomeSketch\assets\tile"
 MAX_IN_FLIGHT = 2   # stay far below the 8-job account cap
 
 STYLE = ("crisp isometric pixel art game tile, 2:1 diamond top surface, "
@@ -30,8 +35,6 @@ def _ref_entry(path):
     w, h = Image.open(path).size
     return {"type": "base64", "base64": b64_file(path), "width": w, "height": h}
 
-
-BIOMESKETCH_TILES = r"C:\Projects\Unity-Projects\LIT-ISO\Tools\BiomeSketch\assets\tile"
 
 def style_refs(*names):
     refs = []
@@ -85,6 +88,19 @@ FAMILIES = {
             ("dungeon_dark_2", "flat dark stone floor with ember-orange cracks, full diamond coverage"),
         ],
     },
+    # Farming kit (catalog section K). Crop growth stages come from local
+    # recolor/derivation of the mature tile — only soil states are generated.
+    "farming": {
+        "refs": ["plains2_02", "dirt", "forest_rich_dirt"],
+        "tiles": [
+            ("farm_tilled_dry",     "flat tilled farmland, dry brown soil with neat furrow rows, full diamond coverage"),
+            ("farm_tilled_wet",     "flat tilled farmland, dark moist soil with neat furrow rows, full diamond coverage"),
+            ("farm_tilled_planted", "flat tilled dark soil with tiny green seedlings in rows, full diamond coverage"),
+            ("farm_soil_rich",      "flat rich dark garden soil, loose crumbly texture, full diamond coverage"),
+            ("farm_fallow",         "flat fallow field, pale dry cracked soil with sparse weeds, full diamond coverage"),
+            ("farm_mulch",          "flat farm soil covered in straw mulch, full diamond coverage"),
+        ],
+    },
     "mountain_stone": {
         "refs": ["plains_grass_base"],
         "tiles": [
@@ -93,18 +109,6 @@ FAMILIES = {
             ("stone_cracked", "cracked granite surface"),
             ("stone_snowcap", "gray stone dusted with snow at the edges"),
         ],
-    },
-    # The Wang-tileset IDEA in iso form: directional edge tiles per boundary pair.
-    # N/E/S/W edges + 2 diagonals each for the boundaries the generator hits most.
-    "transitions": {
-        "refs": ["plains_grass_base", "forest_grass_base"],
-        "tiles": [(f"{a}_to_{b}_{d}",
-                   f"transition tile: {a.replace('_',' ')} blending into {b.replace('_',' ')} "
-                   f"along the {dn} edge of the diamond, drawn edge (not dithered)")
-                  for a, b in (("grass", "sand"), ("sand", "water"), ("grass", "dirt"),
-                               ("grass", "forest_floor"), ("grass", "stone"))
-                  for d, dn in (("n", "north"), ("e", "east"), ("s", "south"), ("w", "west"),
-                                ("ne", "north-east corner"), ("sw", "south-west corner"))],
     },
 }
 
@@ -115,22 +119,7 @@ def main():
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--fetch", default=None,
                     help="tile_id of an already-generated batch to download")
-    ap.add_argument("--list-remote", action="store_true",
-                    help="list recent tiles-pro batches on the account")
     args = ap.parse_args()
-
-    if args.list_remote:
-        tok3 = token()
-        got = call(tok3, "GET", "/tiles-pro?limit=10", fatal=False)
-        blob = json.dumps(got) if isinstance(got, (dict, list)) else str(got)
-        import re as _re
-        ids = _re.findall(r'"(?:tile_)?id"\s*:\s*"([0-9a-f-]{36})"', blob)
-        stats = _re.findall(r'"status"\s*:\s*"(\w+)"', blob)
-        for i, tid in enumerate(ids):
-            print(tid, stats[i] if i < len(stats) else "?")
-        if not ids:
-            print(blob[:800])
-        return
 
     if args.fetch:
         tok2 = token()
@@ -214,8 +203,18 @@ def main():
             for k in range(len(names), len(imgs)):
                 save_b64(imgs[k], os.path.join(out_dir, f"_extra_{c0+k:02d}.png"))
         elif got is not None:
-            # completed records carry storage URLs, not inline base64
+            # completed records carry storage URLs, not inline base64.
+            # Uploads can lag job completion — refetch until URL count stabilizes.
+            tid2 = got.get("id") or got.get("tile_id") or resp.get("tile_id") or resp.get("background_job_id")
             saved = download_urls(tok, got, out_dir, prefix=names[0])
+            for retry in range(5):
+                if len(saved) >= len(names) or not tid2:
+                    break
+                print(f"  only {len(saved)}/{len(names)} so far — waiting 20s for uploads ...")
+                time.sleep(20)
+                got = call(tok, "GET", f"/tiles-pro/{tid2}", fatal=False)
+                if isinstance(got, dict) and "_error" not in got:
+                    saved = download_urls(tok, got, out_dir, prefix=names[0])
             if not saved:
                 print("  record had no images/urls:", str(got)[:500])
         else:

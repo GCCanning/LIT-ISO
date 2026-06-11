@@ -49,6 +49,7 @@
     <button id="flip">Flip brush: OFF (R)</button>
     <select id="gsize"><option value="9">9 x 9</option><option value="13">13 x 13</option><option value="17">17 x 17</option><option value="25">25 x 25</option><option value="33">33 x 33</option></select>
     <button id="nums" class="on">Heights</button>
+    <button id="pguide">Player: OFF (P)</button>
     <input type="text" id="vname" placeholder="vignette name (e.g. river_bank_v1)">
     <button id="save">Save JSON</button>
     <button id="load">Load JSON</button>
@@ -81,7 +82,9 @@ function mk(n){return Array.from({length:n},()=>Array.from({length:n},()=>({t:nu
 const pal=document.getElementById('pal');
 let cat='all';
 const collapsed=new Set();
-const GROUP_ORDER=['plains v2 (new)','snow (new)','mountain stone (new)','transitions (new)','plains props v2 (new)',
+const GROUP_ORDER=['plains v2 (new)','snow (new)','mountain stone (new)','dungeon (new)','blends (new)','farming (new)','plains props v2 (new)',
+                   'variants - lush','variants - dry','variants - autumn','variants - frost','variants - moss','variants - dusk',
+                   'texture variants - tiles','gradient blends - tiles',
                    'plains','ground','forest','water','sand','stone & high','dungeon','misc','props','decor'];
 function renderPal(){
   const q=document.getElementById('search').value.toLowerCase();
@@ -185,6 +188,21 @@ function draw(){
     cx.drawImage(im, bx, by, bw, bh, p.x-w/2, footY-h, w, h);
     cx.restore();
   }
+  // player height guide: mage idle frame at PPU-true scale follows the cursor
+  if(window.showPlayer&&hoverCell&&window.playerImg&&window.playerImg.complete){
+    const gcell=grid[hoverCell.r][hoverCell.c];
+    const gp=isoPos(hoverCell.c,hoverCell.r,gcell.h);
+    const gs=TW/100; // player sheet imports at PPU 100 in-engine
+    const gw=window.playerImg.width*gs, gh=window.playerImg.height*gs;
+    const gfootY=gp.y+TH/2+3;
+    cx.globalAlpha=0.92;
+    cx.drawImage(window.playerImg,gp.x-gw/2,gfootY-gh,gw,gh);
+    cx.globalAlpha=1;
+    cx.strokeStyle='rgba(120,200,255,0.9)';
+    cx.beginPath();cx.moveTo(gp.x+gw/2+6,gfootY);cx.lineTo(gp.x+gw/2+6,gfootY-gh);cx.stroke();
+    cx.fillStyle='rgba(120,200,255,0.95)';cx.font='11px monospace';
+    cx.fillText('player 1.14u',gp.x+gw/2+10,gfootY-gh/2);
+  }
   // hover highlight: shows exactly which tile receives the brush
   if(hoverCell){
     const cell=grid[hoverCell.r][hoverCell.c];
@@ -197,6 +215,16 @@ function draw(){
   }
 }
 let hoverCell=null;
+
+// player guide toggle (P)
+window.showPlayer=false;
+window.playerImg=new Image(); window.playerImg.src='assets/player_guide.png';
+const pgBtn=document.getElementById('pguide');
+pgBtn.onclick=()=>{window.showPlayer=!window.showPlayer;
+  pgBtn.textContent='Player: '+(window.showPlayer?'ON':'OFF')+' (P)';
+  pgBtn.classList.toggle('on',window.showPlayer); draw();};
+window.addEventListener('keydown',e=>{
+  if((e.key==='p'||e.key==='P')&&document.activeElement.tagName!=='INPUT')pgBtn.onclick();});
 
 function cellAt(mx,my){
   // test from front to back so the topmost (visually nearest) cell wins

@@ -1,57 +1,39 @@
 {
- "_": "floor pools per dungeon tier; walls never render (void rework). Fallback: dungeon_floor_1..5",
+ "_": "floor pools per dungeon tier; walls never render (void rework). Tiles = dungeon2 batch (PixelArt/Tilesets/dungeon_stone tile_N -> dungeon2_NN). Fallback: dungeon_floor_1..5. dungeon2_02 (rune) is an ACCENT: never adjacent to another rune.",
  "tiers": {
   "1-2": {
+   "_": "overgrown ruin: mossy cobble + worn stone",
    "floors": [
-    {
-     "tile": "dungeon_moss_1",
-     "w": 40
-    },
-    {
-     "tile": "dungeon_moss_2",
-     "w": 40
-    },
-    {
-     "tile": "dungeon_broken",
-     "w": 20
-    }
-   ]
+    {"tile": "dungeon2_00", "w": 25},
+    {"tile": "dungeon2_01", "w": 25},
+    {"tile": "dungeon2_08", "w": 15},
+    {"tile": "dungeon2_15", "w": 10},
+    {"tile": "dungeon2_06", "w": 15},
+    {"tile": "dungeon2_07", "w": 10}
+   ],
+   "accents": [{"tile": "dungeon2_02", "w": 3}]
   },
   "3-4": {
+   "_": "deep stone: cracked + rubble, occasional rune",
    "floors": [
-    {
-     "tile": "dungeon_broken",
-     "w": 35
-    },
-    {
-     "tile": "dungeon_moss_2",
-     "w": 25
-    },
-    {
-     "tile": "dungeon_rune",
-     "w": 15
-    },
-    {
-     "tile": "dungeon_dark_1",
-     "w": 25
-    }
-   ]
+    {"tile": "dungeon2_12", "w": 25},
+    {"tile": "dungeon2_11", "w": 25},
+    {"tile": "dungeon2_03", "w": 15},
+    {"tile": "dungeon2_09", "w": 15},
+    {"tile": "dungeon2_06", "w": 20}
+   ],
+   "accents": [{"tile": "dungeon2_02", "w": 5}]
   },
   "5-6": {
+   "_": "obsidian depths: dark floors, ember cracks deepest",
    "floors": [
-    {
-     "tile": "dungeon_dark_1",
-     "w": 45
-    },
-    {
-     "tile": "dungeon_dark_2",
-     "w": 35
-    },
-    {
-     "tile": "dungeon_rune",
-     "w": 20
-    }
-   ]
+    {"tile": "dungeon2_04", "w": 30},
+    {"tile": "dungeon2_13", "w": 25},
+    {"tile": "dungeon2_10", "w": 25},
+    {"tile": "dungeon2_05", "w": 10},
+    {"tile": "dungeon2_14", "w": 10}
+   ],
+   "accents": [{"tile": "dungeon2_02", "w": 6}]
   }
  }
 }
