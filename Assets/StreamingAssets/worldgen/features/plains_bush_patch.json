@@ -3,19 +3,53 @@
   "type": "cluster",
   "entries": [
    {
-    "id": "plains_bush_v2",
-    "w": 4,
-    "optional": true
+    "id": "plains_bush_v2_0",
+    "w": 3
+   },
+   {
+    "id": "plains_bush_v2_1",
+    "w": 2
+   },
+   {
+    "id": "plains_bush_v2_2",
+    "w": 3
+   },
+   {
+    "id": "plains_bush_v2_3",
+    "w": 1
    },
    {
     "id": "plains_bush",
-    "w": 3
+    "w": 2
    },
    {
     "id": "plains_dry_bush",
     "w": 1
    }
-  ]
+  ],
+  "center": {
+   "_": "rare large variant at the cluster heart; bumped resource yield",
+   "chance": 0.3,
+   "dropMultiplier": 1.75,
+   "entries": [
+    {
+     "id": "plains_bush_v2_0_big",
+     "w": 2
+    },
+    {
+     "id": "plains_bush_v2_1_big",
+     "w": 1
+    },
+    {
+     "id": "plains_bush_v2_2_big",
+     "w": 2
+    },
+    {
+     "id": "plains_bush_v2_3_big",
+     "w": 1
+    }
+   ]
+  }
  },
  "placement": {
   "groveCentersPer100": 1.5,

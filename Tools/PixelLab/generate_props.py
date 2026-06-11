@@ -27,9 +27,14 @@ FAMILIES = {
         ("plains_rock_v2",  "weathered grey boulder, mossy base"),
     ],
     "forest": [
-        ("forest_pine",     "tall dark pine tree"),
-        ("forest_mushrooms","cluster of small red-cap mushrooms"),
-        ("forest_log",      "fallen mossy log"),
+        ("forest_pine",           "tall dark green pine tree, layered triangular boughs, slim trunk"),
+        ("forest_pine_young",     "smaller young pine sapling"),
+        ("forest_dead_tree",      "bare dead tree, twisted gray branches, no leaves"),
+        ("forest_mushrooms",      "cluster of small red-cap mushrooms"),
+        ("forest_mushrooms_glow", "cluster of pale blue faintly glowing mushrooms"),
+        ("forest_log",            "fallen mossy log, horizontal"),
+        ("forest_stump",          "old tree stump with growth rings"),
+        ("forest_fern",           "low wide forest fern"),
     ],
 }
 
@@ -45,12 +50,20 @@ def save_state(s):
 
 def style_refs():
     refs = []
+    # Preferred: approved v2 style candidates from the plains run.
+    for p in (os.path.join(OUT, "plains", "plains_tree_v2", "frame_0.png"),
+              os.path.join(OUT, "plains", "plains_rock_v2", "frame_0.png")):
+        if os.path.exists(p):
+            # PixelLab /create-1-direction-object currently rejects
+            # style_images width/height metadata; send only the image payload.
+            refs.append({"type": "base64", "base64": b64_file(p)})
+    if refs:
+        return refs[:2]
+    # Fallback: old repo props (outdated style; used only if v2 files are missing).
     for n in ("forest_oak_tree", "plains_rock"):
         for root, _, files in os.walk(REPO_PROPS):
             if n + ".png" in files:
                 p = os.path.join(root, n + ".png")
-                # PixelLab /create-1-direction-object currently rejects
-                # style_images width/height metadata; send only the image payload.
                 refs.append({"type": "base64", "base64": b64_file(p)})
                 break
     return refs[:2]

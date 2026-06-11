@@ -3,23 +3,53 @@
   "type": "cluster",
   "entries": [
    {
-    "id": "plains_rock_v2",
-    "w": 4,
-    "optional": true
-   },
-   {
-    "id": "plains_rock",
+    "id": "plains_rock_v2_0",
     "w": 3
    },
    {
-    "id": "shared_gray_rock",
+    "id": "plains_rock_v2_1",
     "w": 2
    },
    {
-    "id": "forest_rock",
+    "id": "plains_rock_v2_2",
+    "w": 3
+   },
+   {
+    "id": "plains_rock_v2_3",
     "w": 2
+   },
+   {
+    "id": "plains_rock",
+    "w": 1
+   },
+   {
+    "id": "shared_gray_rock",
+    "w": 1
    }
-  ]
+  ],
+  "center": {
+   "_": "rare large boulder at the outcrop heart; bumped resource yield",
+   "chance": 0.25,
+   "dropMultiplier": 1.75,
+   "entries": [
+    {
+     "id": "plains_rock_v2_0_big",
+     "w": 2
+    },
+    {
+     "id": "plains_rock_v2_1_big",
+     "w": 2
+    },
+    {
+     "id": "plains_rock_v2_2_big",
+     "w": 1
+    },
+    {
+     "id": "plains_rock_v2_3_big",
+     "w": 1
+    }
+   ]
+  }
  },
  "placement": {
   "groveCentersPer100": 0.8,

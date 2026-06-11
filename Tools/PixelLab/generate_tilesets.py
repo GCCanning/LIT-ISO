@@ -101,6 +101,45 @@ FAMILIES = {
             ("farm_mulch",          "flat farm soil covered in straw mulch, full diamond coverage"),
         ],
     },
+    # Beach kit: ocean-edge band tiles (water law: sand apron between grass
+    # and ocean; ocean = dark water family).
+    "beach": {
+        "refs": ["sand_1", "plains2_02", "dirt"],
+        "tiles": [
+            ("beach_sand_1",   "flat pale beach sand, smooth, full diamond coverage"),
+            ("beach_sand_2",   "flat beach sand with subtle wind ripple lines, full diamond coverage"),
+            ("beach_sand_wet", "flat dark wet sand near the waterline, glossy sheen, full diamond coverage"),
+            ("beach_shells",   "flat beach sand with tiny scattered shells and pebbles, full diamond coverage"),
+            ("beach_seaweed",  "flat beach sand with a strand of dark washed-up seaweed, full diamond coverage"),
+            ("beach_dunegrass","flat beach sand with sparse dry dune grass tufts, full diamond coverage"),
+        ],
+    },
+    # Craftable plank flooring matched to the tree types (chop oak -> craft
+    # oak planks you can PLACE as floor tiles).
+    "planks": {
+        "refs": ["plains2_02", "stone_block", "dirt"],
+        "tiles": [
+            ("planks_oak",    "flat warm oak wood plank floor tile, visible grain, full diamond coverage"),
+            ("planks_pine",   "flat pale pine wood plank floor tile, knotty grain, full diamond coverage"),
+            ("planks_willow", "flat greenish-gray willow wood plank floor tile, full diamond coverage"),
+            ("planks_dark",   "flat dark stained wood plank floor tile, full diamond coverage"),
+            ("path_stone",    "flat fitted stone paver path tile, full diamond coverage"),
+            ("path_gravel",   "flat packed gravel path tile, small mixed stones, full diamond coverage"),
+        ],
+    },
+    # Interior kit (catalog section H). Carpets are FLOOR OVERLAYS: walkable,
+    # rendered above the floor tile, below props.
+    "interior": {
+        "refs": ["plains2_02", "stone_block", "dirt"],
+        "tiles": [
+            ("wood_floor_1",   "flat warm wooden plank floor, horizontal boards, full diamond coverage"),
+            ("wood_floor_2",   "flat dark aged wooden plank floor, full diamond coverage"),
+            ("stone_floor_in", "flat smooth dressed-stone interior floor, large pale slabs, full diamond coverage"),
+            ("carpet_red",     "flat rich red carpet with thin gold trim border, full diamond coverage"),
+            ("carpet_blue",    "flat deep blue carpet with silver trim border, full diamond coverage"),
+            ("carpet_green",   "flat forest green carpet with brass trim border, full diamond coverage"),
+        ],
+    },
     "mountain_stone": {
         "refs": ["plains_grass_base"],
         "tiles": [

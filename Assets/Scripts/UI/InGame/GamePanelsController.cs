@@ -77,6 +77,13 @@ namespace LitIso.UI.InGame
         {
             if (Input.GetKeyDown(KeyCode.Escape) && AnyOpen)
             {
+                // inventory overlays (context menu / drag) swallow Escape before
+                // the panel itself closes
+                if (_panel.ConsumeEscape())
+                {
+                    FoundationUiCoordinator.Active?.ConsumeInputThisFrame();
+                    return;
+                }
                 _panel.Hide();
                 FoundationUiCoordinator.Active?.ConsumeInputThisFrame();
                 RefreshCoordinatorState();

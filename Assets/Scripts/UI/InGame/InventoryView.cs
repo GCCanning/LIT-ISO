@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,24 +10,196 @@ namespace LitIso.UI.InGame
     {
         int Capacity { get; }
         HudSlot GetSlot(int i);  // reuses HudSlot from GameUIController (label/count/icon/selected)
+
+        // --- smart-inventory ops (2026-06-11). The placeholder implements all
+        // of these in memory; the Foundation adapter maps whatever the
+        // Foundation API exposes today and no-ops (returns false) for the rest
+        // — see Docs/agent-comms/from-claude.md handoff.
+        bool MoveSlot(int from, int to);      // move into an empty slot (merges same-item partials); false if blocked
+        bool SwapSlots(int a, int b);         // exchange two slots (either side may be empty)
+        bool SplitStack(int slot, int count); // peel `count` items off into the first empty slot
+        bool DropItem(int slot, int count);   // drop to the world; false until the backend op exists
+        void SortInventory();                 // merge partial stacks, then category → rarity → name
+
         event Action Changed;
     }
 
-    /// <summary>Demo data so the panel previews standalone before the Foundation adapter binds.</summary>
+    /// <summary>Demo data so the panel previews standalone before the Foundation adapter
+    /// binds. Implements the full smart-inventory op set in memory (move/swap/split/
+    /// drop/sort) against a tiny demo catalog that carries category + rarity.</summary>
     public sealed class PlaceholderInventoryViewModel : IInventoryViewModel
     {
-        readonly HudSlot[] _slots;
+        struct DemoDef { public string id; public int category; public int rarity; public int maxStack; }
+
+        // category mirrors ItemCategory ordering (Resource=0 … Misc=5); rarity is
+        // placeholder-only until the Foundation ItemDefinition grows a rarity field.
+        static readonly DemoDef[] Defs =
+        {
+            new DemoDef { id = "wood",        category = 0, rarity = 0, maxStack = 99 },
+            new DemoDef { id = "stone",       category = 0, rarity = 0, maxStack = 99 },
+            new DemoDef { id = "coal",        category = 0, rarity = 0, maxStack = 99 },
+            new DemoDef { id = "copper_ore",  category = 0, rarity = 1, maxStack = 99 },
+            new DemoDef { id = "iron_ore",    category = 0, rarity = 1, maxStack = 99 },
+            new DemoDef { id = "ruby_common", category = 5, rarity = 2, maxStack = 20 },
+        };
+
+        struct Entry
+        {
+            public string id;
+            public int count;
+            public bool IsEmpty => string.IsNullOrEmpty(id) || count <= 0;
+        }
+
+        readonly Entry[] _slots;
+
         public PlaceholderInventoryViewModel(int capacity = 36)
         {
-            _slots = new HudSlot[capacity];
-            string[] demo = { "wood", "stone", "iron_ore", "coal", "copper_ore", "ruby_common" };
-            for (int i = 0; i < demo.Length && i < capacity; i++)
-                _slots[i] = new HudSlot { label = demo[i], count = 5 + i * 3, icon = ItemIconResolver.Resolve(demo[i]) };
+            _slots = new Entry[capacity];
+            // deliberately unsorted, with duplicate partial stacks, so SORT has work to do
+            Set(0, "iron_ore", 9); Set(1, "wood", 30); Set(2, "ruby_common", 3);
+            Set(3, "stone", 12);   Set(4, "coal", 14); Set(5, "copper_ore", 17);
+            Set(9, "wood", 8);     Set(12, "stone", 5); Set(15, "ruby_common", 2);
         }
+
+        void Set(int i, string id, int count)
+        {
+            if (i >= 0 && i < _slots.Length)
+                _slots[i] = new Entry { id = id, count = count };
+        }
+
+        static DemoDef DefOf(string id)
+        {
+            for (int i = 0; i < Defs.Length; i++)
+                if (Defs[i].id == id) return Defs[i];
+            return new DemoDef { id = id, category = 99, rarity = 0, maxStack = 99 };
+        }
+
+        bool Valid(int i) => i >= 0 && i < _slots.Length;
+
+        int FirstEmpty()
+        {
+            for (int i = 0; i < _slots.Length; i++)
+                if (_slots[i].IsEmpty) return i;
+            return -1;
+        }
+
         public int Capacity => _slots.Length;
-        public HudSlot GetSlot(int i) => (i >= 0 && i < _slots.Length) ? _slots[i] : default;
         public event Action Changed;
         public void Raise() => Changed?.Invoke();
+
+        public HudSlot GetSlot(int i)
+        {
+            if (!Valid(i) || _slots[i].IsEmpty) return default;
+            var e = _slots[i];
+            return new HudSlot { label = e.id, count = e.count, icon = ItemIconResolver.Resolve(e.id) };
+        }
+
+        public bool MoveSlot(int from, int to)
+        {
+            if (!Valid(from) || !Valid(to) || from == to || _slots[from].IsEmpty) return false;
+            if (_slots[to].IsEmpty)
+            {
+                _slots[to] = _slots[from];
+                _slots[from] = default;
+                Raise();
+                return true;
+            }
+            if (_slots[to].id == _slots[from].id)
+            {
+                int max = Mathf.Max(1, DefOf(_slots[to].id).maxStack);
+                int moved = Mathf.Min(max - _slots[to].count, _slots[from].count);
+                if (moved <= 0) return false;
+                _slots[to].count += moved;
+                _slots[from].count -= moved;
+                if (_slots[from].count <= 0) _slots[from] = default;
+                Raise();
+                return true;
+            }
+            return false;
+        }
+
+        public bool SwapSlots(int a, int b)
+        {
+            if (!Valid(a) || !Valid(b) || a == b) return false;
+            if (_slots[a].IsEmpty && _slots[b].IsEmpty) return false;
+            var tmp = _slots[a];
+            _slots[a] = _slots[b];
+            _slots[b] = tmp;
+            Raise();
+            return true;
+        }
+
+        public bool SplitStack(int slot, int count)
+        {
+            if (!Valid(slot) || _slots[slot].IsEmpty) return false;
+            if (count <= 0 || count >= _slots[slot].count) return false;
+            int empty = FirstEmpty();
+            if (empty < 0) return false;
+            _slots[empty] = new Entry { id = _slots[slot].id, count = count };
+            _slots[slot].count -= count;
+            Raise();
+            return true;
+        }
+
+        public bool DropItem(int slot, int count)
+        {
+            if (!Valid(slot) || _slots[slot].IsEmpty || count <= 0) return false;
+            int dropped = Mathf.Min(count, _slots[slot].count);
+            string id = _slots[slot].id;
+            _slots[slot].count -= dropped;
+            if (_slots[slot].count <= 0) _slots[slot] = default;
+            Debug.Log($"[Inventory] (placeholder) dropped {dropped} x {id} — world pickup pending the Foundation drop op");
+            Raise();
+            return true;
+        }
+
+        public void SortInventory()
+        {
+            // 1) merge partial stacks of the same item, 2) order category → rarity
+            // (rarer first) → name, 3) re-deal into stacks respecting maxStack.
+            var totals = new List<Entry>();
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                if (_slots[i].IsEmpty) { _slots[i] = default; continue; }
+                bool merged = false;
+                for (int t = 0; t < totals.Count; t++)
+                {
+                    if (totals[t].id != _slots[i].id) continue;
+                    var e = totals[t];
+                    e.count += _slots[i].count;
+                    totals[t] = e;
+                    merged = true;
+                    break;
+                }
+                if (!merged) totals.Add(_slots[i]);
+                _slots[i] = default;
+            }
+
+            totals.Sort(CompareEntries);
+
+            int slotIdx = 0;
+            for (int t = 0; t < totals.Count && slotIdx < _slots.Length; t++)
+            {
+                int max = Mathf.Max(1, DefOf(totals[t].id).maxStack);
+                int remaining = totals[t].count;
+                while (remaining > 0 && slotIdx < _slots.Length)
+                {
+                    int put = Mathf.Min(max, remaining);
+                    _slots[slotIdx++] = new Entry { id = totals[t].id, count = put };
+                    remaining -= put;
+                }
+            }
+            Raise();
+        }
+
+        static int CompareEntries(Entry a, Entry b)
+        {
+            var da = DefOf(a.id);
+            var db = DefOf(b.id);
+            if (da.category != db.category) return da.category.CompareTo(db.category);
+            if (da.rarity != db.rarity) return db.rarity.CompareTo(da.rarity); // rarer first within a category
+            return string.Compare(a.id, b.id, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     /// <summary>

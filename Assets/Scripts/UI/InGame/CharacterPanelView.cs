@@ -44,6 +44,22 @@ namespace LitIso.UI.InGame
         CharacterPanelTab _activeTab = CharacterPanelTab.Inventory;
         string _selectedRecipeId;
 
+        // --- smart-inventory interaction state (sort / context menu / drag).
+        // Input is polled in Update (AbilityWheelView convention) and slots are
+        // hit-tested by rect, so no EventSystems per-slot components are needed.
+        const float DragHoldSeconds = 0.15f;
+        RectTransform _overlay;        // canvas-level layer for menu + ghost; survives tab Refresh
+        RectTransform[] _invSlotRects;
+        Image[] _invSlotIcons;
+        int _invSlotCount;
+        int _pressSlot = -1;
+        float _pressTime;
+        bool _dragging;
+        int _dragFrom = -1;
+        RectTransform _dragGhost;
+        RectTransform _ctxMenu;
+        int _ctxSlot = -1;
+
         struct SkillUiBucket
         {
             public string title;
@@ -103,7 +119,11 @@ namespace LitIso.UI.InGame
             Hide();
         }
 
-        void OnDestroy() => Unsubscribe();
+        void OnDestroy()
+        {
+            Unsubscribe();
+            CancelInventoryOps();
+        }
         void OnEnable() => LitIsoFont.TextScaleChanged += HandleTextScaleChanged;
         void OnDisable() => LitIsoFont.TextScaleChanged -= HandleTextScaleChanged;
 
@@ -134,12 +154,14 @@ namespace LitIso.UI.InGame
 
         public void Hide()
         {
+            CancelInventoryOps();
             if (_root != null) _root.SetActive(false);
             Closed?.Invoke();
         }
 
         void Build()
         {
+            CancelInventoryOps();
             if (_canvas != null) Destroy(_canvas.gameObject);
             _canvas = UiBuilder.NewCanvas(transform, "CharacterPanelCanvas", 220);
             _root = new GameObject("Root", typeof(RectTransform));
@@ -181,6 +203,12 @@ namespace LitIso.UI.InGame
             _body.anchorMax = Vector2.one;
             _body.offsetMin = new Vector2(28f, 34f);
             _body.offsetMax = new Vector2(-28f, -116f);
+
+            // Overlay for the inventory context menu / drag ghost. Parented to
+            // the canvas (not _body) and created last so it renders above the
+            // panel and survives the per-tab Refresh teardown.
+            _overlay = UiBuilder.NewRect("InvOpsOverlay", _canvas.transform);
+            UiBuilder.Stretch(_overlay);
         }
 
         void BuildTabs(Transform parent)
@@ -209,6 +237,13 @@ namespace LitIso.UI.InGame
         {
             if (_body == null || !IsOpen) return;
             foreach (Transform child in _body) Destroy(child.gameObject);
+            // slot widgets are about to be destroyed; the context menu would
+            // point at stale data, so dismiss it (a drag survives — DrawInventory
+            // re-applies the source-slot dim from _dragFrom).
+            if (_ctxMenu != null) CloseContextMenu();
+            _invSlotRects = null;
+            _invSlotIcons = null;
+            _invSlotCount = 0;
             UpdateTabButtons();
             if (_title != null) _title.text = LabelFor(_activeTab);
 
@@ -268,6 +303,11 @@ namespace LitIso.UI.InGame
             const float gap = 7f;
             const float bagX = 400f;
             TextLine($"Bag ({cap} slots)", 0, 15, UiBuilder.MutedCol, bagX);
+            DrawSortButton(bagX + cols * (slot + gap) - gap);
+
+            _invSlotRects = new RectTransform[cap];
+            _invSlotIcons = new Image[cap];
+            _invSlotCount = cap;
             for (int i = 0; i < cap; i++)
             {
                 int row = i / cols;
@@ -279,11 +319,15 @@ namespace LitIso.UI.InGame
                 rt.pivot = new Vector2(0f, 1f);
                 rt.anchoredPosition = new Vector2(bagX + col * (slot + gap), -26f - row * (slot + gap));
                 rt.sizeDelta = new Vector2(slot, slot);
+                _invSlotRects[i] = rt;
 
                 var icon = UiBuilder.NewImage(cell.transform, "Icon", s.icon, Color.white);
                 icon.preserveAspect = true;
                 icon.enabled = s.icon != null;
                 UiBuilder.Stretch(icon.rectTransform, 10f);
+                _invSlotIcons[i] = icon;
+                if (_dragging && i == _dragFrom)
+                    icon.color = new Color(1f, 1f, 1f, 0.35f);
 
                 if (s.count > 1)
                 {
@@ -302,6 +346,344 @@ namespace LitIso.UI.InGame
                     lr.sizeDelta = new Vector2(-6f, 18f);
                 }
             }
+        }
+
+        // ====================================================================
+        // Smart inventory: SORT button, right-click context menu, hold-to-drag.
+        // Input is polled in Update (same convention as AbilityWheelView's
+        // hold-X detection); slots are hit-tested against their RectTransforms
+        // so the rebuilt-every-Refresh slot widgets need no extra components.
+        // ====================================================================
+
+        void DrawSortButton(float rightEdgeX)
+        {
+            var btn = UiBuilder.NewButton(_body, "SortBtn", "button", "", 13);
+            var rt = btn.GetComponent<RectTransform>();
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(1f, 1f);
+            rt.anchoredPosition = new Vector2(rightEdgeX, 0f);
+            rt.sizeDelta = new Vector2(88f, 26f);
+            btn.onClick.AddListener(() =>
+            {
+                CancelInventoryOps();
+                _inventory?.SortInventory();
+            });
+
+            // optional generated icon (Resources/UI/InGame/icon_sort); text-only fallback
+            float textX = 6f;
+            var sortSpr = UiBuilder.Spr("icon_sort");
+            if (sortSpr != null)
+            {
+                var icon = UiBuilder.NewImage(btn.transform, "Icon", sortSpr, Color.white);
+                icon.raycastTarget = false;
+                icon.preserveAspect = true;
+                var ir = icon.rectTransform;
+                ir.anchorMin = ir.anchorMax = new Vector2(0f, 0.5f);
+                ir.pivot = new Vector2(0f, 0.5f);
+                ir.anchoredPosition = new Vector2(6f, 0f);
+                ir.sizeDelta = new Vector2(18f, 18f);
+                textX = 28f;
+            }
+            var label = UiBuilder.NewText(btn.transform, "Label", "Sort", 13, TextAnchor.MiddleCenter, UiBuilder.TextCol);
+            label.raycastTarget = false;
+            var lr = label.rectTransform;
+            lr.anchorMin = Vector2.zero;
+            lr.anchorMax = Vector2.one;
+            lr.offsetMin = new Vector2(textX, 1f);
+            lr.offsetMax = new Vector2(-6f, -1f);
+        }
+
+        void Update()
+        {
+            if (!IsOpen || _activeTab != CharacterPanelTab.Inventory)
+            {
+                CancelInventoryOps();
+                return;
+            }
+            UpdateInventoryOps();
+        }
+
+        void UpdateInventoryOps()
+        {
+            if (_inventory == null) return;
+            Vector2 mouse = Input.mousePosition;
+
+            // ghost tracks the cursor every frame while dragging
+            if (_dragging && _dragGhost != null)
+                _dragGhost.anchoredPosition = OverlayPoint(mouse);
+
+            if (_ctxMenu != null)
+            {
+                // pointer-down anywhere outside the menu dismisses it; clicks
+                // inside resolve via the row Buttons (which fire on pointer-up)
+                if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) &&
+                    !RectTransformUtility.RectangleContainsScreenPoint(_ctxMenu, mouse))
+                    CloseContextMenu();
+                return; // no drags while the menu is up
+            }
+
+            if (_dragging)
+            {
+                if (Input.GetMouseButtonUp(0)) EndDrag(mouse);
+                return;
+            }
+
+            // right-click on an occupied slot → context menu at the cursor
+            if (Input.GetMouseButtonDown(1))
+            {
+                int slot = SlotUnderPointer(mouse);
+                if (slot >= 0 && _inventory.GetSlot(slot).count > 0)
+                    OpenContextMenu(slot, mouse);
+                _pressSlot = -1;
+                return;
+            }
+
+            // press on an occupied slot arms a potential drag…
+            if (Input.GetMouseButtonDown(0))
+            {
+                int slot = SlotUnderPointer(mouse);
+                if (slot >= 0 && _inventory.GetSlot(slot).count > 0)
+                {
+                    _pressSlot = slot;
+                    _pressTime = Time.unscaledTime;
+                }
+            }
+
+            // …which starts once the hold passes the threshold. A quick click
+            // (released earlier) keeps the panel's default slot behavior.
+            if (_pressSlot >= 0)
+            {
+                if (!Input.GetMouseButton(0))
+                    _pressSlot = -1;
+                else if (Time.unscaledTime - _pressTime >= DragHoldSeconds)
+                    BeginDrag(_pressSlot);
+            }
+        }
+
+        int SlotUnderPointer(Vector2 screenPos)
+        {
+            if (_invSlotRects == null) return -1;
+            for (int i = 0; i < _invSlotCount; i++)
+            {
+                var rt = _invSlotRects[i];
+                if (rt != null && RectTransformUtility.RectangleContainsScreenPoint(rt, screenPos))
+                    return i;
+            }
+            return -1;
+        }
+
+        // screen point → local point on the (full-canvas, center-pivot) overlay
+        Vector2 OverlayPoint(Vector2 screenPos)
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(_overlay, screenPos, null, out var local);
+            return local;
+        }
+
+        void BeginDrag(int slot)
+        {
+            _pressSlot = -1;
+            var s = _inventory.GetSlot(slot);
+            if (s.count <= 0 || _overlay == null) return;
+
+            _dragging = true;
+            _dragFrom = slot;
+
+            if (_invSlotIcons != null && slot < _invSlotIcons.Length && _invSlotIcons[slot] != null)
+                _invSlotIcons[slot].color = new Color(1f, 1f, 1f, 0.35f);
+
+            // ghost: optional skin frame (Resources/UI/InGame/drag_ghost) + the
+            // item icon; semi-transparent and raycast-invisible throughout.
+            _dragGhost = UiBuilder.NewRect("DragGhost", _overlay);
+            _dragGhost.sizeDelta = new Vector2(58f, 58f);
+            var frame = UiBuilder.NewImage(_dragGhost, "Frame", UiBuilder.Spr("drag_ghost"), Color.clear);
+            frame.raycastTarget = false;
+            UiBuilder.Stretch(frame.rectTransform);
+            if (frame.sprite != null)
+            {
+                frame.type = Image.Type.Sliced;
+                frame.color = new Color(1f, 1f, 1f, 0.85f);
+            }
+            else if (s.icon == null)
+            {
+                // no skin and no item icon: flat translucent square fallback
+                frame.color = new Color(UiBuilder.SlotBg.r, UiBuilder.SlotBg.g, UiBuilder.SlotBg.b, 0.6f);
+            }
+            else
+            {
+                frame.enabled = false;
+            }
+            var icon = UiBuilder.NewImage(_dragGhost, "Icon", s.icon, Color.clear);
+            icon.raycastTarget = false;
+            icon.preserveAspect = true;
+            icon.enabled = s.icon != null;
+            icon.color = new Color(1f, 1f, 1f, 0.7f);
+            UiBuilder.Stretch(icon.rectTransform, 6f);
+            _dragGhost.anchoredPosition = OverlayPoint(Input.mousePosition);
+
+            FoundationUiCoordinator.Active?.SetModalOpen("inventoryOps", true);
+        }
+
+        void EndDrag(Vector2 screenPos)
+        {
+            int from = _dragFrom;
+            int target = SlotUnderPointer(screenPos);
+            CancelDrag(); // clear ghost/dim/modal before the VM op triggers Refresh
+            if (target < 0 || target == from)
+                return;   // released outside the grid = cancel (dropping is context-menu only)
+
+            var t = _inventory.GetSlot(target);
+            if (t.count > 0) _inventory.SwapSlots(from, target);
+            else _inventory.MoveSlot(from, target);
+        }
+
+        void CancelDrag()
+        {
+            if (_dragGhost != null) Destroy(_dragGhost.gameObject);
+            _dragGhost = null;
+            if (_dragging && _invSlotIcons != null && _dragFrom >= 0 &&
+                _dragFrom < _invSlotIcons.Length && _invSlotIcons[_dragFrom] != null)
+                _invSlotIcons[_dragFrom].color = Color.white;
+            _dragging = false;
+            _dragFrom = -1;
+            _pressSlot = -1;
+            FoundationUiCoordinator.Active?.SetModalOpen("inventoryOps", _ctxMenu != null);
+        }
+
+        void OpenContextMenu(int slot, Vector2 screenPos)
+        {
+            _ctxSlot = slot;
+            BuildContextMenu(false, screenPos);
+            FoundationUiCoordinator.Active?.SetModalOpen("inventoryOps", _ctxMenu != null);
+        }
+
+        void BuildContextMenu(bool splitMode, Vector2 screenPos)
+        {
+            if (_ctxMenu != null) Destroy(_ctxMenu.gameObject);
+            _ctxMenu = null;
+            if (_overlay == null) return;
+
+            var s = _inventory.GetSlot(_ctxSlot);
+            if (s.count <= 0) return;
+
+            const float w = 200f, rowH = 36f, rowGap = 4f, pad = 8f, headH = 24f;
+            int rows = splitMode ? 3 : (s.count > 1 ? 3 : 2);
+            float h = pad * 2f + headH + 2f + rows * (rowH + rowGap);
+
+            // skinnable via Resources/UI/InGame/context_menu; flat panel fallback
+            var panel = UiBuilder.NewPanel(_overlay, "InvContextMenu", "context_menu",
+                new Color(0.07f, 0.08f, 0.11f, 0.97f));
+            _ctxMenu = panel.rectTransform;
+            _ctxMenu.anchorMin = _ctxMenu.anchorMax = new Vector2(0.5f, 0.5f);
+            _ctxMenu.pivot = new Vector2(0f, 1f);
+            _ctxMenu.sizeDelta = new Vector2(w, h);
+            var lp = OverlayPoint(screenPos);
+            var bounds = _overlay.rect.size * 0.5f; // keep the menu on-canvas
+            lp.x = Mathf.Min(lp.x, bounds.x - w);
+            lp.y = Mathf.Max(lp.y, -bounds.y + h);
+            _ctxMenu.anchoredPosition = lp;
+
+            string head = splitMode ? $"Split {s.label}" : $"{s.label} x{s.count}";
+            var title = UiBuilder.NewText(panel.transform, "Head", head, 13, TextAnchor.MiddleLeft, UiBuilder.MutedCol);
+            Place(title.rectTransform, pad + 2f, pad, w - pad * 2f, headH);
+
+            float y = pad + headH + 2f;
+            if (!splitMode)
+            {
+                if (s.count > 1)
+                {
+                    ContextRow(panel.transform, "Split stack", "icon_split", y,
+                        () => BuildContextMenu(true, screenPos));
+                    y += rowH + rowGap;
+                }
+                ContextRow(panel.transform, "Drop", "icon_drop", y, () =>
+                {
+                    int slot = _ctxSlot;
+                    int count = _inventory.GetSlot(slot).count;
+                    CloseContextMenu();
+                    if (count > 0 && !_inventory.DropItem(slot, count))
+                        Debug.Log("[Inventory] Drop unavailable — pending Foundation world-drop op.");
+                });
+                y += rowH + rowGap;
+                ContextRow(panel.transform, "Cancel", null, y, CloseContextMenu);
+            }
+            else
+            {
+                int halfCount = s.count / 2;
+                ContextRow(panel.transform, $"Half ({halfCount})", "icon_split", y, () =>
+                {
+                    int slot = _ctxSlot;
+                    CloseContextMenu();
+                    _inventory.SplitStack(slot, halfCount);
+                });
+                y += rowH + rowGap;
+                ContextRow(panel.transform, "One", "icon_split", y, () =>
+                {
+                    int slot = _ctxSlot;
+                    CloseContextMenu();
+                    _inventory.SplitStack(slot, 1);
+                });
+                y += rowH + rowGap;
+                ContextRow(panel.transform, "Cancel", null, y, CloseContextMenu);
+            }
+        }
+
+        void ContextRow(Transform parent, string label, string iconSkin, float y, System.Action onClick)
+        {
+            var btn = UiBuilder.NewButton(parent, "Ctx_" + label, "craft_row", "", 13);
+            var rt = btn.GetComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(8f, -y);
+            rt.sizeDelta = new Vector2(-16f, 36f);
+            btn.onClick.AddListener(() => onClick());
+
+            float textX = 10f;
+            var iconSpr = iconSkin != null ? UiBuilder.Spr(iconSkin) : null;
+            if (iconSpr != null)
+            {
+                var icon = UiBuilder.NewImage(btn.transform, "Icon", iconSpr, Color.white);
+                icon.raycastTarget = false;
+                icon.preserveAspect = true;
+                var ir = icon.rectTransform;
+                ir.anchorMin = ir.anchorMax = new Vector2(0f, 0.5f);
+                ir.pivot = new Vector2(0f, 0.5f);
+                ir.anchoredPosition = new Vector2(8f, 0f);
+                ir.sizeDelta = new Vector2(22f, 22f);
+                textX = 38f;
+            }
+            var t = UiBuilder.NewText(btn.transform, "Label", label, 13, TextAnchor.MiddleLeft, UiBuilder.TextCol);
+            t.raycastTarget = false;
+            var tr = t.rectTransform;
+            tr.anchorMin = Vector2.zero;
+            tr.anchorMax = Vector2.one;
+            tr.offsetMin = new Vector2(textX, 2f);
+            tr.offsetMax = new Vector2(-8f, -2f);
+        }
+
+        void CloseContextMenu()
+        {
+            if (_ctxMenu != null) Destroy(_ctxMenu.gameObject);
+            _ctxMenu = null;
+            _ctxSlot = -1;
+            FoundationUiCoordinator.Active?.SetModalOpen("inventoryOps", _dragging);
+        }
+
+        void CancelInventoryOps()
+        {
+            if (_ctxMenu != null) CloseContextMenu();
+            if (_dragging) CancelDrag();
+            _pressSlot = -1;
+        }
+
+        /// <summary>Escape first dismisses inventory overlays (context menu or an
+        /// active drag) before the panel itself closes; GamePanelsController calls
+        /// this ahead of Hide(). Returns true if Escape was consumed here.</summary>
+        public bool ConsumeEscape()
+        {
+            if (_ctxMenu != null) { CloseContextMenu(); return true; }
+            if (_dragging) { CancelDrag(); return true; }
+            return false;
         }
 
         /// <summary>

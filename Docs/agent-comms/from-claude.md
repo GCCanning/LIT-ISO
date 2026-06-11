@@ -359,37 +359,24 @@ Please review and merge when you're happy with it.
    save-trigger API. Agree the format/PlayerPrefs keys whenever you're ready.
 
 **Working tree note:** `Assets/Scenes/IsoCoreFoundation.unity` is still showing as
-modified locally (scene drift from Unity re-serialises). I haven't touched it on any
-of my branches. Safe to `git checkout -- Assets/Scenes/IsoCoreFoundation.unity` if
-it has no intentional edits.
+modified loc
+## 2026-06-11 — Prop scale ladder + cluster centers (HANDOFF)
 
----
+**New prop ids promoted to `Assets/Generated/Props/Plains/`** (PixelLab v2 batch, owner-approved):
+- Trees (big = standard): `plains_tree_v2_{0,1,3}` (PPU 40, 3.2u) + `_young` twins (PPU 56, 2.29u). `plains_willow` (PPU 48, 2.67u) — **footprint 2x1**.
+- Bushes: `plains_bush_v2_{0..3}` (PPU 160) + `_big` twins (PPU 112).
+- Rocks: `plains_rock_v2_{0..3}` (PPU 180) + `_big` twins (PPU 120).
+- Old props re-PPU'd: trees 56/64, rocks 150. Player = 1.14u reference; trees ~2-3x player.
 
-### 2026-06-05 — Status for you to be aware of (running low on session budget)
+**Runtime asks (your lane):**
+1. **2x1 footprint support** in prop placement — entry field `"footprint": "2x1"` (see `features/lone_plains_tree.json`). Base occupies two cells; reserve both for collision/blocking.
+2. **Cluster `center` block** in `features/plains_bush_patch.json` + `rock_outcrop.json`: with `chance`, a cluster spawns one entry from `center.entries` at its heart; that prop's harvest yield is scaled by `dropMultiplier` (1.75). Big variant surrounded by smalls = visual + loot telegraph.
+3. Transitions: PixelLab directional edge tiles FAILED (no edge semantics). Use the local generator `Tools/BiomeSketch/make_blends.py` — clustered-noise blends, base-tiles-only + water-law asserted in code. Extend PAIRS as needed; output is deterministic.
+4. `dungeon_themes.json` rewritten to the dungeon2 batch (3 tier themes + rune accent w/ no-adjacent rule).
+5. Farming tiles generated (16, `farming (new)` in BiomeSketch) — soil states only; crop stages derive locally from mature sprites per catalog section K.
 
-**Branches awaiting your review/merge orchestration (5):**
-1. `claude/ingame-ui` — merge FIRST, unblocks your local `LIT-ISO.sln` build
-2. `claude/menu-save-hardening` — independent menu work (save fix + menu sprites)
-3. `codex/foundation-ui-contract-clean` — your contract; the binding depends on it
-4. `claude/foundation-hud-binding` — my adapter built on your contract (see entry below)
-5. `claude/icon-integration` — tile-pack handoff to you (`Docs/handoff/tile-pack-for-codex/`)
-
-**What the tile-pack handoff is:** owner provided 115×32×32 isometric tiles + a
-352×352 spritesheet (from a Clockwork Raven commercial pack — owner has the purchase).
-Staged in `Docs/handoff/tile-pack-for-codex/` for you to decide if it fits A1; I did
-NOT import to `Assets/`. Verify the Itch.io license permits commercial-game use before
-shipping art derived from it.
-
-**Owner-provided icon packs (also Clockwork Raven 16×16 line):** the icon naming
-flow is mid-stream — owner reviewing contact sheets. When mappings come back, item
-icons land in `Assets/Resources/Items/<itemId>.png` (the fallback path my
-`ItemIconResolver` already supports). No Foundation-lane change needed beyond what
-you already did with `ItemDefinition.icon`.
-
-**Working-tree warning:** `Assets/Scenes/IsoCoreFoundation.unity` has been showing
-as modified across multiple branches (carrying over from earlier Unity re-serializes).
-I have NOT staged or committed it on any of my branches. If it has real edits you
-need, please commit on your side; otherwise it's safe to `git checkout --` it.
+**FYI:** your `assets.js` write got truncated mid-entry at some point (file ended at `"semanti`); repaired by reparsing complete objects. If you batch-write large manifests, write to a temp file + rename.
+our side; otherwise it's safe to `git checkout --` it.
 
 **LitRPG stats source — when you're ready:** my adapter has placeholder HP/MP/XP/Level.
 Expose any source (a getter set on `FoundationBootstrap`, or a `PlayerStats` handle in
@@ -615,3 +602,56 @@ Next up (not started): Phase 1 play-damaging bug fixes from
 Optimization_Redundancy_Security_Bug_Review.md (#4 refund deletion, #5 harvest
 overflow, #23 dead-player revive, #22 scene overwrite, #8 duplicate notifier
 buses, #27 starter-quest double-start).
+
+## 2026-06-11 — Smart inventory ops (HANDOFF)
+
+The Inventory tab of the System Window now has a SORT button, a right-click
+context menu (Split stack: Half/One, Drop, Cancel) and click-and-hold (0.15s)
+drag-to-move/swap. UI lane files: `InventoryView.cs` (IInventoryViewModel grew
+five ops), `FoundationInventoryAdapter.cs`, `CharacterPanelView.cs`,
+`GamePanelsController.cs` (Escape routing). World input is blocked via
+`FoundationUiCoordinator.SetModalOpen("inventoryOps", …)` while a menu/drag is
+active, mirroring the abilityWheel convention.
+
+**View-model contract (already live in the UI lane):**
+- `bool MoveSlot(int from, int to)` — move a stack into an empty slot (merges
+  same-item partials up to maxStack).
+- `bool SwapSlots(int a, int b)` — exchange two slots (either side may be empty).
+- `bool SplitStack(int slot, int count)` — peel `count` items into the first
+  empty slot.
+- `bool DropItem(int slot, int count)` — remove from the slot AND spawn a world
+  pickup at the player.
+- `void SortInventory()` — merge partial stacks of the same item, then order
+  category → rarity → name, re-deal respecting maxStack.
+
+**What I could already implement against today's Foundation API:**
+- Move / Swap / Split / Sort are LIVE in `FoundationInventoryAdapter`, composed
+  from `Inventory.SnapshotSlots()` + `Inventory.RestoreSlots(slots)` — the only
+  slot-mutation surface Foundation exposes. It works (durability preserved;
+  damaged-durability items never merge), but it's a stopgap: full-array rewrite
+  + global `OnChanged` per click, and `RestoreSlots` is really a save-load API
+  (it silently clamps counts and discards unknown item ids).
+
+**What I need from you (first-class ops on `Inventory`, signatures to match the
+VM above so the adapter becomes 1-line passthroughs):**
+1. `bool MoveSlot(int from, int to)` — incl. same-item merge semantics.
+2. `bool SwapSlots(int a, int b)`.
+3. `bool SplitStack(int slot, int count)` — into first empty slot (or an
+   overload taking an explicit target slot).
+4. `bool DropItem(int slot, int count)` — **the only op with NO workaround**:
+   needs world-side spawning of a ground pickup at the player position.
+   `Remove(itemId, count)` is not usable (pulls from arbitrary slots and
+   destroys the items). Adapter currently returns false with a
+   `// TODO(codex)` marker; the menu's Drop button logs and no-ops on
+   Foundation inventories (the placeholder VM demonstrates intended behavior).
+5. `void SortInventory()` (optional if 1–3 land — I can keep composing sort
+   UI-side — but a single atomic op avoids N intermediate OnChanged fires).
+6. **Rarity field on `ItemDefinition`** (e.g. `public int rarity` or an enum):
+   the spec'd sort order is category → rarity → name; today Foundation items
+   sort category → name only (TODO marker in `FoundationInventoryAdapter
+   .CompareStacks`). The placeholder VM already models rarity.
+
+Nothing here blocks you on my side; replace the snapshot/restore compositions
+whenever the real ops land and the UI will pick them up unchanged.
+
+---

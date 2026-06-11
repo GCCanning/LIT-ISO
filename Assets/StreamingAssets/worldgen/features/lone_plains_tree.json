@@ -3,17 +3,41 @@
   "type": "single",
   "entries": [
    {
-    "id": "plains_tree_v2",
-    "w": 4,
-    "optional": true
+    "id": "plains_tree_v2_0",
+    "w": 4
    },
    {
-    "id": "plains_tree",
+    "id": "plains_tree_v2_1",
+    "w": 2
+   },
+   {
+    "id": "plains_tree_v2_3",
     "w": 3
    },
    {
-    "id": "plains_small_tree",
+    "id": "plains_tree_v2_0_young",
     "w": 2
+   },
+   {
+    "id": "plains_tree_v2_1_young",
+    "w": 1
+   },
+   {
+    "id": "plains_tree_v2_3_young",
+    "w": 1
+   },
+   {
+    "id": "plains_willow",
+    "w": 1,
+    "footprint": "2x1"
+   },
+   {
+    "id": "plains_tree",
+    "w": 1
+   },
+   {
+    "id": "plains_small_tree",
+    "w": 1
    }
   ]
  },

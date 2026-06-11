@@ -113,6 +113,26 @@ namespace LitIso.UI.InGame
             // void backdrop + ambient motes (reuses the menu particle layer)
             var bg = UiBuilder.NewImage(_canvas.transform, "Void", null, new Color(0.015f, 0.02f, 0.035f, 0.985f));
             UiBuilder.Stretch(bg.rectTransform);
+
+            // Cinematic backdrop, used when art exists at
+            // Resources/UI/ClassSelection/background (the flat void color above
+            // stays as the fallback when it doesn't). Slow Ken Burns drift +
+            // dark scrim so the ceremony text stays readable over the art.
+            var sceneSprite = Resources.Load<Sprite>("UI/ClassSelection/background");
+            if (sceneSprite != null)
+            {
+                var scene = UiBuilder.NewImage(_canvas.transform, "Backdrop", sceneSprite, Color.white);
+                UiBuilder.Stretch(scene.rectTransform);
+                scene.preserveAspect = false;
+                scene.raycastTarget = false;
+                var drift = scene.gameObject.AddComponent<MenuCinematicBackground>();
+                drift.cycleSeconds = 45f; // extra slow for the ceremony
+                var scrim = UiBuilder.NewImage(_canvas.transform, "BackdropScrim", null,
+                    new Color(0f, 0f, 0f, 0.45f));
+                UiBuilder.Stretch(scrim.rectTransform);
+                scrim.raycastTarget = false;
+            }
+
             var motes = new GameObject("Motes", typeof(RectTransform));
             motes.transform.SetParent(_canvas.transform, false);
             UiBuilder.Stretch((RectTransform)motes.transform);
