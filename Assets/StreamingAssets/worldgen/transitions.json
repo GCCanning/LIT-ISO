@@ -1,0 +1,65 @@
+{
+ "_": "4-bit neighbor-mask autotile (spec: Transition auto-tiling). Missing piece -> plain A tile",
+ "pairs": [
+  {
+   "a": "grass",
+   "b": "sand",
+   "tiles": {
+    "n": "grass_to_sand_n",
+    "e": "grass_to_sand_e",
+    "s": "grass_to_sand_s",
+    "w": "grass_to_sand_w",
+    "ne": "grass_to_sand_ne",
+    "sw": "grass_to_sand_sw"
+   }
+  },
+  {
+   "a": "sand",
+   "b": "water",
+   "tiles": {
+    "n": "sand_to_water_n",
+    "e": "sand_to_water_e",
+    "s": "sand_to_water_s",
+    "w": "sand_to_water_w",
+    "ne": "sand_to_water_ne",
+    "sw": "sand_to_water_sw"
+   }
+  },
+  {
+   "a": "grass",
+   "b": "dirt",
+   "tiles": {
+    "n": "grass_to_dirt_n",
+    "e": "grass_to_dirt_e",
+    "s": "grass_to_dirt_s",
+    "w": "grass_to_dirt_w",
+    "ne": "grass_to_dirt_ne",
+    "sw": "grass_to_dirt_sw"
+   }
+  },
+  {
+   "a": "grass",
+   "b": "forest_floor",
+   "tiles": {
+    "n": "grass_to_forest_floor_n",
+    "e": "grass_to_forest_floor_e",
+    "s": "grass_to_forest_floor_s",
+    "w": "grass_to_forest_floor_w",
+    "ne": "grass_to_forest_floor_ne",
+    "sw": "grass_to_forest_floor_sw"
+   }
+  },
+  {
+   "a": "grass",
+   "b": "stone",
+   "tiles": {
+    "n": "grass_to_stone_n",
+    "e": "grass_to_stone_e",
+    "s": "grass_to_stone_s",
+    "w": "grass_to_stone_w",
+    "ne": "grass_to_stone_ne",
+    "sw": "grass_to_stone_sw"
+   }
+  }
+ ]
+}

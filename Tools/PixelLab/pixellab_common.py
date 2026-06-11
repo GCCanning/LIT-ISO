@@ -82,6 +82,47 @@ def save_b64(b64, path):
     return path
 
 
+def download_urls(tok, record, out_dir, prefix="img"):
+    """Download every image URL found in an API record. Tries unauthenticated
+    first (storage links are often public), then with the bearer token."""
+    import re, urllib.request
+    blob = json.dumps(record) if not isinstance(record, str) else record
+    urls = []
+    for u in re.findall(r'https?://[^"\\\s]+?\.(?:png|webp|gif)[^"\\\s]*', blob):
+        if u not in urls:
+            urls.append(u)
+    os.makedirs(out_dir, exist_ok=True)
+    saved = []
+    first_fail_logged = False
+    for i, u in enumerate(urls):
+        data = None
+        errs = []
+        for headers in ({}, {"Authorization": f"Bearer {tok}"},
+                        {"User-Agent": "Mozilla/5.0"},
+                        {"Authorization": f"Bearer {tok}", "User-Agent": "Mozilla/5.0"}):
+            try:
+                req = urllib.request.Request(u, headers=headers)
+                data = urllib.request.urlopen(req, timeout=60).read()
+                break
+            except Exception as e:
+                errs.append(str(e)[:60])
+        if data is None:
+            if not first_fail_logged:
+                first_fail_logged = True
+                print("  FULL URL:", u)
+                print("  attempts:", " | ".join(errs))
+            else:
+                print("  could not fetch:", u[:90])
+            continue
+        tail = u.split("?")[0].rstrip("/").split("/")[-1]
+        name = tail if tail.endswith(".png") else f"{prefix}_{i:02d}.png"
+        p = os.path.join(out_dir, name)
+        open(p, "wb").write(data)
+        saved.append(p)
+        print("  downloaded", name)
+    return saved
+
+
 def contact_sheet(folder, out_name="_contact_sheet.png"):
     try:
         from PIL import Image, ImageDraw

@@ -4,23 +4,6 @@
   "see": "noise_params.elevation.mountainAbove"
  },
  "surfaceBase": "grass_3",
- "surfaceAccents": [
-  {
-   "tile": "grass_2",
-   "w": 10
-  },
-  {
-   "tile": "stone_path",
-   "w": 4
-  }
- ],
- "elevation": {
-  "range": [
-   3,
-   7
-  ],
-  "relief": "steep"
- },
  "stratification": [
   {
    "band": [
@@ -28,6 +11,12 @@
     4
    ],
    "surface": "grass_3",
+   "accents": [
+    {
+     "tile": "stone_mossy",
+     "w": 8
+    }
+   ],
    "rockPropDensity": 0.06,
    "oreDensity": 0.01
   },
@@ -36,7 +25,17 @@
     4,
     5
    ],
-   "surface": "badlands_1",
+   "surface": "stone_scree",
+   "accents": [
+    {
+     "tile": "stone_mossy",
+     "w": 10
+    },
+    {
+     "tile": "badlands_1",
+     "w": 8
+    }
+   ],
    "rockPropDensity": 0.14,
    "oreDensity": 0.03
   },
@@ -45,7 +44,17 @@
     5,
     7
    ],
-   "surface": "stone_block",
+   "surface": "stone_cracked",
+   "accents": [
+    {
+     "tile": "stone_snowcap",
+     "w": 14
+    },
+    {
+     "tile": "stone_block",
+     "w": 8
+    }
+   ],
    "rockPropDensity": 0.22,
    "oreDensity": 0.06
   }
@@ -55,5 +64,5 @@
   "ore_copper",
   "lone_pine"
  ],
- "_": "owner rule: stone increases toward the top; rock props and ore deposits scale with height"
+ "_": "owner rule: stone & snowcap increase with height; ore scales with elevation"
 }

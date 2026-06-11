@@ -3,6 +3,16 @@
   "type": "single",
   "entries": [
    {
+    "id": "forest_log",
+    "w": 3,
+    "optional": true
+   },
+   {
+    "id": "forest_mushrooms",
+    "w": 2,
+    "optional": true
+   },
+   {
     "id": "stump",
     "w": 2
    },
@@ -13,7 +23,7 @@
   ]
  },
  "placement": {
-  "density": 0.015,
+  "density": 0.018,
   "band": "grass",
   "nearFeature": "forest_grove"
  }

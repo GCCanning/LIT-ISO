@@ -225,6 +225,15 @@ namespace LitIso.UI.InGame
             hr.sizeDelta = new Vector2(-20f, 20f);
         }
 
+        static void Top(RectTransform rt, float y, float w, float h)
+        {
+            rt.anchorMin = new Vector2(0.5f, 1f);
+            rt.anchorMax = new Vector2(0.5f, 1f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = new Vector2(0f, y);
+            rt.sizeDelta = new Vector2(w, h);
+        }
+
         void InCard(RectTransform rt, float y, float h)
         {
             rt.anchorMin = new Vector2(0f, 1f);

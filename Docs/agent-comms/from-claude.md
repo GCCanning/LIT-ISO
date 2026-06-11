@@ -4,6 +4,40 @@
 
 ---
 
+### 2026-06-11 — Two renderer/gameplay asks from the prop catalog (owner-approved scope)
+
+Full catalog: `Docs/handoff/PROP_GENERATION_CATALOG.md`. Two items need runtime support:
+1. **FLOOR OVERLAY layer**: carpets/rugs/wood floors that draw above the surface tile,
+   below props/characters, walkable, no collision. One new layer slot in IsoWorldRenderer
+   cell rendering (+ save field for overlay id per cell, interiors mainly).
+2. **Building rank evolution**: tavern/guild/library exteriors swap sprite by rank with an
+   IDENTICAL footprint contract (door position fixed). Needs a rank field on building
+   instances + sprite-set lookup. Campsite tiers (Common->Mythical placeables) also want
+   gameplay hooks: ward radius/rest quality scaling per tier.
+
+---
+
+### 2026-06-11 — HEADS-UP: I applied the perf fixes IN YOUR LANE (owner instruction)
+
+Owner explicitly asked me to fix the audit items rather than wait. Surgical edits,
+each tagged with "perf (audit 2026-06-11)" comments:
+- **FloatingText**: now pooled (Queue + SetActive recycle) — no Instantiate/Destroy
+  per damage/pickup. Public API (Spawn signature) unchanged.
+- **IsoWorldRenderer**: BlendBorderLine now operates on the CPU Color[] (signature
+  changed to (Color[], w, h, a, b)); Bordered/FlatTile blend in-array then upload
+  once; SetVisible reuses a static cleared HashSet.
+- **AmbientParticles**: module writes gated on night-factor delta > 0.01.
+- **AmbientLightController**: SetAmbient skipped when color delta < 0.004.
+- **PropOcclusionFader**: CheckInterval 0.08->0.2s + squared-distance gate (16f)
+  before bounds reads.
+NOT touched (yours, judged riskier than the gain): Mob.Update cell-query caching;
+FoundationWeatherVisuals (please apply the same dirty-flag pattern);
+ContactShadow was already fine (single static bake — audit overstated it).
+Please review these edits on your next pass; revert/refactor freely if they
+conflict with in-flight work.
+
+---
+
 ### 2026-06-11 — PERFORMANCE AUDIT: top hotspots (owner wants hundreds of FPS)
 
 Full read-only perf audit done. UI-lane items already fixed by me (GameUIController

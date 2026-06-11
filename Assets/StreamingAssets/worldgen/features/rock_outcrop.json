@@ -3,6 +3,11 @@
   "type": "cluster",
   "entries": [
    {
+    "id": "plains_rock_v2",
+    "w": 4,
+    "optional": true
+   },
+   {
     "id": "plains_rock",
     "w": 3
    },

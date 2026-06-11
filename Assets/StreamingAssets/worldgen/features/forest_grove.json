@@ -11,6 +11,11 @@
     "w": 3
    },
    {
+    "id": "forest_pine",
+    "w": 3,
+    "optional": true
+   },
+   {
     "id": "forest_moss_bush",
     "w": 2
    }
@@ -21,6 +26,7 @@
   "radius": 4,
   "fillDensity": 0.55,
   "falloff": 0.15,
-  "band": "grass"
+  "band": "grass",
+  "heightBias": "uphill"
  }
 }

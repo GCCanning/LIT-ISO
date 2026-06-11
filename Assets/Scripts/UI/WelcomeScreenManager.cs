@@ -746,6 +746,11 @@ public class WelcomeScreenManager : MonoBehaviour
             FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty, callingId);
         }
 
+        // First entry into a brand-new world: play the transmigration boot-up
+        // cutscene after the scene loads (owner spec — disoriented arrival).
+        if (!File.Exists(foundationSavePath))
+            TransmigrationIntro.Arm();
+
         // Load the Foundation scene (canonical game) behind a fade + tip screen.
         LoadingScreen.Go("IsoCoreFoundation", $"Entering {world.worldName}…");
     }

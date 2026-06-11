@@ -24,10 +24,20 @@ namespace IsoCore.Foundation
             _ = SpriteAmbient.Material; // ensures a safe default ambient is set immediately
         }
 
+        Color _lastAmbient = new Color(-1f, -1f, -1f);
+
         void LateUpdate()
         {
             if (dayNight == null) return;
-            SpriteAmbient.SetAmbient(Compute());
+            // Perf (audit 2026-06-11): skip the global shader write when the
+            // ambient hasn't visibly changed (it moves slowly across the day).
+            var c = Compute();
+            if (Mathf.Abs(c.r - _lastAmbient.r) < 0.004f &&
+                Mathf.Abs(c.g - _lastAmbient.g) < 0.004f &&
+                Mathf.Abs(c.b - _lastAmbient.b) < 0.004f)
+                return;
+            _lastAmbient = c;
+            SpriteAmbient.SetAmbient(c);
         }
 
         Color Compute()

@@ -6,11 +6,16 @@
 <style>
  body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
  #side{width:300px;min-width:300px;background:#1d2027;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
- #pal{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;align-content:start}
- .sw{background:#262a33;border:2px solid #333;border-radius:4px;cursor:pointer;padding:2px;text-align:center}
- .sw img{max-width:56px;max-height:48px;image-rendering:pixelated;display:block;margin:0 auto}
- .sw div{font-size:8px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
- .sw.sel{border-color:#e8c468}
+ #pal{flex:1;overflow-y:auto;align-content:start}
+ .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px}
+ .sw{background:#262a33;border:2px solid #333;border-radius:5px;cursor:pointer;padding:4px 2px;text-align:center}
+ .sw:hover{border-color:#666}
+ .sw img{max-width:64px;max-height:56px;image-rendering:pixelated;display:block;margin:0 auto}
+ .sw div{font-size:9px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:2px}
+ .sw.sel{border-color:#e8c468;background:#33301f}
+ .ghead{position:sticky;top:0;background:#1d2027;color:#e8c468;font-size:12px;font-weight:600;
+        padding:6px 4px 4px;cursor:pointer;user-select:none;border-bottom:1px solid #333;z-index:2}
+ .ghead .arrow{color:#778;margin-right:6px}
  #main{flex:1;display:flex;flex-direction:column}
  #bar{padding:8px 12px;background:#1d2027;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
  button,select,input[type=text]{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
@@ -75,18 +80,40 @@ function mk(n){return Array.from({length:n},()=>Array.from({length:n},()=>({t:nu
 
 const pal=document.getElementById('pal');
 let cat='all';
+const collapsed=new Set();
+const GROUP_ORDER=['plains v2 (new)','snow (new)','mountain stone (new)','transitions (new)','plains props v2 (new)',
+                   'plains','ground','forest','water','sand','stone & high','dungeon','misc','props','decor'];
 function renderPal(){
   const q=document.getElementById('search').value.toLowerCase();
   pal.innerHTML='';
-  ASSETS.filter(a=>(cat==='all'||a.cat===cat)&&a.name.toLowerCase().includes(q)).forEach(a=>{
-    const d=document.createElement('div');
-    d.className='sw'+(brush===a.name?' sel':'');
-    d.innerHTML=`<img src="${a.path}"><div>${a.name}</div>`;
-    d.onclick=()=>{brush=a.name;
-      mode = a.cat==='tile' ? 'tile' : 'decor';
-      document.getElementById('mode').value=mode;
-      renderPal();};
-    pal.appendChild(d);
+  const items=ASSETS.filter(a=>(cat==='all'||a.cat===cat)&&a.name.toLowerCase().includes(q));
+  const groups={};
+  items.forEach(a=>{(groups[a.group||'misc'] ||= []).push(a);});
+  const keys=Object.keys(groups).sort((a,b)=>{
+    const ia=GROUP_ORDER.indexOf(a), ib=GROUP_ORDER.indexOf(b);
+    return (ia<0?99:ia)-(ib<0?99:ib);});
+  keys.forEach(g=>{
+    const head=document.createElement('div');
+    head.className='ghead';
+    const closed=collapsed.has(g) && !q;   // searching expands everything
+    head.innerHTML=`<span class="arrow">${closed?'▸':'▾'}</span>${g} <span style="color:#667">(${groups[g].length})</span>`;
+    head.onclick=()=>{closed?collapsed.delete(g):collapsed.add(g); renderPal();};
+    pal.appendChild(head);
+    if(closed) return;
+    const grid=document.createElement('div');
+    grid.className='pgrid';
+    groups[g].forEach(a=>{
+      const d=document.createElement('div');
+      d.className='sw'+(brush===a.name?' sel':'');
+      d.title=a.name;
+      d.innerHTML=`<img src="${a.path}"><div>${a.name}</div>`;
+      d.onclick=()=>{brush=a.name;
+        mode = a.cat==='tile' ? 'tile' : 'decor';
+        document.getElementById('mode').value=mode;
+        renderPal();};
+      grid.appendChild(d);
+    });
+    pal.appendChild(grid);
   });
 }
 document.querySelectorAll('#cats button').forEach(b=>b.onclick=()=>{

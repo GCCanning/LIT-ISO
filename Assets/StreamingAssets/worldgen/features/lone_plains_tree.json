@@ -3,6 +3,11 @@
   "type": "single",
   "entries": [
    {
+    "id": "plains_tree_v2",
+    "w": 4,
+    "optional": true
+   },
+   {
     "id": "plains_tree",
     "w": 3
    },

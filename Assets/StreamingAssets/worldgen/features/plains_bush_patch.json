@@ -3,6 +3,11 @@
   "type": "cluster",
   "entries": [
    {
+    "id": "plains_bush_v2",
+    "w": 4,
+    "optional": true
+   },
+   {
     "id": "plains_bush",
     "w": 3
    },

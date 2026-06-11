@@ -9,25 +9,85 @@
    0.45
   ]
  },
- "surfaceBase": "plains_grass_base",
+ "_": "plains2_* = approved PixelLab set; classified base/accent by flower-pixel ratio",
+ "surfaceBase": "plains2_02",
+ "surfaceBasePool": [
+  {
+   "tile": "plains2_02",
+   "w": 20
+  },
+  {
+   "tile": "plains2_05",
+   "w": 20
+  },
+  {
+   "tile": "plains2_07",
+   "w": 20
+  },
+  {
+   "tile": "plains2_11",
+   "w": 20
+  },
+  {
+   "tile": "plains2_15",
+   "w": 20
+  },
+  {
+   "tile": "plains2_08",
+   "w": 12
+  },
+  {
+   "tile": "plains2_14",
+   "w": 12
+  }
+ ],
  "surfaceAccents": [
   {
-   "tile": "plains_flower_grass",
-   "w": 7
+   "tile": "plains2_04",
+   "w": 6
   },
   {
-   "tile": "plains_grass_tufts",
-   "w": 7
+   "tile": "plains2_00",
+   "w": 6
   },
   {
-   "tile": "plains_dry_grass",
+   "tile": "plains2_10",
+   "w": 6
+  },
+  {
+   "tile": "plains2_03",
    "w": 5
   },
   {
-   "tile": "grass_1",
-   "w": 6
+   "tile": "plains2_01",
+   "w": 5
+  },
+  {
+   "tile": "plains2_13",
+   "w": 3
+  },
+  {
+   "tile": "plains2_12",
+   "w": 3
+  },
+  {
+   "tile": "plains2_06",
+   "w": 3
+  },
+  {
+   "tile": "plains2_09",
+   "w": 3
+  },
+  {
+   "tile": "plains_flower_grass",
+   "w": 2
+  },
+  {
+   "tile": "plains_grass_tufts",
+   "w": 2
   }
  ],
+ "accentRate": 0.15,
  "elevation": {
   "range": [
    0,
@@ -42,5 +102,5 @@
   "plains_bush_patch",
   "rock_outcrop"
  ],
- "_": "plains: sporadic trees, MORE flowers and long-grass props (owner rule)"
+ "fallback": "if a tile id is missing from Resources, use surfaceBase; never hard-fail"
 }

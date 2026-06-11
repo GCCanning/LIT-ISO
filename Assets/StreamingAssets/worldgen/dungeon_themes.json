@@ -1,0 +1,57 @@
+{
+ "_": "floor pools per dungeon tier; walls never render (void rework). Fallback: dungeon_floor_1..5",
+ "tiers": {
+  "1-2": {
+   "floors": [
+    {
+     "tile": "dungeon_moss_1",
+     "w": 40
+    },
+    {
+     "tile": "dungeon_moss_2",
+     "w": 40
+    },
+    {
+     "tile": "dungeon_broken",
+     "w": 20
+    }
+   ]
+  },
+  "3-4": {
+   "floors": [
+    {
+     "tile": "dungeon_broken",
+     "w": 35
+    },
+    {
+     "tile": "dungeon_moss_2",
+     "w": 25
+    },
+    {
+     "tile": "dungeon_rune",
+     "w": 15
+    },
+    {
+     "tile": "dungeon_dark_1",
+     "w": 25
+    }
+   ]
+  },
+  "5-6": {
+   "floors": [
+    {
+     "tile": "dungeon_dark_1",
+     "w": 45
+    },
+    {
+     "tile": "dungeon_dark_2",
+     "w": 35
+    },
+    {
+     "tile": "dungeon_rune",
+     "w": 20
+    }
+   ]
+  }
+ }
+}
