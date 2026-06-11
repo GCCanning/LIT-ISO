@@ -1,0 +1,58 @@
+{
+ "params": {
+  "temperature": [
+   0.25,
+   0.7
+  ],
+  "moisture": [
+   0.45,
+   1.0
+  ]
+ },
+ "surfaceBase": "forest_grass_base",
+ "surfaceAccents": [
+  {
+   "tile": "forest_floor",
+   "w": 14
+  },
+  {
+   "tile": "forest_leaf_litter",
+   "w": 12
+  },
+  {
+   "tile": "forest_moss_grass",
+   "w": 10
+  },
+  {
+   "tile": "forest_dark_underbrush",
+   "w": 6
+  },
+  {
+   "tile": "forest_grass_tufts",
+   "w": 6
+  }
+ ],
+ "elevation": {
+  "range": [
+   0,
+   3
+  ],
+  "relief": "rolling"
+ },
+ "features": [
+  "forest_grove",
+  "forest_bush_patch",
+  "clearing",
+  "rock_outcrop",
+  "stump_log_litter"
+ ],
+ "transitionTo": {
+  "meadow": {
+   "cells": [
+    4,
+    7
+   ],
+   "_": "tree density fades grove->sporadic; flower/tuft density rises toward plains (owner rule)"
+  }
+ }
+}

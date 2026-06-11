@@ -697,5 +697,31 @@ namespace IsoCore.Foundation
 
             return campsite != null;
         }
+
+        /// <summary>
+        /// Death respawn (audit rec #3): nearest placed campsite anywhere in the world.
+        /// Unlike TryFindBestCampsite this has no ward-radius gate — it answers
+        /// "where is the player's campfire?", not "is the player inside an aura?".
+        /// </summary>
+        public bool TryFindNearestCampsite(Vector2 ground, out PlaceableInstance campsite)
+        {
+            campsite = null;
+            float best = float.MaxValue;
+
+            foreach (var p in _placeables)
+            {
+                if (!p || p.Def == null || !p.Def.isCampsite)
+                    continue;
+
+                float d = ((Vector2)p.transform.position - ground).sqrMagnitude;
+                if (d < best)
+                {
+                    best = d;
+                    campsite = p;
+                }
+            }
+
+            return campsite != null;
+        }
     }
 }

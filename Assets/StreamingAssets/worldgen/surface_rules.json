@@ -1,0 +1,110 @@
+[
+ {
+  "if": {
+   "waterBody": "ocean"
+  },
+  "tile": "water_deep",
+  "variants": [
+   {
+    "tile": "water_deep_2",
+    "w": 8
+   },
+   {
+    "tile": "water_deep_3",
+    "w": 5
+   }
+  ],
+  "shoreContact": [
+   {
+    "tile": "water_swell_1",
+    "w": 5
+   },
+   {
+    "tile": "water_swell_2",
+    "w": 5
+   }
+  ]
+ },
+ {
+  "if": {
+   "waterBody": "lake"
+  },
+  "tile": "water"
+ },
+ {
+  "if": {
+   "waterBody": "river"
+  },
+  "tile": "water"
+ },
+ {
+  "if": {
+   "waterAdjacent": "river"
+  },
+  "tile": "forest_mud_path",
+  "outerBank": "shared_mud_dark"
+ },
+ {
+  "if": {
+   "waterAdjacent": "lake"
+  },
+  "tile": "dirt"
+ },
+ {
+  "if": {
+   "waterAdjacent": "ocean"
+  },
+  "tile": "sand_2"
+ },
+ {
+  "if": {
+   "nearOcean": [
+    2,
+    3
+   ]
+  },
+  "tile": "sand_2",
+  "accents": [
+   {
+    "tile": "sand_1",
+    "w": 10
+   }
+  ]
+ },
+ {
+  "if": {
+   "nearOcean": [
+    4,
+    5
+   ]
+  },
+  "tile": "dirt",
+  "_": "owner beach band: ocean -> sand (wet) -> dirt -> grass"
+ },
+ {
+  "if": {
+   "elevationAbove": 5
+  },
+  "tile": "stone_block",
+  "_": "mountain caps are stone"
+ },
+ {
+  "if": {
+   "elevationAbove": 4
+  },
+  "tile": "badlands_1",
+  "variants": [
+   {
+    "tile": "badlands_2",
+    "w": 30
+   }
+  ],
+  "_": "rocky shoulder below the stone cap"
+ },
+ {
+  "if": {
+   "biome": "*"
+  },
+  "tile": "$biome.surfaceBase"
+ }
+]

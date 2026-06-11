@@ -1,0 +1,13 @@
+{
+ "configured": {
+  "type": "negative_space",
+  "_": "suppresses tree placement; adds flowers/stump"
+ },
+ "placement": {
+  "per100Cells": 0.5,
+  "radius": [
+   2,
+   3
+  ]
+ }
+}

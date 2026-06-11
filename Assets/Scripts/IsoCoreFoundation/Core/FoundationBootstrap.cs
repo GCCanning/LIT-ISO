@@ -49,6 +49,7 @@ namespace IsoCore.Foundation
         public MobSpawner MobSpawner { get; private set; }
         public DayNightSystem DayNight { get; private set; }
         public FoundationCampingSystem Camping { get; private set; }
+        public FoundationDeathSystem Death { get; private set; }
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
         public FoundationAbilitySystem Abilities { get; private set; }
@@ -185,7 +186,8 @@ namespace IsoCore.Foundation
             var playerGo = new GameObject("Player");
             playerGo.transform.SetParent(transform, false);
             Player = playerGo.AddComponent<IsoFoundationPlayer>();
-            Player.Init(World, config);
+            // Stats wired in so sprint meters against the LitRPG Stamina pool (HUD-bound).
+            Player.Init(World, config, Progression?.Stats);
             // Render the knight sheet over the placeholder box (added after Init so it owns
             // the SpriteRenderer): directional facing + walk animation.
             playerGo.AddComponent<PlayerAnimator>();
@@ -290,7 +292,13 @@ namespace IsoCore.Foundation
             // Input router.
             Interaction = gameObject.AddComponent<PlayerInteraction>();
             Interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
-                Storage, _cam, InteractionOverlay, Instances, DungeonPortals, heldTool, Camping);
+                Storage, _cam, InteractionOverlay, Instances, DungeonPortals, heldTool, Camping,
+                Progression?.Stats);
+
+            // Death + soft respawn (audit rec #3): 0 HP fades out and wakes the player
+            // at their campfire (or the spawn clearing) with half Health. No item loss.
+            Death = gameObject.AddComponent<FoundationDeathSystem>();
+            Death.Init(Player, World, Progression, Placement, Instances, DungeonPortals, InteractionOverlay);
 
             // LitRPG progression hooks. Gameplay systems emit success events; this component
             // converts them into activity XP and starter quest progress.

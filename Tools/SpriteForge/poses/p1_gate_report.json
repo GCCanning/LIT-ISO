@@ -1,8 +1,8 @@
 {
   "schema": "lit-iso.spriteforge.p1-gate-report.v1",
-  "checked_utc": "2026-06-10T19:55:12.674454+00:00",
+  "checked_utc": "2026-06-10T23:35:14.842531+00:00",
   "poses_root": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses",
-  "version": "0.2.1-p2-walk-readability",
+  "version": "0.3.0-p4-action-matrix",
   "status": "pass",
   "issues": [],
   "warnings": [],
@@ -38,6 +38,86 @@
       ],
       "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\walk\\action.json",
       "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\walk\\walk_pose_contact_sheet.png"
+    },
+    {
+      "action": "run",
+      "expected_frames": 6,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\run\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\run\\run_pose_contact_sheet.png"
+    },
+    {
+      "action": "attack_swing",
+      "expected_frames": 6,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\attack_swing\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\attack_swing\\attack_swing_pose_contact_sheet.png"
+    },
+    {
+      "action": "cast",
+      "expected_frames": 6,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\cast\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\cast\\cast_pose_contact_sheet.png"
+    },
+    {
+      "action": "hurt",
+      "expected_frames": 4,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\hurt\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\hurt\\hurt_pose_contact_sheet.png"
+    },
+    {
+      "action": "death",
+      "expected_frames": 6,
+      "directions": [
+        "S",
+        "SE",
+        "E",
+        "NE",
+        "N",
+        "NW",
+        "W",
+        "SW"
+      ],
+      "action_json": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\death\\action.json",
+      "contact_sheet": "C:\\Projects\\Unity-Projects\\LIT-ISO\\Tools\\SpriteForge\\poses\\death\\death_pose_contact_sheet.png"
     }
   ]
 }

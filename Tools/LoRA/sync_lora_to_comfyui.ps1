@@ -29,6 +29,16 @@ $dest = Join-Path $loraDir $checkpoint.Name
 $manifestPath = Join-Path $loraDir "$OutputName.sync.json"
 $existing = if (Test-Path -LiteralPath $dest) { Get-Item -LiteralPath $dest } else { $null }
 $hash = Get-FileHash -LiteralPath $checkpoint.FullName -Algorithm SHA256
+$existingHash = $null
+if ($existing) {
+    try {
+        $existingHash = (Get-FileHash -LiteralPath $existing.FullName -Algorithm SHA256).Hash
+    }
+    catch {
+        $existingHash = $null
+    }
+}
+$alreadySynced = $existing -and $existingHash -eq $hash.Hash
 
 $payload = [ordered]@{
     output_name = $OutputName
@@ -39,6 +49,8 @@ $payload = [ordered]@{
     source_sha256 = $hash.Hash
     replacing_existing = $null -ne $existing
     existing_destination_size_bytes = if ($existing) { $existing.Length } else { $null }
+    existing_destination_sha256 = $existingHash
+    already_synced = $alreadySynced
     synced_utc = (Get-Date).ToUniversalTime().ToString("o")
 }
 
@@ -48,11 +60,14 @@ if ($DryRun.IsPresent) {
 }
 
 New-Item -ItemType Directory -Force -Path $loraDir | Out-Null
-Copy-Item -LiteralPath $checkpoint.FullName -Destination $dest -Force
+if (-not $alreadySynced) {
+    Copy-Item -LiteralPath $checkpoint.FullName -Destination $dest -Force
+}
 $payload | ConvertTo-Json -Depth 6 | Set-Content -Path $manifestPath -Encoding UTF8
 
 [ordered]@{
     copied = $dest
+    skipped_copy = [bool]$alreadySynced
     manifest = $manifestPath
     source_sha256 = $hash.Hash
     next = "Run eval_latest_synced_lora.ps1 -OutputName $OutputName when ComfyUI/Asset Forge is ready."

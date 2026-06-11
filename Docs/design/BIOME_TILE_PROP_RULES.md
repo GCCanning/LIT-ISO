@@ -57,4 +57,16 @@ rendering as a placeholder box; swap when LoRA ore art lands.
 - Depth chain, never skipped: deep ocean -> shallow rim -> beach dirt or
   foam-stone shoreline -> land. Deep water never touches land.
 - Rivers: light water, grass banks meeting the stream directly (pond-style)
-  with occasional sand bank patches; river surface sits one heigh
+  with occasional sand bank patches; river surface sits one height step below
+  the local terrain; mouths widen into the shallow rim.
+- Cliff faces: every raised tile is backed by a dirt body (renderer stacks
+  them); badlands tiers use strata 014-016 so mesas read banded.
+- Biome regions are large and coherent (low-frequency climate noise); a biome
+  never appears as single-cell islands inside another.
+
+## Sample grids
+
+Regenerate the visual: `python3 Tools/WorldGenPreview/render_biome_samples.py`
+The six boards (meadow, forest, badlands+border, coast chain, river, crag)
+are authored in the script as ASCII grids - edit those to evolve the rules,
+re-render, and update this doc in the same commit.

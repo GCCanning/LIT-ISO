@@ -1,0 +1,21 @@
+{
+ "configured": {
+  "type": "cluster",
+  "entries": [
+   {
+    "id": "plains_bush",
+    "w": 3
+   },
+   {
+    "id": "plains_dry_bush",
+    "w": 1
+   }
+  ]
+ },
+ "placement": {
+  "groveCentersPer100": 1.5,
+  "radius": 2,
+  "fillDensity": 0.3,
+  "band": "grass"
+ }
+}

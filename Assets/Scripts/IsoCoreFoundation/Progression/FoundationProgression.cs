@@ -176,11 +176,32 @@ namespace IsoCore.Foundation
 
         public string[] CaptureRegionShifts() => _regionShifts.ToArray();
 
+        // Fix #27: single source of truth for the quests every new character begins with.
+        // Started once via StartStarterQuests() (called by FoundationProgressionHooks.Init
+        // after content and gameplay systems are ready) — not in the constructor.
+        static readonly string[] StarterQuestIds =
+        {
+            "first_flame_first_field",
+            "a_roof_before_rain",
+            "thread_twig_and_tin",
+            "fixing_the_south_path",
+        };
+
         public FoundationProgression(FoundationContent content)
         {
             _content = content;
             SelectCalling("greenhand");
-            StartQuest("first_flame_first_field");
+        }
+
+        /// <summary>
+        /// Fix #27: starts the playable starter quests. Idempotent: quests that are
+        /// already active or completed are left untouched (StartQuest no-ops on known
+        /// ids). Must be invoked from exactly one runtime place.
+        /// </summary>
+        public void StartStarterQuests()
+        {
+            for (int i = 0; i < StarterQuestIds.Length; i++)
+                StartQuest(StarterQuestIds[i]);
         }
 
         public bool SelectCalling(string callingId)

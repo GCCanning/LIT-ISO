@@ -87,6 +87,8 @@ class Phase:
     far_arm: int = 0
     lift_near: int = 0
     lift_far: int = 0
+    arm_lift_near: int = 0
+    arm_lift_far: int = 0
 
 
 ACTION_PHASES = {
@@ -104,11 +106,54 @@ ACTION_PHASES = {
         Phase("far_contact", bob=12, torso_sway=-2, head_sway=0, near_leg=-16, far_leg=24, near_arm=7, far_arm=-8),
         Phase("recover", bob=-8, torso_sway=0, head_sway=0, near_leg=11, far_leg=-11, near_arm=-3, far_arm=3),
     ],
+    "run": [
+        Phase("anchor"),
+        Phase("near_drive", bob=-18, torso_sway=5, head_sway=3, near_leg=62, far_leg=-42, near_arm=-26, far_arm=22, lift_near=18, arm_lift_far=6),
+        Phase("near_plant", bob=14, torso_sway=3, head_sway=1, near_leg=32, far_leg=-24, near_arm=-13, far_arm=11),
+        Phase("far_drive", bob=-18, torso_sway=-5, head_sway=-3, near_leg=-42, far_leg=62, near_arm=22, far_arm=-26, lift_far=18, arm_lift_near=6),
+        Phase("far_plant", bob=14, torso_sway=-3, head_sway=-1, near_leg=-24, far_leg=32, near_arm=11, far_arm=-13),
+        Phase("recover", bob=-10, torso_sway=0, head_sway=0, near_leg=18, far_leg=-18, near_arm=-6, far_arm=6),
+    ],
+    "attack_swing": [
+        Phase("anchor"),
+        Phase("windup", bob=-4, torso_sway=-8, head_sway=-3, near_arm=-44, far_arm=-24, arm_lift_near=34, arm_lift_far=18, near_leg=-10, far_leg=10),
+        Phase("coil", bob=2, torso_sway=-12, head_sway=-4, near_arm=-58, far_arm=-28, arm_lift_near=42, arm_lift_far=22, near_leg=-16, far_leg=12),
+        Phase("slash", bob=6, torso_sway=14, head_sway=5, near_arm=62, far_arm=36, arm_lift_near=4, arm_lift_far=10, near_leg=24, far_leg=-18),
+        Phase("follow_through", bob=5, torso_sway=9, head_sway=3, near_arm=44, far_arm=22, arm_lift_near=-8, arm_lift_far=0, near_leg=16, far_leg=-10),
+        Phase("recover", bob=0, torso_sway=2, head_sway=0, near_arm=12, far_arm=-6, near_leg=4, far_leg=-4),
+    ],
+    "cast": [
+        Phase("anchor"),
+        Phase("ready", bob=-3, torso_sway=0, head_sway=0, near_arm=8, far_arm=-8, arm_lift_near=24, arm_lift_far=20),
+        Phase("raise", bob=-7, torso_sway=1, head_sway=0, near_arm=18, far_arm=-18, arm_lift_near=54, arm_lift_far=48),
+        Phase("channel", bob=-9, torso_sway=-1, head_sway=-1, near_arm=24, far_arm=-24, arm_lift_near=62, arm_lift_far=58),
+        Phase("release", bob=4, torso_sway=3, head_sway=2, near_arm=42, far_arm=-28, arm_lift_near=22, arm_lift_far=34),
+        Phase("settle", bob=0, torso_sway=0, head_sway=0, near_arm=8, far_arm=-4, arm_lift_near=10, arm_lift_far=8),
+    ],
+    "hurt": [
+        Phase("anchor"),
+        Phase("hit", bob=-6, torso_sway=-14, head_sway=-8, near_arm=-18, far_arm=-12, arm_lift_near=8, arm_lift_far=4, near_leg=-8, far_leg=-8),
+        Phase("recoil", bob=8, torso_sway=16, head_sway=9, near_arm=20, far_arm=14, near_leg=10, far_leg=6),
+        Phase("recover", bob=1, torso_sway=4, head_sway=2, near_arm=4, far_arm=2),
+    ],
+    "death": [
+        Phase("anchor"),
+        Phase("stagger", bob=8, torso_sway=-12, head_sway=-7, near_arm=-20, far_arm=-16, near_leg=-8, far_leg=8),
+        Phase("collapse_1", bob=28, torso_sway=-18, head_sway=-10, near_arm=-28, far_arm=-24, arm_lift_near=-12, arm_lift_far=-8, near_leg=-18, far_leg=12),
+        Phase("collapse_2", bob=54, torso_sway=-24, head_sway=-16, near_arm=-34, far_arm=-30, arm_lift_near=-18, arm_lift_far=-12, near_leg=-22, far_leg=18),
+        Phase("down", bob=76, torso_sway=-30, head_sway=-18, near_arm=-38, far_arm=-34, arm_lift_near=-22, arm_lift_far=-18, near_leg=-26, far_leg=20),
+        Phase("still", bob=78, torso_sway=-30, head_sway=-18, near_arm=-38, far_arm=-34, arm_lift_near=-22, arm_lift_far=-18, near_leg=-26, far_leg=20),
+    ],
 }
 
 ACTION_DEFAULTS = {
     "idle": {"frames": 4, "fps": 4, "loop": True, "loop_start": 0, "loop_end": 3, "weapon_hand": "none"},
     "walk": {"frames": 6, "fps": 10, "loop": True, "loop_start": 1, "loop_end": 5, "weapon_hand": "none"},
+    "run": {"frames": 6, "fps": 14, "loop": True, "loop_start": 1, "loop_end": 5, "weapon_hand": "none"},
+    "attack_swing": {"frames": 6, "fps": 12, "loop": False, "loop_start": 0, "loop_end": 5, "weapon_hand": "dominant"},
+    "cast": {"frames": 6, "fps": 10, "loop": False, "loop_start": 0, "loop_end": 5, "weapon_hand": "both"},
+    "hurt": {"frames": 4, "fps": 8, "loop": False, "loop_start": 0, "loop_end": 3, "weapon_hand": "none"},
+    "death": {"frames": 6, "fps": 8, "loop": False, "loop_start": 0, "loop_end": 5, "weapon_hand": "none"},
 }
 
 
@@ -272,8 +317,8 @@ def apply_phase(points: list[Point], direction: str, phase: Phase) -> list[Point
 
     move_chain(near_leg_indices, phase.near_leg, phase.lift_near)
     move_chain(far_leg_indices, phase.far_leg, phase.lift_far)
-    move_chain(near_arm_indices, phase.near_arm, 0, 0.65)
-    move_chain(far_arm_indices, phase.far_arm, 0, 0.65)
+    move_chain(near_arm_indices, phase.near_arm, phase.arm_lift_near, 0.65)
+    move_chain(far_arm_indices, phase.far_arm, phase.arm_lift_far, 0.65)
 
     return out
 
@@ -456,7 +501,7 @@ def build_library(poses_root: Path, version: str, replace: bool) -> dict:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build SpriteForge P1 action pose library.")
     parser.add_argument("--poses-root", type=Path, default=Path(__file__).resolve().parent / "poses")
-    parser.add_argument("--version", default="0.2.1-p2-walk-readability")
+    parser.add_argument("--version", default="0.3.0-p4-action-matrix")
     parser.add_argument("--replace", action="store_true")
     return parser.parse_args()
 

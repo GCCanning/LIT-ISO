@@ -256,7 +256,10 @@ namespace IsoCore.Foundation
             float band = PerlinF(warpX, warpY, _cfg.riverFrequency, 55, 56);
             float riverDist = Mathf.Abs(band - 0.5f);
             bool belowRidge = e < _cfg.riverMaxElevation;
-            bool isRiver = belowRidge && riverDist < _cfg.riverHalfWidth;
+            // Rivers never carve through the spawn apron - water is impassable, so a
+            // stream ringing the clearing would wall the player in at minute zero.
+            bool outsideApron = clearing > _cfg.spawnClearingRadius + 6;
+            bool isRiver = belowRidge && outsideApron && riverDist < _cfg.riverHalfWidth;
             bool isBank = belowRidge && !isRiver && riverDist < (_cfg.riverHalfWidth + _cfg.riverBankWidth);
 
             if (isRiver)
@@ -315,6 +318,17 @@ namespace IsoCore.Foundation
             if (e > _cfg.continentTier3Level) height = 3;
             if (e > _cfg.continentTier4Level) height = 4;
             height = Mathf.Clamp(height, 0, Mathf.Min(_cfg.maxHeight, 7));
+
+            // Spawn apron: the land bias lifts elevation near the origin, which can
+            // ring the flat clearing with tier-2+ cliff walls the player can't climb
+            // (maxWalkStepHeight stays 0). Ramp the cap gently instead: first ring is
+            // flush with the clearing, then at most one (jumpable) step per two cells.
+            int pastClearing = clearing - _cfg.spawnClearingRadius;
+            if (pastClearing > 0 && pastClearing <= 8)
+            {
+                int cap = Mathf.Clamp(_cfg.spawnHeight, 0, 7) + pastClearing / 2;
+                if (height > cap) height = cap;
+            }
 
             cell.Height = (byte)height;
             cell.BiomeIndex = (byte)biomeIndex;

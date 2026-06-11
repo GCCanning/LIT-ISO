@@ -111,3 +111,18 @@ C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_action_p
 The validator writes `poses/p1_gate_report.json`. The P1 review gate is human
 eyeballing of `poses/idle/idle_pose_contact_sheet.png` and
 `poses/walk/walk_pose_contact_sheet.png` after the automated report passes.
+
+## P4 lane-A matrix command
+
+Regenerate the expanded pose library and run the full review matrix:
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\build_action_pose_library.py --replace
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\validate_action_pose_library.py
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\SpriteForge\run_lane_a_matrix.py --clean
+```
+
+The P4 gate report lands at
+`Tools/SpriteForge/out/p4_matrix/witch/p4_gate_report.json`. Per-action
+direction contact sheets land beside each action folder, for example
+`Tools/SpriteForge/out/p4_matrix/witch/walk/walk_directions_contact_sheet.png`.

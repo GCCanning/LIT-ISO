@@ -81,5 +81,9 @@ namespace LitIso.UI.InGame
         public float Hunger01 => 0f;
         public float Xp01 => _stats != null ? _stats.Xp01 : 0f;
         public int Level => _stats != null ? _stats.Level : 1;
+        public string HealthText => _stats != null
+            ? $"{Mathf.RoundToInt(_stats.Health)} / {Mathf.RoundToInt(_stats.MaxHealth)}" : "";
+        public string ManaText => _stats != null
+            ? $"{Mathf.RoundToInt(_stats.Mana)} / {Mathf.RoundToInt(_stats.MaxMana)}" : "";
     }
 }

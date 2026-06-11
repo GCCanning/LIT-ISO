@@ -1310,6 +1310,7 @@ namespace IsoCore.Foundation.EditorTools
         static void ValidateProgressionContracts(AddCheck add, FoundationContent content)
         {
             var progression = new FoundationProgression(content);
+            progression.StartStarterQuests();
             int beforeXp = progression.Stats.Experience;
             int rewardEvents = 0;
             progression.RewardUnlocked += reward =>
@@ -1345,6 +1346,7 @@ namespace IsoCore.Foundation.EditorTools
                 firstQuestRead.progress01 >= 0.99f,
                 firstQuestRead.progress01.ToString("0.00"));
             var pinnedProgression = new FoundationProgression(content);
+            pinnedProgression.StartStarterQuests();
             pinnedProgression.AdvanceQuestObjective("first_flame_first_field", "gather_wood", 2);
             var pinnedService = new FoundationQoLService();
             pinnedService.Init(content, pinnedProgression, new Inventory(6, content));

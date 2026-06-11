@@ -1,0 +1,21 @@
+{
+ "configured": {
+  "type": "cluster",
+  "entries": [
+   {
+    "id": "flower",
+    "w": 3
+   },
+   {
+    "id": "flower_tulip",
+    "w": 2
+   }
+  ]
+ },
+ "placement": {
+  "groveCentersPer100": 2.2,
+  "radius": 2,
+  "fillDensity": 0.35,
+  "band": "grass"
+ }
+}

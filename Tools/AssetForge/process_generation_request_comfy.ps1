@@ -165,7 +165,8 @@ if ($requestComfySettings) {
 $reviewRoot = Join-Path $ProjectRoot "Assets\Generated\_Review\$job"
 $rawRoot = Join-Path $requestRoot "Outputs\raw"
 $cleanRoot = Join-Path $requestRoot "Outputs\cleaned"
-$manifestPath = Join-Path $requestRoot "comfy_generation_manifest.json"
+$manifestFileName = if ($DryRun.IsPresent) { "comfy_generation_manifest.dry_run.json" } else { "comfy_generation_manifest.json" }
+$manifestPath = Join-Path $requestRoot $manifestFileName
 Assert-UnderRoot -Root $projectRootResolved -Path $reviewRoot -Label "ReviewRoot"
 Assert-UnderRoot -Root $projectRootResolved -Path $rawRoot -Label "RawOutputRoot"
 Assert-UnderRoot -Root $projectRootResolved -Path $cleanRoot -Label "CleanOutputRoot"

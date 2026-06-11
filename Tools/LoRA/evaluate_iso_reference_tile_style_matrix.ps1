@@ -8,6 +8,8 @@ param(
     [double[]]$Strengths = @(0.35, 0.55, 0.72, 0.90),
     [string[]]$BlockOnTraining = @("litiso_iso_reference_critter_style_v1"),
     [string]$OutputRoot = "",
+    [string]$ScoreRoot = "",
+    [string]$SelectedFamilyRoot = "",
     [switch]$AllowRunningCheckpoint,
     [switch]$ForceDuringTraining,
     [switch]$DryRun
@@ -20,6 +22,12 @@ if ([string]::IsNullOrWhiteSpace($ProjectRoot)) {
 }
 if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
     $OutputRoot = Join-Path $ProjectRoot "Temp\LoRA\Evals"
+}
+if ([string]::IsNullOrWhiteSpace($ScoreRoot)) {
+    $ScoreRoot = Join-Path $ProjectRoot "Temp\LoRA\Evals"
+}
+if ([string]::IsNullOrWhiteSpace($SelectedFamilyRoot)) {
+    $SelectedFamilyRoot = Join-Path $ProjectRoot "Assets\Generated\_Review\tile_style_eval_selected_family_v1"
 }
 
 function Convert-ToRepoPath {
@@ -89,10 +97,10 @@ if (-not (Test-Path -LiteralPath $selectScript)) {
 }
 $referenceTargets = Join-Path $ProjectRoot "Temp\LoRA\Evals\stylelock_tile_reference_targets.png"
 $referenceTargetsManifest = Join-Path $ProjectRoot "Temp\LoRA\Evals\stylelock_tile_reference_targets.json"
-$scoreReport = Join-Path $ProjectRoot "Temp\LoRA\Evals\tile_style_eval_scores.json"
-$scoreCsv = Join-Path $ProjectRoot "Temp\LoRA\Evals\tile_style_eval_scores.csv"
-$scoreSheet = Join-Path $ProjectRoot "Temp\LoRA\Evals\tile_style_eval_ranked_sheet.png"
-$selectedFamilyRoot = Join-Path $ProjectRoot "Assets\Generated\_Review\tile_style_eval_selected_family_v1"
+$scoreReport = Join-Path $ScoreRoot "tile_style_eval_scores.json"
+$scoreCsv = Join-Path $ScoreRoot "tile_style_eval_scores.csv"
+$scoreSheet = Join-Path $ScoreRoot "tile_style_eval_ranked_sheet.png"
+$selectedFamilyRoot = $SelectedFamilyRoot
 
 $summaryPath = Join-Path $ProjectRoot "Temp\LoRA\$OutputName.eval_matrix_plan.json"
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $summaryPath) | Out-Null

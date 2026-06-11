@@ -116,6 +116,25 @@ namespace IsoCore.Foundation
         public float moveSpeed = 2.8f;
         public float interactRange = 1.8f;
 
+        // ---- Movement: jump & sprint (owner-approved addition) ----
+        // Walking keeps the maxWalkStepHeight=0 invariant; only an active jump may ascend.
+        [Header("Movement: jump & sprint")]
+        [Tooltip("Seconds a jump hop lasts (visual arc + the window in which one height step may be climbed).")]
+        public float jumpDuration = 0.35f;
+        [Tooltip("Peak visual lift of the hop in world units. Visual only — never changes cell/height queries.")]
+        public float jumpHeightUnits = 0.22f;
+        [Tooltip("Height steps the player may ascend during a single jump (walking stays at 0).")]
+        public int jumpClimbSteps = 1;
+        [Tooltip("Move-speed multiplier while sprinting (hold Left Shift).")]
+        public float sprintMultiplier = 1.6f;
+        [Tooltip("Stamina drained per second while sprint-moving; sprint stops at 0 stamina.")]
+        public float sprintStaminaPerSecond = 6f;
+        [Tooltip("Stamina regained per second while not sprinting.")]
+        public float sprintStaminaRegenPerSecond = 4f;
+        [Tooltip("After running dry, sprint stays locked out until stamina regenerates back " +
+                 "above this value (prevents on/off flicker at the 0 boundary).")]
+        public float sprintRecoverStamina = 8f;
+
         [Header("Mobs")]
         public int mobCap = 8;
         public float mobSpawnInterval = 3f;

@@ -1,0 +1,15 @@
+{
+ "configured": {
+  "type": "single",
+  "entries": [
+   {
+    "id": "shore_stone",
+    "w": 1
+   }
+  ]
+ },
+ "placement": {
+  "density": 0.05,
+  "band": "shallow_water_near_land"
+ }
+}

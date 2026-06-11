@@ -32,6 +32,10 @@ namespace LitIso.UI.InGame
         float Hunger01 { get; }   // 0..1  (rendered only when showHungerBar=true)
         float Xp01     { get; }   // 0..1 toward next level
         int Level { get; }
+        // Live absolute readouts rendered inside the bars ("82 / 110").
+        // LitRPG rule: the player always sees the numbers.
+        string HealthText { get; }
+        string ManaText   { get; }
         event Action Changed;     // raise when any of the above changes
     }
 
@@ -54,6 +58,8 @@ namespace LitIso.UI.InGame
         public float Hunger01 => 0.6f;
         public float Xp01     => 0.35f;
         public int Level => 3;
+        public string HealthText => "82 / 110";
+        public string ManaText   => "35 / 60";
         public event Action Changed; // never raised by the placeholder
         public void Raise() => Changed?.Invoke();
     }
@@ -109,6 +115,7 @@ namespace LitIso.UI.InGame
 
         Image _healthFill, _manaFill, _hungerFill, _xpFill;
         Text  _levelText;
+        Text  _healthValue, _manaValue;
 
         /// <summary>Bind a real data model (e.g. <see cref="FoundationHudAdapter"/>) and rebuild against it.</summary>
         public void Init(IGameHudModel model)
@@ -201,7 +208,9 @@ namespace LitIso.UI.InGame
 
             int row = 0;
             _healthFill = Bar(col, "Health", row++, HealthCol, "bar_health_fill", 30f, "bar_track", "HP");
+            _healthValue = BarValueText(_healthFill, "HealthValue");
             _manaFill   = Bar(col, "Mana",   row++, ManaCol,   "bar_mana_fill",   30f, "bar_track", "MP");
+            _manaValue  = BarValueText(_manaFill, "ManaValue");
             if (showHungerBar)
                 _hungerFill = Bar(col, "Hunger", row++, HungerCol, "bar_hunger_fill", 30f, "bar_track", "FOOD");
             _xpFill     = Bar(col, "XP",     row++, XpCol,     "bar_xp_fill", 24f, "bar_xp_track", "XP");
@@ -213,6 +222,19 @@ namespace LitIso.UI.InGame
             lt.pivot = new Vector2(0f, 0f);
             lt.anchoredPosition = new Vector2(48f, -((rowCount - 1) * 44f));
             lt.sizeDelta = new Vector2(140f, 22f);
+        }
+
+        // Centered live readout inside a bar's track ("82 / 110").
+        Text BarValueText(Image fill, string name)
+        {
+            if (fill == null) return null;
+            var track = fill.rectTransform.parent;
+            var t = NewText(track, name, "", 14, TextAnchor.MiddleCenter);
+            t.raycastTarget = false;
+            var rt = t.rectTransform;
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+            rt.offsetMin = rt.offsetMax = Vector2.zero;
+            return t;
         }
 
         // Creates a track + fill bar; returns the fill Image. row 0=top.
@@ -257,10 +279,10 @@ namespace LitIso.UI.InGame
             fill.fillMethod = Image.FillMethod.Horizontal;
             fill.fillOrigin = (int)Image.OriginHorizontal.Left;
             fill.fillAmount = 1f;
-            // Preserve the sprite's own aspect so the colored portion of the fill
-            // sprite (which may have transparent padding above/below the colored bar)
-            // doesn't get vertically stretched/squashed into the track.
-            fill.preserveAspect = fillSprite != null;
+            // New skin fills are exact edge-to-edge bars (no transparent padding),
+            // so they must stretch with the track. preserveAspect previously made
+            // fills render tiny/misaligned inside the track.
+            fill.preserveAspect = false;
             var fr = fill.rectTransform;
             fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one;
             fr.offsetMin = new Vector2(4f, 4f); fr.offsetMax = new Vector2(-4f, -4f);
@@ -388,6 +410,8 @@ namespace LitIso.UI.InGame
             if (_hungerFill != null) _hungerFill.fillAmount = Mathf.Clamp01(_model.Hunger01);
             if (_xpFill     != null) _xpFill.fillAmount     = Mathf.Clamp01(_model.Xp01);
             if (_levelText  != null) _levelText.text = "Lv " + _model.Level;
+            if (_healthValue != null) _healthValue.text = _model.HealthText ?? "";
+            if (_manaValue   != null) _manaValue.text   = _model.ManaText ?? "";
 
             if (_slotFrames == null) return;
             for (int i = 0; i < _slotFrames.Length; i++)

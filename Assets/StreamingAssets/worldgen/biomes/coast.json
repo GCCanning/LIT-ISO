@@ -1,0 +1,34 @@
+{
+ "params": {
+  "appliedAs": "band where continents in coast range"
+ },
+ "bandOrder": [
+  "water_deep(ocean)",
+  "sand_2 wet band 2-3",
+  "dirt band 1-2",
+  "grass"
+ ],
+ "cliffs": {
+  "heightField": "cliffiness",
+  "heights": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "coves": "cliffiness<0.45 carves stepped sand cove (see beach_coast_v1 + cliff_coast proposal)",
+  "_": "cliff top height VARIES along the coastline so it reads as a real coast (owner rule)"
+ },
+ "decor": {
+  "waterEdgeRocks": {
+   "id": "shore_stone",
+   "density": 0.05,
+   "band": "shallow"
+  },
+  "drySandRocks": {
+   "id": "rock",
+   "density": 0.03,
+   "band": "apron"
+  }
+ }
+}

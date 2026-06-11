@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO Biome Sketch</title>
+<style>
+ body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
+ #side{width:300px;min-width:300px;background:#1d2027;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+ #pal{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;align-content:start}
+ .sw{background:#262a33;border:2px solid #333;border-radius:4px;cursor:pointer;padding:2px;text-align:center}
+ .sw img{max-width:56px;max-height:48px;image-rendering:pixelated;display:block;margin:0 auto}
+ .sw div{font-size:8px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ .sw.sel{border-color:#e8c468}
+ #main{flex:1;display:flex;flex-direction:column}
+ #bar{padding:8px 12px;background:#1d2027;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+ button,select,input[type=text]{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
+ button.on{background:#5b4d20;border-color:#e8c468}
+ #cv{flex:1;cursor:crosshair}
+ #help{font-size:11px;color:#889;padding:4px 12px}
+ input[type=text]{width:160px}
+ #cats button{padding:3px 8px;font-size:11px}
+</style>
+</head>
+<body>
+<div id="side">
+  <div style="font-size:15px;font-weight:600;color:#e8c468">LIT-ISO Biome Sketch</div>
+  <div id="cats">
+    <button data-c="all" class="on">All</button>
+    <button data-c="tile">Tiles</button>
+    <button data-c="prop">Props</button>
+    <button data-c="decor">Decor</button>
+  </div>
+  <input type="text" id="search" placeholder="search...">
+  <div id="pal"></div>
+</div>
+<div id="main">
+  <div id="bar">
+    <select id="mode">
+      <option value="tile">Paint tile</option>
+      <option value="decor">Place decor/prop</option>
+      <option value="height">Height (+1 / RMB -1)</option>
+      <option value="erase">Erase</option>
+    </select>
+    <button id="flip">Flip brush: OFF (R)</button>
+    <select id="gsize"><option value="9">9 x 9</option><option value="13">13 x 13</option><option value="17">17 x 17</option><option value="25">25 x 25</option><option value="33">33 x 33</option></select>
+    <button id="nums" class="on">Heights</button>
+    <input type="text" id="vname" placeholder="vignette name (e.g. river_bank_v1)">
+    <button id="save">Save JSON</button>
+    <button id="load">Load JSON</button>
+    <input type="file" id="loadf" style="display:none" accept=".json">
+    <button id="png">Export PNG</button>
+    <button id="clear">Clear</button>
+    <select id="presets"><option value="">Claude's proposals...</option></select>
+  </div>
+  <canvas id="cv"></canvas>
+  <div id="help">LMB = apply brush · RMB = erase / lower height · pick a tile then "Paint tile", a prop then "Place decor" · heights 0-6 render as elevation. Save JSON and send the file to Claude.</div>
+</div>
+<script src="assets.js"></script>
+<script src="vignettes.js"></script>
+<script>
+let TW=64, TH=32, HS=18;
+let N=9, mode='tile', brush=null, flip=false, showNums=true;
+function layout(){
+  // adaptive zoom: bigger grids shrink tiles to fit the canvas
+  TW=Math.max(18, Math.min(64,
+      Math.floor((cv.width-80)/N),
+      Math.floor(((cv.height-140)*2)/(N+2))));
+  TW-=TW%2; TH=TW/2; HS=Math.round(TW*0.28);
+}
+let grid=mk(N);
+const imgs={};
+ASSETS.forEach(a=>{const i=new Image(); i.src=a.path; imgs[a.name]=i; a.img=i;});
+
+function mk(n){return Array.from({length:n},()=>Array.from({length:n},()=>({t:null,d:null,h:0,f:false,df:false})));}
+
+const pal=document.getElementById('pal');
+let cat='all';
+function renderPal(){
+  const q=document.getElementById('search').value.toLowerCase();
+  pal.innerHTML='';
+  ASSETS.filter(a=>(cat==='all'||a.cat===cat)&&a.name.toLowerCase().includes(q)).forEach(a=>{
+    const d=document.createElement('div');
+    d.className='sw'+(brush===a.name?' sel':'');
+    d.innerHTML=`<img src="${a.path}"><div>${a.name}</div>`;
+    d.onclick=()=>{brush=a.name;
+      mode = a.cat==='tile' ? 'tile' : 'decor';
+      document.getElementById('mode').value=mode;
+      renderPal();};
+    pal.appendChild(d);
+  });
+}
+document.querySelectorAll('#cats button').forEach(b=>b.onclick=()=>{
+  cat=b.dataset.c;
+  document.querySelectorAll('#cats button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); renderPal();});
+document.getElementById('search').oninput=renderPal;
+renderPal();
+
+const cv=document.getElementById('cv'), cx=cv.getContext('2d');
+function resize(){cv.width=cv.clientWidth; cv.height=cv.clientHeight; layout(); draw();}
+window.onresize=resize;
+
+function origin(){return {x:cv.width/2, y:90};}
+function isoPos(c,r,h){const o=origin();
+  return {x:o.x+(c-r)*TW/2, y:o.y+(c+r)*TH/2-h*HS};}
+
+function draw(){
+  cx.imageSmoothingEnabled=false;
+  cx.fillStyle='#15171c'; cx.fillRect(0,0,cv.width,cv.height);
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const cell=grid[r][c], p=isoPos(c,r,cell.h);
+    if(cell.h>0){ // cliff face
+      const pb=isoPos(c,r,0);
+      cx.fillStyle='#241d15';
+      cx.beginPath();
+      cx.moveTo(p.x-TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
+      cx.lineTo(pb.x,pb.y+TH); cx.lineTo(pb.x-TW/2,pb.y+TH/2); cx.closePath(); cx.fill();
+      cx.fillStyle='#2e251a';
+      cx.beginPath();
+      cx.moveTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
+      cx.lineTo(pb.x,pb.y+TH); cx.lineTo(pb.x+TW/2,pb.y+TH/2); cx.closePath(); cx.fill();
+    }
+    // diamond outline
+    cx.strokeStyle=cell.t?'rgba(255,255,255,0.06)':'rgba(255,255,255,0.15)';
+    cx.beginPath();
+    cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
+    cx.lineTo(p.x-TW/2,p.y+TH/2); cx.closePath(); cx.stroke();
+    if(cell.t&&imgs[cell.t]&&imgs[cell.t].complete){
+      const im=imgs[cell.t], w=TW, h=w*im.height/im.width;
+      cx.save();
+      if(cell.f){cx.translate(p.x,0); cx.scale(-1,1); cx.translate(-p.x,0);}
+      cx.drawImage(im, p.x-w/2, p.y+TH-h, w, h);
+      cx.restore();
+    }
+    if(showNums&&cell.h>0){
+      cx.fillStyle='rgba(232,196,104,0.85)'; cx.font='10px monospace';
+      cx.fillText(cell.h, p.x-3, p.y+TH/2+3);
+    }
+  }
+  // second pass: decorations/props on top so tall sprites are never
+  // overdrawn by the tiles of rows in front of them
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const cell=grid[r][c];
+    if(!cell.d||!imgs[cell.d]||!imgs[cell.d].complete) continue;
+    const p=isoPos(c,r,cell.h), im=imgs[cell.d];
+    const meta=ASSETS.find(a=>a.name===cell.d);
+    // PPU-true scale: world width (cells) = pngWidth / spritePixelsToUnits,
+    // exactly as Unity's renderer sizes these sprites. 1 cell = TW screen px.
+    const s=meta ? (TW/meta.ppu) : (TW/Math.max(32,im.width));
+    // draw only the content bbox so transparent canvas padding doesn't float
+    const bx=meta?meta.bx:0, by=meta?meta.by:0,
+          bw=meta?meta.bw:im.width, bh=meta?meta.bh:im.height;
+    const w=bw*s, h=bh*s;
+    // bottom-center pivot standing on the tile surface, like in-engine placeables
+    const footY=p.y+TH/2+3;
+    cx.save();
+    if(cell.df){cx.translate(p.x,0); cx.scale(-1,1); cx.translate(-p.x,0);}
+    cx.drawImage(im, bx, by, bw, bh, p.x-w/2, footY-h, w, h);
+    cx.restore();
+  }
+  // hover highlight: shows exactly which tile receives the brush
+  if(hoverCell){
+    const cell=grid[hoverCell.r][hoverCell.c];
+    const p=isoPos(hoverCell.c,hoverCell.r,cell.h);
+    cx.strokeStyle='rgba(232,196,104,0.95)'; cx.lineWidth=2;
+    cx.beginPath();
+    cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
+    cx.lineTo(p.x-TW/2,p.y+TH/2); cx.closePath(); cx.stroke();
+    cx.lineWidth=1;
+  }
+}
+let hoverCell=null;
+
+function cellAt(mx,my){
+  // test from front to back so the topmost (visually nearest) cell wins
+  for(let r=N-1;r>=0;r--)for(let c=N-1;c>=0;c--){
+    const p=isoPos(c,r,grid[r][c].h);
+    const dx=Math.abs(mx-p.x), dy=Math.abs(my-(p.y+TH/2));
+    if(dx/(TW/2)+dy/(TH/2)<=1) return {r,c};
+  }
+  return null;
+}
+
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+let painting=false, paintBtn=0, lastCell=null;
+function applyAt(mx,my,rmb){
+  const hit=cellAt(mx,my);
+  if(!hit) return;
+  if(lastCell&&lastCell.r===hit.r&&lastCell.c===hit.c) return; // once per cell
+  lastCell=hit;
+  const cell=grid[hit.r][hit.c];
+  if(mode==='height'){cell.h=Math.max(0,Math.min(6,cell.h+(rmb?-1:1)));}
+  else if(mode==='erase'||rmb){ if(cell.d) cell.d=null; else cell.t=null; }
+  else if(mode==='tile'&&brush){cell.t=brush; cell.f=flip;}
+  else if(mode==='decor'&&brush){cell.d=brush; cell.df=flip;}
+  draw();
+}
+cv.addEventListener('mousedown',e=>{
+  painting=true; paintBtn=e.button; lastCell=null;
+  const r=cv.getBoundingClientRect();
+  applyAt(e.clientX-r.left, e.clientY-r.top, e.button===2);
+});
+cv.addEventListener('mousemove',e=>{
+  const r=cv.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  const h=cellAt(mx,my);
+  if(!hoverCell||!h||h.r!==hoverCell.r||h.c!==hoverCell.c){hoverCell=h; draw();}
+  if(painting) applyAt(mx,my,paintBtn===2);
+});
+window.addEventListener('mouseup',()=>{painting=false; lastCell=null;});
+
+document.getElementById('mode').onchange=e=>mode=e.target.value;
+document.getElementById('gsize').onchange=e=>{N=+e.target.value; grid=mk(N); layout(); draw();};
+document.getElementById('nums').onclick=e=>{showNums=!showNums; e.target.classList.toggle('on'); draw();};
+document.getElementById('flip').onclick=()=>setFlip(!flip);
+function setFlip(v){flip=v; document.getElementById('flip').textContent='Flip brush: '+(v?'ON':'OFF')+' (R)';
+  document.getElementById('flip').classList.toggle('on',v);}
+window.addEventListener('keydown',e=>{if(e.key==='r'||e.key==='R')setFlip(!flip);});
+
+document.getElementById('clear').onclick=()=>{grid=mk(N); draw();};
+document.getElementById('save').onclick=()=>{
+  const name=document.getElementById('vname').value||'vignette';
+  const blob=new Blob([JSON.stringify({name,size:N,grid},null,1)],{type:'application/json'});
+  dl(URL.createObjectURL(blob), name+'.json');
+};
+document.getElementById('load').onclick=()=>document.getElementById('loadf').click();
+document.getElementById('loadf').onchange=e=>{
+  const f=e.target.files[0]; if(!f)return;
+  f.text().then(t=>{const j=JSON.parse(t); N=j.size; grid=j.grid;
+    document.getElementById('vname').value=j.name||'';
+    document.getElementById('gsize').value=String(N); layout(); draw();});
+};
+document.getElementById('png').onclick=()=>{
+  const name=document.getElementById('vname').value||'vignette';
+  dl(cv.toDataURL('image/png'), name+'.png');
+};
+function dl(url,fn){const a=document.createElement('a'); a.href=url; a.download=fn; a.click();}
+
+if(typeof PRESETS!=='undefined'){
+  const sel=document.getElementById('presets');
+  PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.name;sel.appendChild(o);});
+  sel.onchange=e=>{
+    if(e.target.value==='')return;
+    const p=PRESETS[+e.target.value];
+    N=p.size; grid=JSON.parse(JSON.stringify(p.grid));
+    document.getElementById('vname').value=p.name.replace('PROPOSAL_','');
+    document.getElementById('gsize').value=String(N);
+    layout(); draw();
+  };
+}
+setTimeout(resize,150);
+setInterval(draw,800); // repaint as images finish loading
+</script>
+</body>
+</html>

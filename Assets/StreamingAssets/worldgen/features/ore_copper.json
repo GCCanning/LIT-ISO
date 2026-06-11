@@ -1,0 +1,21 @@
+{
+ "configured": {
+  "type": "single",
+  "entries": [
+   {
+    "id": "copper_vein",
+    "w": 1
+   }
+  ]
+ },
+ "placement": {
+  "densityByElevation": {
+   "3": 0.01,
+   "4": 0.03,
+   "5": 0.05,
+   "6": 0.07
+  },
+  "band": "grass|rock",
+  "_": "ore frequency rises with height (owner rule)"
+ }
+}

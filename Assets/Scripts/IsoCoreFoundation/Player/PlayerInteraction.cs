@@ -26,6 +26,7 @@ namespace IsoCore.Foundation
         FoundationDungeonPortalSystem _dungeonPortals;
         PlayerHeldTool _heldTool;
         FoundationCampingSystem _camping;
+        FoundationPlayerStats _stats;
         ResourceNode _heldHarvestTarget;
         float _nextHeldPrimaryTime;
 
@@ -41,13 +42,15 @@ namespace IsoCore.Foundation
             FarmingSystem farming, StorageSystem storage = null,
             Camera cam = null, FoundationInteractionOverlay overlay = null,
             FoundationInstanceSystem instances = null, FoundationDungeonPortalSystem dungeonPortals = null,
-            PlayerHeldTool heldTool = null, FoundationCampingSystem camping = null)
+            PlayerHeldTool heldTool = null, FoundationCampingSystem camping = null,
+            FoundationPlayerStats stats = null)
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
             _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming;
             _storage = storage; _cam = cam; _overlay = overlay; _instances = instances; _dungeonPortals = dungeonPortals;
             _heldTool = heldTool;
             _camping = camping;
+            _stats = stats;
 
             var hi = new GameObject("TargetHighlight");
             hi.transform.SetParent(transform, false);
@@ -261,6 +264,10 @@ namespace IsoCore.Foundation
             if (PointerOverUI()) return;
             _overlay?.CloseContextMenu();
 
+            // Eat path (audit rec #2): a selected Food item is "used" like tools and
+            // placeables — primary click consumes one and restores Health.
+            if (TryEatSelected()) return;
+
             if (SelectedIsPlacementAction())
             {
                 string farmMsg = _farming.TryUseSelected();
@@ -447,6 +454,39 @@ namespace IsoCore.Foundation
                 _heldHarvestTarget = null;
             if (!toolBroke)
                 Flash(depleted ? $"Harvested {node.Def.Display}" : $"Breaking {node.Def.Display}...");
+        }
+
+        /// <summary>
+        /// Eat path (audit rec #2): if the selected hotbar item is Food, consume one and
+        /// restore Health by foodRestore (Heal clamps at MaxHealth). At full health the
+        /// click is still handled but the item is kept (no-op + message). Returns true
+        /// whenever the click was consumed by the food item.
+        /// </summary>
+        bool TryEatSelected()
+        {
+            var stack = _hotbar.SelectedStack;
+            if (stack.IsEmpty) return false;
+            var def = _content.Items.Get(stack.itemId);
+            if (def == null || def.category != ItemCategory.Food || def.foodRestore <= 0)
+                return false;
+            if (_stats == null) return false; // no stats wired (tests): fall through
+
+            if (_stats.Health >= _stats.MaxHealth)
+            {
+                Flash("Already at full health");
+                return true; // keep the item
+            }
+
+            if (!_inv.Remove(def.id, 1)) return false;
+            float before = _stats.Health;
+            _stats.Heal(def.foodRestore);
+            int restored = Mathf.CeilToInt(_stats.Health - before);
+            FloatingText.Spawn(_player.transform.position + Vector3.up * 0.75f,
+                $"+{restored} HP", new Color(0.45f, 0.95f, 0.45f));
+            Flash($"Ate {def.Display} (+{restored} HP)");
+            SfxManager.Play("ui_click", 0.7f);
+            ContextActionUsed?.Invoke("eat_food", def.id);
+            return true;
         }
 
         bool OnHarvestHitSucceeded(ResourceNodeDefinition nodeDef)

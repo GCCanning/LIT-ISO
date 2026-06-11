@@ -172,6 +172,22 @@ namespace IsoCore.Foundation
             return exited;
         }
 
+        /// <summary>
+        /// Death respawn (audit rec #3): leave the active dungeon without granting
+        /// completion, rewards, or history. Same exit path as CompleteAndExit, minus
+        /// the result bookkeeping — the run is simply abandoned.
+        /// </summary>
+        public bool AbandonAndExit()
+        {
+            if (!_activeDungeon.active)
+                return false;
+
+            bool exited = _instances != null && _instances.Exit();
+            if (exited)
+                _activeDungeon = default;
+            return exited;
+        }
+
         public FoundationSavedDungeon CaptureState()
         {
             if (_instances == null || !_instances.IsInsideInstance ||

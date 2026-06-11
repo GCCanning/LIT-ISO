@@ -15,7 +15,6 @@ if sys.platform == "win32":
 
 
 DIRECTIONS = ["S", "SE", "E", "NE", "N", "NW", "W", "SW"]
-EXPECTED = {"idle": 4, "walk": 6}
 
 
 def now_utc() -> str:
@@ -67,7 +66,14 @@ def validate_library(poses_root: Path) -> dict:
 
     action_reports = []
     idle_anchor_hashes: dict[str, str] = {}
-    for action, frame_count in EXPECTED.items():
+    manifest_path = poses_root / "pose_library_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+    manifest_actions = manifest.get("actions", []) if isinstance(manifest.get("actions", []), list) else []
+    expected = {str(item.get("action")): int(item.get("frames", 0)) for item in manifest_actions if item.get("action")}
+    if not expected:
+        expected = {"idle": 4, "walk": 6}
+
+    for action, frame_count in expected.items():
         action_root = poses_root / action
         action_json_path = action_root / "action.json"
         if not action_json_path.exists():
@@ -116,11 +122,9 @@ def validate_library(poses_root: Path) -> dict:
             }
         )
 
-    manifest_path = poses_root / "pose_library_manifest.json"
     if not manifest_path.exists():
         issues.append("missing pose_library_manifest.json")
     else:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         if manifest.get("version") != version:
             issues.append("pose_library_manifest.json version does not match VERSION")
 

@@ -1,0 +1,46 @@
+{
+ "params": {
+  "temperature": [
+   0.35,
+   0.75
+  ],
+  "moisture": [
+   0.0,
+   0.45
+  ]
+ },
+ "surfaceBase": "plains_grass_base",
+ "surfaceAccents": [
+  {
+   "tile": "plains_flower_grass",
+   "w": 7
+  },
+  {
+   "tile": "plains_grass_tufts",
+   "w": 7
+  },
+  {
+   "tile": "plains_dry_grass",
+   "w": 5
+  },
+  {
+   "tile": "grass_1",
+   "w": 6
+  }
+ ],
+ "elevation": {
+  "range": [
+   0,
+   2
+  ],
+  "relief": "gentle"
+ },
+ "features": [
+  "lone_plains_tree",
+  "flower_patch",
+  "long_grass_patch",
+  "plains_bush_patch",
+  "rock_outcrop"
+ ],
+ "_": "plains: sporadic trees, MORE flowers and long-grass props (owner rule)"
+}

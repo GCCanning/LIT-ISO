@@ -30,6 +30,11 @@ namespace IsoCore.Foundation
         public string Class { get; private set; } = "Wanderer";
         public string Title { get; private set; } = "Newcomer";
 
+        // Fix #23: (review doc: RecalculateVitals revived dead players)
+        // True once vitals have been seeded (new character or loaded save). After that,
+        // RecalculateVitals only clamps downward — it never refills a zero (dead) vital.
+        bool _vitalsInitialized;
+
         public float Health01 => Ratio(Health, MaxHealth);
         public float Mana01 => Ratio(Mana, MaxMana);
         public float Stamina01 => Ratio(Stamina, MaxStamina);
@@ -210,6 +215,9 @@ namespace IsoCore.Foundation
             Health = Clamp(state.health, 0f, MaxHealth);
             Mana = Clamp(state.mana, 0f, MaxMana);
             Stamina = state.maxStamina > 0f ? Clamp(state.stamina, 0f, MaxStamina) : MaxStamina;
+            // Fix #23: loaded vitals are authoritative: a saved dead character must stay
+            // dead, so later recalculations may only clamp, never refill.
+            _vitalsInitialized = true;
             Changed?.Invoke();
         }
 
@@ -232,9 +240,23 @@ namespace IsoCore.Foundation
             MaxHealth = 60f + VIT * 10f;
             MaxMana = 30f + INT * 5f;
             MaxStamina = CalculatedMaxStamina();
-            Health = Health <= 0f ? MaxHealth : Math.Min(Health, MaxHealth);
-            Mana = Mana <= 0f ? MaxMana : Math.Min(Mana, MaxMana);
-            Stamina = Stamina <= 0f ? MaxStamina : Math.Min(Stamina, MaxStamina);
+
+            if (!_vitalsInitialized)
+            {
+                // Fix #23: first recalculation (new character): seed vitals at full.
+                Health = MaxHealth;
+                Mana = MaxMana;
+                Stamina = MaxStamina;
+                _vitalsInitialized = true;
+                return;
+            }
+
+            // Fix #23: generic stat recalculation must never revive: only clamp down to the new
+            // maximums. A dead (0 HP) character stays dead through level-ups/class changes.
+            // (ApplyCalling intentionally refills vitals to max itself after this call.)
+            Health = Math.Min(Health, MaxHealth);
+            Mana = Math.Min(Mana, MaxMana);
+            Stamina = Math.Min(Stamina, MaxStamina);
         }
 
         float CalculatedMaxStamina()

@@ -1,7 +1,7 @@
 {
   "schema": "lit-iso.spriteforge.pose-library.v1",
-  "generated_utc": "2026-06-10T19:54:38.973824+00:00",
-  "version": "0.2.1-p2-walk-readability",
+  "generated_utc": "2026-06-10T23:35:13.420316+00:00",
+  "version": "0.3.0-p4-action-matrix",
   "directions": [
     "S",
     "SE",
@@ -26,6 +26,41 @@
       "fps": 10,
       "loop": true,
       "contact_sheet": "walk/walk_pose_contact_sheet.png"
+    },
+    {
+      "action": "run",
+      "frames": 6,
+      "fps": 14,
+      "loop": true,
+      "contact_sheet": "run/run_pose_contact_sheet.png"
+    },
+    {
+      "action": "attack_swing",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "contact_sheet": "attack_swing/attack_swing_pose_contact_sheet.png"
+    },
+    {
+      "action": "cast",
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "contact_sheet": "cast/cast_pose_contact_sheet.png"
+    },
+    {
+      "action": "hurt",
+      "frames": 4,
+      "fps": 8,
+      "loop": false,
+      "contact_sheet": "hurt/hurt_pose_contact_sheet.png"
+    },
+    {
+      "action": "death",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "contact_sheet": "death/death_pose_contact_sheet.png"
     }
   ],
   "requirements": {

@@ -1,0 +1,1215 @@
+{
+ "name": "PROPOSAL_forest_interior_v1",
+ "size": 13,
+ "grid": [
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "pine",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "pine",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_floor",
+    "d": "forest_moss_bush",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "pine",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_rock",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "shared_gray_rock",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_moss_bush",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_rock",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "pine",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_moss_bush",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_tufts",
+    "d": "flower",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "pine",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": "stump",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": "flower_tulip",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_rock",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_moss_bush",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "pine",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "pine",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_rock",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_grass_base",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_leaf_litter",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_moss_bush",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_deep_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_deep_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_floor",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "pine",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_oak_tree",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_leaf_litter",
+    "d": "forest_rock",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "pine",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_moss_grass",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_dark_underbrush",
+    "d": "forest_oak_tree",
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ]
+ ]
+}

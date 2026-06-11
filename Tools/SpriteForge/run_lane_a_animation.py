@@ -38,6 +38,40 @@ DIRECTION_WORD = {
     "SW": "south-west",
 }
 
+DIRECTION_RENDER_CLAUSE = {
+    "S": "front view, facing the camera, face visible, chest/front of robe visible",
+    "SE": "three-quarter front view facing south-east, face partly visible, front of robe readable",
+    "E": "right side profile view facing east, one side of face visible, not facing the camera",
+    "NE": "three-quarter rear view facing north-east, mostly back view, face hidden, back of hat and robe visible",
+    "N": "rear view facing away from the camera, no visible face, no visible eyes, back of head, hat, shoulders, and robe visible",
+    "NW": "three-quarter rear view facing north-west, mostly back view, face hidden, back of hat and robe visible",
+    "W": "left side profile view facing west, one side of face visible, not facing the camera",
+    "SW": "three-quarter front view facing south-west, face partly visible, front of robe readable",
+}
+
+DIRECTION_NEGATIVE_CLAUSE = {
+    "S": "back view, rear view",
+    "SE": "rear view, facing away",
+    "E": "front-facing symmetrical face, looking at viewer, both eyes centered",
+    "NE": "front-facing, looking at viewer, visible face, visible eyes, chest/front view",
+    "N": "front-facing, looking at viewer, visible face, visible eyes, chest/front view, face mask looking forward",
+    "NW": "front-facing, looking at viewer, visible face, visible eyes, chest/front view",
+    "W": "front-facing symmetrical face, looking at viewer, both eyes centered",
+    "SW": "rear view, facing away",
+}
+
+DEFAULT_WITCH_REF = Path("Assets/Characters/Witch/AnimationSprites/Static/witch static00.png")
+WITCH_STATIC_DIRECTION_REFS = {
+    "S": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static00.png"),
+    "SE": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static01.png"),
+    "E": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static02.png"),
+    "NE": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static03.png"),
+    "N": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static04.png"),
+    "NW": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static05.png"),
+    "W": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static06.png"),
+    "SW": Path("Assets/Characters/Witch/AnimationSprites/Static/witch static07.png"),
+}
+
 
 def now_utc() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -109,21 +143,37 @@ def action_frame_records(action_json: dict[str, Any], direction: str) -> list[di
 
 def prompt_for(character: str, action: str, direction: str, frame_index: int, frame_count: int) -> str:
     direction_word = DIRECTION_WORD.get(direction, direction.lower())
+    direction_clause = DIRECTION_RENDER_CLAUSE.get(direction, f"{direction_word} view")
     readable = character.replace("_", " ")
     return (
         f"LIT-ISO pixel sprite, {readable} adventurer, {action} cycle, {direction_word} facing, "
+        f"{direction_clause}, "
         f"frame {frame_index + 1} of {frame_count}, one isolated full-body character, "
         "cozy fantasy survival RPG, readable chibi proportions, pointed witch hat, robe, boots, "
         "clean hard pixel edges, limited palette, transparent or chroma background, no floor, no base"
     )
 
 
-def negative_prompt() -> str:
-    return (
+def negative_prompt(direction: str = "") -> str:
+    base = (
         "floor, ground, base, pedestal, shadow blob, duplicate character, multiple characters, sprite sheet, "
         "turnaround grid, cropped body, missing feet, huge head, realistic render, painterly blur, antialias haze, "
         "text, watermark, frame, border, UI panel"
     )
+    extra = DIRECTION_NEGATIVE_CLAUSE.get(direction, "")
+    return f"{base}, {extra}" if extra else base
+
+
+def resolve_character_reference(project_root: Path, args: argparse.Namespace) -> tuple[Path, str]:
+    requested_ref = args.character_ref if args.character_ref.is_absolute() else project_root / args.character_ref
+    uses_default_witch_ref = args.character_ref.as_posix() == DEFAULT_WITCH_REF.as_posix()
+    if args.directional_reference_mode == "auto" and args.character == "witch" and uses_default_witch_ref:
+        direction_ref = WITCH_STATIC_DIRECTION_REFS.get(args.direction)
+        if direction_ref is not None:
+            resolved = project_root / direction_ref
+            if resolved.exists():
+                return resolved, "witch_static_direction_refs"
+    return requested_ref, "request_character_ref"
 
 
 def hard_alpha(image: Image.Image, threshold: int = 80) -> Image.Image:
@@ -246,7 +296,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run SpriteForge lane A for one action/direction.")
     parser.add_argument("--project-root", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--character", default="witch")
-    parser.add_argument("--character-ref", type=Path, default=Path("Assets/Characters/Witch/AnimationSprites/Static/witch static00.png"))
+    parser.add_argument("--character-ref", type=Path, default=DEFAULT_WITCH_REF)
     parser.add_argument("--action", default="walk")
     parser.add_argument("--direction", default="S")
     parser.add_argument("--target-size", type=int, default=64)
@@ -263,6 +313,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--anchor-style-weight", type=float, default=None)
     parser.add_argument("--anchor-control-strength", type=float, default=None)
     parser.add_argument("--control-net", default="control_v11p_sd15_openpose.pth")
+    parser.add_argument("--directional-reference-mode", choices=["auto", "off"], default="auto")
     parser.add_argument("--palette-lock", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
@@ -271,7 +322,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     project_root = args.project_root.resolve()
-    character_ref = args.character_ref if args.character_ref.is_absolute() else project_root / args.character_ref
+    character_ref, reference_source = resolve_character_reference(project_root, args)
     if not character_ref.exists():
         raise FileNotFoundError(f"character reference not found: {character_ref}")
 
@@ -320,7 +371,7 @@ def main() -> int:
                 "frame_index": frame_index,
             },
             "prompt": prompt_for(args.character, args.action, args.direction, frame_index, frame_count),
-            "negative_prompt": negative_prompt(),
+            "negative_prompt": negative_prompt(args.direction),
             "seed": f"{args.seed}_{frame_index:03d}",
             "batch_count": 1,
             "reference_image": rel(project_root, character_ref),
@@ -429,6 +480,7 @@ def main() -> int:
         "direction": args.direction,
         "target_size": args.target_size,
         "reference_image": rel(project_root, character_ref),
+        "reference_source": reference_source,
         "action_json": rel(project_root, action_json_path),
         "loop_start": action_json.get("loop_start", 0),
         "loop_end": action_json.get("loop_end", action_json.get("frames", 1) - 1),
@@ -451,6 +503,7 @@ def main() -> int:
             "anchor_control_strength": args.anchor_control_strength,
             "control_net": args.control_net,
             "palette_lock": args.palette_lock,
+            "directional_reference_mode": args.directional_reference_mode,
         },
         "frames": frame_results,
         "pack": pack_result,

@@ -1,0 +1,59 @@
+{
+ "params": {
+  "promotedBy": "elevation",
+  "see": "noise_params.elevation.mountainAbove"
+ },
+ "surfaceBase": "grass_3",
+ "surfaceAccents": [
+  {
+   "tile": "grass_2",
+   "w": 10
+  },
+  {
+   "tile": "stone_path",
+   "w": 4
+  }
+ ],
+ "elevation": {
+  "range": [
+   3,
+   7
+  ],
+  "relief": "steep"
+ },
+ "stratification": [
+  {
+   "band": [
+    3,
+    4
+   ],
+   "surface": "grass_3",
+   "rockPropDensity": 0.06,
+   "oreDensity": 0.01
+  },
+  {
+   "band": [
+    4,
+    5
+   ],
+   "surface": "badlands_1",
+   "rockPropDensity": 0.14,
+   "oreDensity": 0.03
+  },
+  {
+   "band": [
+    5,
+    7
+   ],
+   "surface": "stone_block",
+   "rockPropDensity": 0.22,
+   "oreDensity": 0.06
+  }
+ ],
+ "features": [
+  "rock_outcrop",
+  "ore_copper",
+  "lone_pine"
+ ],
+ "_": "owner rule: stone increases toward the top; rock props and ore deposits scale with height"
+}

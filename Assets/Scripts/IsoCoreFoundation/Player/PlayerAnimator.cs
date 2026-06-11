@@ -14,7 +14,10 @@ namespace IsoCore.Foundation
     public class PlayerAnimator : MonoBehaviour
     {
         [Tooltip("Resources path of the multi-sprite sheet (no extension).")]
-        public string sheetResource = "Characters/Player/ReferenceKnight_Idle_512x1024";
+        // Placeholder black mage (owner-supplied) until the AssetForge 8D character
+        // pipeline produces the real player set. Same 8-row x 4-frame contract as the
+        // ReferenceKnight sheet, so swapping back/forward is just this string.
+        public string sheetResource = "Characters/Player/BlackMage_Idle_512x1024";
         public int framesPerRow = 4;
         public int rowCount = 8;
         [Tooltip("Idle playback speed (fps).")]

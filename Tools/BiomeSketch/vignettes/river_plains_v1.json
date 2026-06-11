@@ -1,0 +1,591 @@
+{
+ "name": "vignette",
+ "size": 9,
+ "grid": [
+  [
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_3",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 2,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": null,
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": "shore_stone",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "shared_mud_dark",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "plains_grass_tufts",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "shared_mud_dark",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 2,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "shared_mud_dark",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 2,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "plains_flower_grass",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_1",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "shared_mud_dark",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ],
+  [
+   {
+    "t": "grass_3",
+    "d": null,
+    "h": 2,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_3",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "grass_2",
+    "d": null,
+    "h": 1,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "shared_mud_dark",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "forest_mud_path",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": "shore_stone",
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   },
+   {
+    "t": "water",
+    "d": null,
+    "h": 0,
+    "f": false,
+    "df": false
+   }
+  ]
+ ]
+}

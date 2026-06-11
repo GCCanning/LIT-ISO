@@ -9,9 +9,17 @@ using UnityEngine.UI;
 public static class LitIsoFont
 {
     private const string FontResourcePath = "Fonts/antiquity-print";
+    // Optional readable body font: drop any .ttf at Resources/Fonts/body to override.
+    private const string BodyFontResourcePath = "Fonts/body";
     public const string TextScalePrefKey = "ui.textScale";
 
+    // Owner feedback 2026-06-10: the decorative Antiquity face is unreadable at
+    // body sizes. Split: Antiquity stays for big display text (titles, headers);
+    // everything below this requested size renders in a clean readable font.
+    private const int DisplayMinRequestedSize = 19;
+
     private static Font cachedFont;
+    private static Font cachedBodyFont;
     private static float lastBroadcastScale = float.NaN;
 
     public static Font UI
@@ -31,9 +39,31 @@ public static class LitIsoFont
         }
     }
 
+    /// <summary>Readable font for body copy, lists, and small labels.</summary>
+    public static Font Body
+    {
+        get
+        {
+            if (cachedBodyFont == null)
+            {
+                cachedBodyFont = Resources.Load<Font>(BodyFontResourcePath);
+                if (cachedBodyFont == null)
+                    cachedBodyFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                if (cachedBodyFont == null)
+                    cachedBodyFont = UI;
+            }
+
+            return cachedBodyFont;
+        }
+    }
+
     public static int SnapSize(int requestedSize)
     {
-        return Mathf.Max(12, Mathf.RoundToInt(requestedSize * 1.2f * TextScale));
+        // 1.2x inflation existed to compensate for Antiquity rendering small.
+        // Body text now uses a normal font, so inflate ONLY display-size text;
+        // body sizes render true (fixes text overflowing panels/slots/bars).
+        float compensate = requestedSize >= DisplayMinRequestedSize ? 1.2f : 1.0f;
+        return Mathf.Max(11, Mathf.RoundToInt(requestedSize * compensate * TextScale));
     }
 
     public static float TextScale => Mathf.Clamp(PlayerPrefs.GetFloat(TextScalePrefKey, 1.08f), 0.8f, 1.45f);
@@ -65,7 +95,8 @@ public static class LitIsoFont
     {
         if (text == null) return;
 
-        text.font = UI;
+        // Display face only at heading sizes; readable body face below.
+        text.font = requestedSize >= DisplayMinRequestedSize ? UI : Body;
         text.fontSize = SnapSize(requestedSize);
         text.fontStyle = style;
         text.resizeTextForBestFit = false;

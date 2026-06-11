@@ -1,0 +1,26 @@
+{
+ "configured": {
+  "type": "cluster",
+  "entries": [
+   {
+    "id": "plains_rock",
+    "w": 3
+   },
+   {
+    "id": "shared_gray_rock",
+    "w": 2
+   },
+   {
+    "id": "forest_rock",
+    "w": 2
+   }
+  ]
+ },
+ "placement": {
+  "groveCentersPer100": 0.8,
+  "radius": 1,
+  "fillDensity": 0.8,
+  "minCount": 2,
+  "_": "rocks never spawn alone (vignette rule)"
+ }
+}

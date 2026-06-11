@@ -1,0 +1,32 @@
+{
+ "continents": {
+  "freqCells": 220,
+  "octaves": 3,
+  "oceanBelow": 0.34,
+  "coastBelow": 0.42
+ },
+ "erosion": {
+  "freqCells": 140,
+  "octaves": 2
+ },
+ "temperature": {
+  "freqCells": 300,
+  "octaves": 2
+ },
+ "moisture": {
+  "freqCells": 260,
+  "octaves": 2
+ },
+ "cliffiness": {
+  "freqCells": 90,
+  "octaves": 2,
+  "_": "sampled along coastlines: <0.45 beach cove, 0.45-0.7 low cliff h1-2, >0.7 high cliff h3-4. Same field varies cliff TOP height continuously so coastline height undulates like a real coast"
+ },
+ "elevation": {
+  "maxHeight": 7,
+  "inlandRiseCells": 18,
+  "neighborDeltaMax": 1,
+  "mountainAbove": 0.62,
+  "_": "mountainAbove on (continents*erosion) promotes region to mountain biome"
+ }
+}

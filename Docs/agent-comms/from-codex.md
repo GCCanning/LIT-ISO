@@ -3231,6 +3231,30 @@ Review note:
 
 ---
 
+## 2026-06-10 - Codex: SpriteForge P4 started
+
+P4 branch: `codex/spriteforge-p4`.
+
+Scope in progress:
+
+- Expand Action Pose Library v1 from idle/walk to idle, walk, run,
+  attack_swing, cast, hurt, death across canonical directions.
+- Keep `d038_c062_bob` as lane-A default settings.
+- Honor `action.json` mirrorable mappings for W/NW/SW unless explicitly
+  disabled.
+- Add temporal-stability QA to the lane-A gate: fixed head/band crop delta
+  versus frame 0.
+- Stop at the P4 gate with per-action direction contact sheets under
+  `Tools/SpriteForge/out/p4_matrix`.
+- First live idle render exposed a direction-readability issue: N/NE still
+  read too front-facing because the front reference fights "north facing".
+  Codex stopped the render, tightened direction-specific prompt/negative
+  clauses, and will restart from a clean P4 output root.
+
+No Unity import.
+
+---
+
 ## 2026-06-10 - Codex: SpriteForge P3 Lane B install gate
 
 P3 status: CONDITIONAL GATE READY for review.

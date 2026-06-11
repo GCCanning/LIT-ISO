@@ -82,10 +82,22 @@ def request_payload(
     pose_entry: dict,
     prompt_entry: dict | None,
     reference_image: str,
+    style_reference_image: str,
     style_weight: float,
     control_strength: float,
     seed: int,
     batch_count: int,
+    strict_sprite_contract: bool,
+    template_enabled: bool,
+    template_denoise: float,
+    control_enabled: bool,
+    pose_source: str,
+    style_end_at: float,
+    checkpoint: str,
+    lora: str,
+    lora_strength: float,
+    steps: int,
+    cfg: float,
 ) -> dict:
     direction_word = DIRECTION_WORD[direction]
     prompt = (
@@ -95,6 +107,11 @@ def request_payload(
         "dark gloves, one crooked staff with orange crystal, solid flat chroma green background for extraction, "
         "no floor, no shadow, no extra objects, crisp compact pixel art, bottom-center anchor"
     )
+    if strict_sprite_contract:
+        prompt += (
+            ", single isolated full-body sprite only, staff close to body, compact 1x1 actor silhouette, "
+            "plain chroma background only, no spell casting, no visual effects, no environment, no scenic prop"
+        )
     negative = (
         "side-scroller sprite, chibi front portrait, floor, base, shadow, text, duplicate, blurry, "
         "antialiased, smooth painting, 3D render"
@@ -103,8 +120,15 @@ def request_payload(
         f"{negative}, wrong direction, {DIRECTION_NEGATIVE[direction]}, "
         "books, table, pumpkin, tile, terrain, circle, ring, halo, portal, ornament, extra staff, extra prop, backdrop"
     )
+    if strict_sprite_contract:
+        negative += (
+            ", spell effect, magic circle, energy ring, aura, flame trail, glowing path, ground patch, "
+            "gray card, background square, scene, environmental prop, floating duplicate, cropped body, "
+            "summoning circle, light beam, oversized weapon effect, floor shadow, cast shadow"
+        )
     pose_json_path = repo_path(project_root, pose_entry["pose_json"])
     reference_repo_path = repo_path(project_root, reference_image)
+    style_reference_repo_path = repo_path(project_root, style_reference_image)
     return {
         "schema": "lit_iso.asset_forge.generation_request.v1",
         "generated_utc": utc_now(),
@@ -118,25 +142,26 @@ def request_payload(
         "user_prompt": prompt,
         "user_negative_prompt": negative,
         "reference_image": reference_repo_path,
-        "style_reference_image": reference_repo_path,
+        "style_reference_image": style_reference_repo_path,
         "template_guidance": {
-            "enabled": False,
-            "source": "BlackMage1 normalized reference is used for style only; template pose is disabled so OpenPose controls orientation.",
+            "enabled": template_enabled,
+            "source": "Direction scaffold template" if template_enabled else "BlackMage1 normalized reference is used for style only; template pose is disabled so OpenPose controls orientation.",
             "direction": direction,
-            "policy": "avoid_front_reference_pose_lock",
+            "policy": "preserve_direction_scaffold_silhouette" if template_enabled else "avoid_front_reference_pose_lock",
+            "denoise": template_denoise,
         },
         "style_guidance": {
             "enabled": True,
             "source": "BlackMage1 normalized style lock reference",
             "weight": style_weight,
             "start_at": 0.0,
-            "end_at": 0.68,
+            "end_at": style_end_at,
             "weight_type": "style transfer",
             "ipadapter_model": "ip-adapter_sd15.safetensors",
             "preset": "STANDARD (medium strength)",
         },
         "control_guidance": {
-            "enabled": True,
+            "enabled": control_enabled,
             "type": "openpose",
             "pose_json_path": pose_json_path,
             "control_net": "control_v11p_sd15_openpose.pth",
@@ -145,14 +170,14 @@ def request_payload(
             "end_percent": 0.86,
             "action": action,
             "direction": direction,
-            "source": "Assets/Generated/_Review/_PoseControls/litiso_openpose_diagonal_v1",
+            "source": pose_source,
         },
         "comfy_settings": {
-            "checkpoint": "DreamShaper_8_pruned.safetensors",
-            "lora": "PixelArtRedmond-Lite64.safetensors",
-            "lora_strength": 0.32,
-            "steps": 28,
-            "cfg": 5.6,
+            "checkpoint": checkpoint,
+            "lora": lora,
+            "lora_strength": lora_strength,
+            "steps": steps,
+            "cfg": cfg,
             "sampler": "dpmpp_2m",
             "scheduler": "karras",
             "width": 512,
@@ -174,7 +199,7 @@ def request_payload(
             "background_policy": "transparent",
             "shadow_policy": "none",
             "palette_policy": "reference_locked",
-            "quality_gate": "strict",
+            "quality_gate": "strict_v7_no_floor_no_effects" if strict_sprite_contract else "strict",
         },
         "canvas": {
             "width": 128,
@@ -222,6 +247,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pose-manifest", type=Path, default=Path(r"Assets\Generated\_Review\_PoseControls\litiso_openpose_diagonal_v1\idle_manifest.json"))
     parser.add_argument("--mage-manifest", type=Path, default=Path(r"Assets\Generated\_Review\black_mage_iso_style_lock_v1\black_mage_iso_review_manifest.json"))
     parser.add_argument("--reference-image", default=r"Assets\Generated\_Review\black_mage_iso_style_lock_v1\black_mage_normalized_128.png")
+    parser.add_argument("--style-reference-image", default=r"Assets\Generated\_Review\black_mage_iso_style_lock_v1\black_mage_normalized_128.png")
+    parser.add_argument("--scaffold-manifest", type=Path, default=Path(r"Assets\Generated\_Review\black_mage_iso_style_lock_v1\black_mage_iso_review_manifest.json"))
+    parser.add_argument("--use-scaffold-template", action="store_true")
+    parser.add_argument("--use-reference-template", action="store_true")
+    parser.add_argument("--template-denoise", type=float, default=0.38)
     parser.add_argument("--out-root", type=Path, default=Path(r"Temp\AssetForge\black_mage_requests"))
     parser.add_argument("--directions", nargs="+", default=DEFAULT_DIRECTIONS)
     parser.add_argument("--action", default="Idle")
@@ -230,7 +260,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-count", type=int, default=1)
     parser.add_argument("--seed", type=int, default=118300)
     parser.add_argument("--style-weight", type=float, default=0.56)
+    parser.add_argument("--style-end-at", type=float, default=0.68)
     parser.add_argument("--control-strength", type=float, default=0.84)
+    parser.add_argument("--disable-control", action="store_true")
+    parser.add_argument("--checkpoint", default="DreamShaper_8_pruned.safetensors")
+    parser.add_argument("--lora", default="PixelArtRedmond-Lite64.safetensors")
+    parser.add_argument("--lora-strength", type=float, default=0.32)
+    parser.add_argument("--steps", type=int, default=28)
+    parser.add_argument("--cfg", type=float, default=5.6)
+    parser.add_argument("--strict-sprite-contract", action="store_true")
     parser.add_argument("--replace", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
@@ -244,12 +282,24 @@ def main() -> int:
     reference_image = Path(args.reference_image)
     if not reference_image.is_absolute():
         reference_image = project_root / reference_image
+    style_reference_image = Path(args.style_reference_image)
+    if not style_reference_image.is_absolute():
+        style_reference_image = project_root / style_reference_image
+    scaffold_manifest_path = args.scaffold_manifest if args.scaffold_manifest.is_absolute() else project_root / args.scaffold_manifest
     if not pose_manifest.exists():
         raise FileNotFoundError(f"Missing diagonal pose manifest: {pose_manifest}")
     if not reference_image.exists():
         raise FileNotFoundError(f"Missing black mage normalized reference image: {reference_image}")
+    if not style_reference_image.exists():
+        raise FileNotFoundError(f"Missing black mage style reference image: {style_reference_image}")
     pose_map = load_pose_map(pose_manifest)
     prompt_map = load_mage_prompt_map(mage_manifest)
+    scaffold_map: dict[str, str] = {}
+    if args.use_scaffold_template:
+        if not scaffold_manifest_path.exists():
+            raise FileNotFoundError(f"Missing black mage scaffold manifest: {scaffold_manifest_path}")
+        scaffold_manifest = json.loads(scaffold_manifest_path.read_text(encoding="utf-8-sig"))
+        scaffold_map = {str(key).upper(): str(value) for key, value in scaffold_manifest.get("scaffolds", {}).items()}
     out_root = args.out_root if args.out_root.is_absolute() else project_root / args.out_root
     plan = []
     for index, direction in enumerate(args.directions):
@@ -258,6 +308,16 @@ def main() -> int:
             raise ValueError(f"Unsupported direction: {direction}")
         if direction not in pose_map:
             raise ValueError(f"Pose manifest has no {direction} entry: {pose_manifest}")
+        template_reference = reference_image
+        if args.use_scaffold_template:
+            scaffold = scaffold_map.get(direction, "")
+            if not scaffold:
+                raise ValueError(f"Scaffold manifest has no {direction} entry: {scaffold_manifest_path}")
+            template_reference = Path(scaffold)
+            if not template_reference.is_absolute():
+                template_reference = project_root / str(template_reference).replace("/", "\\")
+            if not template_reference.exists():
+                raise FileNotFoundError(f"Missing black mage {direction} scaffold image: {template_reference}")
         job_name = safe_name(f"{args.job_prefix}_{args.action.lower()}_{direction.lower()}_{args.variant_suffix}")
         request_root = out_root / job_name
         payload = request_payload(
@@ -267,11 +327,23 @@ def main() -> int:
             args.action,
             pose_map[direction],
             prompt_map.get(direction),
-            str(reference_image),
+            str(template_reference),
+            str(style_reference_image),
             args.style_weight,
             args.control_strength,
             args.seed + index,
             max(1, min(8, args.batch_count)),
+            args.strict_sprite_contract,
+            args.use_scaffold_template or args.use_reference_template,
+            args.template_denoise,
+            not args.disable_control,
+            repo_path(project_root, pose_manifest),
+            args.style_end_at,
+            args.checkpoint,
+            args.lora,
+            args.lora_strength,
+            args.steps,
+            args.cfg,
         )
         plan.append({"job_name": job_name, "direction": direction, "request_path": str(request_root / "generation_request.json"), "payload": payload})
 
@@ -309,7 +381,7 @@ def main() -> int:
             encoding="utf-8",
         )
         created.append({"job_name": item["job_name"], "direction": item["direction"], "status": "queued", "request_path": str(request_path)})
-    print(json.dumps({"ok": True, "status": "queued", "created": created, "pose_manifest": str(pose_manifest), "reference_image": str(reference_image), "out_root": str(out_root)}, indent=2))
+    print(json.dumps({"ok": True, "status": "queued", "created": created, "pose_manifest": str(pose_manifest), "reference_image": str(reference_image), "style_reference_image": str(style_reference_image), "use_scaffold_template": args.use_scaffold_template, "out_root": str(out_root)}, indent=2))
     return 0
 
 

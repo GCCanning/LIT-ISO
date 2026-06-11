@@ -14,6 +14,7 @@ namespace LitIso.UI.InGame
         IInventoryViewModel _inventory;
         ICraftingViewModel _crafting;
         ICharacterSheetViewModel _character;
+        ISkillWebViewModel _skillWeb;
         FoundationProgression _progression;
         FoundationQoLService _qol;
 
@@ -24,6 +25,7 @@ namespace LitIso.UI.InGame
             _inventory ??= new PlaceholderInventoryViewModel();
             _crafting ??= new PlaceholderCraftingViewModel();
             _character ??= new PlaceholderCharacterSheetViewModel();
+            _skillWeb ??= new PlaceholderSkillWebViewModel();
 
             _panel = gameObject.AddComponent<CharacterPanelView>();
             _panel.Closed += RefreshCoordinatorState;
@@ -49,6 +51,12 @@ namespace LitIso.UI.InGame
             RebindPanel();
         }
 
+        public void BindSkillWeb(ISkillWebViewModel model)
+        {
+            _skillWeb = model ?? new PlaceholderSkillWebViewModel();
+            RebindPanel();
+        }
+
         public void BindProgression(FoundationProgression progression, FoundationQoLService qol)
         {
             _progression = progression;
@@ -58,9 +66,10 @@ namespace LitIso.UI.InGame
 
         public void OpenInventory() => Open(CharacterPanelTab.Inventory);
         public void OpenCrafting() => Open(CharacterPanelTab.Crafting);
-        public void OpenCharacterSheet() => Open(CharacterPanelTab.Status);
+        public void OpenCharacterSheet() => Open(CharacterPanelTab.Character);
         public void OpenSkills() => Open(CharacterPanelTab.Skills);
-        public void OpenQuests() => Open(CharacterPanelTab.Quests);
+        public void OpenSpells() => Open(CharacterPanelTab.Spells);
+        public void OpenQuests() => Open(CharacterPanelTab.Journal);
         public void OpenSystem() => Open(CharacterPanelTab.System);
         public void OpenMapTab() => Open(CharacterPanelTab.Map);
 
@@ -81,6 +90,8 @@ namespace LitIso.UI.InGame
             if (Input.GetKeyDown(KeyCode.I)) OpenInventory();
             if (Input.GetKeyDown(KeyCode.C)) OpenCrafting();
             if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.Tab)) OpenCharacterSheet();
+            if (Input.GetKeyDown(KeyCode.T)) OpenSkills();
+            if (Input.GetKeyDown(KeyCode.J)) OpenQuests();
         }
 
         void Open(CharacterPanelTab tab)
@@ -98,7 +109,7 @@ namespace LitIso.UI.InGame
             if (_panel == null)
                 return;
 
-            _panel.Init(_inventory, _crafting, _character, _progression, _qol);
+            _panel.Init(_inventory, _crafting, _character, _progression, _qol, _skillWeb);
             RefreshCoordinatorState();
         }
 

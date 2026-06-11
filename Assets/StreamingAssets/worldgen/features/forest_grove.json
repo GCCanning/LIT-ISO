@@ -1,0 +1,26 @@
+{
+ "configured": {
+  "type": "cluster",
+  "entries": [
+   {
+    "id": "forest_oak_tree",
+    "w": 5
+   },
+   {
+    "id": "forest_deep_oak_tree",
+    "w": 3
+   },
+   {
+    "id": "forest_moss_bush",
+    "w": 2
+   }
+  ]
+ },
+ "placement": {
+  "groveCentersPer100": 1.3,
+  "radius": 4,
+  "fillDensity": 0.55,
+  "falloff": 0.15,
+  "band": "grass"
+ }
+}

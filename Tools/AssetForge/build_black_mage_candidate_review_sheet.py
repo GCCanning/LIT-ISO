@@ -15,7 +15,8 @@ from PIL import Image, ImageDraw, ImageFont
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
 
-DIRECTIONS = ["NE", "NW", "SE", "SW"]
+CANONICAL_DIRECTIONS = ["S", "SE", "E", "NE", "N", "NW", "W", "SW"]
+DEFAULT_DIRECTIONS = ["NE", "NW", "SE", "SW"]
 SCRIPT_SCHEMA = "lit_iso.asset_forge.black_mage_candidate_review.v1"
 
 
@@ -72,7 +73,7 @@ def alpha_coverage(image: Image.Image) -> float:
 
 def direction_from_name(name: str) -> str | None:
     lowered = name.lower()
-    for direction in DIRECTIONS:
+    for direction in CANONICAL_DIRECTIONS:
         if re.search(rf"(^|[_\-.]){direction.lower()}([_\-.]|$)", lowered):
             return direction
     return None
@@ -354,7 +355,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build a black mage candidate QC sheet from generated review outputs.")
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
     parser.add_argument("--variant", default="v6")
-    parser.add_argument("--directions", nargs="+", default=DIRECTIONS)
+    parser.add_argument("--directions", nargs="+", default=DEFAULT_DIRECTIONS)
     parser.add_argument("--job-template", default="black_mage_iso_idle_{direction}_{variant}")
     parser.add_argument("--flat-source", type=Path, help="Optional legacy folder with flat direction PNGs.")
     parser.add_argument("--output-root", type=Path)
@@ -368,7 +369,7 @@ def main() -> int:
     project_root = args.project_root.resolve()
     args.directions = [direction.upper() for direction in args.directions]
     for direction in args.directions:
-        if direction not in DIRECTIONS:
+        if direction not in CANONICAL_DIRECTIONS:
             raise ValueError(f"Unsupported black mage review direction: {direction}")
 
     output_root = args.output_root

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +23,8 @@ namespace LitIso.UI.InGame
         public CraftingIngredient[] outputs;
         public bool canCraft;
         public string disabledReason;
+        /// <summary>How many times this recipe can be crafted with the current inventory (0 if none).</summary>
+        public int maxCraftable;
     }
 
     /// <summary>Model the crafting panel renders from. Foundation-free; adapter binds later.</summary>
@@ -30,6 +34,8 @@ namespace LitIso.UI.InGame
         CraftingRecipeRow GetRecipe(int i);
         CraftingRecipeDetails GetDetails(string recipeId);
         void Craft(string recipeId);
+        /// <summary>Craft up to <paramref name="count"/> times, stopping early if ingredients/space run out.</summary>
+        void Craft(string recipeId, int count);
         event Action Changed;
     }
 
@@ -61,9 +67,11 @@ namespace LitIso.UI.InGame
                 outputs = new[] { new CraftingIngredient { itemId=recipeId, display=recipeId, icon=ItemIconResolver.Resolve(recipeId), needed=1, have=0 } },
                 canCraft = true,
                 disabledReason = "",
+                maxCraftable = 1,
             };
         }
         public void Craft(string recipeId) { Debug.Log("[placeholder] craft " + recipeId); }
+        public void Craft(string recipeId, int count) { Debug.Log("[placeholder] craft " + recipeId + " x" + count); }
         public event Action Changed;
         public void Raise() => Changed?.Invoke();
     }
@@ -81,8 +89,15 @@ namespace LitIso.UI.InGame
         GameObject _root;
         Transform _rowsContainer;
         Transform _detailsContainer;
+        ScrollRect _listScroll;
         Button _craftBtn;
+        Button _craftAllBtn;
+        Text _craftAllLabel;
         string _selectedId;
+        int _selectedMax;
+        // Row backgrounds by recipe id, so selection can re-highlight without a rebuild.
+        readonly Dictionary<string, Image> _rowImages = new Dictionary<string, Image>();
+        static readonly Color SelectedBg = new Color(0.16f, 0.20f, 0.27f, 0.96f);
 
         public bool IsOpen => _root != null && _root.activeSelf;
         public event Action Closed;
@@ -143,8 +158,9 @@ namespace LitIso.UI.InGame
             scroll.horizontal = false; scroll.vertical = true;
             var viewport = UiBuilder.NewRect("Viewport", listRect);
             UiBuilder.Stretch(viewport);
-            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
-            viewport.gameObject.AddComponent<Image>().color = new Color(0,0,0,0.001f); // mask needs Image
+            // RectMask2D instead of stencil Mask (see CharacterPanelView.CreateScrollView).
+            viewport.gameObject.AddComponent<RectMask2D>();
+            viewport.gameObject.AddComponent<Image>().color = new Color(0,0,0,0.001f); // raycast target for scroll drag
             scroll.viewport = viewport;
             var content = UiBuilder.NewRect("Content", viewport);
             content.anchorMin = new Vector2(0f, 1f); content.anchorMax = new Vector2(1f, 1f);
@@ -156,6 +172,7 @@ namespace LitIso.UI.InGame
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             scroll.content = content;
             _rowsContainer = content;
+            _listScroll = scroll;
 
             // Right: details + Craft button (rest of the panel).
             var detRect = UiBuilder.NewRect("Details", panel.transform);
@@ -170,21 +187,51 @@ namespace LitIso.UI.InGame
             cbr.pivot = new Vector2(1f, 0f);
             cbr.anchoredPosition = new Vector2(-24f, 24f);
             cbr.sizeDelta = new Vector2(200f, 56f);
+
+            // Craft All: batch-crafts as many as ingredients/space allow (left of Craft).
+            _craftAllBtn = UiBuilder.NewButton(panel.transform, "CraftAllBtn", "craft_button", "Craft All", 18);
+            _craftAllBtn.onClick.AddListener(() =>
+            {
+                if (!string.IsNullOrEmpty(_selectedId) && _selectedMax > 0) _model?.Craft(_selectedId, _selectedMax);
+            });
+            _craftAllLabel = _craftAllBtn.GetComponentInChildren<Text>();
+            var car = _craftAllBtn.GetComponent<RectTransform>();
+            car.anchorMin = new Vector2(1f, 0f); car.anchorMax = new Vector2(1f, 0f);
+            car.pivot = new Vector2(1f, 0f);
+            car.anchoredPosition = new Vector2(-236f, 24f);
+            car.sizeDelta = new Vector2(170f, 56f);
         }
 
         void Refresh()
         {
             if (_model == null || _rowsContainer == null) return;
+            // Remember where the player scrolled to: the rebuild below otherwise snaps
+            // the list back to the top on every inventory change (e.g. mid-batch-craft).
+            float scrollPos = _listScroll != null ? _listScroll.verticalNormalizedPosition : 1f;
+            _rowImages.Clear();
             foreach (Transform c in _rowsContainer) Destroy(c.gameObject);
+            string lastStation = null;
             for (int i = 0; i < _model.RecipeCount; i++)
             {
                 var r = _model.GetRecipe(i);
+                // Section header whenever the station group changes (model is station-sorted).
+                if (!string.IsNullOrEmpty(r.station) && r.station != lastStation)
+                {
+                    lastStation = r.station;
+                    var header = UiBuilder.NewText(_rowsContainer, "Hdr_" + r.station, r.station, 14,
+                        TextAnchor.MiddleLeft, UiBuilder.MutedCol);
+                    var le = header.gameObject.AddComponent<LayoutElement>();
+                    le.minHeight = 24f; le.preferredHeight = 24f;
+                }
                 var row = UiBuilder.NewPanel(_rowsContainer, "Row_" + r.id, "craft_row", UiBuilder.SlotBg);
                 var rr = row.rectTransform;
                 rr.sizeDelta = new Vector2(0f, 56f);
+                // Highlight the selected recipe's row so the list shows what the details pane is about.
+                _rowImages[r.id] = row;
+                if (r.id == _selectedId) row.color = SelectedBg;
                 var btn = row.gameObject.AddComponent<Button>(); btn.targetGraphic = row;
                 string id = r.id;
-                btn.onClick.AddListener(() => { _selectedId = id; RefreshDetails(); });
+                btn.onClick.AddListener(() => SelectRow(id));
                 // Icon + label inside the row.
                 var icon = UiBuilder.NewImage(row.transform, "Icon", r.icon, Color.white);
                 icon.preserveAspect = true; icon.enabled = r.icon != null;
@@ -198,8 +245,30 @@ namespace LitIso.UI.InGame
                 lr.anchorMin = new Vector2(0f, 0f); lr.anchorMax = new Vector2(1f, 1f);
                 lr.offsetMin = new Vector2(56f, 0f); lr.offsetMax = new Vector2(-8f, 0f);
             }
-            if (string.IsNullOrEmpty(_selectedId) && _model.RecipeCount > 0) _selectedId = _model.GetRecipe(0).id;
+            if (string.IsNullOrEmpty(_selectedId) && _model.RecipeCount > 0) SelectRow(_model.GetRecipe(0).id);
+            else RefreshDetails();
+            // Restore the scroll position once the deferred Destroy()/layout pass settles.
+            if (_listScroll != null && isActiveAndEnabled && IsOpen)
+                StartCoroutine(RestoreScroll(scrollPos));
+        }
+
+        /// <summary>Move selection (and its row highlight) without rebuilding the list.</summary>
+        void SelectRow(string id)
+        {
+            if (!string.IsNullOrEmpty(_selectedId) && _selectedId != id &&
+                _rowImages.TryGetValue(_selectedId, out var prev) && prev != null)
+                prev.color = UiBuilder.SlotBg;
+            _selectedId = id;
+            if (!string.IsNullOrEmpty(id) && _rowImages.TryGetValue(id, out var cur) && cur != null)
+                cur.color = SelectedBg;
             RefreshDetails();
+        }
+
+        IEnumerator RestoreScroll(float normalizedPos)
+        {
+            yield return null; // old rows are Destroy()ed end-of-frame; wait them out
+            if (_listScroll != null)
+                _listScroll.verticalNormalizedPosition = Mathf.Clamp01(normalizedPos);
         }
 
         void RefreshDetails()
@@ -226,9 +295,12 @@ namespace LitIso.UI.InGame
                 for (int i = 0; i < d.inputs.Length; i++)
                 {
                     var ing = d.inputs[i];
-                    var t = UiBuilder.NewText(_detailsContainer, "Ing_" + i,
-                        $"{ing.display}   {ing.have}/{ing.needed}", 16, TextAnchor.UpperLeft,
-                        ing.have >= ing.needed ? UiBuilder.TextCol : new Color(0.85f, 0.45f, 0.45f, 1f));
+                    bool enough = ing.have >= ing.needed;
+                    string line = enough
+                        ? $"{ing.display}   {ing.have}/{ing.needed}"
+                        : $"{ing.display}   {ing.have}/{ing.needed}   (short {ing.needed - ing.have})";
+                    var t = UiBuilder.NewText(_detailsContainer, "Ing_" + i, line, 16, TextAnchor.UpperLeft,
+                        enough ? UiBuilder.TextCol : new Color(0.85f, 0.45f, 0.45f, 1f));
                     var tr = t.rectTransform;
                     tr.anchorMin = new Vector2(0f, 1f); tr.anchorMax = new Vector2(1f, 1f);
                     tr.pivot = new Vector2(0f, 1f);
@@ -236,7 +308,48 @@ namespace LitIso.UI.InGame
                     y -= 26f;
                 }
 
+            if (d.outputs != null && d.outputs.Length > 0)
+            {
+                y -= 10f;
+                var oh = UiBuilder.NewText(_detailsContainer, "OutHead", "Makes", 16, TextAnchor.UpperLeft, UiBuilder.MutedCol);
+                var ohr = oh.rectTransform;
+                ohr.anchorMin = new Vector2(0f, 1f); ohr.anchorMax = new Vector2(1f, 1f);
+                ohr.pivot = new Vector2(0f, 1f);
+                ohr.anchoredPosition = new Vector2(0f, y); ohr.sizeDelta = new Vector2(0f, 24f);
+                y -= 28f;
+                for (int i = 0; i < d.outputs.Length; i++)
+                {
+                    var o = d.outputs[i];
+                    var t = UiBuilder.NewText(_detailsContainer, "Out_" + i,
+                        $"{o.display} x{o.needed}", 16, TextAnchor.UpperLeft);
+                    var tr = t.rectTransform;
+                    tr.anchorMin = new Vector2(0f, 1f); tr.anchorMax = new Vector2(1f, 1f);
+                    tr.pivot = new Vector2(0f, 1f);
+                    tr.anchoredPosition = new Vector2(8f, y); tr.sizeDelta = new Vector2(0f, 22f);
+                    y -= 26f;
+                }
+            }
+
+            // Tell the player exactly why the craft button is greyed out.
+            if (!d.canCraft && !string.IsNullOrEmpty(d.disabledReason))
+            {
+                y -= 10f;
+                var why = UiBuilder.NewText(_detailsContainer, "Reason", d.disabledReason, 16,
+                    TextAnchor.UpperLeft, new Color(0.85f, 0.45f, 0.45f, 1f));
+                var wr = why.rectTransform;
+                wr.anchorMin = new Vector2(0f, 1f); wr.anchorMax = new Vector2(1f, 1f);
+                wr.pivot = new Vector2(0f, 1f);
+                wr.anchoredPosition = new Vector2(0f, y); wr.sizeDelta = new Vector2(0f, 22f);
+            }
+
+            _selectedMax = d.maxCraftable;
             if (_craftBtn != null) _craftBtn.interactable = d.canCraft;
+            if (_craftAllBtn != null)
+            {
+                _craftAllBtn.interactable = d.canCraft && d.maxCraftable > 1;
+                if (_craftAllLabel != null)
+                    _craftAllLabel.text = d.maxCraftable > 1 ? $"Craft All ({d.maxCraftable})" : "Craft All";
+            }
         }
     }
 }

@@ -157,6 +157,19 @@ def prepare_template_canvas(source_path: Path, output_path: Path, width: int, he
     return output_path
 
 
+def prepare_tile_template_canvas(source_path: Path, output_path: Path, width: int, height: int) -> Path:
+    if Image is None:
+        raise RuntimeError(f"Pillow is not available: {PIL_IMPORT_ERROR}")
+    image = Image.open(source_path).convert("RGBA")
+    if image.size != (width, height):
+        image = image.resize((width, height), Image.Resampling.NEAREST)
+    canvas = Image.new("RGBA", (width, height), (0, 0, 0, 255))
+    canvas.alpha_composite(image, (0, 0))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.convert("RGB").save(output_path)
+    return output_path
+
+
 def prepare_style_reference(source_path: Path, output_path: Path, width: int, height: int) -> Path:
     if Image is None:
         raise RuntimeError(f"Pillow is not available: {PIL_IMPORT_ERROR}")
@@ -182,9 +195,12 @@ def mode_prompt(mode: str, prompt: str, template_guided: bool = False) -> str:
     semantic_lock = f'The image must clearly depict exactly "{requested}". No substitutes.'
     template_lock = ""
     if template_guided:
-        template_lock = " Preserve the reference template pose, body orientation, silhouette placement, and full-body framing."
+        if mode == "tile":
+            template_lock = " Preserve the reference template footprint, diamond silhouette, edge placement, and material placement."
+        else:
+            template_lock = " Preserve the reference template pose, body orientation, silhouette placement, and full-body framing."
     contracts = {
-        "tile": "single isolated 2:1 isometric terrain diamond tile sprite only, uniform terrain surface only, transparent background, no trees, no rocks, no props, no characters, no border frame, no raised cube, no object on top",
+        "tile": "single isolated 2:1 isometric terrain tile sprite only, transparent background, no trees, no rocks, no props, no characters, no border frame, no unrelated object on top, no complete scene",
         "prop": "one standalone object, object fills frame, orthographic 3/4 isometric game sprite, transparent empty background, bottom centered, full object visible, not cropped, no floor contact shadow except tiny object shadow, no other objects, no room, no diorama, no walls, no ground tile, no floor, no base plate, no pedestal, no collection, no set",
         "item": "one standalone item sprite only, centered inventory item sprite, transparent empty background, object silhouette only, full object visible, not cropped, no hand, no character, no badge, no emblem, no label, no circular backing, no square backing, no pedestal, no collection, no set",
         "character": "one standalone full-body isometric pixel character sprite only, solid flat chroma green background for extraction, bottom-center foot anchor, full body visible, not cropped, readable face and silhouette, no floor, no base, no scene, no duplicate character",
@@ -196,7 +212,7 @@ def mode_prompt(mode: str, prompt: str, template_guided: bool = False) -> str:
 
 def mode_negative(mode: str, negative: str) -> str:
     contracts = {
-        "tile": "tree, bush, rock, flower, log, prop, object on top, character, building, border, frame, square floor, cube, wall, scene, background, text, watermark, blurry, antialias haze, realistic render",
+        "tile": "tree, bush, rock, flower, log, prop, object on top, character, building, border, frame, square floor, wall, scene, background, text, watermark, blurry, antialias haze, realistic render",
         "prop": "room, house, village, landscape, tile, terrain, floor plan, miniature scene, terrarium, dollhouse, showcase, shelf, display case, vignette, circular badge, emblem, icon border, pedestal, plinth, multiple objects, object set, clutter, diorama, walls, floor, corner wall, furniture set, ground, grass patch, terrain tile, base plate, platform, scene, background, text, watermark, blurry, antialias haze, realistic render",
         "item": "character, face, building, room, landscape, terrain, tile, weapon rack, sign, hand, person, badge, emblem, medallion, coin, sticker, app icon, logo, circular frame, square frame, rounded rectangle, inventory slot, UI backing, label, text, pedestal, display stand, background, scene, floor, blurry, antialias haze, realistic render",
         "character": "floor, base, ground patch, scene, scenery, cave, portal, mountains, rays, vignette, duplicate character, cropped body, portrait, bust, face close-up, realistic render, 3d render, blurry, antialias haze, text, watermark",
@@ -674,7 +690,8 @@ def main() -> int:
     control_guidance = get_value(request, "control_guidance", "controlGuidance", default={}) or {}
     template_enabled = bool(reference_path and mode in {"character", "npc", "mob"})
     if template_guidance and "enabled" in template_guidance:
-        template_enabled = template_enabled and bool(template_guidance.get("enabled"))
+        requested_template = bool(template_guidance.get("enabled"))
+        template_enabled = requested_template and bool(reference_path) and mode in {"tile", "character", "npc", "mob"}
     template_denoise = float(get_value(template_guidance, "denoise", default=args.denoise))
     if template_enabled and (not reference_path or not reference_path.exists()):
         raise FileNotFoundError(f"Template/reference image was requested but not found: {reference_path}")
@@ -820,7 +837,10 @@ def main() -> int:
     prepared_style_path = ""
     uploaded_control = ""
     if template_enabled and reference_path:
-        prepared = prepare_template_canvas(reference_path, raw_root / "_template_uploads" / f"{job_name}_template.png", args.width, args.height)
+        if mode == "tile":
+            prepared = prepare_tile_template_canvas(reference_path, raw_root / "_template_uploads" / f"{job_name}_template.png", args.width, args.height)
+        else:
+            prepared = prepare_template_canvas(reference_path, raw_root / "_template_uploads" / f"{job_name}_template.png", args.width, args.height)
         prepared_template_path = rel_path(project_root, prepared)
         uploaded_template = upload_image(comfy_url, prepared)
     if style_enabled and style_reference_path:

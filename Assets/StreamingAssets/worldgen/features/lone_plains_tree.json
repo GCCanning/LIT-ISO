@@ -1,0 +1,20 @@
+{
+ "configured": {
+  "type": "single",
+  "entries": [
+   {
+    "id": "plains_tree",
+    "w": 3
+   },
+   {
+    "id": "plains_small_tree",
+    "w": 2
+   }
+  ]
+ },
+ "placement": {
+  "density": 0.015,
+  "minSpacing": 5,
+  "band": "grass"
+ }
+}

@@ -71,3 +71,6 @@ __pycache__/
 # Unity recovery scenes are editor crash/recovery output, not source assets
 /Assets/_Recovery/
 /Assets/_Recovery.meta
+
+# PixelLab MCP local proxy secret (never commit)
+/Tools/PixelLab/pixellab_token.local.txt

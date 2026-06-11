@@ -34,7 +34,8 @@ namespace IsoCore.Foundation
             _farming = farming;
             _mobs = mobs;
 
-            StartPlayableStarterQuests();
+            // Fix #27: single starter-quest entry point (idempotent; see FoundationProgression).
+            _progression?.StartStarterQuests();
 
             if (_interaction != null) _interaction.ResourceHarvested += HandleResourceHarvested;
             if (_crafting != null) _crafting.Crafted += HandleCrafted;
@@ -59,15 +60,6 @@ namespace IsoCore.Foundation
         void OnDestroy()
         {
             Unsubscribe();
-        }
-
-        void StartPlayableStarterQuests()
-        {
-            if (_progression == null) return;
-            _progression.StartQuest(FirstQuest);
-            _progression.StartQuest(RoofQuest);
-            _progression.StartQuest(CraftQuest);
-            _progression.StartQuest(PathQuest);
         }
 
         void HandleResourceHarvested(ResourceNodeDefinition node, IReadOnlyList<ItemStack> drops)

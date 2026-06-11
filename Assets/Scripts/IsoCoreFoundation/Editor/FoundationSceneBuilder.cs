@@ -16,6 +16,23 @@ namespace IsoCore.Foundation.EditorTools
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return "[ISO-Core] Build cancelled (unsaved changes kept).";
 
+            // Fix #22: destructive guard — rebuilding REPLACES the canonical scene
+            // contents, so confirm explicitly (naming the target path) before saving
+            // over an existing scene. "Cancel" is deliberately the first (default) button.
+            if (!Application.isBatchMode &&
+                AssetDatabase.LoadAssetAtPath<SceneAsset>(FoundationPaths.ScenePath) != null)
+            {
+                bool cancelled = EditorUtility.DisplayDialog(
+                    "ISO-Core Foundation — Overwrite Scene?",
+                    "This will OVERWRITE the existing scene at:\n\n" +
+                    FoundationPaths.ScenePath + "\n\n" +
+                    "All current contents of that scene will be lost and rebuilt from " +
+                    "scratch (Main Camera + FoundationBootstrap only).",
+                    "Cancel", "Overwrite");
+                if (cancelled)
+                    return $"[ISO-Core] Build cancelled (kept existing scene at {FoundationPaths.ScenePath}).";
+            }
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             var camGo = new GameObject("Main Camera");

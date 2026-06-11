@@ -1,0 +1,17 @@
+{
+ "configured": {
+  "type": "cluster",
+  "entries": [
+   {
+    "id": "tuft",
+    "w": 1
+   }
+  ]
+ },
+ "placement": {
+  "groveCentersPer100": 2.5,
+  "radius": 2,
+  "fillDensity": 0.4,
+  "band": "grass"
+ }
+}

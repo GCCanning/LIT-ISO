@@ -1,6 +1,104 @@
-﻿# Notes from Claude → Codex
+# Notes from Claude → Codex
 
 > Append-only log. Newest entry on top. Codex reads this; only Claude writes here.
+
+---
+
+### 2026-06-10 — WORLD GENERATION SPEC (full design, owner-approved direction)
+
+Vignette #3 landed (`lake_plains_v1.json` — dirt-ring lake in a bowl) and the owner
+asked for the full Minecraft-style biome generator design. **Complete spec:
+`Docs/handoff/WORLD_GENERATION_SPEC.md`** — six-layer architecture (skeleton noise
+-> elevation+smoothing -> region biomes -> carved water features with aprons ->
+structures -> clustered banded decoration), a data-driven BiomeGenRules table, and
+7 validator acceptance tests derived from the three golden vignettes. Headline
+universal law: grass never touches water (mud=river, sand=ocean, dirt=lake aprons).
+Suggested implementation order is in the doc; L1 smoothing + aprons give the
+biggest visible win first.
+
+---
+
+### 2026-06-10 — GOLDEN VIGNETTE #2: beach / ocean coast (acceptance spec)
+
+`Tools/BiomeSketch/vignettes/beach_coast_v1.json` (9x9, diagonal NW upland -> SE
+open water). Rules for the coast pass:
+
+1. **Banded transition, always in order:** vegetated grass upland (h2, trees/
+   flowers) -> sand band -> waterline -> shallow water -> deep water. Sand band is
+   3-6 cells wide, stepping down h2->h1->h0 one step per 1-2 cells; the last sand
+   cell is h0 and meets water at h0 — beaches slip under the water, never cliff
+   into it.
+2. **Dunes allowed:** sand may locally rise to h2 (vignette has a small dune
+   shoulder), but every shore-normal path still descends monotonically to the
+   waterline.
+3. **Water layering:** body = water_deep; water_deep_2/3 sprinkled as deep-water
+   variation (~10%); water_swell_1/2 as wave accents concentrated near the
+   shoreline contact plus occasional open-water whitecaps.
+4. **Decor bands:** trees/flowers strictly on grass; rocks on dry sand (sparse);
+   shore_stones in shallow water near the sand contact. Nothing on the open deep.
+5. **Sand variety:** sand_2 base with sand_1 single-cell accents (~10%).
+6. **Generalized water-apron principle** (combining vignettes 1+2): every water
+   body gets a material apron between water and grass — MUD for rivers/forest
+   water, SAND for coasts/lakes(?). Grass never touches water directly anywhere.
+
+---
+
+### 2026-06-10 — GOLDEN VIGNETTE #1: river through plains (acceptance spec)
+
+First owner-authored vignette landed: `Tools/BiomeSketch/vignettes/river_plains_v1.json`
+(9x9, diagonal NW->SE river). Rules it encodes — treat as acceptance criteria for the
+sampler's river pass:
+
+1. Water always height 0; channel 3+ cells wide and **widening downstream** (3 -> 5
+   across the vignette).
+2. Every water edge has a 1-cell mud shoreline at water height: `forest_mud_path`
+   inner bank, `shared_mud_dark` on the outer/steeper bank. Water never touches
+   grass directly.
+3. Terrain rises away from the channel: mud h0 -> grass h0 -> h1 -> h2, +1 per 1-2
+   cells, fully walkable (no bank cliffs). Highest ground farthest from water.
+4. Shore props sparse: ~2 shore_stones per 81 cells, on water-edge cells only.
+5. Grass variety = single accent cells (~15%: grass_2/3, flower, tufts) over a
+   grass_1 base — never clumped repetition.
+(Cell [1,6] is null h1 — owner slip, ignore.)
+
+---
+
+### 2026-06-10 — OWNER DIRECTIVE: organic world generation rules (your lane — terrain sampler)
+
+Owner feedback: the world reads as "a random combination of scattered tiles," not
+a place. Required structural rules (his words, formalized):
+
+1. **Height model:** ocean = height 0. Coastal land 0–1, rising *gradually* inland
+   to 3–4. No single-cell height spikes; max neighbor delta 1 outside cliffs.
+2. **Rivers:** never 1 cell wide. Water channel 3–4 cells wide, carved as a path
+   (source → ocean/lake), with **bank gradients**: terrain steps down toward the
+   water 1 height per cell on both sides so the player can walk down to and up
+   from the river. Rivers must read as terrain features, not painted lines.
+3. **Coherence generally:** decoration clustering (groves, outcrops) over uniform
+   random sprinkle; biome transitions over multiple cells, not hard per-cell noise.
+
+**Vignette workflow:** I built `Tools/BiomeSketch/index.html` — a local browser
+editor with every current tile/prop/decoration (85 assets), 9x9/13x13 iso grid,
+per-cell height 0–6 with cliff rendering, decor layer, flip, JSON save. The owner
+will author "golden vignettes" (e.g. river_bank_v1.json) showing how terrain
+should look; treat them as acceptance criteria for sampler output (e.g., generated
+river cross-sections must match the vignette's height profile). JSONs will land in
+`Tools/BiomeSketch/vignettes/` as they're made.
+
+---
+
+### 2026-06-10 — OWNER-CONFIRMED: ability input scheme (addendum to the big handoff)
+
+Owner locked the combat input design (relevant to FoundationAbilitySystem /
+PlayerInteraction when you wire ability triggering):
+- **Q/E/R/F = 4 ability slots.** Tap casts instantly — no long-press semantics.
+- **Hold X = radial ability wheel** (time-slow optional): all known abilities in a
+  ring; drag toward one of 4 inner anchors to ASSIGN it to that slot; release
+  directly on an ability to one-shot cast it without rebinding.
+- Tools/weapons stay on the 1-9 hotbar (existing held-tool paradigm unchanged).
+- Loadout (4 assigned ability ids) should persist in the save.
+Wireframes for all of this are in `WireframeUiPreview.cs` (F9 in-game; hold X for
+the wheel). UI implementation is mine; runtime cast/assign API is yours.
 
 ---
 
@@ -348,6 +446,21 @@ in a fixed head/band crop vs frame 0) so band/face drift gets a metric
 instead of an eyeball. d038_c062_bob settings become the lane-A defaults.
 -20% in the builder rather than hand-editing frames.
 
+## 2026-06-10 - Claude Fable: SpriteForge P3 INSTALL GATE - PASS AS SCOPED
+
+Recorded by Codex at Claude's request because Claude cannot commit from its
+environment right now.
+
+P3 install gate passes as scoped: WanVideoWrapper and its Python dependencies
+are installed, the lane-B workflow contracts exist, and the lane-B runner can
+prove the video-frame cleanup/packing tail without Unity import. Live lane-B
+rendering is deferred to P3b until the Wan 2.2 model files are downloaded and
+ComfyUI is restarted so the Wan node classes are visible.
+
+P3b trigger: after Wan models are present under `C:\Projects\ComfyUI\models`
+and ComfyUI has restarted, rerun `Tools/SpriteForge/check_lane_b_stack.py` and
+bring a real A/B comparison for witch walk-S, lane A vs lane B.
+
 P2 is GO: lane A end-to-end, witch idle ref, walk-S first. Stop at gate.
 ).
 - `Core/FoundationConfig.cs`: new Continent world + rivers config blocks
@@ -395,19 +508,3 @@ Next up (not started): Phase 1 play-damaging bug fixes from
 Optimization_Redundancy_Security_Bug_Review.md (#4 refund deletion, #5 harvest
 overflow, #23 dead-player revive, #22 scene overwrite, #8 duplicate notifier
 buses, #27 starter-quest double-start).
-
-## 2026-06-10 - Claude Fable: SpriteForge P3 INSTALL GATE - PASS AS SCOPED
-
-Recorded by Codex at Claude's request because Claude cannot commit from its
-environment right now.
-
-P3 install gate passes as scoped: WanVideoWrapper and its Python dependencies
-are installed, the lane-B workflow contracts exist, and the lane-B runner can
-prove the video-frame cleanup/packing tail without Unity import. Live lane-B
-rendering is deferred to P3b until the Wan 2.2 model files are downloaded and
-ComfyUI is restarted so the Wan node classes are visible.
-
-P3b trigger: after Wan models are present under `C:\Projects\ComfyUI\models`
-and ComfyUI has restarted, rerun `Tools/SpriteForge/check_lane_b_stack.py` and
-bring a real A/B comparison for witch walk-S, lane A vs lane B.
-

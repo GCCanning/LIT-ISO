@@ -6,15 +6,20 @@ using UnityEngine.UI;
 
 namespace LitIso.UI.InGame
 {
+    // Owner-approved UI overhaul (2026-06-10): 9-tab System Window.
+    // Skills = the skill web (the old XP-bucket list is retired);
+    // Journal = quests; System = save/quit + System log; Settings is new.
     public enum CharacterPanelTab
     {
         Inventory,
         Crafting,
-        Status,
         Skills,
-        Quests,
-        System,
+        Spells,
+        Character,
+        Journal,
         Map,
+        Settings,
+        System,
     }
 
     /// <summary>
@@ -27,6 +32,7 @@ namespace LitIso.UI.InGame
         IInventoryViewModel _inventory;
         ICraftingViewModel _crafting;
         ICharacterSheetViewModel _character;
+        ISkillWebViewModel _skillWeb;
         FoundationProgression _progression;
         FoundationQoLService _qol;
 
@@ -82,12 +88,14 @@ namespace LitIso.UI.InGame
         public event Action Closed;
 
         public void Init(IInventoryViewModel inventory, ICraftingViewModel crafting,
-            ICharacterSheetViewModel character, FoundationProgression progression, FoundationQoLService qol)
+            ICharacterSheetViewModel character, FoundationProgression progression, FoundationQoLService qol,
+            ISkillWebViewModel skillWeb = null)
         {
             Unsubscribe();
             _inventory = inventory;
             _crafting = crafting;
             _character = character;
+            _skillWeb = skillWeb;
             _progression = progression;
             _qol = qol;
             Build();
@@ -104,6 +112,7 @@ namespace LitIso.UI.InGame
             if (_inventory != null) _inventory.Changed += Refresh;
             if (_crafting != null) _crafting.Changed += Refresh;
             if (_character != null) _character.Changed += Refresh;
+            if (_skillWeb != null) _skillWeb.Changed += Refresh;
             if (_progression != null) _progression.Changed += Refresh;
         }
 
@@ -112,6 +121,7 @@ namespace LitIso.UI.InGame
             if (_inventory != null) _inventory.Changed -= Refresh;
             if (_crafting != null) _crafting.Changed -= Refresh;
             if (_character != null) _character.Changed -= Refresh;
+            if (_skillWeb != null) _skillWeb.Changed -= Refresh;
             if (_progression != null) _progression.Changed -= Refresh;
         }
 
@@ -181,13 +191,15 @@ namespace LitIso.UI.InGame
             for (int i = 0; i < tabs.Length; i++)
             {
                 var tab = tabs[i];
-                var btn = UiBuilder.NewButton(parent, "Tab_" + tab, "craft_row", LabelFor(tab), 16);
+                var btn = UiBuilder.NewButton(parent, "Tab_" + tab, "craft_row", LabelFor(tab), 14);
                 var rt = btn.GetComponent<RectTransform>();
                 rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
                 rt.pivot = new Vector2(0f, 1f);
                 rt.anchoredPosition = new Vector2(x, -70f);
-                rt.sizeDelta = new Vector2(132f, 40f);
-                x += 138f;
+                rt.sizeDelta = new Vector2(106f, 40f);
+                x += 112f;
+                // meta tabs (Settings/System) sit visually apart
+                if (tab == CharacterPanelTab.Map) x += 24f;
                 btn.onClick.AddListener(() => Show(tab));
                 _tabButtons[i] = btn;
             }
@@ -200,15 +212,31 @@ namespace LitIso.UI.InGame
             UpdateTabButtons();
             if (_title != null) _title.text = LabelFor(_activeTab);
 
-            switch (_activeTab)
+            try
             {
-                case CharacterPanelTab.Inventory: DrawInventory(); break;
-                case CharacterPanelTab.Crafting: DrawCrafting(); break;
-                case CharacterPanelTab.Status: DrawStatus(); break;
-                case CharacterPanelTab.Skills: DrawSkills(); break;
-                case CharacterPanelTab.Quests: DrawQuests(); break;
-                case CharacterPanelTab.System: DrawSystem(); break;
-                case CharacterPanelTab.Map: DrawMap(); break;
+                switch (_activeTab)
+                {
+                    case CharacterPanelTab.Inventory: DrawInventory(); break;
+                    case CharacterPanelTab.Crafting: DrawCrafting(); break;
+                    case CharacterPanelTab.Skills: SkillWebDrawer.Draw(_body, _skillWeb, Refresh); break;
+                    case CharacterPanelTab.Spells: DrawSpells(); break;
+                    case CharacterPanelTab.Character: DrawStatus(); break;
+                    case CharacterPanelTab.Journal: DrawQuests(); break;
+                    case CharacterPanelTab.Map: DrawMap(); break;
+                    case CharacterPanelTab.Settings: DrawSettings(); break;
+                    case CharacterPanelTab.System: DrawSystem(); break;
+                }
+            }
+            catch (Exception e)
+            {
+                // A failing tab must never blank the whole panel; surface the
+                // error in place so it can be reported and fixed.
+                Debug.LogException(e);
+                var err = UiBuilder.NewText(_body, "TabError",
+                    $"This tab hit an error:\n{e.GetType().Name}: {e.Message}\n(see Console for stack)",
+                    16, TextAnchor.UpperLeft, new Color(0.95f, 0.55f, 0.45f, 1f));
+                err.horizontalOverflow = HorizontalWrapMode.Wrap;
+                UiBuilder.Stretch(err.rectTransform, 8f);
             }
         }
 
@@ -233,9 +261,13 @@ namespace LitIso.UI.InGame
                 return;
             }
 
-            const int cols = 9;
-            const float slot = 78f;
-            const float gap = 8f;
+            DrawPaperDoll();
+
+            const int cols = 6;
+            const float slot = 66f;
+            const float gap = 7f;
+            const float bagX = 400f;
+            TextLine($"Bag ({cap} slots)", 0, 15, UiBuilder.MutedCol, bagX);
             for (int i = 0; i < cap; i++)
             {
                 int row = i / cols;
@@ -245,7 +277,7 @@ namespace LitIso.UI.InGame
                 var rt = cell.rectTransform;
                 rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
                 rt.pivot = new Vector2(0f, 1f);
-                rt.anchoredPosition = new Vector2(col * (slot + gap), -row * (slot + gap));
+                rt.anchoredPosition = new Vector2(bagX + col * (slot + gap), -26f - row * (slot + gap));
                 rt.sizeDelta = new Vector2(slot, slot);
 
                 var icon = UiBuilder.NewImage(cell.transform, "Icon", s.icon, Color.white);
@@ -270,6 +302,149 @@ namespace LitIso.UI.InGame
                     lr.sizeDelta = new Vector2(-6f, 18f);
                 }
             }
+        }
+
+        /// <summary>
+        /// Minecraft-style (but roomier) equipment paper-doll: live player sprite
+        /// flanked by armor/accessory slots. Slots are visual placeholders until
+        /// the Foundation equipment system lands — tools stay on the hotbar by design.
+        /// </summary>
+        void DrawPaperDoll()
+        {
+            var frame = UiBuilder.NewPanel(_body, "Doll", "system_row", new Color(0.07f, 0.08f, 0.11f, 0.94f));
+            var fr = frame.rectTransform;
+            fr.anchorMin = new Vector2(0f, 1f);
+            fr.anchorMax = new Vector2(0f, 1f);
+            fr.pivot = new Vector2(0f, 1f);
+            fr.anchoredPosition = Vector2.zero;
+            fr.sizeDelta = new Vector2(380f, 520f);
+
+            // live player sprite (south idle frame of the current sheet)
+            Sprite playerSprite = null;
+            var sheet = Resources.LoadAll<Sprite>("Characters/Player/BlackMage_Idle_512x1024");
+            if (sheet != null)
+                for (int i = 0; i < sheet.Length; i++)
+                    if (sheet[i].name.EndsWith("_0")) { playerSprite = sheet[i]; break; }
+            var pv = UiBuilder.NewImage(frame.transform, "Player", playerSprite, Color.white);
+            pv.preserveAspect = true;
+            pv.enabled = playerSprite != null;
+            var pvr = pv.rectTransform;
+            pvr.anchorMin = pvr.anchorMax = new Vector2(0.5f, 1f);
+            pvr.pivot = new Vector2(0.5f, 1f);
+            pvr.anchoredPosition = new Vector2(0f, -40f);
+            pvr.sizeDelta = new Vector2(150f, 260f);
+
+            string[] leftSlots = { "Head", "Chest", "Legs", "Feet" };
+            for (int i = 0; i < leftSlots.Length; i++)
+                DollSlot(frame.transform, leftSlots[i], 16f, 36f + i * 78f);
+            string[] rightSlots = { "Back", "Acc 1", "Acc 2" };
+            for (int i = 0; i < rightSlots.Length; i++)
+                DollSlot(frame.transform, rightSlots[i], 290f, 36f + i * 78f);
+
+            var hint = UiBuilder.NewText(frame.transform, "Hint",
+                "Equipment slots — armor & accessories.\nTools and weapons live on the hotbar.\n(Equip system arriving with the class update.)",
+                13, TextAnchor.UpperLeft, UiBuilder.MutedCol);
+            hint.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var hr = hint.rectTransform;
+            hr.anchorMin = new Vector2(0f, 0f);
+            hr.anchorMax = new Vector2(1f, 0f);
+            hr.pivot = new Vector2(0f, 0f);
+            hr.anchoredPosition = new Vector2(16f, 14f);
+            hr.sizeDelta = new Vector2(-32f, 110f);
+        }
+
+        void DollSlot(Transform parent, string label, float x, float y)
+        {
+            var s = UiBuilder.NewPanel(parent, "Equip_" + label, "inv_slot", UiBuilder.SlotBg);
+            var rt = s.rectTransform;
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(x, -y);
+            rt.sizeDelta = new Vector2(72f, 60f);
+            var t = UiBuilder.NewText(s.transform, "L", label, 11, TextAnchor.MiddleCenter, UiBuilder.MutedCol);
+            UiBuilder.Stretch(t.rectTransform, 2f);
+        }
+
+        /// <summary>Ability loadout tab. Visual contract for the confirmed Q/E/R/F +
+        /// hold-X wheel scheme; binds to the Foundation ability API when it lands.</summary>
+        void DrawSpells()
+        {
+            TextLine("Abilities", 0, 22, UiBuilder.TextCol);
+            TextLine("Tap Q / E / R / F to cast. Hold X for the ability wheel: drag outward to assign, release on an ability to cast it once.",
+                34, 14, UiBuilder.MutedCol);
+
+            string[] keys = { "Q", "E", "R", "F" };
+            for (int i = 0; i < 4; i++)
+            {
+                var slot = UiBuilder.NewPanel(_body, "Ability_" + keys[i], "inv_slot", UiBuilder.SlotBg);
+                var rt = slot.rectTransform;
+                rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+                rt.pivot = new Vector2(0f, 1f);
+                rt.anchoredPosition = new Vector2(i * 130f, -80f);
+                rt.sizeDelta = new Vector2(116f, 96f);
+                var k = UiBuilder.NewText(slot.transform, "K", keys[i], 26, TextAnchor.UpperCenter, UiBuilder.TextCol);
+                UiBuilder.Stretch(k.rectTransform, 8f);
+                var e = UiBuilder.NewText(slot.transform, "E", "(empty)", 12, TextAnchor.LowerCenter, UiBuilder.MutedCol);
+                UiBuilder.Stretch(e.rectTransform, 8f);
+            }
+
+            TextLine("Known abilities", 200, 18, UiBuilder.TextCol);
+            string[] known =
+            {
+                "Steady Strike — stamina 10 · cooldown 3s · melee",
+                "Guard Step — stamina 8 · cooldown 5s · defense",
+                "Mana Bolt — mana 12 · cooldown 2s · neutral",
+                "Ember Spark — mana 15 · requires Ember affinity rank 1",
+            };
+            for (int i = 0; i < known.Length; i++)
+                TextLine(known[i], 236 + i * 30, 15, i == 0 ? UiBuilder.TextCol : UiBuilder.MutedCol);
+            TextLine("Assignment activates with the class/trial update (runtime API pending).",
+                236 + known.Length * 30 + 12, 13, new Color(0.98f, 0.84f, 0.52f, 1f));
+        }
+
+        /// <summary>Settings tab: volumes (same PlayerPrefs keys as the pause menu),
+        /// UI scale and text scale.</summary>
+        void DrawSettings()
+        {
+            TextLine("Settings", 0, 22, UiBuilder.TextCol);
+            DrawPrefSlider("Master volume", "vol_master", 1f, 60f, v => AudioListener.volume = Mathf.Clamp01(v));
+            DrawPrefSlider("UI scale", "ui.scale", 1f, 124f, null, 0.7f, 1.6f);
+            float textScale = LitIsoFont.TextScale;
+            TextLine($"Text size: {Mathf.RoundToInt(textScale * 100f)}%", 188, 16, UiBuilder.TextCol);
+            DrawStepButtons(216f, () => LitIsoFont.SetTextScale(LitIsoFont.TextScale - 0.1f),
+                                   () => LitIsoFont.SetTextScale(LitIsoFont.TextScale + 0.1f));
+            TextLine("More options (bindings, HUD layout, accessibility) arrive with the overhaul. F1 cycles HUD modes; Alt-drag moves HUD panels.",
+                290, 13, UiBuilder.MutedCol);
+        }
+
+        void DrawPrefSlider(string label, string prefKey, float def, float y,
+            System.Action<float> onApply, float min = 0f, float max = 1f)
+        {
+            float val = PlayerPrefs.GetFloat(prefKey, def);
+            TextLine($"{label}: {Mathf.RoundToInt(Mathf.InverseLerp(min, max, val) * 100f)}%", y, 16, UiBuilder.TextCol);
+            DrawStepButtons(y + 28f,
+                () => { float v = Mathf.Clamp(PlayerPrefs.GetFloat(prefKey, def) - (max - min) * 0.1f, min, max);
+                        PlayerPrefs.SetFloat(prefKey, v); PlayerPrefs.Save(); onApply?.Invoke(v); Refresh(); },
+                () => { float v = Mathf.Clamp(PlayerPrefs.GetFloat(prefKey, def) + (max - min) * 0.1f, min, max);
+                        PlayerPrefs.SetFloat(prefKey, v); PlayerPrefs.Save(); onApply?.Invoke(v); Refresh(); });
+        }
+
+        void DrawStepButtons(float y, System.Action minus, System.Action plus)
+        {
+            var btnDown = UiBuilder.NewButton(_body, "Minus" + y, "button", "-", 18);
+            var dr = btnDown.GetComponent<RectTransform>();
+            dr.anchorMin = dr.anchorMax = new Vector2(0f, 1f);
+            dr.pivot = new Vector2(0f, 1f);
+            dr.anchoredPosition = new Vector2(0f, -y);
+            dr.sizeDelta = new Vector2(48f, 34f);
+            btnDown.onClick.AddListener(() => minus());
+            var btnUp = UiBuilder.NewButton(_body, "Plus" + y, "button", "+", 18);
+            var ur = btnUp.GetComponent<RectTransform>();
+            ur.anchorMin = ur.anchorMax = new Vector2(0f, 1f);
+            ur.pivot = new Vector2(0f, 1f);
+            ur.anchoredPosition = new Vector2(56f, -y);
+            ur.sizeDelta = new Vector2(48f, 34f);
+            btnUp.onClick.AddListener(() => plus());
         }
 
         void DrawCrafting()
@@ -447,7 +622,11 @@ namespace LitIso.UI.InGame
             var viewport = UiBuilder.NewRect("Viewport", root);
             UiBuilder.Stretch(viewport);
             viewport.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.001f);
-            viewport.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+            // RectMask2D instead of stencil Mask: a Mask over a (near-)transparent Image
+            // can cull every masked child depending on canvas/material setup, which made
+            // scroll-list rows render invisible (recipes/callings). RectMask2D clips by
+            // rect with no stencil/graphic dependency.
+            viewport.gameObject.AddComponent<RectMask2D>();
 
             content = UiBuilder.NewRect("Content", viewport);
             content.anchorMin = new Vector2(0f, 1f);
@@ -764,10 +943,33 @@ namespace LitIso.UI.InGame
 
         void DrawSystem()
         {
+            // save / quit block (mirrors PauseMenu behaviour + same save path)
+            DrawSystemButton("Save Game", 0f, () =>
+            {
+                var bootstrap = UnityEngine.Object.FindFirstObjectByType<IsoCore.Foundation.FoundationBootstrap>();
+                if (bootstrap != null && bootstrap.Save(bootstrap.DefaultSavePath))
+                    Debug.Log("[SystemTab] Game saved.");
+                else
+                    Debug.LogWarning("[SystemTab] Save failed.");
+                Refresh();
+            });
+            DrawSystemButton("Save & Main Menu", 230f, () =>
+            {
+                var bootstrap = UnityEngine.Object.FindFirstObjectByType<IsoCore.Foundation.FoundationBootstrap>();
+                if (bootstrap != null) bootstrap.Save(bootstrap.DefaultSavePath);
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
+            });
+            DrawSystemButton("Quit to Desktop", 460f, () =>
+            {
+                var bootstrap = UnityEngine.Object.FindFirstObjectByType<IsoCore.Foundation.FoundationBootstrap>();
+                if (bootstrap != null) bootstrap.Save(bootstrap.DefaultSavePath);
+                Application.Quit();
+            });
+
             var read = _qol?.CaptureReadState();
-            TextLine("System Log", 0, 22, UiBuilder.TextCol);
-            TextLine("Filtered, persistent Ledger messages from trial evidence, quests, titles, affinities, and warnings.", 34, 15, UiBuilder.MutedCol);
-            float y = 76f;
+            TextLine("System Log", 76, 22, UiBuilder.TextCol);
+            TextLine("Filtered, persistent Ledger messages from trial evidence, quests, titles, affinities, and warnings.", 110, 15, UiBuilder.MutedCol);
+            float y = 152f;
             if (read?.visibleMessages != null && read.visibleMessages.Length > 0)
             {
                 for (int i = read.visibleMessages.Length - 1; i >= 0 && y < 480f; i--)
@@ -794,6 +996,17 @@ namespace LitIso.UI.InGame
                     if (gy > 420f) break;
                 }
             }
+        }
+
+        void DrawSystemButton(string label, float x, System.Action onClick)
+        {
+            var btn = UiBuilder.NewButton(_body, "Sys_" + label, "button", label, 16);
+            var rt = btn.GetComponent<RectTransform>();
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(x, 0f);
+            rt.sizeDelta = new Vector2(214f, 52f);
+            btn.onClick.AddListener(() => onClick());
         }
 
         void DrawMap()
@@ -878,9 +1091,11 @@ namespace LitIso.UI.InGame
             {
                 case CharacterPanelTab.Inventory: return "Inventory";
                 case CharacterPanelTab.Crafting: return "Crafting";
-                case CharacterPanelTab.Status: return "Status";
                 case CharacterPanelTab.Skills: return "Skills";
-                case CharacterPanelTab.Quests: return "Quests";
+                case CharacterPanelTab.Spells: return "Spells";
+                case CharacterPanelTab.Character: return "Character";
+                case CharacterPanelTab.Journal: return "Journal";
+                case CharacterPanelTab.Settings: return "Settings";
                 case CharacterPanelTab.System: return "System";
                 case CharacterPanelTab.Map: return "Map";
                 default: return tab.ToString();

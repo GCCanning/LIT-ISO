@@ -24,6 +24,7 @@ namespace LitIso.UI.InGame
     {
         readonly FoundationProgression _progression;
         readonly FoundationPlayerStats _stats;
+        readonly SystemMessageFeed _systemFeed;
 
         int _prevLevel;
         int _prevStr, _prevDex, _prevInt, _prevVit, _prevDef, _prevLuck;
@@ -56,6 +57,14 @@ namespace LitIso.UI.InGame
                 _progression.QuestStarted   += OnQuestStarted;
                 _progression.QuestCompleted += OnQuestCompleted;
             }
+
+            // Fix #8: evidence/title/affinity/dungeon announcements flow through the
+            // Foundation SystemMessageFeed, not the stat/quest events above — bridge
+            // those too so they reach the uGUI notifications.
+            // (RestoreState on the feed does not raise Queued, so loads stay silent.)
+            _systemFeed = progression?.SystemFeed;
+            if (_systemFeed != null)
+                _systemFeed.Queued += OnSystemMessageQueued;
         }
 
         public void Dispose()
@@ -66,6 +75,8 @@ namespace LitIso.UI.InGame
                 _progression.QuestStarted   -= OnQuestStarted;
                 _progression.QuestCompleted -= OnQuestCompleted;
             }
+            if (_systemFeed != null)
+                _systemFeed.Queued -= OnSystemMessageQueued;
         }
 
         void Snapshot()
@@ -128,6 +139,33 @@ namespace LitIso.UI.InGame
         {
             if (quest == null) return;
             Announce($"Quest complete: {Title(quest)}.", SystemNotifier.MessageType.QuestComplete);
+        }
+
+        void OnSystemMessageQueued(FoundationSystemMessageEntry entry)
+        {
+            if (string.IsNullOrWhiteSpace(entry.text)) return;
+
+            // Fix #8 duplicate guard: level-up and quest channels are skipped — those
+            // announcements already reach the notifier via Stats.Changed and
+            // QuestStarted/QuestCompleted, and bridging them here would double-post.
+            if (entry.channel == SystemMessageChannel.LevelUp ||
+                entry.channel == SystemMessageChannel.QuestUpdate)
+                return;
+
+            Announce(entry.text, TypeForChannel(entry.channel));
+        }
+
+        static SystemNotifier.MessageType TypeForChannel(SystemMessageChannel channel)
+        {
+            switch (channel)
+            {
+                case SystemMessageChannel.Warning:           return SystemNotifier.MessageType.Warning;
+                case SystemMessageChannel.TitleAcquired:     return SystemNotifier.MessageType.Achievement;
+                case SystemMessageChannel.AffinityResonance: return SystemNotifier.MessageType.Achievement;
+                case SystemMessageChannel.DungeonAlert:      return SystemNotifier.MessageType.DungeonClear;
+                case SystemMessageChannel.WorldEvent:        return SystemNotifier.MessageType.WorldEvent;
+                default:                                     return SystemNotifier.MessageType.Info;
+            }
         }
 
         static string Title(FoundationQuestDefinition quest)

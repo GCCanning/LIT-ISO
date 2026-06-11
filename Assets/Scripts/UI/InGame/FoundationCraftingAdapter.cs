@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using IsoCore.Foundation;
 using FoundationRecipeDefinition = IsoCore.Foundation.RecipeDefinition;
 using UnityEngine;
@@ -7,14 +8,19 @@ namespace LitIso.UI.InGame
 {
     /// <summary>
     /// Wires CraftingView to Foundation's CraftingSystem + Inventory.
-    /// Shows every recipe defined in FoundationContent; highlights craftable ones.
+    /// Shows every recipe defined in FoundationContent, grouped by station then
+    /// sorted by name; highlights craftable ones.
     /// Subscribes to Inventory.OnChanged so the ingredient counts update live.
     /// </summary>
     public sealed class FoundationCraftingAdapter : ICraftingViewModel, IDisposable
     {
+        /// <summary>Safety cap for batch crafting / max-craftable estimates.</summary>
+        const int MaxBatch = 999;
+
         readonly IsoCore.Foundation.CraftingSystem _crafting;
         readonly Inventory _inv;
         readonly FoundationContent _content;
+        readonly List<FoundationRecipeDefinition> _ordered = new List<FoundationRecipeDefinition>();
 
         public event Action Changed;
 
@@ -23,7 +29,32 @@ namespace LitIso.UI.InGame
             _crafting = crafting;
             _inv      = inv;
             _content  = content;
+            BuildOrder();
             if (_inv != null) _inv.OnChanged += OnChanged;
+        }
+
+        /// <summary>Stable display order: station group (Hand first), then display name.</summary>
+        void BuildOrder()
+        {
+            _ordered.Clear();
+            if (_content?.Recipes == null) return;
+            for (int i = 0; i < _content.Recipes.Count; i++)
+                _ordered.Add(_content.Recipes[i]);
+            _ordered.Sort(CompareRecipes);
+        }
+
+        static int CompareRecipes(FoundationRecipeDefinition a, FoundationRecipeDefinition b)
+        {
+            int sa = StationOrder(a), sb = StationOrder(b);
+            if (sa != sb) return sa.CompareTo(sb);
+            return string.Compare(a.displayName ?? a.id, b.displayName ?? b.id, StringComparison.OrdinalIgnoreCase);
+        }
+
+        static int StationOrder(FoundationRecipeDefinition r)
+        {
+            // None and Hand share the "craft anywhere" group.
+            var st = r != null ? r.station : StationType.Hand;
+            return st == StationType.None ? (int)StationType.Hand : (int)st;
         }
 
         public void Dispose()
@@ -33,12 +64,12 @@ namespace LitIso.UI.InGame
 
         void OnChanged() => Changed?.Invoke();
 
-        public int RecipeCount => _content?.Recipes?.Count ?? 0;
+        public int RecipeCount => _ordered.Count;
 
         public CraftingRecipeRow GetRecipe(int i)
         {
-            if (_content?.Recipes == null || i < 0 || i >= _content.Recipes.Count) return default;
-            var r = _content.Recipes[i];
+            if (i < 0 || i >= _ordered.Count) return default;
+            var r = _ordered[i];
             string disabledReason = DisabledReason(r);
             return new CraftingRecipeRow
             {
@@ -69,6 +100,7 @@ namespace LitIso.UI.InGame
                 outputs  = outputs,
                 canCraft = _crafting != null && _crafting.CanCraft(r),
                 disabledReason = DisabledReason(r),
+                maxCraftable   = MaxCraftable(r),
             };
         }
 
@@ -77,6 +109,18 @@ namespace LitIso.UI.InGame
             if (_content?.Recipes == null || _crafting == null) return;
             var r = _content.Recipes.Get(recipeId);
             if (r != null) _crafting.TryCraft(r);
+        }
+
+        public void Craft(string recipeId, int count)
+        {
+            if (_content?.Recipes == null || _crafting == null) return;
+            var r = _content.Recipes.Get(recipeId);
+            if (r == null) return;
+            // TryCraft re-validates ingredients + output space each pass, so this
+            // stops safely the moment a batch no longer fits.
+            int n = Mathf.Clamp(count, 0, MaxBatch);
+            for (int i = 0; i < n; i++)
+                if (!_crafting.TryCraft(r)) break;
         }
 
         // ---- helpers --------------------------------------------------------
@@ -122,6 +166,26 @@ namespace LitIso.UI.InGame
             return result;
         }
 
+        /// <summary>How many consecutive crafts the current ingredient counts allow (0 if blocked).</summary>
+        int MaxCraftable(FoundationRecipeDefinition recipe)
+        {
+            if (recipe == null || _crafting == null || _inv == null) return 0;
+            if (!_crafting.CanCraft(recipe)) return 0;
+
+            int max = MaxBatch;
+            if (recipe.inputs != null)
+            {
+                for (int i = 0; i < recipe.inputs.Length; i++)
+                {
+                    var input = recipe.inputs[i];
+                    if (input.count <= 0) continue;
+                    max = Math.Min(max, _inv.Count(input.itemId) / input.count);
+                }
+            }
+            // CanCraft passed, so at least one craft fits even if inputs is empty.
+            return Math.Max(1, max);
+        }
+
         string DisabledReason(FoundationRecipeDefinition recipe)
         {
             if (recipe == null) return "Recipe unavailable";
@@ -136,16 +200,21 @@ namespace LitIso.UI.InGame
 
             if (recipe.inputs != null)
             {
+                // List every short ingredient (with how many are missing), not just the first.
+                System.Text.StringBuilder missing = null;
                 for (int i = 0; i < recipe.inputs.Length; i++)
                 {
                     var input = recipe.inputs[i];
-                    if (!_inv.Has(input.itemId, input.count))
-                    {
-                        var def = _content?.Items?.Get(input.itemId);
-                        string display = def?.displayName ?? input.itemId;
-                        return $"Need {display} x{input.count}";
-                    }
+                    int have = _inv.Count(input.itemId);
+                    if (have >= input.count) continue;
+                    var def = _content?.Items?.Get(input.itemId);
+                    string display = def?.displayName ?? input.itemId;
+                    missing ??= new System.Text.StringBuilder("Need ");
+                    if (missing.Length > 5) missing.Append(", ");
+                    missing.Append(display).Append(" x").Append(input.count - have);
                 }
+                if (missing != null)
+                    return missing.ToString();
             }
 
             if (!_inv.CanExchange(recipe.inputs, recipe.outputs))

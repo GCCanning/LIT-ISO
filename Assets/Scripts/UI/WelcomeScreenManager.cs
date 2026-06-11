@@ -97,7 +97,30 @@ public class WelcomeScreenManager : MonoBehaviour
         EnsureSaveFolder();
         LoadSkin();
         BuildCanvas();
+        StartMenuMusic();
         ShowScreen(Screen.MainMenu);
+    }
+
+    /// <summary>
+    /// Soft looping menu music. Prefers a dedicated track at Resources/Audio/Music/menu
+    /// (drop one in and it wins); falls back to the night ambience, then day music.
+    /// Volume respects the shared master-volume pref.
+    /// </summary>
+    private void StartMenuMusic()
+    {
+        AudioClip clip = Resources.Load<AudioClip>("Audio/Music/menu")
+                      ?? Resources.Load<AudioClip>("Audio/Ambient/night")
+                      ?? Resources.Load<AudioClip>("Audio/Music/day");
+        if (clip == null) return;
+
+        var go = new GameObject("MenuMusic");
+        go.transform.SetParent(transform, false);
+        var src = go.AddComponent<AudioSource>();
+        src.clip = clip;
+        src.loop = true;
+        src.spatialBlend = 0f;
+        src.volume = 0.35f * Mathf.Clamp01(PlayerPrefs.GetFloat("vol_master", 1f));
+        src.Play();
     }
 
     /// <summary>
@@ -287,10 +310,12 @@ public class WelcomeScreenManager : MonoBehaviour
             return;
         }
 
-        // New worlds choose a Calling before launch. Existing worlds (Continue / Load)
-        // skip this and keep their saved Calling once save/load lands.
-        pendingWorld = world;
-        ShowScreen(Screen.CallingSelect);
+        // Transmigration opening (owner-approved progression rework, 2026-06-10):
+        // new characters start CLASSLESS. The first 7 in-game days are the trial;
+        // class selection happens in-world at day 7 (Class Selection Instance).
+        // The CallingSelect screen is intentionally kept out of this flow — its
+        // card UI will be recycled as the day-7 class offer screen.
+        LaunchWorld(world, null);
     }
 
     private void UpdateDifficultyLabel(float value)
@@ -706,6 +731,25 @@ public class WelcomeScreenManager : MonoBehaviour
             AspectRatioFitter fitter = bgGO.AddComponent<AspectRatioFitter>();
             fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
             fitter.aspectRatio = (float)bg.rect.width / Mathf.Max(1f, bg.rect.height);
+
+            // Cinematic treatment (owner request): slow Ken Burns drift on the art
+            // plus a dark scrim so menu text stays readable over any background.
+            bgGO.AddComponent<MenuCinematicBackground>();
+            // Ambient animation loop, auto-enabled when frames exist at
+            // Resources/UI/Menu/background_frames (disables itself otherwise).
+            bgGO.AddComponent<MenuBackgroundFlipbook>();
+
+            GameObject scrimGO = new GameObject("BackgroundScrim", typeof(RectTransform));
+            scrimGO.transform.SetParent(mainCanvas.transform, false);
+            scrimGO.transform.SetSiblingIndex(1); // above background, below content
+            RectTransform scrimRT = scrimGO.GetComponent<RectTransform>();
+            scrimRT.anchorMin = Vector2.zero;
+            scrimRT.anchorMax = Vector2.one;
+            scrimRT.offsetMin = Vector2.zero;
+            scrimRT.offsetMax = Vector2.zero;
+            Image scrim = scrimGO.AddComponent<Image>();
+            scrim.color = new Color(0.02f, 0.03f, 0.05f, 0.45f);
+            scrim.raycastTarget = false;
         }
         else
         {
@@ -958,8 +1002,10 @@ public class WelcomeScreenManager : MonoBehaviour
         vpRect.offsetMin = Vector2.zero;
         vpRect.offsetMax = Vector2.zero;
         Image vpMask = viewport.AddComponent<Image>();
-        vpMask.color = Color.clear;
-        viewport.AddComponent<Mask>();
+        vpMask.color = Color.clear; // raycast target only (scroll drag)
+        // RectMask2D instead of stencil Mask: a Mask over a fully transparent Image can
+        // cull every masked child (empty Calling/world lists). RectMask2D needs no graphic.
+        viewport.AddComponent<RectMask2D>();
 
         GameObject content = new GameObject("Content", typeof(RectTransform));
         content.transform.SetParent(vpRect, false);
@@ -992,9 +1038,14 @@ public class WelcomeScreenManager : MonoBehaviour
         text.text = content;
         text.color = textColor;
         text.alignment = anchor;
-        text.horizontalOverflow = HorizontalWrapMode.Overflow;
-        text.verticalOverflow = VerticalWrapMode.Overflow;
         LitIsoFont.Apply(text, size);
+        // Owner feedback: menu text must NEVER exceed its box. Wrap + best-fit
+        // shrinks long labels into their rect instead of spilling out.
+        text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        text.verticalOverflow = VerticalWrapMode.Truncate;
+        text.resizeTextForBestFit = true;
+        text.resizeTextMaxSize = text.fontSize;
+        text.resizeTextMinSize = 11;
         return text;
     }
 }

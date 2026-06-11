@@ -1,0 +1,19 @@
+{
+ "configured": {
+  "type": "single",
+  "entries": [
+   {
+    "id": "pine",
+    "w": 1
+   }
+  ]
+ },
+ "placement": {
+  "density": 0.02,
+  "band": "grass",
+  "elevationRange": [
+   3,
+   5
+  ]
+ }
+}
