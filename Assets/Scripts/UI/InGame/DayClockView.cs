@@ -80,8 +80,20 @@ namespace LitIso.UI.InGame
             ApplyHudViewMode(_hudMode);
         }
 
-        // Time advances continuously, so poll rather than wait on an event.
-        void Update() => Refresh();
+        // Time advances continuously, so poll — but at 4 Hz, not every frame,
+        // and only touch the Text/colors when something actually changed
+        // (perf audit 2026-06-11: per-frame string interpolation + color writes
+        // dirtied the canvas ~60x/sec for a value that changes ~1x/sec).
+        float _nextRefresh;
+        string _lastShown;
+        float _lastNight = -1f;
+
+        void Update()
+        {
+            if (Time.unscaledTime < _nextRefresh) return;
+            _nextRefresh = Time.unscaledTime + 0.25f;
+            Refresh();
+        }
 
         void Refresh()
         {
@@ -89,18 +101,27 @@ namespace LitIso.UI.InGame
 
             if (_model == null)
             {
-                _text.text = "";
+                if (_lastShown != "") { _lastShown = ""; _text.text = ""; }
                 return;
             }
 
             float night = Mathf.Clamp01(_model.Night01);
-            _panel.color = Color.Lerp(DayTint, NightTint, night);
-            _text.color  = Color.Lerp(DayText, NightText, night);
+            if (Mathf.Abs(night - _lastNight) > 0.005f)
+            {
+                _lastNight = night;
+                _panel.color = Color.Lerp(DayTint, NightTint, night);
+                _text.color  = Color.Lerp(DayText, NightText, night);
+            }
 
             string phase = _model.PhaseLabel;
-            _text.text = string.IsNullOrEmpty(phase)
+            string shown = string.IsNullOrEmpty(phase)
                 ? _model.TimeText
                 : $"{_model.TimeText}   {phase}";
+            if (shown != _lastShown)
+            {
+                _lastShown = shown;
+                _text.text = shown;
+            }
         }
 
         void ApplyHudViewMode(FoundationHudViewMode mode)

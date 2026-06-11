@@ -59,6 +59,8 @@ public class WelcomeScreenManager : MonoBehaviour
     // Load game data
     private List<WorldSaveData> savedWorlds = new List<WorldSaveData>();
     private RectTransform worldListContent;
+    private int pendingDeleteIndex = -1;     // two-step delete confirmation
+    private float pendingDeleteTime;
 
     // Calling select data — the world is created first, then the player picks a Calling
     // before the Foundation scene loads. selectedCallingId is passed to ConfigureLaunch.
@@ -541,7 +543,14 @@ public class WelcomeScreenManager : MonoBehaviour
                     RectTransform entry = CreatePanel("Entry", worldListContent, buttonBg, panelBorder);
                     entry.sizeDelta = new Vector2(panelWidth - 80f, 60f);
 
-                    Text entryText = CreateText("Name", entry, $"{world.worldName} (Seed: {world.seed})", 16, buttonText, TextAnchor.MiddleLeft);
+                    // Richer row: name, seed, difficulty, and whether a Foundation
+                    // save exists (so "Play" = resume vs fresh is visible upfront).
+                    string diff = world.difficulty switch { 0 => "Easy", 2 => "Hard", _ => "Normal" };
+                    bool hasSave = File.Exists(
+                        FoundationBootstrap.DefaultSavePathForWorld(world.worldName, world.seed));
+                    string rowLabel = $"{world.worldName}   ·   seed {world.seed}   ·   {diff}"
+                                      + (hasSave ? "   ·   saved" : "   ·   new");
+                    Text entryText = CreateText("Name", entry, rowLabel, 16, buttonText, TextAnchor.MiddleLeft);
                     RectTransform entryTextRect = entryText.rectTransform;
                     entryTextRect.anchorMin = new Vector2(0f, 0.5f);
                     entryTextRect.anchorMax = new Vector2(1f, 0.5f);
@@ -551,7 +560,25 @@ public class WelcomeScreenManager : MonoBehaviour
 
                     int capturedIdx = i;
                     CreateSmallButton("PlayBtn", entry, "Play", () => LaunchWorld(savedWorlds[capturedIdx]), -60f, 0f);
-                    CreateSmallButton("DeleteBtn", entry, "Delete", () => DeleteWorld(capturedIdx), 0f, 0f);
+                    // Two-step delete: first click arms ("Sure?"), second within
+                    // 3s actually deletes — instant world deletion was dangerous.
+                    bool armed = pendingDeleteIndex == i
+                                 && Time.realtimeSinceStartup - pendingDeleteTime < 3f;
+                    CreateSmallButton("DeleteBtn", entry, armed ? "Sure?" : "Delete", () =>
+                    {
+                        if (pendingDeleteIndex == capturedIdx
+                            && Time.realtimeSinceStartup - pendingDeleteTime < 3f)
+                        {
+                            pendingDeleteIndex = -1;
+                            DeleteWorld(capturedIdx);
+                        }
+                        else
+                        {
+                            pendingDeleteIndex = capturedIdx;
+                            pendingDeleteTime = Time.realtimeSinceStartup;
+                            RefreshWorldList();
+                        }
+                    }, 0f, 0f);
                 }
             }
         }

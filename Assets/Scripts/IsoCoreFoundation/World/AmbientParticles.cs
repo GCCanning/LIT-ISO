@@ -84,6 +84,8 @@ namespace IsoCore.Foundation
             _ps.Play();
         }
 
+        float _lastNight = -1f;
+
         void LateUpdate()
         {
             if (cam != null)
@@ -94,6 +96,11 @@ namespace IsoCore.Foundation
             if (dayNight == null) return;
 
             float night = dayNight.NightFactor;          // 0 day, 1 deep night
+            // Perf (audit 2026-06-11, applied by Claude on owner instruction):
+            // ParticleSystem module writes are not free — only write on change.
+            if (Mathf.Abs(night - _lastNight) < 0.01f) return;
+            _lastNight = night;
+
             // Fireflies appear at night, pollen by day; cross-fade colour + density.
             Color c = Color.Lerp(Pollen, Firefly, night);
             _main.startColor = c;

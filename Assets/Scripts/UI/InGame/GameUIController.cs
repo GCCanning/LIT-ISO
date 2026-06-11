@@ -401,6 +401,14 @@ namespace LitIso.UI.InGame
 
         // --------------------------------------------------------------- update
 
+        // change-detection caches (perf audit 2026-06-11: this method was the #1
+        // UI hotspot — per-refresh string allocations + redundant SetActive/text
+        // writes dirtied the canvas every event and churned the GC)
+        int _lastLevel = int.MinValue;
+        string _lastHealthText, _lastManaText;
+        int[] _slotCountCache;
+        bool[] _slotSelCache, _slotDuraActiveCache;
+
         void Refresh()
         {
             if (_model == null) return;
@@ -409,12 +417,36 @@ namespace LitIso.UI.InGame
             if (_manaFill   != null) _manaFill.fillAmount   = Mathf.Clamp01(_model.Mana01);
             if (_hungerFill != null) _hungerFill.fillAmount = Mathf.Clamp01(_model.Hunger01);
             if (_xpFill     != null) _xpFill.fillAmount     = Mathf.Clamp01(_model.Xp01);
-            if (_levelText  != null) _levelText.text = "Lv " + _model.Level;
-            if (_healthValue != null) _healthValue.text = _model.HealthText ?? "";
-            if (_manaValue   != null) _manaValue.text   = _model.ManaText ?? "";
+
+            if (_levelText != null && _model.Level != _lastLevel)
+            {
+                _lastLevel = _model.Level;
+                _levelText.text = "Lv " + _lastLevel;
+            }
+            string ht = _model.HealthText ?? "";
+            if (_healthValue != null && ht != _lastHealthText)
+            {
+                _lastHealthText = ht;
+                _healthValue.text = ht;
+            }
+            string mt = _model.ManaText ?? "";
+            if (_manaValue != null && mt != _lastManaText)
+            {
+                _lastManaText = mt;
+                _manaValue.text = mt;
+            }
 
             if (_slotFrames == null) return;
-            for (int i = 0; i < _slotFrames.Length; i++)
+            int n = _slotFrames.Length;
+            if (_slotCountCache == null || _slotCountCache.Length != n)
+            {
+                _slotCountCache = new int[n];
+                _slotSelCache = new bool[n];
+                _slotDuraActiveCache = new bool[n];
+                for (int i = 0; i < n; i++) _slotCountCache[i] = int.MinValue;
+            }
+
+            for (int i = 0; i < n; i++)
             {
                 var s = _model.GetSlot(i);
                 bool hasItem = !string.IsNullOrEmpty(s.label) || s.count > 0 || s.icon != null;
@@ -433,22 +465,35 @@ namespace LitIso.UI.InGame
                     else _slotIcons[i].color = Color.white;
                 }
 
-                if (_slotCounts[i] != null)
+                if (_slotCounts[i] != null && s.count != _slotCountCache[i])
+                {
+                    _slotCountCache[i] = s.count;
                     _slotCounts[i].text = s.count > 1 ? s.count.ToString() : "";
+                }
 
-                if (_slotHighlights[i] != null)
+                if (_slotHighlights[i] != null && s.selected != _slotSelCache[i])
+                {
+                    _slotSelCache[i] = s.selected;
                     _slotHighlights[i].gameObject.SetActive(s.selected);
+                }
 
                 if (_slotDurabilityFills != null && i < _slotDurabilityFills.Length && _slotDurabilityFills[i] != null)
                 {
                     float durability = Mathf.Clamp01(s.durability01);
-                    var track = _slotDurabilityFills[i].transform.parent.gameObject;
-                    track.SetActive(durability > 0f && hasItem);
-                    _slotDurabilityFills[i].fillAmount = durability;
-                    _slotDurabilityFills[i].color = Color.Lerp(
-                        new Color(0.95f, 0.25f, 0.18f, 1f),
-                        new Color(0.32f, 0.90f, 0.42f, 1f),
-                        durability);
+                    bool active = durability > 0f && hasItem;
+                    if (active != _slotDuraActiveCache[i])
+                    {
+                        _slotDuraActiveCache[i] = active;
+                        _slotDurabilityFills[i].transform.parent.gameObject.SetActive(active);
+                    }
+                    if (active)
+                    {
+                        _slotDurabilityFills[i].fillAmount = durability;
+                        _slotDurabilityFills[i].color = Color.Lerp(
+                            new Color(0.95f, 0.25f, 0.18f, 1f),
+                            new Color(0.32f, 0.90f, 0.42f, 1f),
+                            durability);
+                    }
                 }
             }
         }

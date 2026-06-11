@@ -221,7 +221,7 @@ namespace LitIso.UI.InGame
                     case CharacterPanelTab.Skills: SkillWebDrawer.Draw(_body, _skillWeb, Refresh); break;
                     case CharacterPanelTab.Spells: DrawSpells(); break;
                     case CharacterPanelTab.Character: DrawStatus(); break;
-                    case CharacterPanelTab.Journal: DrawQuests(); break;
+                    case CharacterPanelTab.Journal: DrawJournal(); break;
                     case CharacterPanelTab.Map: DrawMap(); break;
                     case CharacterPanelTab.Settings: DrawSettings(); break;
                     case CharacterPanelTab.System: DrawSystem(); break;
@@ -415,6 +415,21 @@ namespace LitIso.UI.InGame
             TextLine($"Text size: {Mathf.RoundToInt(textScale * 100f)}%", 316, 16, UiBuilder.TextCol);
             DrawStepButtons(344f, () => LitIsoFont.SetTextScale(LitIsoFont.TextScale - 0.1f),
                                    () => LitIsoFont.SetTextScale(LitIsoFont.TextScale + 0.1f));
+
+            // display options (right column)
+            const float dx = 560f;
+            TextLine("Display", 0, 18, UiBuilder.TextCol, dx);
+            DrawToggleButton($"Fullscreen: {(Screen.fullScreen ? "ON" : "OFF")}", dx, 36f,
+                () => Screen.fullScreen = !Screen.fullScreen);
+            DrawToggleButton($"VSync: {(QualitySettings.vSyncCount > 0 ? "ON" : "OFF")}", dx, 96f,
+                () =>
+                {
+                    QualitySettings.vSyncCount = QualitySettings.vSyncCount > 0 ? 0 : 1;
+                    PlayerPrefs.SetInt("display.vsync", QualitySettings.vSyncCount);
+                    PlayerPrefs.Save();
+                });
+            TextLine($"Resolution: {Screen.width} x {Screen.height}", 160, 14, UiBuilder.MutedCol, dx);
+
             TextLine("More options (bindings, HUD layout, accessibility) arrive with the overhaul. F1 cycles HUD modes; Alt-drag moves HUD panels.",
                 414, 13, UiBuilder.MutedCol);
         }
@@ -429,6 +444,17 @@ namespace LitIso.UI.InGame
                         PlayerPrefs.SetFloat(prefKey, v); PlayerPrefs.Save(); onApply?.Invoke(v); Refresh(); },
                 () => { float v = Mathf.Clamp(PlayerPrefs.GetFloat(prefKey, def) + (max - min) * 0.1f, min, max);
                         PlayerPrefs.SetFloat(prefKey, v); PlayerPrefs.Save(); onApply?.Invoke(v); Refresh(); });
+        }
+
+        void DrawToggleButton(string label, float x, float y, System.Action onClick)
+        {
+            var btn = UiBuilder.NewButton(_body, "Toggle_" + label, "button", label, 14);
+            var rt = btn.GetComponent<RectTransform>();
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(x, -y);
+            rt.sizeDelta = new Vector2(230f, 44f);
+            btn.onClick.AddListener(() => { onClick(); Refresh(); });
         }
 
         void DrawStepButtons(float y, System.Action minus, System.Action plus)
@@ -910,6 +936,49 @@ namespace LitIso.UI.InGame
                 case FoundationSkillNodeKind.Utility: return "Utility";
                 case FoundationSkillNodeKind.Harmony: return "Harmony";
                 default: return kind.ToString();
+            }
+        }
+
+        /// <summary>Journal = quests (left) + live trial status and the System
+        /// log (right), per the approved 9-tab design. All real data.</summary>
+        void DrawJournal()
+        {
+            DrawQuests();   // left column (self-limits to ~520px wide)
+
+            const float x = 560f;
+            if (_progression != null)
+            {
+                string trialTitle = _progression.TrialCompleted
+                    ? "Trial complete"
+                    : $"Trial — Day {_progression.TrialDay} of {_progression.TrialDurationDays}";
+                TextLine(trialTitle, 0, 20, new Color(0.55f, 0.85f, 1f, 1f), x);
+                TextLine($"Grade forecast: {_progression.GradeForecast}    ·    total score {_progression.TotalTrialScore}",
+                    32, 15, UiBuilder.TextCol, x);
+
+                float ty = 64f;
+                foreach (var kv in _progression.TrialScores)
+                {
+                    TextLine($"{kv.Key}: {kv.Value}", ty, 13, UiBuilder.MutedCol, x);
+                    ty += 22f;
+                    if (ty > 220f) break;
+                }
+            }
+
+            var read = _qol?.CaptureReadState();
+            TextLine("System log", 250, 18, UiBuilder.TextCol, x);
+            float ly = 284f;
+            if (read?.visibleMessages != null && read.visibleMessages.Length > 0)
+            {
+                for (int i = read.visibleMessages.Length - 1; i >= 0 && ly < 560f; i--)
+                {
+                    var msg = read.visibleMessages[i];
+                    TextLine($"[{msg.channel}] {msg.text}", ly, 13, UiBuilder.MutedCol, x);
+                    ly += 24f;
+                }
+            }
+            else
+            {
+                TextLine("No System messages yet", ly, 14, UiBuilder.MutedCol, x);
             }
         }
 

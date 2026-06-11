@@ -91,9 +91,14 @@ namespace IsoCore.Foundation
             _pool.Push(sr);
         }
 
+        // perf (audit 2026-06-11): reused across Retargets instead of allocating
+        // a fresh ~7k-entry set on every chunk-boundary crossing
+        static readonly HashSet<long> s_desired = new HashSet<long>();
+
         public void SetVisible(IsoWorld world, List<Vector2Int> cells)
         {
-            var desired = new HashSet<long>(cells.Count);
+            var desired = s_desired;
+            desired.Clear();
             foreach (var c in cells)
             {
                 long k = Key(c.x, c.y);
@@ -212,18 +217,20 @@ namespace IsoCore.Foundation
             try { pixels = src.texture.GetPixels((int)rect.x, (int)rect.y, w, h); }
             catch { _bordered[src] = src; return src; } // texture not readable -> use as-is
 
+            // Perf (audit 2026-06-11): blend the border in the CPU-side array,
+            // then upload once — the old path did per-pixel GetPixel/SetPixel on
+            // the texture, causing streaming hitches when new tile types appear.
+            BlendBorderLine(pixels, w, h, new Vector2Int(15, 27), new Vector2Int(31, 16));
+            BlendBorderLine(pixels, w, h, new Vector2Int(31, 16), new Vector2Int(15, 5));
+            BlendBorderLine(pixels, w, h, new Vector2Int(15, 5), new Vector2Int(0, 16));
+            BlendBorderLine(pixels, w, h, new Vector2Int(0, 16), new Vector2Int(15, 27));
+
             var tex = new Texture2D(w, h, TextureFormat.RGBA32, false)
             {
                 filterMode = FilterMode.Point,
                 wrapMode = TextureWrapMode.Clamp
             };
             tex.SetPixels(pixels);
-
-            // Top-face diamond edge of the 32px block tiles.
-            BlendBorderLine(tex, new Vector2Int(15, 27), new Vector2Int(31, 16));
-            BlendBorderLine(tex, new Vector2Int(31, 16), new Vector2Int(15, 5));
-            BlendBorderLine(tex, new Vector2Int(15, 5), new Vector2Int(0, 16));
-            BlendBorderLine(tex, new Vector2Int(0, 16), new Vector2Int(15, 27));
             tex.Apply();
 
             var ns = Sprite.Create(tex, new Rect(0, 0, w, h),
@@ -257,13 +264,14 @@ namespace IsoCore.Foundation
                 if (nx + ny > 1.0f) pixels[y * w + x] = new Color(0, 0, 0, 0);
             }
 
+            BlendBorderLine(pixels, w, h, new Vector2Int(15, 27), new Vector2Int(31, 16));
+            BlendBorderLine(pixels, w, h, new Vector2Int(31, 16), new Vector2Int(15, 5));
+            BlendBorderLine(pixels, w, h, new Vector2Int(15, 5), new Vector2Int(0, 16));
+            BlendBorderLine(pixels, w, h, new Vector2Int(0, 16), new Vector2Int(15, 27));
+
             var tex = new Texture2D(w, h, TextureFormat.RGBA32, false)
             { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
             tex.SetPixels(pixels);
-            BlendBorderLine(tex, new Vector2Int(15, 27), new Vector2Int(31, 16));
-            BlendBorderLine(tex, new Vector2Int(31, 16), new Vector2Int(15, 5));
-            BlendBorderLine(tex, new Vector2Int(15, 5), new Vector2Int(0, 16));
-            BlendBorderLine(tex, new Vector2Int(0, 16), new Vector2Int(15, 27));
             tex.Apply();
 
             var ns = Sprite.Create(tex, new Rect(0, 0, w, h),
@@ -275,7 +283,8 @@ namespace IsoCore.Foundation
 
         // Lightens the existing (opaque) tile pixels along a line — so the border hugs the
         // tile art and never paints onto transparent areas outside the top face.
-        static void BlendBorderLine(Texture2D tex, Vector2Int a, Vector2Int b)
+        // Operates on the CPU-side pixel array (perf: no per-pixel texture calls).
+        static void BlendBorderLine(Color[] px, int w, int h, Vector2Int a, Vector2Int b)
         {
             int x0 = a.x, y0 = a.y, x1 = b.x, y1 = b.y;
             int dx = Mathf.Abs(x1 - x0), dy = Mathf.Abs(y1 - y0);
@@ -283,14 +292,15 @@ namespace IsoCore.Foundation
             int err = dx - dy;
             while (true)
             {
-                if (x0 >= 0 && x0 < tex.width && y0 >= 0 && y0 < tex.height)
+                if (x0 >= 0 && x0 < w && y0 >= 0 && y0 < h)
                 {
-                    var c = tex.GetPixel(x0, y0);
+                    int idx = y0 * w + x0;
+                    var c = px[idx];
                     if (c.a > 0.4f)
                     {
                         c = Color.Lerp(c, BorderColor, BorderStrength);
                         c.a = 1f;
-                        tex.SetPixel(x0, y0, c);
+                        px[idx] = c;
                     }
                 }
                 if (x0 == x1 && y0 == y1) break;

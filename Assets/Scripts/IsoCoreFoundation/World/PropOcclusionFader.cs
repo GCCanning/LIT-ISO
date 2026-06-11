@@ -21,7 +21,7 @@ namespace IsoCore.Foundation
         bool _occluding;
         float _nextCheckTime;
 
-        const float CheckInterval = 0.08f;
+        const float CheckInterval = 0.2f;   // perf: occlusion is visual polish; 5Hz is plenty
 
         // Shared across all props: the one player sprite. Lazily found, re-found if destroyed.
         static SpriteRenderer s_playerSr;
@@ -46,11 +46,21 @@ namespace IsoCore.Foundation
             {
                 _nextCheckTime = Time.time + CheckInterval;
                 var psr = PlayerSprite();
-                _occluding =
-                    psr != null && psr.enabled && _sr.enabled &&
-                    _sr.sortingLayerID == psr.sortingLayerID &&
-                    _sr.sortingOrder > psr.sortingOrder &&   // this prop draws in front of the player
-                    _sr.bounds.Intersects(psr.bounds);        // and overlaps the player on screen
+                // Perf (audit 2026-06-11): cheap squared-distance gate before the
+                // bounds reads — distant props can never occlude the player, and
+                // bounds property reads accumulate across hundreds of props.
+                if (psr == null || !psr.enabled || !_sr.enabled ||
+                    (psr.transform.position - transform.position).sqrMagnitude > 16f)
+                {
+                    _occluding = false;
+                }
+                else
+                {
+                    _occluding =
+                        _sr.sortingLayerID == psr.sortingLayerID &&
+                        _sr.sortingOrder > psr.sortingOrder &&   // this prop draws in front of the player
+                        _sr.bounds.Intersects(psr.bounds);        // and overlaps the player on screen
+                }
             }
 
             float target = _occluding ? fadedAlpha : 1f;

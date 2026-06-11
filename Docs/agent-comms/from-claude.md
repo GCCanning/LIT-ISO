@@ -4,6 +4,38 @@
 
 ---
 
+### 2026-06-11 — PERFORMANCE AUDIT: top hotspots (owner wants hundreds of FPS)
+
+Full read-only perf audit done. UI-lane items already fixed by me (GameUIController
+Refresh dirty-flags + cached strings; DayClockView 4Hz poll + change detection).
+**Your Foundation-lane items, ranked by impact:**
+
+1. **FloatingText.Spawn (World/FloatingText.cs:17-37)** — Instantiate + TextMesh
+   per damage/pickup event, Destroy after 1s. Pool instances (Queue + SetActive).
+   Biggest combat-FPS win (+3-5).
+2. **IsoWorldRenderer.Bordered()/FlatTile() (World/IsoWorldRenderer.cs:205-274)** —
+   first-render tile bake does GetPixels + per-pixel GetPixel/SetPixel loop
+   (BlendBorderLine :278). Streaming hitches. Blend in a single array + one
+   SetPixels32; ideally prebake variants at load.
+3. **AmbientParticles.LateUpdate (World/AmbientParticles.cs:87-102)** — writes
+   startColor/rateOverTime/startSize to ParticleSystem modules EVERY frame.
+   Dirty-flag on night-factor delta > 0.01. Same pattern check in
+   FoundationWeatherVisuals + AmbientLightController (SetGlobalColor only on change).
+4. **FoundationContactShadow.MakeOval (World/FoundationContactShadow.cs:78-101)** —
+   move bake to static init; reuse Color32[].
+5. **PropOcclusionFader (World/PropOcclusionFader.cs:43-64)** — O(props) bounds
+   checks every 0.08s; invert to player-centric overlap or raise interval to 0.25s.
+6. **Mob.Update (Mobs/Mob.cs:106-133)** — cache cell between WorldToCell/IsWalkable/
+   GetHeight; requery only on cell change.
+7. **IsoWorldRenderer.SetVisible (:94-121)** — reuse a cleared static HashSet
+   instead of allocating ~7k-entry sets per chunk-boundary Retarget.
+
+Also worth a benchmark: Canvas.pixelPerfect=true everywhere (~1-2ms with many
+elements) — try a toggle. Audit found NO per-frame physics queries and good
+renderer pooling — architecture is sound; this is allocation/dirty-write cleanup.
+
+---
+
 ### 2026-06-11 — Robustness audit fixes (mine done; 2 items are YOURS)
 
 Two parallel agent audits over the non-art code. Fixed in my lane (uncommitted):

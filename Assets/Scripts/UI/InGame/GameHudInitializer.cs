@@ -35,6 +35,8 @@ namespace LitIso.UI.InGame
         static DayClockView              _dayView;
         static PlayerInteraction         _boundInteraction;
         static FoundationBootstrap       _boundBootstrap;
+        static AbilityWheelView          _abilityWheel;
+        static TrialStatusBanner         _trialBanner;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Hook()
@@ -105,6 +107,28 @@ namespace LitIso.UI.InGame
             _panels.BindCharacter(new FoundationCharacterSheetAdapter(stats));
             _panels.BindCrafting(new FoundationCraftingAdapter(bootstrap.Crafting, bootstrap.Inventory, bootstrap.Content));
             _panels.BindProgression(progression, bootstrap.QoL);
+
+            // ---- Trial status banner (live data: day + grade forecast) -----
+            if (progression != null)
+            {
+                if (_trialBanner == null)
+                {
+                    var tgo = new GameObject("TrialBanner");
+                    Object.DontDestroyOnLoad(tgo);
+                    _trialBanner = tgo.AddComponent<TrialStatusBanner>();
+                }
+                _trialBanner.Bind(progression);
+            }
+
+            // ---- Ability slots + hold-X wheel (placeholder loadout until the
+            //      Foundation ability cast/assign API lands) -----------------
+            if (_abilityWheel == null)
+            {
+                var ago = new GameObject("AbilityWheel");
+                Object.DontDestroyOnLoad(ago);
+                _abilityWheel = ago.AddComponent<AbilityWheelView>();
+            }
+            _abilityWheel.Bind(new PlaceholderAbilityLoadoutViewModel());
             BindInteractionPanelRequests(bootstrap.Interaction);
 
             // ---- Quest tracker overlay --------------------------------------

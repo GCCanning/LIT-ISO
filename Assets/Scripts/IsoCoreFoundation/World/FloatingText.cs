@@ -9,6 +9,11 @@ namespace IsoCore.Foundation
     /// </summary>
     public class FloatingText : MonoBehaviour
     {
+        // Pooled (perf audit 2026-06-11, applied by Claude on owner instruction):
+        // Instantiate+Destroy per damage/pickup event caused GC spikes in combat.
+        static readonly System.Collections.Generic.Queue<FloatingText> s_pool
+            = new System.Collections.Generic.Queue<FloatingText>();
+
         float _life, _maxLife = 1.0f;
         TextMesh _tm;
         MeshRenderer _mr;
@@ -16,24 +21,30 @@ namespace IsoCore.Foundation
 
         public static void Spawn(Vector3 worldPos, string text, Color color, float rise = 0.9f)
         {
-            var go = new GameObject("FloatingText");
-            go.transform.position = worldPos + new Vector3(0f, 0.4f, 0f);
-            var ft = go.AddComponent<FloatingText>();
-            ft.Setup(text, color, rise);
-        }
+            FloatingText ft = null;
+            while (s_pool.Count > 0 && ft == null)
+                ft = s_pool.Dequeue();           // skip any destroyed entries
 
-        void Setup(string text, Color color, float rise)
-        {
-            _tm = gameObject.AddComponent<TextMesh>();
-            _tm.text = text;
-            _tm.characterSize = 0.06f;
-            _tm.fontSize = 64;
-            _tm.anchor = TextAnchor.LowerCenter;
-            _tm.alignment = TextAlignment.Center;
-            _tm.color = color;
-            _mr = GetComponent<MeshRenderer>();
-            _mr.sortingOrder = 9500; // above world & FX, below UI
-            _vel = new Vector3(0f, rise, 0f);
+            if (ft == null)
+            {
+                var go = new GameObject("FloatingText");
+                ft = go.AddComponent<FloatingText>();
+                ft._tm = go.AddComponent<TextMesh>();
+                ft._tm.characterSize = 0.06f;
+                ft._tm.fontSize = 64;
+                ft._tm.anchor = TextAnchor.LowerCenter;
+                ft._tm.alignment = TextAlignment.Center;
+                ft._mr = go.GetComponent<MeshRenderer>();
+                ft._mr.sortingOrder = 9500; // above world & FX, below UI
+            }
+
+            ft.gameObject.SetActive(true);
+            ft.transform.position = worldPos + new Vector3(0f, 0.4f, 0f);
+            ft.transform.localScale = Vector3.one;
+            ft._tm.text = text;
+            ft._tm.color = color;
+            ft._vel = new Vector3(0f, rise, 0f);
+            ft._life = 0f;
         }
 
         void Update()
@@ -48,7 +59,11 @@ namespace IsoCore.Foundation
                 float s = 1f + 0.15f * Mathf.Sin(t * Mathf.PI); // subtle pop
                 transform.localScale = Vector3.one * s;
             }
-            if (_life >= _maxLife) Destroy(gameObject);
+            if (_life >= _maxLife)
+            {
+                gameObject.SetActive(false);
+                s_pool.Enqueue(this);
+            }
         }
     }
 }
