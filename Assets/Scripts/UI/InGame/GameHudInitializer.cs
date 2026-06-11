@@ -53,6 +53,17 @@ namespace LitIso.UI.InGame
 
         static void OnFoundationReady(FoundationBootstrap bootstrap)
         {
+            // One failing adapter must never kill the whole HUD spawn chain
+            // (2026-06-11 audit: there was no error recovery here at all).
+            try { OnFoundationReadyInner(bootstrap); }
+            catch (System.Exception e)
+            {
+                Debug.LogError("[GameHudInitializer] HUD init failed — UI may be partial. " + e);
+            }
+        }
+
+        static void OnFoundationReadyInner(FoundationBootstrap bootstrap)
+        {
             if (bootstrap == null) return;
             if (bootstrap.Content == null || bootstrap.Inventory == null || bootstrap.Hotbar == null)
                 return;

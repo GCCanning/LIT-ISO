@@ -21,6 +21,9 @@ namespace LitIso.UI.InGame
         /// <summary>Sprite from Resources/UI/InGame/&lt;name&gt; (null if not present).</summary>
         internal static Sprite Spr(string name) => Resources.Load<Sprite>("UI/InGame/" + name);
 
+        static readonly System.Collections.Generic.List<CanvasScaler> s_scalers
+            = new System.Collections.Generic.List<CanvasScaler>();
+
         internal static Canvas NewCanvas(Transform parent, string name, int sortingOrder)
         {
             var go = new GameObject(name);
@@ -31,10 +34,27 @@ namespace LitIso.UI.InGame
             c.sortingOrder = sortingOrder;
             var s = go.AddComponent<CanvasScaler>();
             s.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            s.referenceResolution = new Vector2(1920, 1080);
             s.matchWidthOrHeight = 0.5f;
+            s_scalers.Add(s);
+            ApplyScaleTo(s, CurrentUiScale());
             go.AddComponent<GraphicRaycaster>();
             return c;
+        }
+
+        internal static float CurrentUiScale() =>
+            Mathf.Clamp(PlayerPrefs.GetFloat("ui.scale", 1f), 0.75f, 1.75f);
+
+        static void ApplyScaleTo(CanvasScaler s, float scale) =>
+            s.referenceResolution = new Vector2(1920f / scale, 1080f / scale);
+
+        /// <summary>Live-applies the shared ui.scale pref to every canvas this
+        /// builder created (Settings tab calls this — fixes the stored-but-
+        /// never-applied UI scale bug found in the 2026-06-11 audit).</summary>
+        internal static void ApplyUiScale(float scale)
+        {
+            scale = Mathf.Clamp(scale, 0.75f, 1.75f);
+            s_scalers.RemoveAll(s => s == null);
+            foreach (var s in s_scalers) ApplyScaleTo(s, scale);
         }
 
         internal static RectTransform NewRect(string name, Transform parent)

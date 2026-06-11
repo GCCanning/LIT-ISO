@@ -549,6 +549,20 @@ public class WelcomeScreenManager : MonoBehaviour
             {
                 File.Delete(file);
             }
+            // Also remove the Foundation save folder, or deleted worlds leave
+            // orphaned save.json data behind forever (2026-06-11 audit).
+            try
+            {
+                string foundationSave = FoundationBootstrap.DefaultSavePathForWorld(world.worldName, world.seed);
+                string folder = Path.GetDirectoryName(foundationSave);
+                if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder)
+                    && folder.StartsWith(Application.persistentDataPath))
+                    Directory.Delete(folder, true);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"Could not remove Foundation save folder for '{world.worldName}': {e.Message}");
+            }
             RefreshWorldList();
         }
     }
@@ -663,7 +677,17 @@ public class WelcomeScreenManager : MonoBehaviour
         if (isExistingWorldLaunch && File.Exists(foundationSavePath))
         {
             Debug.Log($"Loading Foundation save: {foundationSavePath}");
-            FoundationBootstrap.ConfigureLoad(foundationSavePath);
+            // A corrupted save must fall back to a fresh seed launch instead of
+            // crashing the menu (2026-06-11 audit).
+            try
+            {
+                FoundationBootstrap.ConfigureLoad(foundationSavePath);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Save load failed for '{world.worldName}' — launching fresh from seed. {e.Message}");
+                FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty, callingId);
+            }
         }
         else
         {
@@ -920,6 +944,9 @@ public class WelcomeScreenManager : MonoBehaviour
         InputField inputField = go.AddComponent<InputField>();
         inputField.targetGraphic = bgImage;
         inputField.textComponent = CreateText("Text", rt, "", 18, inputText, TextAnchor.MiddleLeft);
+        // best-fit must stay OFF inside input fields: InputField caret math
+        // assumes a fixed font size, and typed text shrinking reads as a glitch
+        inputField.textComponent.resizeTextForBestFit = false;
         RectTransform textRect = inputField.textComponent.rectTransform;
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
@@ -928,6 +955,7 @@ public class WelcomeScreenManager : MonoBehaviour
         inputField.textComponent.color = inputText;
 
         Text placeholderText = CreateText("Placeholder", inputField.textComponent.transform, placeholder, 18, new Color(0.5f, 0.5f, 0.5f, 0.5f), TextAnchor.MiddleLeft);
+        placeholderText.resizeTextForBestFit = false;
         RectTransform placeholderRect = placeholderText.rectTransform;
         placeholderRect.anchorMin = Vector2.zero;
         placeholderRect.anchorMax = Vector2.one;

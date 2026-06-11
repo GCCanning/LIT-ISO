@@ -129,6 +129,19 @@ New rules encoded there:
   while flower/long-grass (tuft) patch density rises — plains read as open and
   flowery, forest as dense and littered.
 
+## Transition auto-tiling (Wang-idea in iso form — owner-approved 2026-06-10)
+Biome/apron borders should be DRAWN edges, not interleaved dither. New transition
+mini-sets are being generated (Tools/PixelLab/generate_tilesets.py --family
+transitions): for each boundary pair (grass-sand, sand-water, grass-dirt,
+grass-forest_floor, grass-stone), edge tiles for N/E/S/W + 2 corner diagonals.
+
+Selection rule (classic 4-bit autotile, applied after surface rules):
+for a cell of material A, build mask = which of its 4 neighbors are material B;
+if mask matches an edge direction, swap the cell's tile for `A_to_B_<dir>`;
+two adjacent set bits -> corner variant. Single pass, deterministic, no save
+impact (purely a render-time tile choice). Fall back to the plain A tile when a
+transition piece is missing, so partial sets ship safely.
+
 ## Acceptance tests (validator additions — run against generated chunks)
 1. **No grass-water adjacency anywhere.** (The single most important check.)
 2. Neighbor height delta ≤ 1 except cells flagged as deliberate cliff features.

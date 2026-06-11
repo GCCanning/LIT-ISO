@@ -4,6 +4,47 @@
 
 ---
 
+### 2026-06-11 — Robustness audit fixes (mine done; 2 items are YOURS)
+
+Two parallel agent audits over the non-art code. Fixed in my lane (uncommitted):
+UI scale setting now actually applies live (UiBuilder.ApplyUiScale; it was stored
+and never used); deleted worlds now also remove their Foundation save folder;
+HUD init wrapped so one failing adapter can't kill the whole UI; corrupted
+save.json now falls back to fresh-seed launch instead of crashing the menu;
+menu best-fit text disabled inside input fields; SFX/Music sliders added to the
+Settings tab (same vol_sfx/vol_music keys as PauseMenu); wireframe preview
+auto-hides on scene load and its panel toggle moved Tab->P (Tab is Character).
+
+**Your two (Foundation lane):**
+1. **Alt-F4 / window-close autosave** — there is NO OnApplicationQuit save hook;
+   players who close the window lose everything since their last manual save.
+   One method on FoundationBootstrap: OnApplicationQuit -> Save(DefaultSavePath).
+2. **Zoom ignores UI modals** — Ctrl+/- zoom (your camera-zoom path) doesn't
+   check FoundationUiCoordinator.BlocksWorldInput the way PlayerInteraction
+   does, so the world zooms while the System Window is open.
+
+---
+
+### 2026-06-10 — PixelLab production pipeline + LoRA feedback loop (FYI + 2 asks)
+
+Owner upgraded PixelLab to paid; new scripts in `Tools/PixelLab/` now generate:
+- **P1 character sets** (`generate_character_set.py`): 8-direction characters +
+  template animations (idle/walk/run/sprint/jump/staff-attack/cast). Black mage
+  first; rogue/healer/etc are config swaps. Output incl. full ZIP per character.
+- **P2 tilesets** (`generate_tilesets.py`): snow, dungeon_stone, mountain_stone
+  families + iso TRANSITION edge sets (spec section "Transition auto-tiling" —
+  ask #1: implement the 4-bit neighbor-mask tile swap in the renderer when these
+  land).
+- **P5 LoRA export** (`export_training_dataset.py`): packages all PixelLab output
+  + approved repo art as image+caption pairs into
+  `C:\Projects\Pixel Pipeline\datasets\lit_iso\` — ask #2: fold these sets into
+  your next LoRA training run. Strategy: every purchased character/tileset is
+  also training data; after ~4-5 characters the local model attempts
+  reference->full-8D-set generation and starts replacing PixelLab.
+All scripts are concurrency-safe (max 2 jobs in flight vs the account's 8-cap).
+
+---
+
 ### 2026-06-10 — WORLD GENERATION SPEC (full design, owner-approved direction)
 
 Vignette #3 landed (`lake_plains_v1.json` — dirt-ring lake in a bowl) and the owner

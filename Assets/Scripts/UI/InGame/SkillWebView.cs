@@ -272,6 +272,7 @@ namespace LitIso.UI.InGame
             bool found = false;
             for (int i = 0; i < nodes.Length; i++)
                 if (nodes[i].id == s_selectedId) { sel = nodes[i]; found = true; break; }
+            if (!found) s_selectedId = null;   // clear stale selection from a previous world
 
             string text = !found
                 ? "Select a node. Gold nodes are within reach; allocation is confirmed here."

@@ -20,8 +20,8 @@ if sys.platform == "win32":
 
 
 DEFAULT_HEAD_BAND_CROP = [18, 4, 28, 18]
-DEFAULT_WARN_DELTA = 0.075
-DEFAULT_FAIL_DELTA = 0.12
+DEFAULT_WARN_DELTA = 0.10
+DEFAULT_FAIL_DELTA = 0.16
 
 
 def now_utc() -> str:

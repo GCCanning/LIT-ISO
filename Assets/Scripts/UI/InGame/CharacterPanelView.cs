@@ -408,13 +408,15 @@ namespace LitIso.UI.InGame
         {
             TextLine("Settings", 0, 22, UiBuilder.TextCol);
             DrawPrefSlider("Master volume", "vol_master", 1f, 60f, v => AudioListener.volume = Mathf.Clamp01(v));
-            DrawPrefSlider("UI scale", "ui.scale", 1f, 124f, null, 0.7f, 1.6f);
+            DrawPrefSlider("SFX volume", "vol_sfx", 1f, 124f, null);
+            DrawPrefSlider("Music volume", "vol_music", 1f, 188f, null);
+            DrawPrefSlider("UI scale", "ui.scale", 1f, 252f, v => UiBuilder.ApplyUiScale(v), 0.75f, 1.75f);
             float textScale = LitIsoFont.TextScale;
-            TextLine($"Text size: {Mathf.RoundToInt(textScale * 100f)}%", 188, 16, UiBuilder.TextCol);
-            DrawStepButtons(216f, () => LitIsoFont.SetTextScale(LitIsoFont.TextScale - 0.1f),
+            TextLine($"Text size: {Mathf.RoundToInt(textScale * 100f)}%", 316, 16, UiBuilder.TextCol);
+            DrawStepButtons(344f, () => LitIsoFont.SetTextScale(LitIsoFont.TextScale - 0.1f),
                                    () => LitIsoFont.SetTextScale(LitIsoFont.TextScale + 0.1f));
             TextLine("More options (bindings, HUD layout, accessibility) arrive with the overhaul. F1 cycles HUD modes; Alt-drag moves HUD panels.",
-                290, 13, UiBuilder.MutedCol);
+                414, 13, UiBuilder.MutedCol);
         }
 
         void DrawPrefSlider(string label, string prefKey, float def, float y,

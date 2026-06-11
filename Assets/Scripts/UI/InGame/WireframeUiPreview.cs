@@ -42,6 +42,13 @@ namespace LitIso.UI.InGame
             var go = new GameObject("WireframeUiPreview");
             DontDestroyOnLoad(go);
             s_instance = go.AddComponent<WireframeUiPreview>();
+            // auto-close on scene change so the preview never lingers over a
+            // freshly loaded scene's real UI (2026-06-11 audit)
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += (_, __) =>
+            {
+                if (s_instance != null && s_instance._root != null)
+                    s_instance._root.SetActive(false);
+            };
         }
 
         void Update()
@@ -51,7 +58,8 @@ namespace LitIso.UI.InGame
 
             if (Input.GetKeyDown(KeyCode.H))
                 _hudRoot.SetActive(!_hudRoot.activeSelf);
-            if (Input.GetKeyDown(KeyCode.Tab))
+            // P (not Tab): Tab is the live game's Character key — don't double-bind
+            if (Input.GetKeyDown(KeyCode.P))
                 _panelRoot.SetActive(!_panelRoot.activeSelf);
             if (_wheelRoot != null && _hudRoot.activeSelf)
             {
@@ -173,7 +181,7 @@ namespace LitIso.UI.InGame
             BuildPanel();
 
             var foot = Text(_root.transform, "Footer",
-                "WIREFRAME PREVIEW — F9 close · Tab hide panel · H toggle HUD · hold X = wheel · 1-9 tabs", 13, new Color(1f, 1f, 1f, 0.8f));
+                "WIREFRAME PREVIEW — F9 close · P hide panel · H toggle HUD · hold X = wheel · 1-9 tabs", 13, new Color(1f, 1f, 1f, 0.8f));
             foot.alignment = TextAnchor.LowerLeft;
             foot.rectTransform.anchorMin = new Vector2(0f, 0f);
             foot.rectTransform.anchorMax = new Vector2(0f, 0f);
