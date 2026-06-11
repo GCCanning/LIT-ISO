@@ -100,18 +100,35 @@ def main():
     src_path = os.path.join(SCENE_DIR, args.source)
     if not os.path.exists(src_path):
         sys.exit(f"Source still not found: {src_path}")
-    with open(src_path, "rb") as f:
-        src_b64 = base64.b64encode(f.read()).decode()
+
+    # The animate endpoint caps input at 256x256. Instead of softening the whole
+    # scene, animate only the LIVE REGION (campfire + light pool) at native res;
+    # the importer composites frames back onto the full still.
+    try:
+        from PIL import Image
+    except ImportError:
+        sys.exit("pip install pillow")
+    im = Image.open(src_path).convert("RGBA")
+    CROP = (72, 0, 328, 224)   # 256x224 window centred on the campfire
+    crop = im.crop(CROP)
+    import io, json as _json
+    buf = io.BytesIO(); crop.save(buf, "PNG")
+    src_b64 = base64.b64encode(buf.getvalue()).decode()
+    os.makedirs(os.path.join(SCENE_DIR, "frames"), exist_ok=True)
+    with open(os.path.join(SCENE_DIR, "frames", "_composite.json"), "w") as f:
+        _json.dump({"source": args.source, "crop": CROP}, f)
 
     print("Balance:", json.dumps(call(token, "GET", "/balance")))
     print(f"Animating {args.source} -> {args.frames} frames ... "
           "(this can take a few minutes)")
 
+    # Schema per 422 feedback (2026-06-11): the v3 endpoint wants the motion
+    # text in `action` and the source still in `first_frame`.
+    # image size is inferred from first_frame; sending it is forbidden
     payload = {
-        "description": args.prompt,
-        "image_size": {"width": 400, "height": 224},
+        "action": args.prompt,
+        "first_frame": {"type": "base64", "base64": src_b64},
         "frame_count": args.frames,
-        "start_image": {"type": "base64", "base64": src_b64},
     }
     resp = call(token, "POST", "/animate-with-text-v3", payload)
 

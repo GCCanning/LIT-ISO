@@ -92,6 +92,10 @@ namespace LitIso.UI.InGame
             if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.Tab)) OpenCharacterSheet();
             if (Input.GetKeyDown(KeyCode.T)) OpenSkills();
             if (Input.GetKeyDown(KeyCode.J)) OpenQuests();
+            // F8: preview the Day-7 Class Assignment ceremony (placeholder data
+            // until the Foundation trial-scoring runtime lands)
+            if (Input.GetKeyDown(KeyCode.F8))
+                ClassAssignmentView.Show(new PlaceholderClassAssignmentViewModel());
         }
 
         void Open(CharacterPanelTab tab)

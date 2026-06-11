@@ -12,7 +12,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public sealed class MenuBackgroundFlipbook : MonoBehaviour
 {
-    public float fps = 6f;
+    public float fps = 3.5f;   // slowed per owner feedback — calmer fire
 
     Image _image;
     Sprite[] _frames;

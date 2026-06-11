@@ -959,7 +959,7 @@ namespace LitIso.UI.InGame
             {
                 var bootstrap = UnityEngine.Object.FindFirstObjectByType<IsoCore.Foundation.FoundationBootstrap>();
                 if (bootstrap != null) bootstrap.Save(bootstrap.DefaultSavePath);
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
+                LoadingScreen.Go("MenuScene", "Returning to the fire…");
             });
             DrawSystemButton("Quit to Desktop", 460f, () =>
             {

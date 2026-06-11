@@ -16,7 +16,7 @@ public sealed class MenuCinematicBackground : MonoBehaviour
     [Tooltip("Pan radius in canvas pixels.")]
     public float panRadius = 14f;
     [Tooltip("Seconds per full drift cycle.")]
-    public float cycleSeconds = 26f;
+    public float cycleSeconds = 38f;   // slowed per owner feedback
 
     RectTransform _rt;
     Vector2 _basePos;

@@ -158,6 +158,7 @@ public class WelcomeScreenManager : MonoBehaviour
         {
             Destroy(contentPanel.gameObject);
         }
+        StartCoroutine(FadeInNewScreen());
 
         switch (screen)
         {
@@ -316,6 +317,23 @@ public class WelcomeScreenManager : MonoBehaviour
         // The CallingSelect screen is intentionally kept out of this flow — its
         // card UI will be recycled as the day-7 class offer screen.
         LaunchWorld(world, null);
+    }
+
+    /// <summary>Soft 0.22s fade-in for whichever screen was just built — menu
+    /// navigation feels intentional instead of snapping.</summary>
+    private System.Collections.IEnumerator FadeInNewScreen()
+    {
+        yield return null;   // wait for the new contentPanel to be built
+        if (contentPanel == null) yield break;
+        var cg = contentPanel.gameObject.GetComponent<CanvasGroup>()
+                 ?? contentPanel.gameObject.AddComponent<CanvasGroup>();
+        for (float a = 0f; a < 1f; a += Time.unscaledDeltaTime / 0.22f)
+        {
+            if (cg == null) yield break;
+            cg.alpha = a;
+            yield return null;
+        }
+        if (cg != null) cg.alpha = 1f;
     }
 
     private void UpdateDifficultyLabel(float value)
@@ -701,15 +719,15 @@ public class WelcomeScreenManager : MonoBehaviour
             FoundationBootstrap.ConfigureLaunch(world.worldName, world.seed, world.difficulty, callingId);
         }
 
-        // Load the Foundation scene (canonical game).
-        UnityEngine.SceneManagement.SceneManager.LoadScene("IsoCoreFoundation");
+        // Load the Foundation scene (canonical game) behind a fade + tip screen.
+        LoadingScreen.Go("IsoCoreFoundation", $"Entering {world.worldName}…");
     }
 
     private void LaunchCreationInstance()
     {
         Debug.Log("Launching Creation Instance showroom.");
         FoundationBootstrap.ConfigureCreationInstanceLaunch();
-        UnityEngine.SceneManagement.SceneManager.LoadScene("IsoCoreFoundation");
+        LoadingScreen.Go("IsoCoreFoundation", "Entering the Creation Instance…");
     }
 
     // -------------------------------------------------------------------------
@@ -774,6 +792,28 @@ public class WelcomeScreenManager : MonoBehaviour
             Image scrim = scrimGO.AddComponent<Image>();
             scrim.color = new Color(0.02f, 0.03f, 0.05f, 0.45f);
             scrim.raycastTarget = false;
+
+            // Ambient particle layers (embers / fireflies / stars) — above the
+            // scrim so they read bright against it, below all menu content.
+            GameObject ambientGO = new GameObject("AmbientParticles", typeof(RectTransform));
+            ambientGO.transform.SetParent(mainCanvas.transform, false);
+            ambientGO.transform.SetSiblingIndex(2);
+            RectTransform ambientRT = (RectTransform)ambientGO.transform;
+            ambientRT.anchorMin = Vector2.zero;
+            ambientRT.anchorMax = Vector2.one;
+            ambientRT.offsetMin = Vector2.zero;
+            ambientRT.offsetMax = Vector2.zero;
+            ambientGO.AddComponent<MenuAmbientParticles>();
+
+            // version tag, bottom-right corner
+            Text ver = CreateText("Version", mainCanvas.transform,
+                $"LIT-ISO v{Application.version}", 12,
+                new Color(1f, 1f, 1f, 0.35f), TextAnchor.LowerRight);
+            RectTransform vr = ver.rectTransform;
+            vr.anchorMin = vr.anchorMax = new Vector2(1f, 0f);
+            vr.pivot = new Vector2(1f, 0f);
+            vr.anchoredPosition = new Vector2(-12f, 8f);
+            vr.sizeDelta = new Vector2(300f, 20f);
         }
         else
         {
@@ -794,9 +834,12 @@ public class WelcomeScreenManager : MonoBehaviour
     private RectTransform CreateMainPanel(string name)
     {
         RectTransform rt = CreatePanel(name, mainCanvas.transform, panelBg, panelBorder);
-        rt.anchorMin = new Vector2(0.5f, 0.5f);
-        rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.pivot = new Vector2(0.5f, 0.5f);
+        // Owner request: menu lives on the LEFT so the animated campfire scene
+        // (fire sits center-right) stays visible and unobstructed.
+        rt.anchorMin = new Vector2(0f, 0.5f);
+        rt.anchorMax = new Vector2(0f, 0.5f);
+        rt.pivot = new Vector2(0f, 0.5f);
+        rt.anchoredPosition = new Vector2(24f, 0f);
         rt.sizeDelta = new Vector2(panelWidth, panelHeight);
         return rt;
     }

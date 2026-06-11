@@ -106,12 +106,30 @@ TextureImporter:
 """
 
 def main():
+    import json
     frames = sorted(glob.glob(os.path.join(SRC, "frame_*.png")))
     if not frames:
         sys.exit(f"No frames at {SRC} — run animate_menu_scene first.")
     os.makedirs(DST, exist_ok=True)
+
+    # Region-animation mode: frames are a crop of the scene; composite each
+    # frame onto the full still before upscaling (see animate_menu_scene.py).
+    comp_path = os.path.join(SRC, "_composite.json")
+    comp = None
+    if os.path.exists(comp_path):
+        meta = json.load(open(comp_path))
+        scene = Image.open(os.path.join(os.path.dirname(SRC), meta["source"])).convert("RGBA")
+        comp = (scene, tuple(meta["crop"]))
+
     for i, f in enumerate(frames):
         im = Image.open(f).convert("RGBA")
+        if comp is not None:
+            scene, crop = comp
+            full = scene.copy()
+            if im.size != (crop[2]-crop[0], crop[3]-crop[1]):
+                im = im.resize((crop[2]-crop[0], crop[3]-crop[1]), Image.NEAREST)
+            full.paste(im, (crop[0], crop[1]))
+            im = full
         big = im.resize((im.width * 5, im.height * 5), Image.NEAREST)
         x = max(0, (big.width - 1920) // 2)
         y = max(0, (big.height - 1080) // 2)
