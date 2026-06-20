@@ -396,20 +396,83 @@ public class WelcomeScreenManager : MonoBehaviour
         if (cg != null) cg.alpha = 1f;
     }
 
-    private void UpdateDifficultyLabel(float value)
+    /// <summary>Builds the three-segment Easy/Normal/Hard difficulty selector plus the
+    /// description line beneath it, matching the front-end design (replaces the slider).</summary>
+    private void BuildDifficultySelector(Transform parent, float y)
     {
-        int difficulty = Mathf.RoundToInt(value);
-        string label = difficulty switch
+        diffSegmentCards.Clear();
+
+        float fullWidth = panelWidth - 40f;
+        float segWidth = fullWidth / DifficultyOptions.Length;
+
+        GameObject row = new GameObject("DifficultyRow", typeof(RectTransform));
+        row.transform.SetParent(parent, false);
+        RectTransform rowRect = row.GetComponent<RectTransform>();
+        rowRect.anchorMin = new Vector2(0.5f, 1f);
+        rowRect.anchorMax = new Vector2(0.5f, 1f);
+        rowRect.pivot = new Vector2(0.5f, 1f);
+        rowRect.anchoredPosition = new Vector2(0f, y);
+        rowRect.sizeDelta = new Vector2(fullWidth, buttonHeight);
+
+        for (int i = 0; i < DifficultyOptions.Length; i++)
         {
-            0 => "Easy",
-            1 => "Normal",
-            2 => "Hard",
-            _ => "Unknown"
-        };
-        if (difficultyLabel != null)
-        {
-            difficultyLabel.text = label;
+            int idx = i;
+            var opt = DifficultyOptions[i];
+
+            GameObject seg = new GameObject("Diff_" + opt.label, typeof(RectTransform));
+            seg.transform.SetParent(rowRect, false);
+            RectTransform segRect = seg.GetComponent<RectTransform>();
+            segRect.anchorMin = new Vector2(0f, 0f);
+            segRect.anchorMax = new Vector2(0f, 1f);
+            segRect.pivot = new Vector2(0f, 0.5f);
+            segRect.anchoredPosition = new Vector2(i * segWidth, 0f);
+            segRect.sizeDelta = new Vector2(segWidth, 0f);
+
+            Image segBg = seg.AddComponent<Image>();
+            segBg.color = LitIsoTheme.Hex("#1a1d23");
+            Outline segOutline = seg.AddComponent<Outline>();
+            segOutline.effectColor = LitIsoTheme.Base;
+            segOutline.effectDistance = new Vector2(1f, -1f);
+
+            Button segBtn = seg.AddComponent<Button>();
+            segBtn.targetGraphic = segBg;
+            segBtn.transition = Selectable.Transition.None;
+            segBtn.onClick.AddListener(() => SelectDifficulty(idx));
+
+            Text segLabel = CreateText("Label", segRect, opt.label, 18, labelText, TextAnchor.MiddleCenter);
+            segLabel.raycastTarget = false;
+            RectTransform slr = segLabel.rectTransform;
+            slr.anchorMin = Vector2.zero; slr.anchorMax = Vector2.one;
+            slr.offsetMin = Vector2.zero; slr.offsetMax = Vector2.zero;
+
+            diffSegmentCards.Add((idx, segBg, segLabel));
         }
+
+        difficultyDescLabel = CreateText("DifficultyDesc", parent, DifficultyOptions[selectedDifficulty].desc,
+            15, LitIsoTheme.Hex("#a39e90"), TextAnchor.UpperCenter);
+        difficultyDescLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
+        RectTransform descRect = difficultyDescLabel.rectTransform;
+        descRect.anchorMin = new Vector2(0.5f, 1f);
+        descRect.anchorMax = new Vector2(0.5f, 1f);
+        descRect.pivot = new Vector2(0.5f, 1f);
+        descRect.anchoredPosition = new Vector2(0f, y - buttonHeight - 8f);
+        descRect.sizeDelta = new Vector2(fullWidth, 52f);
+    }
+
+    /// <summary>Selects a difficulty segment, updating the highlight + description.</summary>
+    private void SelectDifficulty(int idx)
+    {
+        selectedDifficulty = Mathf.Clamp(idx, 0, DifficultyOptions.Length - 1);
+        for (int i = 0; i < diffSegmentCards.Count; i++)
+        {
+            var card = diffSegmentCards[i];
+            bool sel = card.idx == selectedDifficulty;
+            var opt = DifficultyOptions[card.idx];
+            if (card.bg != null) card.bg.color = sel ? opt.color : LitIsoTheme.Hex("#1a1d23");
+            if (card.label != null) card.label.color = sel ? LitIsoTheme.GoldText : labelText;
+        }
+        if (difficultyDescLabel != null)
+            difficultyDescLabel.text = DifficultyOptions[selectedDifficulty].desc;
     }
 
     // -------------------------------------------------------------------------
