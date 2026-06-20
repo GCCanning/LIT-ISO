@@ -94,10 +94,12 @@ namespace LitIso.UI.InGame
             var rootImg = _root.AddComponent<Image>();
             rootImg.color = UiBuilder.PanelBg;
             var rt = _root.GetComponent<RectTransform>();
+            // 2026-06-13 layout pass: moved up from mid-right toward the
+            // top-right corner, just below the notification stack.
             rt.anchorMin = new Vector2(1f, 1f);
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot     = new Vector2(1f, 1f);
-            rt.anchoredPosition = new Vector2(-36f, -244f);
+            rt.anchoredPosition = new Vector2(-36f, -30f);
             rt.sizeDelta        = new Vector2(PanelW, PanelH);
             PlayerResizableUi.Attach(rt, "hud.quest_tracker", new Vector2(260f, 90f), new Vector2(640f, 280f));
 
@@ -110,6 +112,7 @@ namespace LitIso.UI.InGame
             float y = -PanelPad;
 
             _typeText = UiBuilder.NewText(_root.transform, "QuestType", "", 10, TextAnchor.UpperLeft, TypeTagCol);
+            UiBuilder.FitText(_typeText);
             var typeRt = _typeText.rectTransform;
             typeRt.anchorMin = new Vector2(0f, 1f); typeRt.anchorMax = new Vector2(0f, 1f);
             typeRt.pivot     = new Vector2(0f, 1f);
@@ -119,6 +122,7 @@ namespace LitIso.UI.InGame
             y -= 16f;
 
             _titleText = UiBuilder.NewText(_root.transform, "QuestTitle", "", 14, TextAnchor.UpperLeft, QuestTitleCol);
+            UiBuilder.FitText(_titleText);
             var titleRt = _titleText.rectTransform;
             titleRt.anchorMin = new Vector2(0f, 1f); titleRt.anchorMax = new Vector2(0f, 1f);
             titleRt.pivot     = new Vector2(0f, 1f);
@@ -129,7 +133,7 @@ namespace LitIso.UI.InGame
 
             // -- row 2: objective text ----------------------------------------
             _objText = UiBuilder.NewText(_root.transform, "ObjText", "", 11, TextAnchor.UpperLeft, UiBuilder.TextCol);
-            _objText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            UiBuilder.FitText(_objText);
             var objRt = _objText.rectTransform;
             objRt.anchorMin = new Vector2(0f, 1f); objRt.anchorMax = new Vector2(0f, 1f);
             objRt.pivot     = new Vector2(0f, 1f);
@@ -163,6 +167,7 @@ namespace LitIso.UI.InGame
 
             // -- reward preview -----------------------------------------------
             _rewardText = UiBuilder.NewText(_root.transform, "RewardText", "", 10, TextAnchor.UpperLeft, RewardCol);
+            UiBuilder.FitText(_rewardText);
             var rewRt = _rewardText.rectTransform;
             rewRt.anchorMin = new Vector2(0f, 1f); rewRt.anchorMax = new Vector2(0f, 1f);
             rewRt.pivot     = new Vector2(0f, 1f);

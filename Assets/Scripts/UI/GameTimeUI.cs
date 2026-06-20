@@ -107,10 +107,16 @@ public class GameTimeUI : MonoBehaviour
         Text text = go.AddComponent<Text>();
         text.color = color;
         text.alignment = alignment;
-        text.horizontalOverflow = HorizontalWrapMode.Overflow;
-        text.verticalOverflow = VerticalWrapMode.Overflow;
+        // Keep the clock inside its rect: wrap + truncate, with best-fit so the
+        // large time readout shrinks to fit rather than spilling off-screen.
+        // (LitIsoFont.Apply disables best-fit, so re-enable it after.)
+        text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        text.verticalOverflow = VerticalWrapMode.Truncate;
         text.raycastTarget = false;
         LitIsoFont.Apply(text, fontSize);
+        text.resizeTextForBestFit = true;
+        text.resizeTextMaxSize = text.fontSize;
+        text.resizeTextMinSize = Mathf.Min(11, text.fontSize);
         return text;
     }
 

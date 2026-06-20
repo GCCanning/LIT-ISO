@@ -120,6 +120,16 @@ public class SystemMessageUI : MonoBehaviour
             {
                 label.text  = $"[SYSTEM] {text}";
                 label.color = GetTypeColor(type);
+
+                // System messages vary wildly in length; never let them spill
+                // past the banner edge or off-screen.
+                label.horizontalOverflow = HorizontalWrapMode.Wrap;
+                label.verticalOverflow = VerticalWrapMode.Truncate;
+                int requestedSize = label.fontSize > 0 ? label.fontSize : 16;
+                LitIsoFont.Apply(label, requestedSize);
+                label.resizeTextForBestFit = true;
+                label.resizeTextMaxSize = label.fontSize;
+                label.resizeTextMinSize = Mathf.Min(11, label.fontSize);
             }
 
             CanvasGroup cg = row.GetComponent<CanvasGroup>();

@@ -75,14 +75,16 @@ namespace LitIso.UI.InGame
 
             _canvas = UiBuilder.NewCanvas(transform, "NotificationCanvas", sortingOrder: 30);
 
-            // Upper-left column below vitals, growing downward. Newest toast is inserted at the top.
+            // 2026-06-13 layout pass: moved from upper-left (below vitals) to
+            // upper-right, stacked below the quest tracker. Newest toast is
+            // inserted at the top, growing downward.
             var stackGo = new GameObject("NotificationStack", typeof(RectTransform));
             stackGo.transform.SetParent(_canvas.transform, false);
             _stack = stackGo.GetComponent<RectTransform>();
-            _stack.anchorMin = new Vector2(0f, 1f);
-            _stack.anchorMax = new Vector2(0f, 1f);
-            _stack.pivot     = new Vector2(0f, 1f);
-            _stack.anchoredPosition = new Vector2(24f, -228f);
+            _stack.anchorMin = new Vector2(1f, 1f);
+            _stack.anchorMax = new Vector2(1f, 1f);
+            _stack.pivot     = new Vector2(1f, 1f);
+            _stack.anchoredPosition = new Vector2(-36f, -160f);
             _stack.sizeDelta = new Vector2(ToastW, 0f);
             PlayerResizableUi.Attach(_stack, "hud.notifications", new Vector2(260f, 80f), new Vector2(900f, 520f));
 

@@ -10,13 +10,15 @@ namespace LitIso.UI.InGame
     /// </summary>
     internal static class UiBuilder
     {
-        internal static readonly Color TextCol  = new Color(0.98f, 0.94f, 0.78f, 1f);
-        internal static readonly Color MutedCol = new Color(0.82f, 0.82f, 0.78f, 1f);
-        internal static readonly Color PanelBg  = new Color(0.055f, 0.065f, 0.085f, 0.985f);
-        internal static readonly Color Border   = new Color(0.42f, 0.46f, 0.50f, 1f);
-        internal static readonly Color Scrim    = new Color(0f, 0f, 0f, 0.55f);
-        internal static readonly Color SlotBg   = new Color(0.08f, 0.095f, 0.125f, 0.94f);
-        internal static readonly Color Select   = new Color(0.98f, 0.85f, 0.45f, 1f);
+        // Palette now sourced from the shared LIT-ISO design system
+        // (LitIsoTheme) so the in-game panels and the main menu match exactly.
+        internal static readonly Color TextCol  = LitIsoTheme.Parchment;                 // #d8d4c8 parchment
+        internal static readonly Color MutedCol = LitIsoTheme.WarmTan;                    // #8a8578 warm tan
+        internal static readonly Color PanelBg  = LitIsoTheme.Panel;                      // #15171C stone panel
+        internal static readonly Color Border   = LitIsoTheme.Stone;                      // #2c313c inset bevel
+        internal static readonly Color Scrim    = new Color(0f, 0f, 0f, 0.62f);           // dim scene behind a panel
+        internal static readonly Color SlotBg   = LitIsoTheme.Panel2;                     // #1D2027 raised slot
+        internal static readonly Color Select   = LitIsoTheme.Gold;                       // #E8C468 gold accent
 
         /// <summary>Sprite from Resources/UI/InGame/&lt;name&gt; (null if not present).</summary>
         internal static Sprite Spr(string name) => Resources.Load<Sprite>("UI/InGame/" + name);
@@ -81,9 +83,9 @@ namespace LitIso.UI.InGame
             if (img.sprite != null) { img.type = Image.Type.Sliced; }
             else
             {
-                var outline = img.gameObject.AddComponent<Outline>();
-                outline.effectColor = Border;
-                outline.effectDistance = new Vector2(2f, -2f);
+                // No sprite skin: fall back to the shared design-system Stone
+                // frame (2px border + inset bevel) instead of a bare outline.
+                LitIsoTheme.StyleFrame(img, LitIsoTheme.FrameStyle.Stone);
             }
             return img;
         }
@@ -96,11 +98,34 @@ namespace LitIso.UI.InGame
             t.text = value;
             t.alignment = anchor;
             t.color = color ?? TextCol;
-            t.horizontalOverflow = HorizontalWrapMode.Overflow;
-            t.verticalOverflow = VerticalWrapMode.Overflow;
-            LitIsoFont.Apply(t, size);
+            // Owner feedback: UI text must never spill outside its rect.
+            // Wrap + Truncate keeps strays inside; variable-length labels
+            // should additionally call FitText so they shrink instead of clip.
+            t.horizontalOverflow = HorizontalWrapMode.Wrap;
+            t.verticalOverflow = VerticalWrapMode.Truncate;
+            // Theme fonts: headings (>=19) use the display face, smaller text the
+            // readable body face. LitIsoFont.Apply still owns sizing + scaling.
+            if (size >= 19) LitIsoTheme.ApplyDisplay(t, size);
+            else            LitIsoTheme.ApplyBody(t, size);
             ApplyTextReadability(t);
             return t;
+        }
+
+        /// <summary>
+        /// Best-fit for variable-length labels (same pattern as the welcome
+        /// screen's CreateText): long strings shrink into their rect instead
+        /// of spilling or clipping. LitIsoFont.Apply turns best-fit off, so
+        /// call this AFTER NewText/Apply. Do not use on text whose rect is
+        /// driven by its own preferred size (ContentSizeFitter feedback).
+        /// </summary>
+        internal static void FitText(Text t)
+        {
+            if (t == null) return;
+            t.horizontalOverflow = HorizontalWrapMode.Wrap;
+            t.verticalOverflow = VerticalWrapMode.Truncate;
+            t.resizeTextForBestFit = true;
+            t.resizeTextMaxSize = t.fontSize;
+            t.resizeTextMinSize = Mathf.Min(11, t.fontSize);
         }
 
         internal static void ApplyTextReadability(Text text)
@@ -126,20 +151,42 @@ namespace LitIso.UI.InGame
 
         /// <summary>Skinnable button — uses sprite-swap on hover if skin is provided.</summary>
         internal static Button NewButton(Transform parent, string name, string skinName, string label, int size = 18)
+            => NewButton(parent, name, skinName, label, size, LitIsoTheme.ButtonStyle.Stone);
+
+        /// <summary>Themed button. When no sprite skin exists it uses the shared
+        /// design-system button (gold or stone) with the 5px hard bottom shadow
+        /// + press offset; with a skin it keeps the sprite-swap behaviour.</summary>
+        internal static Button NewButton(Transform parent, string name, string skinName, string label, int size,
+            LitIsoTheme.ButtonStyle style)
         {
-            var img = NewPanel(parent, name, skinName, SlotBg);
+            // Build the image WITHOUT NewPanel's auto-frame so the themed button
+            // styling owns the look in the procedural case.
+            var img = NewImage(parent, name, Spr(skinName), SlotBg);
             var btn = img.gameObject.AddComponent<Button>();
             btn.targetGraphic = img;
             var hoverSpr = Spr(skinName + "_hover");
-            if (img.sprite != null && hoverSpr != null)
+            if (img.sprite != null)
             {
-                btn.transition = Selectable.Transition.SpriteSwap;
-                btn.spriteState = new SpriteState { highlightedSprite = hoverSpr, pressedSprite = hoverSpr, selectedSprite = hoverSpr };
+                img.type = Image.Type.Sliced;
+                if (hoverSpr != null)
+                {
+                    btn.transition = Selectable.Transition.SpriteSwap;
+                    btn.spriteState = new SpriteState { highlightedSprite = hoverSpr, pressedSprite = hoverSpr, selectedSprite = hoverSpr };
+                }
+            }
+            else
+            {
+                // No skin: apply the shared design-system button states.
+                LitIsoTheme.StyleButton(btn, img, style);
             }
             if (!string.IsNullOrEmpty(label))
             {
                 var t = NewText(img.transform, "Label", label, size, TextAnchor.MiddleCenter);
                 Stretch(t.rectTransform, 6f);
+                // Button labels are often translated/dynamic (tab names, "Craft
+                // All (99)", etc.) — shrink to fit rather than spilling past
+                // the button's edges.
+                FitText(t);
             }
             return btn;
         }

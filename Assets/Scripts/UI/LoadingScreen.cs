@@ -63,6 +63,13 @@ public sealed class LoadingScreen : MonoBehaviour
         t.alignment = TextAnchor.MiddleCenter;
         t.color = color;
         LitIsoFont.Apply(t, size);
+        // World titles are player-named: wrap + truncate + best-fit so a long
+        // name shrinks into the line instead of running off-screen.
+        t.horizontalOverflow = HorizontalWrapMode.Wrap;
+        t.verticalOverflow = VerticalWrapMode.Truncate;
+        t.resizeTextForBestFit = true;
+        t.resizeTextMaxSize = t.fontSize;
+        t.resizeTextMinSize = 11;
         var rt = t.rectTransform;
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
         rt.sizeDelta = new Vector2(1200f, 44f);

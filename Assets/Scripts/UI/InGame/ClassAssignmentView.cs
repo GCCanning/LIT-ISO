@@ -152,6 +152,7 @@ namespace LitIso.UI.InGame
                 _vm.RankFlavor + $"   ·   {_vm.StartingPoints} starting skill points", 17,
                 TextAnchor.UpperCenter, UiBuilder.MutedCol);
             Top(flavor.rectTransform, -188f, 900f, 26f);
+            UiBuilder.FitText(flavor);
 
             var axes = _vm.AxisLines;
             for (int i = 0; i < axes.Length; i++)
@@ -159,12 +160,14 @@ namespace LitIso.UI.InGame
                 var line = UiBuilder.NewText(_canvas.transform, "Axis" + i, axes[i], 15,
                     TextAnchor.UpperCenter, UiBuilder.TextCol);
                 Top(line.rectTransform, -228f - i * 24f, 760f, 22f);
+                UiBuilder.FitText(line);
             }
 
             var offerLabel = UiBuilder.NewText(_canvas.transform, "OfferLabel",
                 "The System extends the following paths:", 18,
                 TextAnchor.UpperCenter, new Color(0.55f, 0.85f, 1f, 1f));
             Top(offerLabel.rectTransform, -350f, 900f, 28f);
+            UiBuilder.FitText(offerLabel);
 
             int n = _vm.OfferCount;
             float cardW = 340f, gap = 28f;
@@ -215,13 +218,16 @@ namespace LitIso.UI.InGame
             var name = UiBuilder.NewText(card.transform, "Name", offer.name, 21,
                 TextAnchor.UpperCenter, new Color(0.98f, 0.85f, 0.45f, 1f));
             InCard(name.rectTransform, -14f, 30f);
+            UiBuilder.FitText(name);
             var rarity = UiBuilder.NewText(card.transform, "Rarity", offer.rarity.ToUpperInvariant(),
                 13, TextAnchor.UpperCenter, rarityCol);
             InCard(rarity.rectTransform, -46f, 20f);
+            UiBuilder.FitText(rarity);
             var flavor = UiBuilder.NewText(card.transform, "Flavor", offer.flavor, 14,
                 TextAnchor.UpperCenter, UiBuilder.MutedCol);
             flavor.fontStyle = FontStyle.Italic;
             InCard(flavor.rectTransform, -72f, 24f);
+            UiBuilder.FitText(flavor);
 
             for (int i = 0; i < offer.receipts.Length; i++)
             {
@@ -234,6 +240,7 @@ namespace LitIso.UI.InGame
                 rr.offsetMin = new Vector2(20f, rr.offsetMin.y);
                 rr.offsetMax = new Vector2(-12f, rr.offsetMax.y);
                 rr.sizeDelta = new Vector2(rr.sizeDelta.x, 24f);
+                UiBuilder.FitText(r);
             }
 
             var hint = UiBuilder.NewText(card.transform, "Hint", "select", 12,

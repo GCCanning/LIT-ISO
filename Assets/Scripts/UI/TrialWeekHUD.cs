@@ -349,9 +349,15 @@ public class TrialWeekHUD : MonoBehaviour
         text.text = content;
         text.color = color;
         text.alignment = anchor;
-        text.horizontalOverflow = HorizontalWrapMode.Overflow;
-        text.verticalOverflow = VerticalWrapMode.Overflow;
+        // Never spill outside the banner: wrap + truncate, with best-fit so the
+        // day readout / pip tags shrink into their rects instead of clipping.
+        // (LitIsoFont.Apply disables best-fit, so re-enable it after.)
+        text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        text.verticalOverflow = VerticalWrapMode.Truncate;
         LitIsoFont.Apply(text, size);
+        text.resizeTextForBestFit = true;
+        text.resizeTextMaxSize = text.fontSize;
+        text.resizeTextMinSize = Mathf.Min(11, text.fontSize);
         return text;
     }
 }

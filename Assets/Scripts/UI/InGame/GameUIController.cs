@@ -344,6 +344,18 @@ namespace LitIso.UI.InGame
             fr.sizeDelta = new Vector2(slot, slot);
             _slotFrames[i] = frame;
 
+            // Hover name (2026-06-13 owner request): shows the slot's item name (and
+            // stack count) so players can tell what they've crafted/picked up at a
+            // glance. Re-reads the model live, so it tracks item swaps/counts.
+            int slotIndex = i;
+            var hover = frame.gameObject.AddComponent<UiHoverTooltip>();
+            hover.textProvider = () =>
+            {
+                var s = _model?.GetSlot(slotIndex) ?? default;
+                if (string.IsNullOrEmpty(s.label)) return null;
+                return s.count > 1 ? $"{s.label} x{s.count}" : s.label;
+            };
+
             // Selected highlight (sprite if provided, else tinted border overlay).
             var hi = NewImage(fr, "Highlight", selSpr, SlotSelect);
             hi.type = Image.Type.Sliced;
@@ -559,9 +571,14 @@ namespace LitIso.UI.InGame
             t.text = value;
             t.alignment = anchor;
             t.color = TextCol;
-            t.horizontalOverflow = HorizontalWrapMode.Overflow;
-            t.verticalOverflow = VerticalWrapMode.Overflow;
+            // HUD strings here are short ("82 / 110", "Lv 12", stack counts) but
+            // must still never escape their rects; best-fit shrinks before clipping.
+            t.horizontalOverflow = HorizontalWrapMode.Wrap;
+            t.verticalOverflow = VerticalWrapMode.Truncate;
             LitIsoFont.Apply(t, size);
+            t.resizeTextForBestFit = true;
+            t.resizeTextMaxSize = t.fontSize;
+            t.resizeTextMinSize = Mathf.Min(11, t.fontSize);
             var shadow = go.AddComponent<Shadow>();
             shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
             shadow.effectDistance = new Vector2(1.5f, -1.5f);

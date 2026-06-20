@@ -15,6 +15,7 @@ namespace LitIso.UI.InGame
         ICraftingViewModel _crafting;
         ICharacterSheetViewModel _character;
         ISkillWebViewModel _skillWeb;
+        IAdminViewModel _admin;
         FoundationProgression _progression;
         FoundationQoLService _qol;
 
@@ -57,6 +58,12 @@ namespace LitIso.UI.InGame
             RebindPanel();
         }
 
+        public void BindAdmin(IAdminViewModel model)
+        {
+            _admin = model;
+            RebindPanel();
+        }
+
         public void BindProgression(FoundationProgression progression, FoundationQoLService qol)
         {
             _progression = progression;
@@ -65,13 +72,30 @@ namespace LitIso.UI.InGame
         }
 
         public void OpenInventory() => Open(CharacterPanelTab.Inventory);
-        public void OpenCrafting() => Open(CharacterPanelTab.Crafting);
+
+        public void OpenCrafting()
+        {
+            _crafting?.SetStationFilter(null);
+            Open(CharacterPanelTab.Crafting);
+        }
+
+        /// <summary>
+        /// Opens the crafting panel focused on a specific station (e.g. the furnace or
+        /// tannery the player just interacted with), so that station's recipes show first.
+        /// </summary>
+        public void OpenCrafting(StationType station)
+        {
+            _crafting?.SetStationFilter(station);
+            Open(CharacterPanelTab.Crafting);
+        }
+
         public void OpenCharacterSheet() => Open(CharacterPanelTab.Character);
         public void OpenSkills() => Open(CharacterPanelTab.Skills);
         public void OpenSpells() => Open(CharacterPanelTab.Spells);
         public void OpenQuests() => Open(CharacterPanelTab.Journal);
         public void OpenSystem() => Open(CharacterPanelTab.System);
         public void OpenMapTab() => Open(CharacterPanelTab.Map);
+        public void OpenAdmin() => Open(CharacterPanelTab.Admin);
 
         void Update()
         {
@@ -99,6 +123,8 @@ namespace LitIso.UI.InGame
             if (Input.GetKeyDown(KeyCode.K) || Input.GetKeyDown(KeyCode.Tab)) OpenCharacterSheet();
             if (Input.GetKeyDown(KeyCode.T)) OpenSkills();
             if (Input.GetKeyDown(KeyCode.J)) OpenQuests();
+            // F9: Admin/debug tab - give items + adjust stats/level for testing.
+            if (Input.GetKeyDown(KeyCode.F9)) OpenAdmin();
             // F8: preview the Day-7 Class Assignment ceremony (placeholder data
             // until the Foundation trial-scoring runtime lands)
             if (Input.GetKeyDown(KeyCode.F8))
@@ -120,7 +146,7 @@ namespace LitIso.UI.InGame
             if (_panel == null)
                 return;
 
-            _panel.Init(_inventory, _crafting, _character, _progression, _qol, _skillWeb);
+            _panel.Init(_inventory, _crafting, _character, _progression, _qol, _skillWeb, _admin);
             RefreshCoordinatorState();
         }
 

@@ -104,11 +104,13 @@ namespace LitIso.UI.InGame
         {
             _canvas = UiBuilder.NewCanvas(transform, "AbilityCanvas", 210);
 
-            // --- Q/E/R/F row, bottom-center-left of the hotbar
+            // --- Q/E/R/F row.
+            // 2026-06-13 layout pass: moved from bottom-center (left of the
+            // hotbar) to the bottom-left corner of the screen.
             var row = UiBuilder.NewRect("SlotRow", _canvas.transform);
-            row.anchorMin = row.anchorMax = new Vector2(0.5f, 0f);
-            row.pivot = new Vector2(1f, 0f);
-            row.anchoredPosition = new Vector2(-300f, 30f);
+            row.anchorMin = row.anchorMax = new Vector2(0f, 0f);
+            row.pivot = new Vector2(0f, 0f);
+            row.anchoredPosition = new Vector2(24f, 24f);
             row.sizeDelta = new Vector2(4 * 54f, 64f);
             PlayerResizableUi.Attach(row, "hud.abilities", new Vector2(140f, 50f), new Vector2(420f, 130f));
 
@@ -133,6 +135,8 @@ namespace LitIso.UI.InGame
                     TextAnchor.LowerCenter, UiBuilder.TextCol);
                 UiBuilder.Stretch(_slotLabels[i].rectTransform, 3f);
                 _slotLabels[i].raycastTarget = false;
+                // Ability names vary in length; shrink to fit the small slot cell.
+                UiBuilder.FitText(_slotLabels[i]);
             }
 
             BuildWheel();
@@ -167,6 +171,8 @@ namespace LitIso.UI.InGame
                     TextAnchor.MiddleCenter, a.ready ? UiBuilder.TextCol : UiBuilder.MutedCol);
                 UiBuilder.Stretch(label.rectTransform, 4f);
                 label.raycastTarget = false;
+                // Longer ability names must shrink to stay inside the wedge.
+                UiBuilder.FitText(label);
 
                 var btn = seg.gameObject.AddComponent<Button>();
                 btn.targetGraphic = seg;
@@ -199,6 +205,7 @@ namespace LitIso.UI.InGame
             hr.anchorMin = hr.anchorMax = new Vector2(0.5f, 0.5f);
             hr.anchoredPosition = new Vector2(0f, -300f);
             hr.sizeDelta = new Vector2(700f, 24f);
+            UiBuilder.FitText(hint);
 
             _wheelRoot.gameObject.SetActive(false);
         }
@@ -236,30 +243,38 @@ namespace LitIso.UI.InGame
         {
             if (_vm == null) return;
             var ui = FoundationUiCoordinator.Active;
-            bool blocked = ui != null && ui.BlocksWorldInput;
 
-            // wheel visibility: hold X (never while a panel/modal is open)
-            bool wheelOpen = Input.GetKey(KeyCode.X) && !blocked;
-            if (_wheelRoot.gameObject.activeSelf != wheelOpen)
+            // Only OTHER modals/panels gate the wheel — NOT our own "abilityWheel"
+            // modal (nor pointer-over-UI, which is the wheel itself once open).
+            // Using BlocksWorldInput here was the flicker bug: opening the wheel set
+            // a modal that made BlocksWorldInput true, which forced it shut the next
+            // frame, which cleared the modal, which reopened it… every frame.
+            bool otherModal = ui != null && ui.HasBlockingModalExcept("abilityWheel");
+
+            bool currentlyOpen = _wheelRoot.gameObject.activeSelf;
+            bool xHeld = Input.GetKey(KeyCode.X);
+            // Stay open purely on X while already open; only gate the INITIAL open on
+            // other panels being closed.
+            bool wheelOpen = currentlyOpen ? xHeld : (xHeld && !otherModal);
+
+            if (currentlyOpen != wheelOpen)
             {
                 _wheelRoot.gameObject.SetActive(wheelOpen);
                 if (!wheelOpen) _pendingAssignId = null;
                 ui?.SetModalOpen("abilityWheel", wheelOpen);
             }
 
-            if (blocked && !wheelOpen) return;
+            if (wheelOpen) return;   // wheel handles its own clicks; suppress tap-cast
+            if (otherModal) return;  // another panel owns input
 
-            // tap-to-cast on Q/E/R/F (not while the wheel is open — keys would clash)
-            if (!wheelOpen)
-            {
-                for (int i = 0; i < 4; i++)
-                    if (Input.GetKeyDown(SlotKeys[i]))
-                    {
-                        string id = _vm.GetSlot(i);
-                        if (id != null && _vm.Cast(id))
-                            StartCoroutine(FlashSlot(i));
-                    }
-            }
+            // tap-to-cast on Q/E/R/F
+            for (int i = 0; i < 4; i++)
+                if (Input.GetKeyDown(SlotKeys[i]))
+                {
+                    string id = _vm.GetSlot(i);
+                    if (id != null && _vm.Cast(id))
+                        StartCoroutine(FlashSlot(i));
+                }
         }
 
         System.Collections.IEnumerator FlashSlot(int i)

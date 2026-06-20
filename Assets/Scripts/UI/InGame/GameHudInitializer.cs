@@ -43,6 +43,9 @@ namespace LitIso.UI.InGame
         {
             FoundationBootstrap.Ready -= OnFoundationReady;
             FoundationBootstrap.Ready += OnFoundationReady;
+
+            FoundationBootstrap.HudShutdownRequested -= ShutdownHud;
+            FoundationBootstrap.HudShutdownRequested += ShutdownHud;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -107,6 +110,7 @@ namespace LitIso.UI.InGame
             _panels.BindCharacter(new FoundationCharacterSheetAdapter(stats));
             _panels.BindCrafting(new FoundationCraftingAdapter(bootstrap.Crafting, bootstrap.Inventory, bootstrap.Content));
             _panels.BindProgression(progression, bootstrap.QoL);
+            _panels.BindAdmin(new FoundationAdminAdapter(bootstrap.Inventory, bootstrap.Content, stats));
 
             // ---- Trial status banner (live data: day + grade forecast) -----
             if (progression != null)
@@ -120,15 +124,15 @@ namespace LitIso.UI.InGame
                 _trialBanner.Bind(progression);
             }
 
-            // ---- Ability slots + hold-X wheel (placeholder loadout until the
-            //      Foundation ability cast/assign API lands) -----------------
+            // ---- Ability slots + hold-X wheel (live cast through the Foundation
+            //      ability system + dispatcher) --------------------------------
             if (_abilityWheel == null)
             {
                 var ago = new GameObject("AbilityWheel");
                 Object.DontDestroyOnLoad(ago);
                 _abilityWheel = ago.AddComponent<AbilityWheelView>();
             }
-            _abilityWheel.Bind(new PlaceholderAbilityLoadoutViewModel());
+            _abilityWheel.Bind(new FoundationAbilityLoadout(bootstrap));
             BindInteractionPanelRequests(bootstrap.Interaction);
 
             // ---- Quest tracker overlay --------------------------------------
@@ -196,7 +200,56 @@ namespace LitIso.UI.InGame
 
         static void OnCraftingRequested(StationType station)
         {
-            _panels?.OpenCrafting();
+            if (station == StationType.None || station == StationType.Hand)
+                _panels?.OpenCrafting();
+            else
+                _panels?.OpenCrafting(station);
+        }
+
+        /// <summary>
+        /// Tears down every DontDestroyOnLoad gameplay HUD surface (vitals/hotbar HUD,
+        /// panels, quest tracker, notifications, day clock, ability wheel, trial banner)
+        /// and clears the static refs so a fresh set is rebuilt the next time
+        /// <see cref="FoundationBootstrap.Ready"/> fires (e.g. on returning to gameplay).
+        ///
+        /// Call this from any "return to menu" code path — without it, these
+        /// persistent root objects survive the scene unload and remain visible on
+        /// top of MenuScene.
+        /// </summary>
+        public static void ShutdownHud()
+        {
+            DestroyGo(_hud != null ? _hud.gameObject : null);
+            DestroyGo(_panels != null ? _panels.gameObject : null);
+            DestroyGo(_questView != null ? _questView.gameObject : null);
+            DestroyGo(_notifyView != null ? _notifyView.gameObject : null);
+            DestroyGo(_dayView != null ? _dayView.gameObject : null);
+            DestroyGo(_abilityWheel != null ? _abilityWheel.gameObject : null);
+            DestroyGo(_trialBanner != null ? _trialBanner.gameObject : null);
+
+            _adapter?.Dispose();
+            _adapter = null;
+            _questAdapter?.Dispose();
+            _questAdapter = null;
+            _notifyBridge?.Dispose();
+            _notifyBridge = null;
+            _dayAdapter = null;
+
+            _hud = null;
+            _panels = null;
+            _questView = null;
+            _notifyView = null;
+            _dayView = null;
+            _abilityWheel = null;
+            _trialBanner = null;
+
+            _boundInteraction = null;
+            _boundBootstrap = null;
+        }
+
+        static void DestroyGo(GameObject go)
+        {
+            if (go != null)
+                Object.Destroy(go);
         }
     }
 }

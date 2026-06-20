@@ -20,6 +20,7 @@ namespace LitIso.UI.InGame
         Map,
         Settings,
         System,
+        Admin,
     }
 
     /// <summary>
@@ -33,6 +34,7 @@ namespace LitIso.UI.InGame
         ICraftingViewModel _crafting;
         ICharacterSheetViewModel _character;
         ISkillWebViewModel _skillWeb;
+        IAdminViewModel _admin;
         FoundationProgression _progression;
         FoundationQoLService _qol;
 
@@ -105,13 +107,14 @@ namespace LitIso.UI.InGame
 
         public void Init(IInventoryViewModel inventory, ICraftingViewModel crafting,
             ICharacterSheetViewModel character, FoundationProgression progression, FoundationQoLService qol,
-            ISkillWebViewModel skillWeb = null)
+            ISkillWebViewModel skillWeb = null, IAdminViewModel admin = null)
         {
             Unsubscribe();
             _inventory = inventory;
             _crafting = crafting;
             _character = character;
             _skillWeb = skillWeb;
+            _admin = admin;
             _progression = progression;
             _qol = qol;
             Build();
@@ -133,6 +136,7 @@ namespace LitIso.UI.InGame
             if (_crafting != null) _crafting.Changed += Refresh;
             if (_character != null) _character.Changed += Refresh;
             if (_skillWeb != null) _skillWeb.Changed += Refresh;
+            if (_admin != null) _admin.Changed += Refresh;
             if (_progression != null) _progression.Changed += Refresh;
         }
 
@@ -142,6 +146,7 @@ namespace LitIso.UI.InGame
             if (_crafting != null) _crafting.Changed -= Refresh;
             if (_character != null) _character.Changed -= Refresh;
             if (_skillWeb != null) _skillWeb.Changed -= Refresh;
+            if (_admin != null) _admin.Changed -= Refresh;
             if (_progression != null) _progression.Changed -= Refresh;
         }
 
@@ -180,13 +185,14 @@ namespace LitIso.UI.InGame
             pr.sizeDelta = new Vector2(1080f, 720f);
             PlayerResizableUi.Attach(pr, "panel.character", new Vector2(720f, 460f), new Vector2(1700f, 980f));
 
-            _title = UiBuilder.NewText(panel.transform, "Title", "Character", 26, TextAnchor.MiddleLeft);
+            _title = UiBuilder.NewText(panel.transform, "Title", "Character", 26, TextAnchor.MiddleLeft, LitIsoTheme.Gold);
             var tr = _title.rectTransform;
             tr.anchorMin = new Vector2(0f, 1f);
             tr.anchorMax = new Vector2(1f, 1f);
             tr.pivot = new Vector2(0f, 1f);
             tr.anchoredPosition = new Vector2(28f, -18f);
             tr.sizeDelta = new Vector2(-96f, 36f);
+            UiBuilder.FitText(_title);
 
             var close = UiBuilder.NewButton(panel.transform, "Close", "btn_close", "X", 18);
             close.onClick.AddListener(Hide);
@@ -260,6 +266,7 @@ namespace LitIso.UI.InGame
                     case CharacterPanelTab.Map: DrawMap(); break;
                     case CharacterPanelTab.Settings: DrawSettings(); break;
                     case CharacterPanelTab.System: DrawSystem(); break;
+                    case CharacterPanelTab.Admin: DrawAdmin(); break;
                 }
             }
             catch (Exception e)
@@ -271,6 +278,8 @@ namespace LitIso.UI.InGame
                     $"This tab hit an error:\n{e.GetType().Name}: {e.Message}\n(see Console for stack)",
                     16, TextAnchor.UpperLeft, new Color(0.95f, 0.55f, 0.45f, 1f));
                 err.horizontalOverflow = HorizontalWrapMode.Wrap;
+                err.verticalOverflow = VerticalWrapMode.Truncate;
+                UiBuilder.FitText(err);
                 UiBuilder.Stretch(err.rectTransform, 8f);
             }
         }
@@ -283,7 +292,13 @@ namespace LitIso.UI.InGame
             {
                 var img = _tabButtons[i].targetGraphic as Image;
                 if (img != null)
-                    img.color = tabs[i] == _activeTab ? new Color(0.22f, 0.24f, 0.30f, 0.96f) : UiBuilder.SlotBg;
+                {
+                    bool active = tabs[i] == _activeTab;
+                    // Active tab reads as a gold-lit raised stone; inactive sits flush.
+                    img.color = active ? LitIsoTheme.GoldDeep : UiBuilder.SlotBg;
+                    var lbl = _tabButtons[i].GetComponentInChildren<Text>();
+                    if (lbl != null) lbl.color = active ? LitIsoTheme.GoldLit : LitIsoTheme.Parchment;
+                }
             }
         }
 
@@ -333,6 +348,7 @@ namespace LitIso.UI.InGame
                 {
                     var count = UiBuilder.NewText(cell.transform, "Count", s.count.ToString(), 14, TextAnchor.LowerRight);
                     UiBuilder.Stretch(count.rectTransform, 5f);
+                    UiBuilder.FitText(count);
                 }
 
                 if (!string.IsNullOrWhiteSpace(s.label))
@@ -344,6 +360,7 @@ namespace LitIso.UI.InGame
                     lr.pivot = new Vector2(0.5f, 0f);
                     lr.anchoredPosition = new Vector2(0f, 4f);
                     lr.sizeDelta = new Vector2(-6f, 18f);
+                    UiBuilder.FitText(label);
                 }
             }
         }
@@ -585,6 +602,7 @@ namespace LitIso.UI.InGame
             string head = splitMode ? $"Split {s.label}" : $"{s.label} x{s.count}";
             var title = UiBuilder.NewText(panel.transform, "Head", head, 13, TextAnchor.MiddleLeft, UiBuilder.MutedCol);
             Place(title.rectTransform, pad + 2f, pad, w - pad * 2f, headH);
+            UiBuilder.FitText(title);
 
             float y = pad + headH + 2f;
             if (!splitMode)
@@ -659,6 +677,7 @@ namespace LitIso.UI.InGame
             tr.anchorMax = Vector2.one;
             tr.offsetMin = new Vector2(textX, 2f);
             tr.offsetMax = new Vector2(-8f, -2f);
+            UiBuilder.FitText(t);
         }
 
         void CloseContextMenu()
@@ -727,6 +746,8 @@ namespace LitIso.UI.InGame
                 "Equipment slots — armor & accessories.\nTools and weapons live on the hotbar.\n(Equip system arriving with the class update.)",
                 13, TextAnchor.UpperLeft, UiBuilder.MutedCol);
             hint.horizontalOverflow = HorizontalWrapMode.Wrap;
+            hint.verticalOverflow = VerticalWrapMode.Truncate;
+            UiBuilder.FitText(hint);
             var hr = hint.rectTransform;
             hr.anchorMin = new Vector2(0f, 0f);
             hr.anchorMax = new Vector2(1f, 0f);
@@ -745,6 +766,7 @@ namespace LitIso.UI.InGame
             rt.sizeDelta = new Vector2(72f, 60f);
             var t = UiBuilder.NewText(s.transform, "L", label, 11, TextAnchor.MiddleCenter, UiBuilder.MutedCol);
             UiBuilder.Stretch(t.rectTransform, 2f);
+            UiBuilder.FitText(t);
         }
 
         /// <summary>Ability loadout tab. Visual contract for the confirmed Q/E/R/F +
@@ -839,22 +861,111 @@ namespace LitIso.UI.InGame
             btn.onClick.AddListener(() => { onClick(); Refresh(); });
         }
 
-        void DrawStepButtons(float y, System.Action minus, System.Action plus)
+        void DrawStepButtons(float y, System.Action minus, System.Action plus) => DrawStepButtons(0f, y, minus, plus);
+
+        void DrawStepButtons(float x, float y, System.Action minus, System.Action plus)
         {
-            var btnDown = UiBuilder.NewButton(_body, "Minus" + y, "button", "-", 18);
+            var btnDown = UiBuilder.NewButton(_body, "Minus" + x + "_" + y, "button", "-", 18);
             var dr = btnDown.GetComponent<RectTransform>();
             dr.anchorMin = dr.anchorMax = new Vector2(0f, 1f);
             dr.pivot = new Vector2(0f, 1f);
-            dr.anchoredPosition = new Vector2(0f, -y);
+            dr.anchoredPosition = new Vector2(x, -y);
             dr.sizeDelta = new Vector2(48f, 34f);
             btnDown.onClick.AddListener(() => minus());
-            var btnUp = UiBuilder.NewButton(_body, "Plus" + y, "button", "+", 18);
+            var btnUp = UiBuilder.NewButton(_body, "Plus" + x + "_" + y, "button", "+", 18);
             var ur = btnUp.GetComponent<RectTransform>();
             ur.anchorMin = ur.anchorMax = new Vector2(0f, 1f);
             ur.pivot = new Vector2(0f, 1f);
-            ur.anchoredPosition = new Vector2(56f, -y);
+            ur.anchoredPosition = new Vector2(x + 56f, -y);
             ur.sizeDelta = new Vector2(48f, 34f);
             btnUp.onClick.AddListener(() => plus());
+        }
+
+        /// <summary>
+        /// Admin/debug tab: scrollable "give item" grid (every ItemDefinition in
+        /// FoundationContent — click a row to add 1 to the player's inventory for
+        /// hotbar/equip testing) plus +/- steppers for Level and core stats
+        /// (STR/DEX/INT/VIT/DEF/LUCK), mirroring the Inventory tab's slot styling
+        /// and the Settings tab's step-button pattern.
+        /// </summary>
+        void DrawAdmin()
+        {
+            if (_admin == null)
+            {
+                TextLine("Admin tools unavailable", 0, 18, UiBuilder.MutedCol);
+                return;
+            }
+
+            TextLine("Give Item (click a row to add 1 to your inventory)", 0, 18, UiBuilder.TextCol);
+
+            var listRoot = CreateScrollView(_body, "AdminItemList", out var content);
+            listRoot.anchorMin = new Vector2(0f, 0f);
+            listRoot.anchorMax = new Vector2(0f, 1f);
+            listRoot.pivot = new Vector2(0f, 1f);
+            listRoot.offsetMin = Vector2.zero;
+            listRoot.offsetMax = new Vector2(0f, -34f);
+            listRoot.sizeDelta = new Vector2(500f, 0f);
+
+            int count = _admin.ItemCount;
+            for (int i = 0; i < count; i++)
+            {
+                var entry = _admin.GetItem(i);
+                if (string.IsNullOrEmpty(entry.id)) continue;
+
+                var row = UiBuilder.NewPanel(content, "AdminItem_" + entry.id, "system_row", UiBuilder.SlotBg);
+                var rowLayout = row.gameObject.AddComponent<LayoutElement>();
+                rowLayout.preferredHeight = 50f;
+                rowLayout.minHeight = 50f;
+
+                var icon = UiBuilder.NewImage(row.transform, "Icon", entry.icon, entry.icon != null ? Color.white : entry.color);
+                icon.preserveAspect = true;
+                var iconRt = icon.rectTransform;
+                iconRt.anchorMin = iconRt.anchorMax = new Vector2(0f, 0.5f);
+                iconRt.pivot = new Vector2(0f, 0.5f);
+                iconRt.anchoredPosition = new Vector2(8f, 0f);
+                iconRt.sizeDelta = new Vector2(34f, 34f);
+
+                var label = UiBuilder.NewText(row.transform, "Label", entry.label, 15, TextAnchor.MiddleLeft, UiBuilder.TextCol);
+                label.horizontalOverflow = HorizontalWrapMode.Wrap;
+                label.verticalOverflow = VerticalWrapMode.Truncate;
+                UiBuilder.FitText(label);
+                var labelRt = label.rectTransform;
+                labelRt.anchorMin = new Vector2(0f, 0f);
+                labelRt.anchorMax = new Vector2(1f, 1f);
+                labelRt.offsetMin = new Vector2(50f, 4f);
+                labelRt.offsetMax = new Vector2(-4f, -4f);
+
+                var btn = row.gameObject.AddComponent<Button>();
+                string itemId = entry.id;
+                btn.onClick.AddListener(() => _admin.GiveItem(itemId, 1));
+            }
+
+            // ---- Right column: live player stats/level controls ----
+            const float dx = 560f;
+            TextLine("Player Stats (debug)", 0, 18, UiBuilder.TextCol, dx);
+
+            TextLine($"Level: {_admin.Level}", 40f, 16, UiBuilder.TextCol, dx);
+            DrawStepButtons(dx, 68f,
+                () => { _admin.AdjustLevel(-1); Refresh(); },
+                () => { _admin.AdjustLevel(1); Refresh(); });
+
+            var stats = _admin.Stats;
+            string[] labels = { "STR", "DEX", "INT", "VIT", "DEF", "LUCK" };
+            int[] vals = { stats.str, stats.dex, stats.intel, stats.vit, stats.def, stats.luck };
+            var statTypes = new[]
+            {
+                FoundationStatType.STR, FoundationStatType.DEX, FoundationStatType.INT,
+                FoundationStatType.VIT, FoundationStatType.DEF, FoundationStatType.LUCK,
+            };
+            for (int i = 0; i < labels.Length; i++)
+            {
+                float y = 132f + i * 60f;
+                TextLine($"{labels[i]}: {vals[i]}", y, 16, UiBuilder.TextCol, dx);
+                var stat = statTypes[i];
+                DrawStepButtons(dx, y + 28f,
+                    () => { _admin.AdjustStat(stat, -1); Refresh(); },
+                    () => { _admin.AdjustStat(stat, 1); Refresh(); });
+            }
         }
 
         void DrawCrafting()
@@ -883,6 +994,7 @@ namespace LitIso.UI.InGame
             listTitleRt.pivot = new Vector2(0f, 1f);
             listTitleRt.anchoredPosition = new Vector2(16f, -10f);
             listTitleRt.sizeDelta = new Vector2(-32f, 28f);
+            UiBuilder.FitText(listTitle);
 
             var listScrollRoot = CreateScrollView(listFrame.transform, "RecipeScroll", out var listContent);
             listScrollRoot.offsetMin = new Vector2(10f, 10f);
@@ -921,6 +1033,7 @@ namespace LitIso.UI.InGame
                     row.canCraft ? UiBuilder.TextCol : UiBuilder.MutedCol);
                 label.horizontalOverflow = HorizontalWrapMode.Wrap;
                 label.verticalOverflow = VerticalWrapMode.Truncate;
+                UiBuilder.FitText(label);
                 var labelRt = label.rectTransform;
                 labelRt.anchorMin = new Vector2(0f, 0f);
                 labelRt.anchorMax = new Vector2(1f, 1f);
@@ -934,6 +1047,7 @@ namespace LitIso.UI.InGame
                     TextAnchor.MiddleRight, row.canCraft ? new Color(0.55f, 0.95f, 0.62f, 1f) : new Color(0.95f, 0.52f, 0.45f, 1f));
                 status.horizontalOverflow = HorizontalWrapMode.Wrap;
                 status.verticalOverflow = VerticalWrapMode.Truncate;
+                UiBuilder.FitText(status);
                 var statusRt = status.rectTransform;
                 statusRt.anchorMin = new Vector2(1f, 0f);
                 statusRt.anchorMax = new Vector2(1f, 1f);
@@ -953,6 +1067,8 @@ namespace LitIso.UI.InGame
 
             var title = UiBuilder.NewText(detailsFrame.transform, "RecipeTitle", details.display ?? "Recipe", 22, TextAnchor.UpperLeft);
             title.horizontalOverflow = HorizontalWrapMode.Wrap;
+            title.verticalOverflow = VerticalWrapMode.Truncate;
+            UiBuilder.FitText(title);
             var titleRt = title.rectTransform;
             titleRt.anchorMin = new Vector2(0f, 1f);
             titleRt.anchorMax = new Vector2(1f, 1f);
@@ -967,6 +1083,8 @@ namespace LitIso.UI.InGame
             var statusText = UiBuilder.NewText(detailsFrame.transform, "RecipeStatus", $"Station: {detailStation}\n{reason}", 16, TextAnchor.UpperLeft,
                 details.canCraft ? new Color(0.55f, 0.95f, 0.62f, 1f) : new Color(0.95f, 0.52f, 0.45f, 1f));
             statusText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            statusText.verticalOverflow = VerticalWrapMode.Truncate;
+            UiBuilder.FitText(statusText);
             var statusTextRt = statusText.rectTransform;
             statusTextRt.anchorMin = new Vector2(0f, 1f);
             statusTextRt.anchorMax = new Vector2(1f, 1f);
@@ -1099,6 +1217,7 @@ namespace LitIso.UI.InGame
                     haveEnough ? UiBuilder.TextCol : new Color(0.95f, 0.52f, 0.45f, 1f));
                 label.horizontalOverflow = HorizontalWrapMode.Wrap;
                 label.verticalOverflow = VerticalWrapMode.Truncate;
+                UiBuilder.FitText(label);
                 var labelRt = label.rectTransform;
                 labelRt.anchorMin = new Vector2(0f, 0f);
                 labelRt.anchorMax = new Vector2(1f, 1f);
@@ -1114,6 +1233,7 @@ namespace LitIso.UI.InGame
                 amountRt.pivot = new Vector2(1f, 0.5f);
                 amountRt.anchoredPosition = new Vector2(-12f, 0f);
                 amountRt.sizeDelta = new Vector2(104f, 0f);
+                UiBuilder.FitText(amount);
             }
         }
 
@@ -1484,6 +1604,7 @@ namespace LitIso.UI.InGame
             var text = UiBuilder.NewText(parent, name, value ?? "", size, anchor, color);
             text.horizontalOverflow = HorizontalWrapMode.Wrap;
             text.verticalOverflow = VerticalWrapMode.Truncate;
+            UiBuilder.FitText(text);
             Place(text.rectTransform, x, y, width, height);
             return text;
         }
@@ -1517,6 +1638,7 @@ namespace LitIso.UI.InGame
             rt.pivot = new Vector2(0f, 1f);
             rt.anchoredPosition = new Vector2(x, -y);
             rt.sizeDelta = new Vector2(-x, size + 10f);
+            UiBuilder.FitText(t);
             return t;
         }
 
@@ -1551,6 +1673,7 @@ namespace LitIso.UI.InGame
                 case CharacterPanelTab.Settings: return "Settings";
                 case CharacterPanelTab.System: return "System";
                 case CharacterPanelTab.Map: return "Map";
+                case CharacterPanelTab.Admin: return "Admin";
                 default: return tab.ToString();
             }
         }

@@ -21,6 +21,8 @@ namespace LitIso.UI.InGame
         readonly Inventory _inv;
         readonly FoundationContent _content;
         readonly List<FoundationRecipeDefinition> _ordered = new List<FoundationRecipeDefinition>();
+        readonly List<FoundationRecipeDefinition> _visible = new List<FoundationRecipeDefinition>();
+        StationType? _filterStation;
 
         public event Action Changed;
 
@@ -33,6 +35,18 @@ namespace LitIso.UI.InGame
             if (_inv != null) _inv.OnChanged += OnChanged;
         }
 
+        /// <summary>
+        /// Narrow the recipe list to <paramref name="station"/> (plus Hand/anywhere recipes),
+        /// or null to show everything. Called when a specific prop (furnace, tannery, ...) is
+        /// opened so its own recipes are front and centre.
+        /// </summary>
+        public void SetStationFilter(StationType? station)
+        {
+            _filterStation = station;
+            BuildVisible();
+            Changed?.Invoke();
+        }
+
         /// <summary>Stable display order: station group (Hand first), then display name.</summary>
         void BuildOrder()
         {
@@ -41,6 +55,23 @@ namespace LitIso.UI.InGame
             for (int i = 0; i < _content.Recipes.Count; i++)
                 _ordered.Add(_content.Recipes[i]);
             _ordered.Sort(CompareRecipes);
+            BuildVisible();
+        }
+
+        void BuildVisible()
+        {
+            _visible.Clear();
+            for (int i = 0; i < _ordered.Count; i++)
+            {
+                var r = _ordered[i];
+                if (_filterStation.HasValue)
+                {
+                    var st = r.station;
+                    bool anywhere = st == StationType.None || st == StationType.Hand;
+                    if (!anywhere && st != _filterStation.Value) continue;
+                }
+                _visible.Add(r);
+            }
         }
 
         static int CompareRecipes(FoundationRecipeDefinition a, FoundationRecipeDefinition b)
@@ -64,12 +95,12 @@ namespace LitIso.UI.InGame
 
         void OnChanged() => Changed?.Invoke();
 
-        public int RecipeCount => _ordered.Count;
+        public int RecipeCount => _visible.Count;
 
         public CraftingRecipeRow GetRecipe(int i)
         {
-            if (i < 0 || i >= _ordered.Count) return default;
-            var r = _ordered[i];
+            if (i < 0 || i >= _visible.Count) return default;
+            var r = _visible[i];
             string disabledReason = DisabledReason(r);
             return new CraftingRecipeRow
             {
@@ -91,6 +122,17 @@ namespace LitIso.UI.InGame
             var inputs  = BuildIngredients(r.inputs);
             var outputs = BuildOutputs(r.outputs);
 
+            string fuelInfo = "";
+            if (!string.IsNullOrEmpty(r.fuelItemId))
+            {
+                var fuelDef = _content?.Items?.Get(r.fuelItemId);
+                int have = _inv?.Count(r.fuelItemId) ?? 0;
+                fuelInfo = $"Fuel: {fuelDef?.displayName ?? r.fuelItemId} {have}/{r.fuelCount}";
+            }
+
+            var job = _crafting?.ActiveJob;
+            bool jobActive = job != null && job.Recipe == r;
+
             return new CraftingRecipeDetails
             {
                 id       = r.id,
@@ -101,6 +143,10 @@ namespace LitIso.UI.InGame
                 canCraft = _crafting != null && _crafting.CanCraft(r),
                 disabledReason = DisabledReason(r),
                 maxCraftable   = MaxCraftable(r),
+                craftTimeSeconds = r.craftTimeSeconds,
+                fuelInfo = fuelInfo,
+                jobActive = jobActive,
+                jobProgress01 = jobActive ? job.Progress01 : 0f,
             };
         }
 
@@ -196,6 +242,21 @@ namespace LitIso.UI.InGame
                 bool stationOk = _crafting.StationAvailable != null && _crafting.StationAvailable(recipe.station);
                 if (!stationOk)
                     return $"Requires {recipe.station}";
+            }
+
+            var job = _crafting.ActiveJob;
+            if (recipe.craftTimeSeconds > 0f && job != null && job.Recipe != recipe)
+                return $"Busy: crafting {job.Recipe.displayName ?? job.Recipe.id}";
+
+            if (!string.IsNullOrEmpty(recipe.fuelItemId))
+            {
+                int haveFuel = _inv.Count(recipe.fuelItemId);
+                if (haveFuel < recipe.fuelCount)
+                {
+                    var fuelDef = _content?.Items?.Get(recipe.fuelItemId);
+                    string fuelName = fuelDef?.displayName ?? recipe.fuelItemId;
+                    return $"Need {fuelName} x{recipe.fuelCount - haveFuel} (fuel)";
+                }
             }
 
             if (recipe.inputs != null)

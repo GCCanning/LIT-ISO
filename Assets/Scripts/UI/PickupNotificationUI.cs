@@ -195,6 +195,13 @@ public class PickupNotificationUI : MonoBehaviour
         nameTxt.alignment = TextAnchor.MiddleLeft;
         nameTxt.color     = itemNameColor;
         LitIsoFont.Apply(nameTxt, 13);
+        // Item names vary in length: shrink-to-fit so long names stay inside
+        // the toast instead of spilling past its edge.
+        nameTxt.horizontalOverflow = HorizontalWrapMode.Wrap;
+        nameTxt.verticalOverflow = VerticalWrapMode.Truncate;
+        nameTxt.resizeTextForBestFit = true;
+        nameTxt.resizeTextMaxSize = nameTxt.fontSize;
+        nameTxt.resizeTextMinSize = 11;
 
         return new NotificationEntry
         {

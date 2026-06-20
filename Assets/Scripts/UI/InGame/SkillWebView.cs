@@ -164,6 +164,9 @@ namespace LitIso.UI.InGame
             headerRt.pivot = new Vector2(0.5f, 1f);
             headerRt.anchoredPosition = new Vector2(0f, -6f);
             headerRt.sizeDelta = new Vector2(0f, 26f);
+            // Status line text length varies (placeholder vs. runtime); shrink
+            // rather than spill past the header strip.
+            UiBuilder.FitText(header);
 
             // node positions (centered in the area, scaled to fit)
             var positions = new Dictionary<string, Vector2>();
@@ -255,6 +258,7 @@ namespace LitIso.UI.InGame
                 lrt.anchorMin = lrt.anchorMax = new Vector2(0.5f, 0.5f);
                 lrt.anchoredPosition = pos + new Vector2(0f, size * 0.5f + 12f);
                 lrt.sizeDelta = new Vector2(170f, 18f);
+                UiBuilder.FitText(label);
             }
         }
 
@@ -282,6 +286,7 @@ namespace LitIso.UI.InGame
             var irt = info.rectTransform;
             irt.anchorMin = new Vector2(0f, 0f); irt.anchorMax = new Vector2(1f, 1f);
             irt.offsetMin = new Vector2(14f, 6f); irt.offsetMax = new Vector2(-150f, -6f);
+            UiBuilder.FitText(info);
 
             if (found && sel.state == SkillWebNodeState.Allocatable)
             {

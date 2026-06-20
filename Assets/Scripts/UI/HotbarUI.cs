@@ -149,6 +149,13 @@ public class HotbarUI : MonoBehaviour
             countTxt.alignment = TextAnchor.MiddleCenter;
             countTxt.color     = countTextColor;
             LitIsoFont.Apply(countTxt, 13, FontStyle.Bold);
+            // Stack counts can run to 3-4 digits; shrink-to-fit so they never
+            // spill outside the small slot badge.
+            countTxt.horizontalOverflow = HorizontalWrapMode.Wrap;
+            countTxt.verticalOverflow = VerticalWrapMode.Truncate;
+            countTxt.resizeTextForBestFit = true;
+            countTxt.resizeTextMaxSize = countTxt.fontSize;
+            countTxt.resizeTextMinSize = Mathf.Min(9, countTxt.fontSize);
 
             slots[i] = new HotbarSlotUI
             {

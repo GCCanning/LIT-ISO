@@ -63,10 +63,13 @@ namespace LitIso.UI.InGame
             _panel = UiBuilder.NewImage(_canvas.transform, "DayClockPanel", null, DayTint);
             _panel.raycastTarget = false;
             var rt = _panel.rectTransform;
-            rt.anchorMin = new Vector2(1f, 1f);
-            rt.anchorMax = new Vector2(1f, 1f);
-            rt.pivot     = new Vector2(1f, 1f);
-            rt.anchoredPosition = new Vector2(-260f, -30f);
+            // 2026-06-13 layout pass: moved from top-right to top-left, directly
+            // below the vitals stack (vitals anchors at (24,-24), height
+            // 46*rowCount+30 ≈ 214 for 4 rows → clock sits at y ≈ -238).
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot     = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(24f, -238f);
             rt.sizeDelta = new Vector2(PanelW, PanelH);
             PlayerResizableUi.Attach(rt, "hud.day_clock", new Vector2(180f, 42f), new Vector2(420f, 100f));
 

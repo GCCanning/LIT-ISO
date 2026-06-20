@@ -386,6 +386,13 @@ public class GameSettingsMenu : MonoBehaviour
         text.alignment = anchor;
         text.raycastTarget = false;
         LitIsoFont.Apply(text, fontSize, style);
+        // Tab/button/row labels are short but translatable text could run
+        // longer than the fixed-width rows/buttons; shrink rather than spill.
+        text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        text.verticalOverflow = VerticalWrapMode.Truncate;
+        text.resizeTextForBestFit = true;
+        text.resizeTextMaxSize = text.fontSize;
+        text.resizeTextMinSize = Mathf.Min(9, text.fontSize);
         return text;
     }
 

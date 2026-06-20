@@ -8,7 +8,10 @@ using UnityEngine.UI;
 /// </summary>
 public static class LitIsoFont
 {
-    private const string FontResourcePath = "Fonts/antiquity-print";
+    // Display face: Lumos (owner-supplied, 2026-06-12). Antiquity Print kept as
+    // the fallback if the Lumos asset is ever missing.
+    private const string FontResourcePath = "Fonts/lumos";
+    private const string LegacyDisplayFontResourcePath = "Fonts/antiquity-print";
     // Optional readable body font: drop any .ttf at Resources/Fonts/body to override.
     private const string BodyFontResourcePath = "Fonts/body";
     public const string TextScalePrefKey = "ui.textScale";
@@ -29,6 +32,8 @@ public static class LitIsoFont
             if (cachedFont == null)
             {
                 cachedFont = Resources.Load<Font>(FontResourcePath);
+                if (cachedFont == null)
+                    cachedFont = Resources.Load<Font>(LegacyDisplayFontResourcePath);
                 if (cachedFont == null)
                     cachedFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
                 if (cachedFont == null)

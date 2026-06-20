@@ -66,6 +66,11 @@ public sealed class TransmigrationIntro : MonoBehaviour
         _text.alignment = TextAnchor.MiddleCenter;
         _text.color = new Color(0.55f, 0.85f, 1f, 1f);
         LitIsoFont.Apply(_text, 20);
+        _text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        _text.verticalOverflow = VerticalWrapMode.Truncate;
+        _text.resizeTextForBestFit = true;
+        _text.resizeTextMaxSize = _text.fontSize;
+        _text.resizeTextMinSize = Mathf.Min(11, _text.fontSize);
         var tr = _text.rectTransform;
         tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 0.5f);
         tr.sizeDelta = new Vector2(900f, 500f);

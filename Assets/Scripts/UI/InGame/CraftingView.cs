@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using IsoCore.Foundation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +26,14 @@ namespace LitIso.UI.InGame
         public string disabledReason;
         /// <summary>How many times this recipe can be crafted with the current inventory (0 if none).</summary>
         public int maxCraftable;
+        /// <summary>Seconds for a timed craft (0 = instant).</summary>
+        public float craftTimeSeconds;
+        /// <summary>Display text for an optional fuel requirement, e.g. "Fuel: Wood 1/1". Empty if none.</summary>
+        public string fuelInfo;
+        /// <summary>True if this recipe's timed craft is currently in progress.</summary>
+        public bool jobActive;
+        /// <summary>0..1 progress of the active job, if jobActive.</summary>
+        public float jobProgress01;
     }
 
     /// <summary>Model the crafting panel renders from. Foundation-free; adapter binds later.</summary>
@@ -36,6 +45,12 @@ namespace LitIso.UI.InGame
         void Craft(string recipeId);
         /// <summary>Craft up to <paramref name="count"/> times, stopping early if ingredients/space run out.</summary>
         void Craft(string recipeId, int count);
+        /// <summary>
+        /// Narrow the recipe list to the given station (plus Hand/anywhere recipes), or
+        /// pass null to show every recipe. Used so opening a specific prop (e.g. a furnace)
+        /// shows that station's recipes first.
+        /// </summary>
+        void SetStationFilter(StationType? station);
         event Action Changed;
     }
 
@@ -72,6 +87,7 @@ namespace LitIso.UI.InGame
         }
         public void Craft(string recipeId) { Debug.Log("[placeholder] craft " + recipeId); }
         public void Craft(string recipeId, int count) { Debug.Log("[placeholder] craft " + recipeId + " x" + count); }
+        public void SetStationFilter(StationType? station) { }
         public event Action Changed;
         public void Raise() => Changed?.Invoke();
     }
@@ -95,9 +111,21 @@ namespace LitIso.UI.InGame
         Text _craftAllLabel;
         string _selectedId;
         int _selectedMax;
+        bool _detailsJobActive;
+        float _progressRefreshTimer;
         // Row backgrounds by recipe id, so selection can re-highlight without a rebuild.
         readonly Dictionary<string, Image> _rowImages = new Dictionary<string, Image>();
         static readonly Color SelectedBg = new Color(0.16f, 0.20f, 0.27f, 0.96f);
+
+        // ---- Category filter dropdown (2026-06-13 owner request) ----
+        // "All" plus every real StationType (None is folded into "Hand" — see
+        // FoundationCraftingAdapter.StationOrder/StationLabel).
+        static readonly string[] CategoryNames = { "All", "Hand", "Workbench", "Furnace", "CookingPot", "Tannery" };
+        Button _categoryBtn;
+        Text _categoryLabel;
+        GameObject _categoryPopup;
+        Transform _filterParent;
+        RectTransform _filterRect;
 
         public bool IsOpen => _root != null && _root.activeSelf;
         public event Action Closed;
@@ -107,12 +135,81 @@ namespace LitIso.UI.InGame
             Unsubscribe(); _model = model; Build(); Subscribe(); Refresh(); Hide();
         }
         void OnDestroy() => Unsubscribe();
+
+        void Update()
+        {
+            // Live-refresh the progress bar for an in-progress timed craft (e.g. furnace
+            // smelting) without rebuilding the whole panel every frame.
+            if (!IsOpen || !_detailsJobActive) return;
+            _progressRefreshTimer -= Time.deltaTime;
+            if (_progressRefreshTimer <= 0f)
+            {
+                _progressRefreshTimer = 0.2f;
+                RefreshDetails();
+            }
+        }
         void Subscribe()   { if (_model != null) _model.Changed += Refresh; }
         void Unsubscribe() { if (_model != null) _model.Changed -= Refresh; }
 
         public void Show() { if (_root != null) { _root.SetActive(true); Refresh(); } }
-        public void Hide() { if (_root != null) _root.SetActive(false); Closed?.Invoke(); }
+        public void Hide() { if (_root != null) _root.SetActive(false); CloseCategoryPopup(); Closed?.Invoke(); }
         public void Toggle() { if (IsOpen) Hide(); else Show(); }
+
+        // ---- Category filter dropdown -------------------------------------
+
+        void ToggleCategoryPopup()
+        {
+            if (_categoryPopup != null) CloseCategoryPopup();
+            else BuildCategoryPopup();
+        }
+
+        void CloseCategoryPopup()
+        {
+            if (_categoryPopup == null) return;
+            Destroy(_categoryPopup);
+            _categoryPopup = null;
+        }
+
+        void BuildCategoryPopup()
+        {
+            _categoryPopup = new GameObject("CategoryPopup", typeof(RectTransform));
+            _categoryPopup.transform.SetParent(_filterParent, false);
+            var rt = _categoryPopup.GetComponent<RectTransform>();
+            rt.anchorMin = _filterRect.anchorMin; rt.anchorMax = _filterRect.anchorMax;
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = _filterRect.anchoredPosition - new Vector2(0f, _filterRect.sizeDelta.y);
+            rt.sizeDelta = new Vector2(_filterRect.sizeDelta.x, CategoryNames.Length * 30f);
+            _categoryPopup.transform.SetAsLastSibling();
+
+            var bg = _categoryPopup.AddComponent<Image>();
+            bg.color = UiBuilder.PanelBg;
+            var outline = _categoryPopup.AddComponent<Outline>();
+            outline.effectColor = UiBuilder.Border;
+            outline.effectDistance = new Vector2(1f, -1f);
+
+            var vlg = _categoryPopup.AddComponent<VerticalLayoutGroup>();
+            vlg.childForceExpandWidth = true; vlg.childForceExpandHeight = false;
+
+            for (int i = 0; i < CategoryNames.Length; i++)
+            {
+                string name = CategoryNames[i];
+                var b = UiBuilder.NewButton(_categoryPopup.transform, "Cat_" + name, "craft_row", name, 14);
+                var le = b.gameObject.AddComponent<LayoutElement>();
+                le.preferredHeight = 30f; le.minHeight = 30f;
+                b.onClick.AddListener(() => SelectCategory(name));
+            }
+        }
+
+        /// <summary>Apply the chosen station filter (null for "All") and reset the
+        /// selection so Refresh() picks the first recipe in the newly-filtered list.</summary>
+        void SelectCategory(string name)
+        {
+            if (_categoryLabel != null) _categoryLabel.text = name;
+            CloseCategoryPopup();
+            _selectedId = null;
+            StationType? station = name == "All" ? (StationType?)null : (StationType)Enum.Parse(typeof(StationType), name);
+            _model?.SetStationFilter(station);
+        }
 
         void Build()
         {
@@ -147,12 +244,27 @@ namespace LitIso.UI.InGame
             ccr.anchoredPosition = new Vector2(-12f, -12f);
             ccr.sizeDelta = new Vector2(40f, 40f);
 
+            // Category filter dropdown, sat above the recipe list (2026-06-13 owner
+            // request): lets the player narrow the list to one station so they don't
+            // have to scroll past recipes they don't need right now.
+            _filterParent = panel.transform;
+            _filterRect = UiBuilder.NewRect("Filter", panel.transform);
+            _filterRect.anchorMin = new Vector2(0f, 1f); _filterRect.anchorMax = new Vector2(0f, 1f);
+            _filterRect.pivot = new Vector2(0f, 1f);
+            _filterRect.anchoredPosition = new Vector2(24f, -56f);
+            _filterRect.sizeDelta = new Vector2(300f, 32f);
+
+            _categoryBtn = UiBuilder.NewButton(_filterRect, "CategoryBtn", "craft_row", "All", 16);
+            UiBuilder.Stretch(_categoryBtn.GetComponent<RectTransform>());
+            _categoryLabel = _categoryBtn.GetComponentInChildren<Text>();
+            _categoryBtn.onClick.AddListener(ToggleCategoryPopup);
+
             // Left: scrollable recipe list (300 wide).
             var listRect = UiBuilder.NewRect("List", panel.transform);
             listRect.anchorMin = new Vector2(0f, 0f); listRect.anchorMax = new Vector2(0f, 1f);
             listRect.pivot = new Vector2(0f, 0.5f);
             listRect.anchoredPosition = new Vector2(24f, 0f);
-            listRect.offsetMin = new Vector2(24f, 24f); listRect.offsetMax = new Vector2(324f, -60f);
+            listRect.offsetMin = new Vector2(24f, 24f); listRect.offsetMax = new Vector2(324f, -98f);
 
             var scroll = listRect.gameObject.AddComponent<ScrollRect>();
             scroll.horizontal = false; scroll.vertical = true;
@@ -195,6 +307,9 @@ namespace LitIso.UI.InGame
                 if (!string.IsNullOrEmpty(_selectedId) && _selectedMax > 0) _model?.Craft(_selectedId, _selectedMax);
             });
             _craftAllLabel = _craftAllBtn.GetComponentInChildren<Text>();
+            // "Craft All (99)" can be wider than the static "Craft All" label;
+            // shrink to fit rather than overflowing the button.
+            UiBuilder.FitText(_craftAllLabel);
             var car = _craftAllBtn.GetComponent<RectTransform>();
             car.anchorMin = new Vector2(1f, 0f); car.anchorMax = new Vector2(1f, 0f);
             car.pivot = new Vector2(1f, 0f);
@@ -244,6 +359,7 @@ namespace LitIso.UI.InGame
                 var lr = lbl.rectTransform;
                 lr.anchorMin = new Vector2(0f, 0f); lr.anchorMax = new Vector2(1f, 1f);
                 lr.offsetMin = new Vector2(56f, 0f); lr.offsetMax = new Vector2(-8f, 0f);
+                UiBuilder.FitText(lbl);
             }
             if (string.IsNullOrEmpty(_selectedId) && _model.RecipeCount > 0) SelectRow(_model.GetRecipe(0).id);
             else RefreshDetails();
@@ -275,7 +391,7 @@ namespace LitIso.UI.InGame
         {
             if (_detailsContainer == null) return;
             foreach (Transform c in _detailsContainer) Destroy(c.gameObject);
-            if (string.IsNullOrEmpty(_selectedId) || _model == null) return;
+            if (string.IsNullOrEmpty(_selectedId) || _model == null) { _detailsJobActive = false; return; }
             var d = _model.GetDetails(_selectedId);
 
             var head = UiBuilder.NewText(_detailsContainer, "Head", d.display, 22, TextAnchor.UpperLeft);
@@ -283,6 +399,7 @@ namespace LitIso.UI.InGame
             hr.anchorMin = new Vector2(0f, 1f); hr.anchorMax = new Vector2(1f, 1f);
             hr.pivot = new Vector2(0f, 1f);
             hr.anchoredPosition = new Vector2(0f, 0f); hr.sizeDelta = new Vector2(0f, 32f);
+            UiBuilder.FitText(head);
 
             var sub = UiBuilder.NewText(_detailsContainer, "Sub", "Ingredients", 16, TextAnchor.UpperLeft, UiBuilder.MutedCol);
             var sr = sub.rectTransform;
@@ -305,6 +422,7 @@ namespace LitIso.UI.InGame
                     tr.anchorMin = new Vector2(0f, 1f); tr.anchorMax = new Vector2(1f, 1f);
                     tr.pivot = new Vector2(0f, 1f);
                     tr.anchoredPosition = new Vector2(8f, y); tr.sizeDelta = new Vector2(0f, 22f);
+                    UiBuilder.FitText(t);
                     y -= 26f;
                 }
 
@@ -326,8 +444,65 @@ namespace LitIso.UI.InGame
                     tr.anchorMin = new Vector2(0f, 1f); tr.anchorMax = new Vector2(1f, 1f);
                     tr.pivot = new Vector2(0f, 1f);
                     tr.anchoredPosition = new Vector2(8f, y); tr.sizeDelta = new Vector2(0f, 22f);
+                    UiBuilder.FitText(t);
                     y -= 26f;
                 }
+            }
+
+            // Fuel requirement (e.g. furnace smelting needs wood).
+            if (!string.IsNullOrEmpty(d.fuelInfo))
+            {
+                y -= 6f;
+                var fuel = UiBuilder.NewText(_detailsContainer, "Fuel", d.fuelInfo, 16,
+                    TextAnchor.UpperLeft, UiBuilder.MutedCol);
+                var fr = fuel.rectTransform;
+                fr.anchorMin = new Vector2(0f, 1f); fr.anchorMax = new Vector2(1f, 1f);
+                fr.pivot = new Vector2(0f, 1f);
+                fr.anchoredPosition = new Vector2(0f, y); fr.sizeDelta = new Vector2(0f, 22f);
+                UiBuilder.FitText(fuel);
+                y -= 26f;
+            }
+
+            // Craft-time / in-progress indicator (Minecraft-style smelting bar).
+            _detailsJobActive = d.jobActive;
+            if (d.jobActive)
+            {
+                y -= 6f;
+                int pct = Mathf.RoundToInt(d.jobProgress01 * 100f);
+                var prog = UiBuilder.NewText(_detailsContainer, "Progress", $"Working... {pct}%", 16,
+                    TextAnchor.UpperLeft, new Color(0.55f, 0.85f, 0.55f, 1f));
+                var pr = prog.rectTransform;
+                pr.anchorMin = new Vector2(0f, 1f); pr.anchorMax = new Vector2(1f, 1f);
+                pr.pivot = new Vector2(0f, 1f);
+                pr.anchoredPosition = new Vector2(0f, y); pr.sizeDelta = new Vector2(0f, 22f);
+                UiBuilder.FitText(prog);
+                y -= 26f;
+
+                // Simple bar: background track + filled portion sized by progress.
+                var track = UiBuilder.NewImage(_detailsContainer, "ProgTrack", null, UiBuilder.SlotBg);
+                var trr = track.rectTransform;
+                trr.anchorMin = new Vector2(0f, 1f); trr.anchorMax = new Vector2(1f, 1f);
+                trr.pivot = new Vector2(0f, 1f);
+                trr.anchoredPosition = new Vector2(0f, y); trr.sizeDelta = new Vector2(0f, 16f);
+
+                var fill = UiBuilder.NewImage(track.transform, "ProgFill", null, new Color(0.40f, 0.78f, 0.45f, 1f));
+                var flr = fill.rectTransform;
+                flr.anchorMin = new Vector2(0f, 0f); flr.anchorMax = new Vector2(Mathf.Clamp01(d.jobProgress01), 1f);
+                flr.pivot = new Vector2(0f, 0.5f);
+                flr.offsetMin = Vector2.zero; flr.offsetMax = Vector2.zero;
+                y -= 24f;
+            }
+            else if (d.craftTimeSeconds > 0f)
+            {
+                y -= 6f;
+                var time = UiBuilder.NewText(_detailsContainer, "CraftTime", $"Time: {d.craftTimeSeconds:0.#}s", 16,
+                    TextAnchor.UpperLeft, UiBuilder.MutedCol);
+                var trr2 = time.rectTransform;
+                trr2.anchorMin = new Vector2(0f, 1f); trr2.anchorMax = new Vector2(1f, 1f);
+                trr2.pivot = new Vector2(0f, 1f);
+                trr2.anchoredPosition = new Vector2(0f, y); trr2.sizeDelta = new Vector2(0f, 22f);
+                UiBuilder.FitText(time);
+                y -= 26f;
             }
 
             // Tell the player exactly why the craft button is greyed out.
@@ -340,6 +515,7 @@ namespace LitIso.UI.InGame
                 wr.anchorMin = new Vector2(0f, 1f); wr.anchorMax = new Vector2(1f, 1f);
                 wr.pivot = new Vector2(0f, 1f);
                 wr.anchoredPosition = new Vector2(0f, y); wr.sizeDelta = new Vector2(0f, 22f);
+                UiBuilder.FitText(why);
             }
 
             _selectedMax = d.maxCraftable;

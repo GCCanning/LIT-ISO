@@ -36,15 +36,19 @@ public class WelcomeScreenManager : MonoBehaviour
     public float buttonHeight = 50f;
     public float spacing = 12f;
 
-    [Header("Palette")]
-    public Color panelBg = new Color(0.07f, 0.09f, 0.13f, 0.95f);
-    public Color panelBorder = new Color(0.30f, 0.36f, 0.42f, 1f);
-    public Color buttonBg = new Color(0.15f, 0.18f, 0.24f, 0.9f);
-    public Color buttonBgHover = new Color(0.22f, 0.26f, 0.34f, 1f);
-    public Color buttonText = new Color(0.95f, 0.91f, 0.74f, 1f);
-    public Color inputBg = new Color(0.05f, 0.06f, 0.09f, 0.9f);
-    public Color inputText = new Color(0.90f, 0.90f, 0.90f, 1f);
-    public Color labelText = new Color(0.75f, 0.75f, 0.75f, 1f);
+    [Header("Palette (LIT-ISO design system — LitIsoTheme)")]
+    // Defaults now mirror the approved design tokens so the menu matches the
+    // in-game panels out of the box. Inspector overrides still win.
+    public Color panelBg = LitIsoTheme.Panel;          // #15171C stone panel
+    public Color panelBorder = LitIsoTheme.Stone;      // #2c313c inset bevel
+    public Color buttonBg = LitIsoTheme.Raised;        // #23262E raised button
+    public Color buttonBgHover = LitIsoTheme.Hex("#2c303a");
+    public Color buttonText = LitIsoTheme.Parchment;   // #d8d4c8 parchment
+    public Color inputBg = LitIsoTheme.Hex("#0e1014");  // dark inset input field
+    public Color inputText = LitIsoTheme.ParchmentLit; // #e8e4d8
+    public Color labelText = LitIsoTheme.WarmTan;      // #8a8578 dim label
+    [Tooltip("Gold accent used for titles/headings + selected calling card.")]
+    public Color goldAccent = LitIsoTheme.Gold;        // #E8C468
 
     private Screen currentScreen = Screen.MainMenu;
     private Canvas mainCanvas;
@@ -53,8 +57,18 @@ public class WelcomeScreenManager : MonoBehaviour
     // World creation data
     private InputField worldNameInput;
     private InputField seedInput;
-    private Slider difficultySlider;
-    private Text difficultyLabel;
+    private int selectedDifficulty = 1; // 0 Easy, 1 Normal, 2 Hard
+    private readonly List<(int idx, Image bg, Text label)> diffSegmentCards = new();
+    private Text difficultyDescLabel;
+
+    // Difficulty options — labels, colours and copy transcribed verbatim from the
+    // LIT-ISO front-end design (diffData). Replaces the old slider.
+    private static readonly (string label, Color color, string desc)[] DifficultyOptions =
+    {
+        ("Easy",   LitIsoTheme.Green, "Forgiving foes, generous loot, no permadeath. A gentle way into the realm."),
+        ("Normal", LitIsoTheme.Gold,  "The intended balance — fair fights, meaningful scarcity, honest risk."),
+        ("Hard",   LitIsoTheme.Red,   "Punishing enemies, sparse resources, harsh nights. For seasoned survivors."),
+    };
 
     // Load game data
     private List<WorldSaveData> savedWorlds = new List<WorldSaveData>();
@@ -190,6 +204,11 @@ public class WelcomeScreenManager : MonoBehaviour
     {
         contentPanel = CreateMainPanel("MainMenu");
 
+        // Width of the widest header/content cell — the panel is fitted flush
+        // around this at the end of the method (owner request).
+        float headerWidth = 0f;
+        RectTransform titleRect = null;
+
         if (logoImage != null)
         {
             // Logo art provided → use it as the title wordmark.
@@ -202,6 +221,7 @@ public class WelcomeScreenManager : MonoBehaviour
             logoRect.anchoredPosition = new Vector2(0f, -24f);
             float aspect = (float)logoImage.rect.width / Mathf.Max(1f, logoImage.rect.height);
             logoRect.sizeDelta = new Vector2(logoHeight * aspect, logoHeight);
+            headerWidth = logoRect.sizeDelta.x;
 
             Image logo = logoGO.AddComponent<Image>();
             logo.sprite = logoImage;
@@ -211,31 +231,73 @@ public class WelcomeScreenManager : MonoBehaviour
         else
         {
             // No logo art → fall back to a styled text title.
-            Text title = CreateText("Title", contentPanel, "LIT-ISO", 52, buttonText, TextAnchor.MiddleCenter);
-            RectTransform titleRect = title.rectTransform;
+            Text title = CreateText("Title", contentPanel, "LIT-ISO", 52, goldAccent, TextAnchor.MiddleCenter);
+            titleRect = title.rectTransform;
             titleRect.anchorMin = new Vector2(0.5f, 1f);
             titleRect.anchorMax = new Vector2(0.5f, 1f);
             titleRect.pivot = new Vector2(0.5f, 1f);
             titleRect.anchoredPosition = new Vector2(0f, -40f);
             titleRect.sizeDelta = new Vector2(panelWidth - 40f, 60f);
+            headerWidth = MeasureTextWidth(title);
         }
 
         float buttonY = -120f;
         float buttonSpacing = buttonHeight + spacing;
+        var menuButtons = new List<RectTransform>();
 
         // Continue — only shown when at least one saved world exists.
         WorldSaveData mostRecent = GetMostRecentWorld();
         if (mostRecent != null)
         {
-            CreateMenuButton("ContinueBtn", contentPanel, "Continue", () => LaunchWorld(mostRecent), 0f, buttonY);
+            menuButtons.Add(CreateMenuButton("ContinueBtn", contentPanel, "Continue", () => LaunchWorld(mostRecent), 0f, buttonY));
             buttonY -= buttonSpacing;
         }
 
-        CreateMenuButton("NewGameBtn",  contentPanel, "New Game",  () => ShowScreen(Screen.CreateWorld), 0f, buttonY);
-        CreateMenuButton("CreationInstanceBtn", contentPanel, "Creation Instance", LaunchCreationInstance, 0f, buttonY - buttonSpacing);
-        CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame),    0f, buttonY - 2 * buttonSpacing);
-        CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 3 * buttonSpacing);
-        CreateMenuButton("QuitBtn",     contentPanel, "Quit",      () => Application.Quit(),             0f, buttonY - 4 * buttonSpacing);
+        menuButtons.Add(CreateMenuButton("NewGameBtn",  contentPanel, "New Game",  () => ShowScreen(Screen.CreateWorld), 0f, buttonY));
+        menuButtons.Add(CreateMenuButton("CreationInstanceBtn", contentPanel, "Creation Instance", LaunchCreationInstance, 0f, buttonY - buttonSpacing));
+        menuButtons.Add(CreateMenuButton("LoadGameBtn", contentPanel, "Load Game", () => ShowScreen(Screen.LoadGame),    0f, buttonY - 2 * buttonSpacing));
+        menuButtons.Add(CreateMenuButton("OptionsBtn",  contentPanel, "Options",   () => ShowScreen(Screen.Options),     0f, buttonY - 3 * buttonSpacing));
+        menuButtons.Add(CreateMenuButton("QuitBtn",     contentPanel, "Quit",      () => Application.Quit(),             0f, buttonY - 4 * buttonSpacing));
+
+        // Flush-fit pass (owner request): every button shares the width of the
+        // widest label, and the panel hugs that cell instead of the fixed
+        // panelWidth, so the card stays narrow and leaves the scene visible.
+        float widestLabel = 0f;
+        foreach (RectTransform btn in menuButtons)
+        {
+            Text label = btn.GetComponentInChildren<Text>();
+            if (label != null) widestLabel = Mathf.Max(widestLabel, MeasureTextWidth(label));
+        }
+
+        const float buttonPadX = 22f;   // text → button edge
+        const float panelPadX  = 20f;   // button → panel edge
+        float buttonWidth = Mathf.Clamp(widestLabel + 2f * buttonPadX, 160f, 460f);
+        foreach (RectTransform btn in menuButtons)
+            btn.sizeDelta = new Vector2(buttonWidth, buttonHeight);
+
+        float cellWidth = Mathf.Max(buttonWidth, headerWidth);
+        float fittedWidth = cellWidth + 2f * panelPadX;
+        float fittedHeight = 120f + (menuButtons.Count - 1) * buttonSpacing + buttonHeight + 28f;
+        contentPanel.sizeDelta = new Vector2(fittedWidth, Mathf.Max(fittedHeight, 320f));
+        if (titleRect != null)
+            titleRect.sizeDelta = new Vector2(fittedWidth - 16f, 60f);
+    }
+
+    /// <summary>
+    /// Natural single-line width of a label at its design font size. Best-fit and
+    /// wrapping are disabled during measurement so the box can be sized to the
+    /// text rather than the text shrinking into the box.
+    /// </summary>
+    private static float MeasureTextWidth(Text text)
+    {
+        bool fit = text.resizeTextForBestFit;
+        HorizontalWrapMode wrap = text.horizontalOverflow;
+        text.resizeTextForBestFit = false;
+        text.horizontalOverflow = HorizontalWrapMode.Overflow;
+        float width = text.preferredWidth;
+        text.resizeTextForBestFit = fit;
+        text.horizontalOverflow = wrap;
+        return width;
     }
 
     // -------------------------------------------------------------------------
@@ -260,24 +322,15 @@ public class WelcomeScreenManager : MonoBehaviour
         seedInput = CreateInputField("SeedInput", contentPanel, "e.g. 12345", y);
         y -= buttonHeight + spacing + 12f;
 
-        // Difficulty
+        // Difficulty — segmented Easy / Normal / Hard selector (design system).
         CreateLabel("DifficultyLabel", contentPanel, "Difficulty", y);
-        y -= 24f;
-        difficultySlider = CreateSlider("DifficultySlider", contentPanel, y, 0f, 2f, 1f);
-        difficultyLabel = CreateText("DifficultyValue", contentPanel, "Normal", 18, labelText, TextAnchor.MiddleCenter);
-        RectTransform diffLabelRect = difficultyLabel.rectTransform;
-        diffLabelRect.anchorMin = new Vector2(0.5f, 0f);
-        diffLabelRect.anchorMax = new Vector2(0.5f, 0f);
-        diffLabelRect.pivot = new Vector2(0.5f, 0f);
-        diffLabelRect.anchoredPosition = new Vector2(0f, -buttonHeight - spacing * 2);
-        diffLabelRect.sizeDelta = new Vector2(panelWidth - 40f, 24f);
-
-        difficultySlider.onValueChanged.AddListener(UpdateDifficultyLabel);
-        UpdateDifficultyLabel(1f);
+        y -= 30f;
+        BuildDifficultySelector(contentPanel, y);
+        SelectDifficulty(selectedDifficulty);
 
         // Buttons
         float btnY = -panelHeight + 60f;
-        CreateMenuButton("PlayBtn", contentPanel, "Play", OnCreateWorldPlay, -80f, btnY);
+        CreateMenuButton("PlayBtn", contentPanel, "Play", OnCreateWorldPlay, -80f, btnY, gold: true);
         CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.MainMenu), 80f, btnY);
     }
 
@@ -295,7 +348,7 @@ public class WelcomeScreenManager : MonoBehaviour
             seed = Random.Range(0, 999999).ToString();
         }
 
-        int difficulty = Mathf.RoundToInt(difficultySlider.value);
+        int difficulty = selectedDifficulty;
 
         WorldSaveData world = new WorldSaveData
         {
@@ -318,7 +371,12 @@ public class WelcomeScreenManager : MonoBehaviour
         // class selection happens in-world at day 7 (Class Selection Instance).
         // The CallingSelect screen is intentionally kept out of this flow — its
         // card UI will be recycled as the day-7 class offer screen.
-        LaunchWorld(world, null);
+        //
+        // Character creator (owner request 2026-06-12): appearance is chosen
+        // before the world loads. Confirm persists via LayeredAppearance.Save,
+        // then the trial launches.
+        if (contentPanel != null) contentPanel.gameObject.SetActive(false);
+        LitIso.CharacterCreator.CharacterCreatorUI.Show(_ => LaunchWorld(world, null));
     }
 
     /// <summary>Soft 0.22s fade-in for whichever screen was just built — menu
@@ -365,7 +423,7 @@ public class WelcomeScreenManager : MonoBehaviour
 
         contentPanel = CreateMainPanel("CallingSelect");
 
-        Text title = CreateText("CallingTitle", contentPanel, "Choose Your Calling", 36, buttonText, TextAnchor.MiddleCenter);
+        Text title = CreateText("CallingTitle", contentPanel, "Choose Your Calling", 36, goldAccent, TextAnchor.MiddleCenter);
         RectTransform titleRect = title.rectTransform;
         titleRect.anchorMin = new Vector2(0.5f, 1f);
         titleRect.anchorMax = new Vector2(0.5f, 1f);
@@ -400,7 +458,7 @@ public class WelcomeScreenManager : MonoBehaviour
         {
             if (pendingWorld != null && !string.IsNullOrEmpty(selectedCallingId))
                 LaunchWorld(pendingWorld, selectedCallingId);
-        }, -80f, btnY);
+        }, -80f, btnY, gold: true);
         CreateMenuButton("BackBtn", contentPanel, "Back", () => ShowScreen(Screen.CreateWorld), 80f, btnY);
     }
 
@@ -423,7 +481,7 @@ public class WelcomeScreenManager : MonoBehaviour
         callingCards.Add((id, cardBg, cardOutline));
 
         // Name (gold) + starting title (muted) across the top.
-        Text name = CreateText("Name", card, calling.Display, 20, new Color(1f, 0.85f, 0.35f, 1f), TextAnchor.UpperLeft);
+        Text name = CreateText("Name", card, calling.Display, 20, goldAccent, TextAnchor.UpperLeft);
         name.raycastTarget = false;
         RectTransform nameRect = name.rectTransform;
         nameRect.anchorMin = new Vector2(0f, 1f); nameRect.anchorMax = new Vector2(1f, 1f);
@@ -458,7 +516,7 @@ public class WelcomeScreenManager : MonoBehaviour
     {
         selectedCallingId = id;
         Color selBg     = new Color(0.20f, 0.24f, 0.32f, 1f);
-        Color selBorder = new Color(0.98f, 0.85f, 0.45f, 1f);
+        Color selBorder = goldAccent;
         foreach (var card in callingCards)
         {
             bool sel = card.id == id;
@@ -484,7 +542,7 @@ public class WelcomeScreenManager : MonoBehaviour
     {
         contentPanel = CreateMainPanel("LoadGame");
 
-        Text title = CreateText("LoadTitle", contentPanel, "Load World", 40, buttonText, TextAnchor.MiddleCenter);
+        Text title = CreateText("LoadTitle", contentPanel, "Load World", 40, goldAccent, TextAnchor.MiddleCenter);
         RectTransform titleRect = title.rectTransform;
         titleRect.anchorMin = new Vector2(0.5f, 1f);
         titleRect.anchorMax = new Vector2(0.5f, 1f);
@@ -625,7 +683,7 @@ public class WelcomeScreenManager : MonoBehaviour
     {
         contentPanel = CreateMainPanel("Options");
 
-        Text title = CreateText("OptionsTitle", contentPanel, "Options", 40, buttonText, TextAnchor.MiddleCenter);
+        Text title = CreateText("OptionsTitle", contentPanel, "Options", 40, goldAccent, TextAnchor.MiddleCenter);
         RectTransform titleRect = title.rectTransform;
         titleRect.anchorMin = new Vector2(0.5f, 1f);
         titleRect.anchorMax = new Vector2(0.5f, 1f);
@@ -799,6 +857,7 @@ public class WelcomeScreenManager : MonoBehaviour
             bgImage.sprite = bg;
             bgImage.type = Image.Type.Simple;
             bgImage.color = Color.white;
+            bgImage.raycastTarget = false;
 
             // Cover-fit: fill the screen while preserving aspect (crops the overflow),
             // so the splash never stretches/distorts at any resolution or aspect ratio.
@@ -809,9 +868,9 @@ public class WelcomeScreenManager : MonoBehaviour
             // Cinematic treatment (owner request): slow Ken Burns drift on the art
             // plus a dark scrim so menu text stays readable over any background.
             bgGO.AddComponent<MenuCinematicBackground>();
-            // Ambient animation loop, auto-enabled when frames exist at
-            // Resources/UI/Menu/background_frames (disables itself otherwise).
-            bgGO.AddComponent<MenuBackgroundFlipbook>();
+            // Keep the old flipbook disabled here: background_frames currently
+            // belong to the previous menu image, while this scene is animated by
+            // procedural light/particles until a matching frame loop is authored.
 
             GameObject scrimGO = new GameObject("BackgroundScrim", typeof(RectTransform));
             scrimGO.transform.SetParent(mainCanvas.transform, false);
@@ -825,11 +884,18 @@ public class WelcomeScreenManager : MonoBehaviour
             scrim.color = new Color(0.02f, 0.03f, 0.05f, 0.45f);
             scrim.raycastTarget = false;
 
+            // Subtle living light over the landscape: sunrise wash from the left
+            // horizon and a warm campfire pulse at the foreground fire.
+            GameObject lightingGO = new GameObject("SceneLighting", typeof(RectTransform));
+            lightingGO.transform.SetParent(mainCanvas.transform, false);
+            lightingGO.transform.SetSiblingIndex(2);
+            lightingGO.AddComponent<MenuSceneLighting>();
+
             // Ambient particle layers (embers / fireflies / stars) — above the
             // scrim so they read bright against it, below all menu content.
             GameObject ambientGO = new GameObject("AmbientParticles", typeof(RectTransform));
             ambientGO.transform.SetParent(mainCanvas.transform, false);
-            ambientGO.transform.SetSiblingIndex(2);
+            ambientGO.transform.SetSiblingIndex(3);
             RectTransform ambientRT = (RectTransform)ambientGO.transform;
             ambientRT.anchorMin = Vector2.zero;
             ambientRT.anchorMax = Vector2.one;
@@ -902,7 +968,7 @@ public class WelcomeScreenManager : MonoBehaviour
         return rt;
     }
 
-    private void CreateMenuButton(string name, Transform parent, string text, System.Action onClick, float x, float y)
+    private RectTransform CreateMenuButton(string name, Transform parent, string text, System.Action onClick, float x, float y, bool gold = false)
     {
         GameObject go = new GameObject(name, typeof(RectTransform));
         go.transform.SetParent(parent, false);
@@ -937,26 +1003,22 @@ public class WelcomeScreenManager : MonoBehaviour
         }
         else
         {
-            // Procedural fallback: flat fill + outline + colour-tint hover.
-            bgImage.color = buttonBg;
-            Outline outline = go.AddComponent<Outline>();
-            outline.effectColor = panelBorder;
-            outline.effectDistance = new Vector2(1.5f, -1.5f);
-
-            ColorBlock colors = button.colors;
-            colors.normalColor = buttonBg;
-            colors.highlightedColor = buttonBgHover;
-            colors.pressedColor = new Color(0.10f, 0.12f, 0.18f, 1f);
-            colors.selectedColor = buttonBgHover;
-            button.colors = colors;
+            // No sprite skin: use the shared design-system button (gold for the
+            // primary action, stone otherwise) with the 5px hard bottom shadow
+            // + 4px press offset.
+            LitIsoTheme.StyleButton(button, bgImage,
+                gold ? LitIsoTheme.ButtonStyle.Gold : LitIsoTheme.ButtonStyle.Stone);
         }
 
-        Text btnText = CreateText("Text", rt, text, 20, this.buttonText, TextAnchor.MiddleCenter);
+        Text btnText = CreateText("Text", rt, text, 20,
+            (buttonImage == null && gold) ? LitIsoTheme.GoldText : this.buttonText,
+            TextAnchor.MiddleCenter);
         RectTransform textRect = btnText.rectTransform;
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
         textRect.offsetMin = Vector2.zero;
         textRect.offsetMax = Vector2.zero;
+        return rt;
     }
 
     private void CreateSmallButton(string name, Transform parent, string text, System.Action onClick, float x, float y)
@@ -1141,7 +1203,11 @@ public class WelcomeScreenManager : MonoBehaviour
         text.text = content;
         text.color = textColor;
         text.alignment = anchor;
-        LitIsoFont.Apply(text, size);
+        // Design-system fonts: headings (>=19) render in the display face
+        // ("Press Start 2P"); smaller labels in the readable body face
+        // ("Pixelify Sans"). LitIsoFont still owns sizing + the text scale.
+        if (size >= 19) LitIsoTheme.ApplyDisplay(text, size, textColor);
+        else            LitIsoTheme.ApplyBody(text, size, textColor);
         // Owner feedback: menu text must NEVER exceed its box. Wrap + best-fit
         // shrinks long labels into their rect instead of spilling out.
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -1149,6 +1215,14 @@ public class WelcomeScreenManager : MonoBehaviour
         text.resizeTextForBestFit = true;
         text.resizeTextMaxSize = text.fontSize;
         text.resizeTextMinSize = 11;
+        // Hard pixel drop-shadow on big display headings (mockup: 3px 3px 0 #000).
+        if (size >= 30 && text.GetComponent<Shadow>() == null)
+        {
+            var sh = go.AddComponent<Shadow>();
+            sh.effectColor = LitIsoTheme.Base;
+            sh.effectDistance = new Vector2(3f, -3f);
+            sh.useGraphicAlpha = true;
+        }
         return text;
     }
 }
