@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO — Biome Variant Cards</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;min-height:100vh}
+header{background:#1d2027;border-bottom:1px solid #2a2f3a;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:15px;font-weight:700;color:#e8c468}
+header .sub{font-size:11px;color:#889}
+#toolbar{background:#191c22;border-bottom:1px solid #2a2f3a;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#toolbar button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 12px;cursor:pointer;font-size:12px;transition:background .15s}
+#toolbar button:hover{border-color:#888}
+#toolbar button.active{background:#3a3018;border-color:#e8c468;color:#e8c468}
+#search{background:#22262e;border:1px solid #3a4150;border-radius:4px;padding:5px 10px;color:#ddd;font-size:12px;width:200px}
+#search:focus{outline:none;border-color:#e8c468}
+#count{font-size:11px;color:#556;margin-left:auto}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;padding:14px}
+.biome-group{grid-column:1/-1;margin-top:4px}
+.biome-group h2{font-size:12px;font-weight:700;color:#889;text-transform:uppercase;letter-spacing:0.08em;padding:0 2px 8px;border-bottom:1px solid #2a2f3a;margin-bottom:12px}
+
+.card{background:#1d2027;border:2px solid #2a2f3a;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+.card:hover{border-color:#3d4456}
+.card.hidden{display:none}
+.card-head{padding:9px 12px;background:#22262e;display:flex;align-items:flex-start;gap:8px}
+.card-head .vtag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;border-radius:3px;padding:2px 6px;flex-shrink:0;margin-top:2px}
+.card-head .info{flex:1;min-width:0}
+.card-head .vname{font-size:13px;font-weight:700;color:#e8c468;line-height:1.2}
+.card-head .vdesc{font-size:11px;color:#889;line-height:1.45;margin-top:3px}
+
+.assets-row{padding:10px 12px;border-top:1px solid #23262d;display:flex;gap:14px}
+.asset-group{flex:1;min-width:0}
+.asset-group h4{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#556;margin-bottom:6px}
+.swatches{display:flex;flex-wrap:wrap;gap:3px}
+.swatch{width:36px;height:36px;border-radius:3px;overflow:hidden;background:#12141a;border:1px solid #2a2f3a;display:flex;align-items:center;justify-content:center;cursor:default;position:relative}
+.swatch img{width:100%;height:100%;image-rendering:pixelated;object-fit:cover}
+.swatch:hover .tip{display:block}
+.tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#12141a;border:1px solid #3a4150;border-radius:4px;padding:3px 6px;font-size:9px;color:#ccc;white-space:nowrap;z-index:100;pointer-events:none}
+.prop-swatch{width:52px;height:52px}
+.prop-swatch img{object-fit:contain;padding:2px}
+
+.mob-row{padding:9px 12px;border-top:1px solid #23262d;display:flex;align-items:flex-start;gap:10px}
+.mob-icon{width:32px;height:32px;border-radius:4px;background:#2a2f3a;border:1px solid #3a4150;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.mob-info{flex:1;min-width:0}
+.mob-name{font-size:12px;font-weight:700;color:#c8a850}
+.mob-desc{font-size:10px;color:#778;line-height:1.45;margin-top:2px}
+.drops{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.drop-chip{font-size:9px;color:#667;background:#22262e;border-radius:3px;padding:1px 5px;font-family:monospace}
+
+/* biome tints */
+.vtag.meadow{background:#1e3a1e;color:#6cba6c}
+.vtag.forest{background:#1a3020;color:#4ab874}
+.vtag.mountain{background:#2a2d30;color:#8aafcc}
+.vtag.snow{background:#222d3a;color:#aaccee}
+.vtag.beach{background:#2a2a18;color:#c8b060}
+.vtag.dungeon{background:#1e1a2e;color:#9a80cc}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗺 Biome Variant Cards</h1>
+  <span class="sub">21 variants · 6 biomes · tiles + props + mobs · for worldgen sub-zone integration</span>
+</header>
+
+<div id="toolbar">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="meadow">🌿 Meadow</button>
+  <button data-filter="forest">🌲 Forest</button>
+  <button data-filter="mountain">⛰ Mountain</button>
+  <button data-filter="snow">❄ Snow</button>
+  <button data-filter="beach">🏖 Beach</button>
+  <button data-filter="dungeon">🪨 Dungeon</button>
+  <input id="search" type="text" placeholder="Search variant name…">
+  <span id="count"></span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script src="assets.js"></script>
+<script>
+// ── asset path lookup ──────────────────────────────────────────────────────
+const AMAP = {};
+if(typeof ASSETS !== 'undefined'){
+  ASSETS.forEach(a => { AMAP[a.name] = a.path; });
+}
+function assetPath(id){
+  if(AMAP[id]) return AMAP[id];
+  // Fallback: try common paths
+  return `assets/tile/${id}.png`;
+}
+
+// ── variant data (mirrors biome_variations.json) ───────────────────────────
+const VARIANTS = [
+  // ── MEADOW ──
+  { biome:'meadow', id:'meadow_sunlit', name:'Sunlit Meadow',
+    desc:'Open pastoral grassland, full sun. Flower patches are the biome signature — sparse trees, clear traversal lanes.',
+    tiles:['plains2_02','plains2_05','plains2_07','plains_flower_grass','plains_grass_tufts'],
+    props:['plains_bush_v2_0_big','flower','tuft'],
+    mob:{ name:'Fernwhisk Hare', icon:'🐇', desc:'A fast skittish rabbit with oversized ears and a flower-spotted coat. Bolts at the first sign of movement.', drops:['meadow_fur','herb_bundle'] }
+  },
+  { biome:'meadow', id:'meadow_glade', name:'Overgrown Glade',
+    desc:'Darker, more verdant meadow near the forest edge. Willows and rock outcrops dominate.',
+    tiles:['plains2_11','plains2_13','forest_grass_base','plains_grass_tufts','forest_dark_underbrush'],
+    props:['plains_willow','plains_rock_v2_0_big','plains_bush_v2_2'],
+    mob:{ name:'Thornback Stag', icon:'🦌', desc:'A large deer with thorn-wrapped antlers. Peaceful grazer that turns aggressive when cornered.', drops:['hide_thick','thornwood_shard'] }
+  },
+  { biome:'meadow', id:'meadow_dry', name:'Dry Grassland',
+    desc:'Pale, wind-dried grass near a desert transition. Cracked earth shows through thinning turf.',
+    tiles:['plains2_14','plains2_00','plains2_02','badlands_1','plains_packed_path'],
+    props:['plains_dry_bush','plains_rock_v2_1','shared_gray_rock'],
+    mob:{ name:'Dusttail Lizard', icon:'🦎', desc:'A golden-scaled lizard that basks on sun-warmed rocks. Deceptively fast when threatened.', drops:['lizard_scale','dried_herb'] }
+  },
+  // ── FOREST ──
+  { biome:'forest', id:'forest_oak', name:'Oak Canopy',
+    desc:'Dense oak groves on a lush plains2 floor. Heavy canopy walls, clearings cut between grove clusters.',
+    tiles:['plains2_11','plains2_13','plains2_15','forest_leaf_litter','forest_dark_underbrush'],
+    props:['forest_oak_tree','forest_moss_bush','forest_fern'],
+    mob:{ name:'Ironbark Boar', icon:'🐗', desc:'A heavy boar with bark-like hide plates that absorb blows. Charges hard when disturbed from its rooting.', drops:['boar_hide','ironbark_splinter'] }
+  },
+  { biome:'forest', id:'forest_mushroom', name:'Mushroom Dell',
+    desc:'Dark, mossy hollow where canopy light barely reaches. Toadstools cluster around ancient stumps.',
+    tiles:['forest_floor','forest_moss_grass','plains2_10','plains2_12','forest_dark_underbrush'],
+    props:['forest_mushrooms','forest_stump','forest_fern'],
+    mob:{ name:'Sporecap Lurker', icon:'🍄', desc:'A camouflaged creature shaped like a large toadstool cap. Perfectly still until a player steps within range.', drops:['spore_sac','mycelium_clump'] }
+  },
+  { biome:'forest', id:'forest_pine', name:'Ancient Pines',
+    desc:'Tall snow-dusted conifers with sparse undergrowth. Quieter and colder than oak groves. Dead trees mark lightning strikes.',
+    tiles:['plains2_02','plains2_06','plains2_08','forest_grass_tufts','forest_moss_grass'],
+    props:['forest_pine','forest_pine_young','forest_dead_tree'],
+    mob:{ name:'Ashwing Owl', icon:'🦉', desc:'A large spectral owl that glides without sound. Only appears at dusk. Its gaze inflicts a brief Blind status.', drops:['ash_feather','night_crystal'] }
+  },
+  { biome:'forest', id:'forest_deadfall', name:'Deadfall Clearing',
+    desc:'A clearing inside deep forest where old trees have collapsed. Stumps and logs on bare earth.',
+    tiles:['forest_floor','forest_leaf_litter','plains2_02','forest_grass_tufts','forest_rich_dirt'],
+    props:['forest_stump','forest_dead_tree','forest_mushrooms'],
+    mob:{ name:'Greyback Wolf', icon:'🐺', desc:'A pack hunter that ambushes from the treeline bordering clearings. Rarely alone — always check the shadows.', drops:['wolf_pelt','bone_shard'] }
+  },
+  // ── MOUNTAIN ──
+  { biome:'mountain', id:'mountain_foothills', name:'Grassy Foothills',
+    desc:'Lower slopes where grass still grows between stone outcrops. Copper veins surface in the rock.',
+    tiles:['grass_3','plains_pale_stone_path','mountain_stone_09','plains2_04','mountain_stone_03'],
+    props:['plains_rock_v2_0_big','ore_copper','forest_pine_young'],
+    mob:{ name:'Ridgeback Ram', icon:'🐏', desc:'A mountain goat with stone-plated brow horns. Nimble on any slope. Charges repeatedly if you stay above it.', drops:['mountain_wool','horn_fragment'] }
+  },
+  { biome:'mountain', id:'mountain_alpine', name:'Alpine Meadow',
+    desc:'High-altitude meadow where plains2 tiles mix with weathered stone. Cold wind, short grass, long views.',
+    tiles:['plains2_00','plains2_14_new01','plains2_08_new01','plains2_04','mountain_stone_08'],
+    props:['ore_copper','ore_iron','plains_rock_v2_2'],
+    mob:{ name:'Stonetalon Eagle', icon:'🦅', desc:'A large eagle with stone-grey feathers. Dives from altitude with enough force to stagger the player.', drops:['eagle_feather','talon_shard'] }
+  },
+  { biome:'mountain', id:'mountain_crag', name:'Craggy Summit',
+    desc:'Wind-scoured rock and new-variant tile faces. Stone breaks through the thinning grass. Silver ore surfaces.',
+    tiles:['plains2_02_new03','mountain_stone_13_new03','mountain_stone_03','plains2_08_new01','mountain_stone_05'],
+    props:['ore_iron','ore_silver','shared_gray_rock'],
+    mob:{ name:'Frostclimber Troll', icon:'🧌', desc:'A pale grey troll that hunches motionless against rock faces. Slow — but each hit staggers. Regenerates if left alone.', drops:['troll_stone','frost_gland'] }
+  },
+  { biome:'mountain', id:'mountain_snowcap', name:'Snowcap Peak',
+    desc:'The highest reachable band. Crisp blue-grey stone under thin snow crust. Starmetal surfaces rarely. Wisps drift at night.',
+    tiles:['mountain_stone_14','mountain_stone_05','mountain_stone_14_new01','plains2_02_new03','mountain_stone_09'],
+    props:['ore_silver','ore_starmetal','wisp'],
+    mob:{ name:'Voidstone Elemental', icon:'💠', desc:'A floating mass of cracked rock infused with starmetal energy. Rare spawn. Emits a gravity-pull aura.', drops:['void_ore','starmetal_shard'] }
+  },
+  // ── SNOW ──
+  { biome:'snow', id:'snow_plains', name:'Frost Plains',
+    desc:'Open flat snowfield — the clean white canvas. Lone pines break the horizon. Wolves hunt between rolling crests.',
+    tiles:['snow2_03','snow2_04','snow2_07','snow2_00','snow2_01'],
+    props:['forest_pine','plains_rock_v2_0','forest_pine_young'],
+    mob:{ name:'Frostback Wolf', icon:'🐺', desc:'White-furred pack hunters. Faster and hardier than forest wolves. One distracts while others flank.', drops:['frost_pelt','ice_fang'] }
+  },
+  { biome:'snow', id:'snow_deadwood', name:'Frozen Deadwood',
+    desc:'Open snow littered with fallen tree corpses. Stumps half-buried, dead branches reaching from drifts.',
+    tiles:['snow2_03','snow2_03_new01','snow2_04_new02','snow2_12','snow2_13'],
+    props:['forest_dead_tree','forest_stump','log'],
+    mob:{ name:'Hollowbone Wraith', icon:'👻', desc:'A spirit inhabiting hollow dead tree cores. Emerges as a wisp that circles its host before attacking.', drops:['soul_frost','wraith_ash'] }
+  },
+  { biome:'snow', id:'snow_ice', name:'Ice Field',
+    desc:'Frozen ground dominated by ice patches. Slippery terrain. Silver ore breaks through frozen rock. Wisps gather at night.',
+    tiles:['snow2_10','snow2_11','snow2_07','snow2_03_new03','snow2_00_new03'],
+    props:['wisp','plains_rock_v2_2','ore_silver'],
+    mob:{ name:'Glacial Shard Crab', icon:'🦀', desc:'A large crustacean with an ice-crystal shell that deflects blows. Emerges from frozen lake margins.', drops:['ice_chitin','glacial_water'] }
+  },
+  // ── BEACH ──
+  { biome:'beach', id:'beach_shore', name:'Sandy Shore',
+    desc:'The classic beach — clean sand at h1, deep water visible at h0. Minimal props. Safe arrival zone.',
+    tiles:['sand_06','sand_04','sand_05','water_deep','water_shallow'],
+    props:['shore_stone','shared_gray_rock','plains_rock_v2_0_sm'],
+    mob:{ name:'Sandscuttler Crab', icon:'🦀', desc:'A small fast crab that zips along the waterline. Harmless alone — dangerous in swarms of 4-6.', drops:['crab_shell','sea_salt'] }
+  },
+  { biome:'beach', id:'beach_tidepool', name:'Rocky Tidepool',
+    desc:'More exposed stone, darker wet sand, dense shore rocks. Boulders jut from the shallows.',
+    tiles:['sand_06','sand_04','water_deep','water_shallow','sand_05'],
+    props:['shore_stone','plains_rock_v2_0_big','shared_gray_rock'],
+    mob:{ name:'Brineback Turtle', icon:'🐢', desc:'A sea turtle that hauls onto rocks to rest. Slow on land but its shell deflects most attacks. Passive unless cornered.', drops:['shell_plate','brine_algae'] }
+  },
+  { biome:'beach', id:'beach_driftwood', name:'Driftwood Shore',
+    desc:'Higher dry shore — old waterlogged logs and stumps washed up. Seagulls nest in the debris.',
+    tiles:['sand_06','sand_09','sand_11','sand_05','sand_04'],
+    props:['log','shore_stone','plains_rock_v2_0'],
+    mob:{ name:'Razorwing Gull', icon:'🐦', desc:'An aggressive seagull with blade-edged wings. Dive-bombs anything near its driftwood nest. Fast, low HP.', drops:['razor_quill','sea_pearl'] }
+  },
+  // ── DUNGEON ──
+  { biome:'dungeon', id:'dungeon_vault', name:'Stone Vault',
+    desc:'Standard dungeon entry tier — grey cut-stone floors, brazier light, wooden chests. Predictable layout.',
+    tiles:['dungeon2_00','dungeon2_01','dungeon2_02','dungeon2_03','dungeon2_12'],
+    props:['brazier','dungeon_chest_wood','candle_lantern'],
+    mob:{ name:'Crypt Shambler', icon:'💀', desc:'A slow undead guard in corroded stone armour. Patrols predictable routes. Telegraphs attacks clearly.', drops:['bone_fragment','rusted_key'] }
+  },
+  { biome:'dungeon', id:'dungeon_lava', name:'Lava Vein Depths',
+    desc:'Lower dungeon where the floor glows with orange ore-cracks. Heat everywhere. Braziers line every corridor.',
+    tiles:['dungeon2_05','dungeon2_04','dungeon2_00','dungeon2_01','dungeon2_06'],
+    props:['brazier','ore_copper','torch_standing'],
+    mob:{ name:'Emberskin Crawler', icon:'🦎', desc:'A four-legged lizard with molten patches on its hide. Leaves scorched footprints. Explodes on death.', drops:['ember_scale','magma_gland'] }
+  },
+  { biome:'dungeon', id:'dungeon_corrupted', name:'Corrupted Halls',
+    desc:'Mossy, fungal-overtaken stone. Walls weep green ooze. Mushroom clusters grow from every crack.',
+    tiles:['dungeon2_08','dungeon2_15','dungeon2_03','dungeon2_09','dungeon2_10'],
+    props:['forest_mushrooms','wisp','dungeon_chest_wood'],
+    mob:{ name:'Veinmold Lurker', icon:'🧟', desc:'A fungal-corrupted humanoid with mold-plate armour. Releases a spore cloud on death that inflicts Poison.', drops:['corruption_dust','mold_spore'] }
+  },
+  { biome:'dungeon', id:'dungeon_sanctum', name:'Crystal Sanctum',
+    desc:'Deepest tier — walls veined with mana crystals. Geometric floor patterns. Tightly guarded by magical constructs.',
+    tiles:['dungeon2_11','dungeon2_12','dungeon2_13','dungeon2_14','dungeon2_00'],
+    props:['ore_manacrystal','candle_lantern','dungeon_chest_wood'],
+    mob:{ name:'Prismatic Sentinel', icon:'🔮', desc:'A golem built from mana crystals. Immune to magic damage. Shatters on death releasing homing crystal shards.', drops:['mana_shard','prismatic_dust'] }
+  }
+];
+
+const BIOME_LABELS = {
+  meadow:'🌿 Meadow', forest:'🌲 Forest', mountain:'⛰ Mountain',
+  snow:'❄ Snow', beach:'🏖 Beach', dungeon:'🪨 Dungeon'
+};
+
+// ── PROP path resolver ─────────────────────────────────────────────────────
+const PROP_SUBDIRS = {
+  forest_oak_tree:'prop', forest_deep_oak_tree:'prop', forest_moss_bush:'prop',
+  forest_pine:'prop/review_sync/ready_no_overwrite/forest',
+  forest_pine_young:'prop/review_sync/ready_no_overwrite/forest',
+  forest_dead_tree:'prop/review_sync/ready_no_overwrite/forest',
+  forest_fern:'prop/review_sync/ready_no_overwrite/forest',
+  forest_mushrooms:'prop/review_sync/ready_no_overwrite/forest',
+  forest_stump:'prop/review_sync/ready_no_overwrite/forest',
+  plains_rock_v2_0_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_rock_v2_1_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_rock_v2_2_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_rock_v2_3_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_bush_v2_0_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_bush_v2_1_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_bush_v2_2_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_bush_v2_3_big:'prop/review_sync/ready_no_overwrite/plains',
+  plains_willow:'prop/review_sync/ready_no_overwrite/plains',
+  plains_tree_v2_0_young:'prop/review_sync/ready_no_overwrite/plains',
+  plains_tree_v2_1_young:'prop/review_sync/ready_no_overwrite/plains',
+  plains_tree_v2_3_young:'prop/review_sync/ready_no_overwrite/plains',
+  ore_copper:'prop/review_sync/ready_no_overwrite/ores',
+  ore_iron:'prop/review_sync/ready_no_overwrite/ores',
+  ore_silver:'prop/review_sync/ready_no_overwrite/ores',
+  ore_gold:'prop/review_sync/ready_no_overwrite/ores',
+  ore_manacrystal:'prop/review_sync/ready_no_overwrite/ores',
+  ore_starmetal:'prop/review_sync/ready_no_overwrite/ores',
+  wisp:'prop/review_sync/ready_no_overwrite/ambient',
+  glowbug:'prop/review_sync/ready_no_overwrite/ambient',
+  brazier:'prop/review_sync/ready_no_overwrite/lights',
+  campfire_new:'prop/review_sync/ready_no_overwrite/lights',
+  candle_lantern:'prop/review_sync/ready_no_overwrite/lights',
+  lantern_post:'prop/review_sync/ready_no_overwrite/lights',
+  torch_standing:'prop/review_sync/ready_no_overwrite/lights',
+  dungeon_chest_wood:'prop/review_sync/ready_no_overwrite/chest',
+};
+
+function propPath(id){
+  if(AMAP[id]) return AMAP[id];
+  const sub = PROP_SUBDIRS[id];
+  if(sub) return `assets/${sub}/${id}.png`;
+  return `assets/prop/${id}.png`;
+}
+function tilePath(id){
+  if(AMAP[id]) return AMAP[id];
+  return `assets/tile/${id}.png`;
+}
+
+// ── BUILD UI ───────────────────────────────────────────────────────────────
+const grid = document.getElementById('grid');
+let currentFilter = 'all';
+let searchTerm = '';
+
+function buildGrid(){
+  grid.innerHTML = '';
+  const biomes = ['meadow','forest','mountain','snow','beach','dungeon'];
+  let visCount = 0;
+
+  biomes.forEach(biome => {
+    const group = VARIANTS.filter(v => v.biome === biome);
+    const visible = group.filter(v => matchesFilter(v));
+    if(visible.length === 0) return;
+
+    const section = document.createElement('div');
+    section.className = 'biome-group';
+    section.innerHTML = `<h2>${BIOME_LABELS[biome]} — ${visible.length} variant${visible.length>1?'s':''}</h2>`;
+    grid.appendChild(section);
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;grid-column:1/-1';
+    grid.appendChild(row);
+
+    visible.forEach(v => {
+      visCount++;
+      row.appendChild(buildCard(v));
+    });
+  });
+
+  document.getElementById('count').textContent = `${visCount} of ${VARIANTS.length} variants`;
+}
+
+function matchesFilter(v){
+  if(currentFilter !== 'all' && v.biome !== currentFilter) return false;
+  if(searchTerm && !v.name.toLowerCase().includes(searchTerm)) return false;
+  return true;
+}
+
+function buildCard(v){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.biome = v.biome;
+
+  // head
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  head.innerHTML = `
+    <span class="vtag ${v.biome}">${BIOME_LABELS[v.biome].split(' ')[1]}</span>
+    <div class="info">
+      <div class="vname">${v.name}</div>
+      <div class="vdesc">${v.desc}</div>
+    </div>`;
+  card.appendChild(head);
+
+  // assets
+  const assets = document.createElement('div');
+  assets.className = 'assets-row';
+
+  const tileGroup = document.createElement('div');
+  tileGroup.className = 'asset-group';
+  tileGroup.innerHTML = '<h4>Tiles</h4>';
+  const tileSwatches = document.createElement('div');
+  tileSwatches.className = 'swatches';
+  v.tiles.forEach(tid => {
+    const sw = document.createElement('div');
+    sw.className = 'swatch';
+    sw.innerHTML = `<img src="${tilePath(tid)}" loading="lazy" onerror="this.style.opacity=0.2"><span class="tip">${tid}</span>`;
+    tileSwatches.appendChild(sw);
+  });
+  tileGroup.appendChild(tileSwatches);
+  assets.appendChild(tileGroup);
+
+  const propGroup = document.createElement('div');
+  propGroup.className = 'asset-group';
+  propGroup.innerHTML = '<h4>Props</h4>';
+  const propSwatches = document.createElement('div');
+  propSwatches.className = 'swatches';
+  v.props.forEach(pid => {
+    const sw = document.createElement('div');
+    sw.className = 'swatch prop-swatch';
+    sw.innerHTML = `<img src="${propPath(pid)}" loading="lazy" onerror="this.style.opacity=0.2"><span class="tip">${pid}</span>`;
+    propSwatches.appendChild(sw);
+  });
+  propGroup.appendChild(propSwatches);
+  assets.appendChild(propGroup);
+  card.appendChild(assets);
+
+  // mob
+  const mob = document.createElement('div');
+  mob.className = 'mob-row';
+  const drops = v.mob.drops.map(d=>`<span class="drop-chip">${d}</span>`).join('');
+  mob.innerHTML = `
+    <div class="mob-icon">${v.mob.icon}</div>
+    <div class="mob-info">
+      <div class="mob-name">${v.mob.name}</div>
+      <div class="mob-desc">${v.mob.desc}</div>
+      <div class="drops">${drops}</div>
+    </div>`;
+  card.appendChild(mob);
+
+  return card;
+}
+
+// ── EVENTS ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('#toolbar button[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#toolbar button[data-filter]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    buildGrid();
+  });
+});
+document.getElementById('search').addEventListener('input', e => {
+  searchTerm = e.target.value.toLowerCase().trim();
+  buildGrid();
+});
+
+buildGrid();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

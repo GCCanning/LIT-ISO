@@ -1,0 +1,264 @@
+{
+ "generatedBy": "claude-preassembled",
+ "interiors": [
+  {
+   "building": "tavern",
+   "W": 8,
+   "H": 8,
+   "floorTile": "tp_floor_brick",
+   "floorCells": [
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     5,
+     2
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     5,
+     3
+    ],
+    [
+     6,
+     3
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     5,
+     4
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     2,
+     5
+    ],
+    [
+     3,
+     5
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     5,
+     5
+    ],
+    [
+     6,
+     5
+    ],
+    [
+     1,
+     6
+    ],
+    [
+     2,
+     6
+    ],
+    [
+     3,
+     6
+    ],
+    [
+     4,
+     6
+    ],
+    [
+     5,
+     6
+    ],
+    [
+     6,
+     6
+    ]
+   ],
+   "props": [
+    {
+     "id": "tp_wall_windows",
+     "x": 2,
+     "y": 2,
+     "flip": false,
+     "scale": 1.35,
+     "lift": 0.2
+    },
+    {
+     "id": "tp_floor_wood",
+     "x": 5,
+     "y": 5,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_floor_wood",
+     "x": 6,
+     "y": 5,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_floor_wood",
+     "x": 5,
+     "y": 6,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_floor_wood",
+     "x": 6,
+     "y": 6,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_bar",
+     "x": 6,
+     "y": 3,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_bar",
+     "x": 6,
+     "y": 4,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_table_long",
+     "x": 2,
+     "y": 3,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_table_round",
+     "x": 4,
+     "y": 5,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_table_round",
+     "x": 2,
+     "y": 5,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_table_long",
+     "x": 4,
+     "y": 2,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 0.0
+    },
+    {
+     "id": "tp_sconce",
+     "x": 2,
+     "y": 1,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 1.0
+    },
+    {
+     "id": "tp_sconce",
+     "x": 5,
+     "y": 1,
+     "flip": false,
+     "scale": 1.0,
+     "lift": 1.0
+    }
+   ],
+   "walls": []
+  }
+ ]
+}

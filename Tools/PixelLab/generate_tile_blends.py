@@ -1,8 +1,9 @@
 """
-Generate dithered gradient blend tiles between two approved BiomeSketch tiles.
+Generate gradient blend tiles between two approved BiomeSketch tiles.
 
-No AI calls. The blend uses a directional threshold mask plus a Bayer matrix,
-so the tile reads as a gradient in-map while keeping crisp source pixels.
+No AI calls. The default blend uses a directional threshold mask plus
+clustered value noise, so the tile reads as an organic material transition
+while keeping crisp source pixels.
 """
 
 from __future__ import annotations
@@ -47,7 +48,7 @@ DEFAULT_PAIRS = [
     ("plains2_00", "mountain_stone_00"),
     ("plains2_02", "mountain_stone_05"),
     ("snow2_00", "mountain_stone_03"),
-    ("plains2_00", "transition_grass_to_dirt_w"),
+    ("plains2_00", "plains_bare_dirt"),
 ]
 
 
@@ -94,13 +95,57 @@ def directional_weight(x: int, y: int, width: int, height: int, direction: str, 
     return max(0.0, min(1.0, (projection - (0.5 - softness / 2.0)) / softness))
 
 
-def blend_images(a_path: Path, b_path: Path, direction: str, softness: float) -> Image.Image:
+def deterministic_seed(*parts: str) -> int:
+    digest = 2166136261
+    for part in parts:
+        for char in part:
+            digest ^= ord(char)
+            digest = (digest * 16777619) & 0xFFFFFFFF
+    return digest
+
+
+def cluster_noise(width: int, height: int, seed: int, cell: int = 3) -> list[list[float]]:
+    # Keep a local import-free PRNG so this script remains deterministic across
+    # Python versions and does not depend on hash randomization.
+    state = seed & 0xFFFFFFFF
+
+    def rand() -> float:
+        nonlocal state
+        state = (state + 0x6D2B79F5) & 0xFFFFFFFF
+        t = state
+        t = (t ^ (t >> 15)) * (t | 1)
+        t ^= t + ((t ^ (t >> 7)) * (t | 61))
+        return ((t ^ (t >> 14)) & 0xFFFFFFFF) / 4294967296.0
+
+    def smoothstep(value: float) -> float:
+        return value * value * (3.0 - 2.0 * value)
+
+    grid_w = width // cell + 2
+    grid_h = height // cell + 2
+    grid = [[rand() for _ in range(grid_w)] for _ in range(grid_h)]
+    out = [[0.0] * width for _ in range(height)]
+    for y in range(height):
+        for x in range(width):
+            fx = x / cell
+            fy = y / cell
+            x0 = int(fx)
+            y0 = int(fy)
+            tx = smoothstep(fx - x0)
+            ty = smoothstep(fy - y0)
+            a = grid[y0][x0] * (1.0 - tx) + grid[y0][x0 + 1] * tx
+            b = grid[y0 + 1][x0] * (1.0 - tx) + grid[y0 + 1][x0 + 1] * tx
+            out[y][x] = a * (1.0 - ty) + b * ty
+    return out
+
+
+def blend_images(a_path: Path, b_path: Path, direction: str, softness: float, pattern: str, seed_text: str) -> Image.Image:
     a = Image.open(a_path).convert("RGBA")
     b = Image.open(b_path).convert("RGBA")
     if a.size != b.size:
         b = b.resize(a.size, Image.Resampling.NEAREST)
     out = Image.new("RGBA", a.size, (0, 0, 0, 0))
     apx, bpx, opx = a.load(), b.load(), out.load()
+    noise = cluster_noise(a.width, a.height, deterministic_seed(seed_text, direction)) if pattern == "organic" else None
     for y in range(a.height):
         for x in range(a.width):
             pa = apx[x, y]
@@ -114,7 +159,10 @@ def blend_images(a_path: Path, b_path: Path, direction: str, softness: float) ->
                 opx[x, y] = pa
                 continue
             weight = directional_weight(x, y, a.width, a.height, direction, softness)
-            threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16.0
+            if pattern == "organic":
+                threshold = 0.5 + ((noise[y][x] if noise else 0.5) - 0.5) * 0.55
+            else:
+                threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16.0
             opx[x, y] = pb if weight > threshold else pa
     return out
 
@@ -125,7 +173,7 @@ def contact_sheet(paths: list[Path], out_path: Path) -> None:
     cells = [(p, Image.open(p).convert("RGBA")) for p in paths]
     max_w = max(img.width for _, img in cells)
     max_h = max(img.height for _, img in cells)
-    cell_w = max_w + 18
+    cell_w = max(max_w + 18, 148)
     cell_h = max_h + 34
     cols = min(8, len(cells))
     rows = math.ceil(len(cells) / cols)
@@ -160,6 +208,11 @@ def main() -> None:
     parser.add_argument("--directions", type=lambda v: [d.strip() for d in v.split(",") if d.strip()],
                         default=list(DIRECTIONS))
     parser.add_argument("--softness", type=float, default=0.68)
+    parser.add_argument("--pattern", choices=("organic", "dither"), default="organic")
+    parser.add_argument("--count", type=int, default=1,
+                        help="Number of organic variants per pair and direction.")
+    parser.add_argument("--seed", default="litiso",
+                        help="Stable batch seed. Change this to create a different deterministic blend family.")
     parser.add_argument("--register", action="store_true")
     parser.add_argument("--contact-sheet", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
@@ -191,36 +244,48 @@ def main() -> None:
             print(f"skipping non-tile pair: {left}:{right}")
             continue
         for direction in args.directions:
-            name = f"blend_{safe_name(left)}_to_{safe_name(right)}_{direction}"
-            if ("tile", name) in existing and not args.overwrite:
-                continue
-            out_rel = Path("assets") / "tile" / "gradient_blends" / f"{name}.png"
-            out_path = BIOME / out_rel
-            out_path.parent.mkdir(parents=True, exist_ok=True)
-            image = blend_images(BIOME / left_asset["path"], BIOME / right_asset["path"], direction, args.softness)
-            image.save(out_path)
-            bx, by, bw, bh = alpha_bounds(image)
-            record = {
-                "cat": "tile",
-                "name": name,
-                "path": out_rel.as_posix(),
-                "w": image.width,
-                "h": image.height,
-                "ppu": left_asset.get("ppu", 32),
-                "bx": bx,
-                "by": by,
-                "bw": bw,
-                "bh": bh,
-                "group": "gradient blends - tiles",
-                "variant_kind": "dithered_gradient_blend",
-                "blend_from": left,
-                "blend_to": right,
-                "blend_direction": direction,
-                "blend_softness": args.softness,
-            }
-            records.append(record)
-            paths.append(out_path)
-            existing.add(("tile", name))
+            for index in range(1, max(1, args.count) + 1):
+                suffix = "" if args.count == 1 else f"_v{index:02d}"
+                name = f"blend_{safe_name(left)}_to_{safe_name(right)}_{direction}{suffix}"
+                if ("tile", name) in existing and not args.overwrite:
+                    continue
+                out_rel = Path("assets") / "tile" / "gradient_blends" / f"{name}.png"
+                out_path = BIOME / out_rel
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+                image = blend_images(
+                    BIOME / left_asset["path"],
+                    BIOME / right_asset["path"],
+                    direction,
+                    args.softness,
+                    args.pattern,
+                    f"{args.seed}:{left}:{right}:{index}",
+                )
+                image.save(out_path)
+                bx, by, bw, bh = alpha_bounds(image)
+                record = {
+                    "cat": "tile",
+                    "name": name,
+                    "path": out_rel.as_posix(),
+                    "w": image.width,
+                    "h": image.height,
+                    "ppu": left_asset.get("ppu", 32),
+                    "bx": bx,
+                    "by": by,
+                    "bw": bw,
+                    "bh": bh,
+                    "group": "gradient blends - tiles",
+                    "variant_kind": f"{args.pattern}_gradient_blend",
+                    "blend_from": left,
+                    "blend_to": right,
+                    "blend_direction": direction,
+                    "blend_softness": args.softness,
+                    "blend_pattern": args.pattern,
+                    "blend_variant_index": index,
+                    "blend_seed": args.seed,
+                }
+                records.append(record)
+                paths.append(out_path)
+                existing.add(("tile", name))
 
     if args.contact_sheet:
         contact_sheet(paths, REVIEW_DIR / "gradient_blends_tiles_contact_sheet.png")
@@ -235,6 +300,9 @@ def main() -> None:
     (REVIEW_DIR / "gradient_blend_manifest.json").write_text(json.dumps({
         "pairs": pairs,
         "directions": args.directions,
+        "pattern": args.pattern,
+        "count_per_direction": args.count,
+        "seed": args.seed,
         "registered": args.register,
         "generated_count": len(records),
         "records": records,

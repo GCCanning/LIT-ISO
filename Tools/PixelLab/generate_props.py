@@ -96,11 +96,19 @@ def submit(tok, family, dry_run=False):
         if dry_run:
             print(json.dumps(payload_preview(payload), indent=2))
             continue
-        resp = call(tok, "POST", "/create-1-direction-object", payload, fatal=False)
-        if "_error" in resp:
-            if resp["_error"] == 402: sys.exit("Out of generations.")
+        resp = None
+        for attempt in range(20):
+            resp = call(tok, "POST", "/create-1-direction-object", payload, fatal=False)
+            if "_error" not in resp:
+                break
+            if resp["_error"] == 402:
+                sys.exit("Out of generations.")
+            if resp["_error"] == 429:
+                print("  all 8 job slots busy - waiting 30s ..."); time.sleep(30); continue
             rejected += 1
-            print("  rejected â€” paste the error above to Claude."); continue
+            print("  rejected â€” paste the error above to Claude."); resp = None; break
+        if resp is None:
+            continue
         oid = resp.get("object_id") or resp.get("id")
         if not oid:
             print("  no object id:", str(resp)[:400]); continue
@@ -111,61 +119,4 @@ def submit(tok, family, dry_run=False):
         time.sleep(2)
     if queued:
         print(f"\nQueued {queued}. Run --status in a few minutes to fetch review candidates.")
-    elif dry_run:
-        print("\nDry run complete. No PixelLab objects were created.")
-    else:
-        print(f"\nQueued 0; rejected {rejected}. No PixelLab objects were created.")
-
-
-def status(tok):
-    state = load_state()
-    if not state: sys.exit("nothing queued yet")
-    for oid, meta in state.items():
-        name, family = meta["name"], meta["family"]
-        st = call(tok, "GET", f"/objects/{oid}?include_preview=true", fatal=False)
-        if "_error" in st: continue
-        s = str(st.get("status", "")).lower()
-        print(f"[{name}] {s}  ({oid})")
-        imgs = []
-        find_images(st, imgs)
-        d = os.path.join(OUT, family, name)
-        if imgs:
-            for i, b in enumerate(imgs[:40]):
-                save_b64(b, os.path.join(d, f"candidate_{i:02d}.png"))
-        saved = download_urls(tok, st, d, prefix="candidate_url")
-        if imgs or saved:
-            cs = contact_sheet(d)
-            print(f"  {len(imgs) + len(saved)} candidates -> {cs or d}")
-
-
-def pick(tok, oid, indices):
-    resp = call(tok, "POST", f"/objects/{oid}/select-frames",
-                {"indices": [int(i) for i in indices.split(",")]}, fatal=False)
-    print(json.dumps(resp)[:600] if isinstance(resp, dict) else resp)
-
-
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--family", default=None)
-    ap.add_argument("--status", action="store_true")
-    ap.add_argument("--pick", nargs=2, metavar=("OBJECT_ID", "INDICES"))
-    ap.add_argument("--dry-run", action="store_true",
-                    help="print request payloads without calling PixelLab")
-    a = ap.parse_args()
-    if a.dry_run:
-        if not a.family:
-            sys.exit("--dry-run requires --family <name>")
-        submit(None, a.family, dry_run=True)
-        return
-    tok = token()
-    print("Balance:", json.dumps(call(tok, "GET", "/balance")))
-    if a.pick: pick(tok, a.pick[0], a.pick[1])
-    elif a.status: status(tok)
-    elif a.family: submit(tok, a.family)
-    else: print("families:", {k: len(v) for k, v in FAMILIES.items()},
-                "\nuse --family <name>, --status, or --pick <id> <i,j>")
-
-
-if __name__ == "__main__":
-    main()
-
+    eli

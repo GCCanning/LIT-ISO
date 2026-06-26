@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO — Biome Variant Preview</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;min-height:100vh}
+header{background:#1d2027;border-bottom:1px solid #2a2f3a;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:15px;font-weight:700;color:#e8c468}
+header .sub{font-size:11px;color:#889}
+#globalbar{background:#191c22;border-bottom:1px solid #2a2f3a;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#globalbar button,#globalbar select{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px}
+#globalbar button:hover{border-color:#888}
+#globalbar button.primary{background:#2d5a2d;border-color:#4a4}
+#globalbar button.active{background:#3a3018;border-color:#e8c468;color:#e8c468}
+#globalbar label{font-size:11px;color:#9aa;display:flex;align-items:center;gap:5px}
+#globalbar input[type=range]{width:90px;accent-color:#e8c468}
+.gallery{padding:14px;display:flex;flex-direction:column;gap:20px}
+.biome-section{}
+.biome-section h2{font-size:11px;font-weight:700;color:#889;text-transform:uppercase;letter-spacing:0.08em;padding:0 2px 10px;border-bottom:1px solid #2a2f3a;margin-bottom:12px}
+.variant-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.variant-card{background:#1d2027;border:2px solid #2a2f3a;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+.variant-card:hover{border-color:#444}
+.variant-card.focused{border-color:#e8c468;grid-column:1/-1}
+.card-head{padding:7px 10px;display:flex;align-items:center;gap:8px;background:#22262e}
+.vname{font-size:12px;font-weight:700;flex:1;color:#ddd}
+.vtag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:3px;padding:2px 5px;flex-shrink:0}
+.card-head button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:11px}
+.canvas-wrap{flex:1;position:relative;min-height:160px;background:#12141a;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.canvas-wrap canvas{display:block;image-rendering:pixelated}
+.canvas-wrap .loading{position:absolute;color:#667;font-size:11px;pointer-events:none}
+.variant-card.focused .canvas-wrap{min-height:400px}
+.card-footer{padding:5px 8px;background:#191c22;border-top:1px solid #23262d;display:flex;flex-wrap:wrap;gap:3px;align-items:center;min-height:28px}
+.legend-chip{font-size:9px;color:#9aa;background:#22262e;border-radius:3px;padding:1px 5px;white-space:nowrap}
+.legend-chip.tile{border-left:3px solid #4a7a4a}
+.legend-chip.prop{border-left:3px solid #c8863a}
+.mob-chip{font-size:9px;color:#c8a850;background:#22262e;border-radius:3px;padding:1px 5px;border-left:3px solid #8a6030}
+/* biome tints */
+.vtag.meadow{background:#1e3a1e;color:#6cba6c}
+.vtag.forest{background:#1a3020;color:#4ab874}
+.vtag.mountain{background:#2a2d30;color:#8aafcc}
+.vtag.snow{background:#222d3a;color:#aaccee}
+.vtag.beach{background:#2a2a18;color:#c8b060}
+.vtag.dungeon{background:#1e1a2e;color:#9a80cc}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗺 Biome Variant Preview</h1>
+  <span class="sub">21 sub-environment variants · isometric worldgen preview · click to focus · right-click to reroll</span>
+</header>
+
+<div id="globalbar">
+  <button id="rerollAll" class="primary">⟳ Reroll All</button>
+  <label>Prop density
+    <input type="range" id="densitySlider" min="0.1" max="2.0" step="0.1" value="1.0">
+    <span id="densityVal">×1.0</span>
+  </label>
+  <label>Grid
+    <select id="gridSize">
+      <option value="9">9×9</option>
+      <option value="13" selected>13×13</option>
+      <option value="17">17×17</option>
+    </select>
+  </label>
+  <label><input type="checkbox" id="showH" checked> heights</label>
+  <label><input type="checkbox" id="showProps" checked> props</label>
+  <label><input type="checkbox" id="showPlayer" checked> player ref</label>
+  <label><input type="checkbox" id="coolCliffs"> cool cliffs</label>
+  <label style="display:flex;align-items:center;gap:4px">prop ×<input type="range" id="propScaleSlider" min="0.4" max="2.5" step="0.05" value="1.0" style="width:66px"> <span id="propScaleVal">×1.0</span></label>
+  <label style="display:flex;align-items:center;gap:4px">angle<input type="range" id="thSlider" min="0.3" max="0.8" step="0.025" value="0.5" style="width:60px"> <span id="thVal">0.50</span></label>
+  <label style="display:flex;align-items:center;gap:4px">step<input type="range" id="hsSlider" min="0.12" max="0.5" step="0.01" value="0.28" style="width:56px"> <span id="hsVal">0.28</span></label>
+  <span style="color:#556;font-size:11px">Filter:</span>
+  <button class="filter-btn active" data-biome="all">All</button>
+  <button class="filter-btn" data-biome="meadow">🌿 Meadow</button>
+  <button class="filter-btn" data-biome="forest">🌲 Forest</button>
+  <button class="filter-btn" data-biome="mountain">⛰ Mountain</button>
+  <button class="filter-btn" data-biome="snow">❄ Snow</button>
+  <button class="filter-btn" data-biome="beach">🏖 Beach</button>
+  <button class="filter-btn" data-biome="dungeon">🪨 Dungeon</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<script src="assets.js"></script>
+<script>
+// ============================================================
+// VARIANT DEFINITIONS
+// Each variant mirrors biome_variations.json but in renderable form:
+//   baseTiles, accentTiles, heightBands, props, relief, maxH, freq
+// Props use cluster (grove-style) or scatter (minSpacing) placement.
+// ============================================================
+const BIOME_TINTS={meadow:'#3a6e3a',forest:'#1f5c2e',mountain:'#5a5f62',snow:'#8899aa',beach:'#8a7a40',dungeon:'#2a2440'};
+const BIOME_LABELS={meadow:'🌿 Meadow',forest:'🌲 Forest',mountain:'⛰ Mountain',snow:'❄ Snow',beach:'🏖 Beach',dungeon:'🪨 Dungeon'};
+
+const VARIANT_DEFS = [
+// ── MEADOW ─────────────────────────────────────────────────────────────────
+{biome:'meadow',id:'meadow_sunlit',name:'Sunlit Meadow',mob:'Fernwhisk Hare',
+ tint:'#3a6e3a',relief:'rolling',maxH:3,freq:0.11,accentRate:0.16,
+ baseTiles:[['plains2_02',60],['plains2_05',30],['plains2_07',25],['plains_flower_grass',18],['plains_grass_tufts',12]],
+ accentTiles:[['plains2_04',6,
+      ['grasscliff',4],['stoneclifftuft',3]],['plains2_00',5],['plains2_10',4],['plains2_03',3]],
+ props:[
+  {id:'flowers',pool:[['flower',4],['flower_tulip',3],['tuft',2]],density:0.55,minH:0,maxH:1,cluster:true,clusterR:2,clusterFill:0.45,centersP100:2.0},
+  {id:'bushes', pool:[['plains_bush_v2_0_big',3],['plains_bush_v2_0',2],['plains_bush',1]],density:0.36,minH:0,maxH:2,cluster:true,clusterR:2,clusterFill:0.38,centersP100:1.6},
+ ]},
+{biome:'meadow',id:'meadow_glade',name:'Overgrown Glade',mob:'Thornback Stag',
+ tint:'#3a6e3a',relief:'rolling',maxH:3,freq:0.11,accentRate:0.18,
+ baseTiles:[['plains2_11',50],['plains2_13',30],['forest_grass_base',20],['plains_grass_tufts',15],['forest_dark_underbrush',10]],
+ accentTiles:[['forest_leaf_litter',5,
+      ['grasscliff',4],['stoneclifftuft',3]],['forest_dark_underbrush',4],['plains_grass_tufts',3]],
+ props:[
+  {id:'willows',pool:[['plains_willow',1]],density:0.08,minH:0,maxH:2,cluster:true,clusterR:2.5,clusterFill:0.35,centersP100:0.9},
+  {id:'rocks',  pool:[['plains_rock_v2_0_big',3],['plains_rock_v2_0_sm',2],['plains_rock_v2_0_lg',2]],density:0.28,minH:0,maxH:2,cluster:true,clusterR:2,clusterFill:0.65,centersP100:0.9},
+ ]},
+{biome:'meadow',id:'meadow_dry',name:'Dry Grassland',mob:'Dusttail Lizard',
+ tint:'#3a6e3a',relief:'rolling',maxH:3,freq:0.11,accentRate:0.10,
+ baseTiles:[['plains2_14',50],['plains2_00',30],['plains2_02',20],['badlands_1',15],['plains_packed_path',8]],
+ accentTiles:[['plains2_01',4,
+      ['grasscliff',4],['stoneclifftuft',3]],['plains2_04',3],['plains2_03',3]],
+ props:[
+  {id:'drybush',pool:[['plains_dry_bush',3],['plains_bush_v2_3',2]],density:0.025,minH:0,maxH:2,cluster:false,minSpacing:4},
+  {id:'rocks',  pool:[['plains_rock_v2_0_big',3],['plains_rock_v2_0_lg',3],['plains_rock_v2_0_lg',2]],density:0.28,minH:0,maxH:2,cluster:true,clusterR:2,clusterFill:0.65,centersP100:0.7},
+ ]},
+// ── FOREST ─────────────────────────────────────────────────────────────────
+{biome:'forest',id:'forest_oak',name:'Oak Canopy',mob:'Ironbark Boar',
+ tint:'#1f5c2e',relief:'rolling',maxH:3,freq:0.11,accentRate:0.22,
+ baseTiles:[['plains2_11',50],['plains2_13',30],['plains2_15',20],['forest_leaf_litter',15],['forest_dark_underbrush',12]],
+ accentTiles:[['forest_leaf_litter',7,
+      ['stonecliffmoss',5],['grasscliff',3]],['forest_dark_underbrush',4],['forest_grass_tufts',4],['forest_floor',3]],
+ props:[
+  {id:'groves',pool:[['forest_oak_tree',5],['forest_deep_oak_tree',3],['forest_moss_bush',2],['forest_fern',1]],density:0.60,minH:0,maxH:3,cluster:true,clusterR:5,clusterFill:0.72,centersP100:2.4},
+  {id:'understory',pool:[['forest_fern',4],['forest_moss_bush',3]],density:0.28,minH:0,maxH:3,cluster:true,clusterR:2.5,clusterFill:0.50,centersP100:1.5},
+ ]},
+{biome:'forest',id:'forest_mushroom',name:'Mushroom Dell',mob:'Sporecap Lurker',
+ tint:'#1f5c2e',relief:'rolling',maxH:3,freq:0.11,accentRate:0.25,
+ baseTiles:[['forest_floor',50],['forest_moss_grass',30],['plains2_10',20],['plains2_12',15],['forest_dark_underbrush',12]],
+ accentTiles:[['forest_dark_underbrush',6,
+      ['stonecliffmoss',5],['grasscliff',3]],['forest_leaf_litter',5],['forest_moss_grass',4],['forest_floor',3]],
+ props:[
+  {id:'mushrooms',pool:[['forest_mushrooms',4],['forest_stump',3],['forest_fern',2]],density:0.42,minH:0,maxH:2,cluster:true,clusterR:3,clusterFill:0.42,centersP100:1.6},
+  {id:'stumps',   pool:[['forest_stump',3],['log',2]],density:0.025,minH:0,maxH:2,cluster:false,minSpacing:4},
+ ]},
+{biome:'forest',id:'forest_pine',name:'Ancient Pines',mob:'Ashwing Owl',
+ tint:'#1f5c2e',relief:'rolling',maxH:3,freq:0.11,accentRate:0.18,
+ baseTiles:[['plains2_02',50],['plains2_06',30],['plains2_08',20],['forest_grass_tufts',15],['forest_moss_grass',10]],
+ accentTiles:[['forest_grass_tufts',5,
+      ['stonecliffmoss',5],['grasscliff',3]],['plains2_05',4],['forest_moss_grass',3]],
+ props:[
+  {id:'pines',  pool:[['forest_pine',4],['forest_pine_young',3]],density:0.58,minH:0,maxH:3,cluster:true,clusterR:4,clusterFill:0.68,centersP100:2.0},
+  {id:'deadtree',pool:[['forest_dead_tree',1]],density:0.020,minH:0,maxH:2,cluster:false,minSpacing:5},
+ ]},
+{biome:'forest',id:'forest_deadfall',name:'Deadfall Clearing',mob:'Greyback Wolf',
+ tint:'#1f5c2e',relief:'rolling',maxH:3,freq:0.11,accentRate:0.20,
+ baseTiles:[['forest_floor',50],['forest_leaf_litter',30],['plains2_02',20],['forest_grass_tufts',15],['forest_rich_dirt',10]],
+ accentTiles:[['forest_dark_underbrush',5,
+      ['stonecliffmoss',5],['grasscliff',3]],['forest_leaf_litter',5],['forest_floor',4]],
+ props:[
+  {id:'deadwood',pool:[['forest_stump',4],['log',4],['forest_dead_tree',3]],density:0.030,minH:0,maxH:2,cluster:false,minSpacing:4},
+  {id:'mushrooms',pool:[['forest_mushrooms',2]],density:0.22,minH:0,maxH:2,cluster:true,clusterR:2,clusterFill:0.35,centersP100:0.8},
+ ]},
+// ── MOUNTAIN ───────────────────────────────────────────────────────────────
+{biome:'mountain',id:'mountain_foothills',name:'Grassy Foothills',mob:'Ridgeback Ram',
+ tint:'#5a5f62',relief:'cone',maxH:3,freq:0.14,accentRate:0,
+ heightBands:[
+  {h:0,tiles:[['mountain_stone_09',55],['mountain_stone_08',30],['mountain_stone_12',20]]},
+  {h:1,tiles:[['grass_3',50],['plains_pale_stone_path',25],['mountain_stone_09',22],['plains2_04',12]]},
+  {h:2,tiles:[['grass_3',26],['mountain_stone_03',25],['plains2_04',18],['plains_pale_stone_path',14],['stonecliffmoss',8],['grasscliff',6]]},
+  {h:3,tiles:[['mountain_stone_03',40],['mountain_stone_09',28],['plains2_04',12],['crackedcliff',10],['stonecliffmoss',8]]},
+ ],
+ baseTiles:[['mountain_stone_09',40],['grass_3',30],['plains_pale_stone_path',18]],accentTiles:[],
+ props:[
+  {id:'pines',  pool:[['forest_pine_young',2],['forest_pine',1]],density:0.035,minH:0,maxH:1,cluster:true,clusterR:2,clusterFill:0.3,centersP100:0.4},
+  {id:'rocks',  pool:[['plains_rock_v2_0_big',3],['plains_rock_v2_0_sm',2],['plains_rock_v2_0_lg',2]],density:0.28,minH:0,maxH:3,cluster:true,clusterR:2,clusterFill:0.65,centersP100:1.4},
+  {id:'copper', pool:[['ore_copper',1]],density:0.030,minH:1,maxH:3,cluster:false,minSpacing:3},
+ ]},
+{biome:'mountain',id:'mountain_alpine',name:'Alpine Meadow',mob:'Stonetalon Eagle',
+ tint:'#5a5f62',relief:'cone',maxH:4,freq:0.13,accentRate:0,
+ heightBands:[
+  {h:0,tiles:[['mountain_stone_09',50],['mountain_stone_08',28],['mountain_stone_12',18]]},
+  {h:1,tiles:[['grass_3',42],['plains_pale_stone_path',22],['mountain_stone_09',20],['plains2_04',12]]},
+  {h:2,tiles:[['plains2_00',32],['plains2_14_new01',28],['plains2_04',22],['plains2_08_new01',18],['mountain_stone_08',10]]},
+  {h:3,tiles:[['plains2_04',24],['plains2_02_new03',20],['mountain_stone_08',20],['mountain_stone_03',16],['stonecliffmoss',10],['crackedcliff',7]]},
+  {h:4,tiles:[['mountain_stone_03',40],['mountain_stone_05',30],['plains2_02_new03',18],['mountain_stone_14',12]]},
+ ],
+ baseTiles:[['plains2_00',30],['plains2_04',25],['mountain_stone_08',18]],accentTiles:[],
+ props:[
+  {id:'rocks',  pool:[['plains_rock_v2_0_sm',3],['plains_rock_v2_0_lg',2],['plains_rock_v2_0_lg',2]],density:0.28,minH:0,maxH:4,cluster:true,clusterR:2.5,clusterFill:0.65,centersP100:1.5},
+  {id:'copper', pool:[['ore_copper',1]],density:0.030,minH:1,maxH:3,cluster:false,minSpacing:3},
+  {id:'iron',   pool:[['ore_iron',1]],density:0.018,minH:2,maxH:4,cluster:false,minSpacing:4},
+ ]},
+{biome:'mountain',id:'mountain_crag',name:'Craggy Summit',mob:'Frostclimber Troll',
+ tint:'#5a5f62',relief:'cone',maxH:5,freq:0.13,accentRate:0,
+ heightBands:[
+  {h:0,tiles:[['mountain_stone_09',55],['mountain_stone_08',28],['mountain_stone_12',18]]},
+  {h:1,tiles:[['grass_3',35],['mountain_stone_09',28],['plains_pale_stone_path',20],['plains2_04',12]]},
+  {h:2,tiles:[['plains2_02_new03',30],['mountain_stone_13_new03',25],['plains2_08_new01',22],['plains2_04',14]]},
+  {h:3,tiles:[['plains2_02_new03',28],['mountain_stone_13_new03',28],['mountain_stone_03',22],['mountain_stone_05',12],['stonecliffmoss',9]},
+  {h:4,tiles:[['mountain_stone_03',38],['mountain_stone_05',30],['mountain_stone_14',20],['plains2_02_new03',12],['crackedcliff',9]},
+  {h:5,tiles:[['mountain_stone_14',45],['mountain_stone_05',32],['mountain_stone_13_new03',18],['crackedcliff',9]},
+ ],
+ baseTiles:[['mountain_stone_09',40],['plains2_02_new03',20],['mountain_stone_03',20]],accentTiles:[],
+ props:[
+  {id:'rocks',  pool:[['plains_rock_v2_0_big',3],['plains_rock_v2_0_lg',3],['plains_rock_v2_0_sm',2]],density:0.28,minH:0,maxH:5,cluster:true,clusterR:2.5,clusterFill:0.70,centersP100:1.6},
+  {id:'iron',   pool:[['ore_iron',1]],density:0.025,minH:2,maxH:5,cluster:false,minSpacing:4},
+  {id:'silver', pool:[['ore_silver',1]],density:0.012,minH:3,maxH:5,cluster:false,minSpacing:5},
+ ]},
+{biome:'mountain',id:'mountain_snowcap',name:'Snowcap Peak',mob:'Voidstone Elemental',
+ tint:'#5a5f62',relief:'cone',maxH:6,freq:0.13,accentRate:0,
+ heightBands:[
+  {h:0,tiles:[['mountain_stone_09',55],['mountain_stone_08',28],['mountain_stone_12',18]]},
+  {h:1,tiles:[['grass_3',35],['mountain_stone_09',28],['plains_pale_stone_path',20]]},
+  {h:2,tiles:[['plains2_02_new03',28],['mountain_stone_13_new03',28],['plains2_08_new01',20]]},
+  {h:3,tiles:[['mountain_stone_03',35],['mountain_stone_05',30],['plains2_02_new03',20],['mountain_stone_14',12],['stonecliffmoss',9]},
+  {h:4,tiles:[['mountain_stone_05',42],['mountain_stone_13_new03',28],['mountain_stone_14',20],['stone_snowcap',10],['crackedcliff',9]},
+  {h:5,tiles:[['mountain_stone_14',50],['mountain_stone_05',28],['stone_snowcap',18],['mountain_stone_14_new01',10],['crackedcliff',9]},
+  {h:6,tiles:[['mountain_stone_14',60],['stone_snowcap',28],['mountain_stone_05',12],['crackedcliff',9]},
+ ],
+ baseTiles:[['mountain_stone_14',40],['mountain_stone_05',28],['stone_snowcap',18]],accentTiles:[],
+ props:[
+  {id:'rocks',  pool:[['plains_rock_v2_0_sm',3],['plains_rock_v2_0_lg',3],['plains_rock_v2_0_lg',2]],density:0.28,minH:0,maxH:6,cluster:true,clusterR:2,clusterFill:0.70,centersP100:1.4},
+  {id:'silver', pool:[['ore_silver',1]],density:0.014,minH:3,maxH:6,cluster:false,minSpacing:5},
+  {id:'starmetal',pool:[['ore_starmetal',1]],density:0.004,minH:5,maxH:6,cluster:false,minSpacing:7},
+  {id:'wisps',  pool:[['wisp',1]],density:0.005,minH:4,maxH:6,cluster:false,minSpacing:6},
+ ]},
+// ── SNOW ───────────────────────────────────────────────────────────────────
+{biome:'snow',id:'snow_plains',name:'Frost Plains',mob:'Frostback Wolf',
+ tint:'#8899aa',relief:'rolling',maxH:4,freq:0.17,accentRate:0.09,
+ baseTiles:[['snow2_03',55],['snow2_04',30],['snow2_07',25],['snow2_00',12],['snow2_01',10]],
+ accentTiles:[['snow2_10',5],['snow2_11',4],['snow2_08',3]],
+ props:[
+  {id:'pines',pool:[['forest_pine',4],['forest_pine_young',3]],density:0.06,minH:0,maxH:3,cluster:true,clusterR:2.5,clusterFill:0.55,centersP100:1.2},
+  {id:'rocks',pool:[['plains_rock_v2_0_lg',2],['plains_rock_v2_0_lg',2],['plains_rock_v2_0_sm',2]],density:0.28,minH:0,maxH:4,cluster:true,clusterR:2,clusterFill:0.70,centersP100:0.8},
+ ]},
+{biome:'snow',id:'snow_deadwood',name:'Frozen Deadwood',mob:'Hollowbone Wraith',
+ tint:'#8899aa',relief:'rolling',maxH:3,freq:0.17,accentRate:0.09,
+ baseTiles:[['snow2_03',50],['snow2_03_new01',20],['snow2_04_new02',15],['snow2_12',10],['snow2_13',8]],
+ accentTiles:[['snow2_08',5],['snow2_09',4],['snow2_14',3]],
+ props:[
+  {id:'deadtrees',pool:[['forest_dead_tree',3],['forest_stump',3],['log',4]],density:0.030,minH:0,maxH:2,cluster:false,minSpacing:5},
+  {id:'rocks',    pool:[['plains_rock_v2_0_lg',2],['plains_rock_v2_0_lg',2]],density:0.60,minH:0,maxH:3,cluster:true,clusterR:2,clusterFill:0.60,centersP100:0.7},
+ ]},
+{biome:'snow',id:'snow_ice',name:'Ice Field',mob:'Glacial Shard Crab',
+ tint:'#8899aa',relief:'rolling',maxH:3,freq:0.15,accentRate:0.12,
+ baseTiles:[['snow2_10',50],['snow2_11',35],['snow2_07',25],['snow2_03_new03',15],['snow2_00_new03',10]],
+ accentTiles:[['snow2_11',6],['snow2_08',4],['snow2_14',3]],
+ props:[
+  {id:'wisps',  pool:[['wisp',1]],density:0.006,minH:0,maxH:3,cluster:false,minSpacing:5},
+  {id:'rocks',  pool:[['plains_rock_v2_0_sm',3],['plains_rock_v2_0_lg',2]],density:0.60,minH:0,maxH:3,cluster:true,clusterR:2,clusterFill:0.60,centersP100:0.8},
+  {id:'silver', pool:[['ore_silver',1]],density:0.010,minH:0,maxH:3,cluster:false,minSpacing:5},
+ ]},
+// ── BEACH ──────────────────────────────────────────────────────────────────
+{biome:'beach',id:'beach_shore',name:'Sandy Shore',mob:'Sandscuttler Crab',
+ tint:'#8a7a40',relief:'shore',maxH:2,freq:0.10,accentRate:0.05,
+ heightBands:[
+  {h:0,tiles:[['water_deep',60],['water_shallow',25]]},
+  {h:1,tiles:[['sand_06',55],['beach_sand_wet',20],['sand_04',12],['sand_05',8],['beach_pebble',5]]},
+  {h:2,tiles:[['sand_06',50],['sand_04',20],['sand_05',15],['sand_09',8],['sand_11',7]]},
+ ],
+ baseTiles:[['sand_06',55],['water_deep',40],['water_shallow',18],['sand_04',14],['sand_05',10]],
+ accentTiles:[['sand_05',5],['sand_09',4],['beach_pebble',3]],
+ props:[
+  {id:'rocks',pool:[['shore_stone',4],['plains_rock_v2_0_lg',3],['plains_rock_v2_0_sm',2]],density:0.050,minH:0,maxH:1,cluster:true,clusterR:1.5,clusterFill:0.60,centersP100:0.6},
+ ]},
+{biome:'beach',id:'beach_tidepool',name:'Rocky Tidepool',mob:'Brineback Turtle',
+ tint:'#8a7a40',relief:'shore',maxH:2,freq:0.11,accentRate:0.06,
+ heightBands:[
+  {h:0,tiles:[['water_deep',55],['water_shallow',30]]},
+  {h:1,tiles:[['sand_06',40],['beach_sand_wet',22],['sand_04',14],['beach_pebble',8],['sand_05',6]]},
+  {h:2,tiles:[['sand_06',45],['sand_04',22],['sand_05',14],['beach_pebble',10],['sand_09',8]]},
+ ],
+ baseTiles:[['sand_06',40],['water_deep',45],['water_shallow',25],['sand_04',18],['sand_05',12]],
+ accentTiles:[['beach_pebble',5],['sand_05',4],['sand_09',3]],
+ props:[
+  {id:'rocks',pool:[['shore_stone',4],['plains_rock_v2_0_big',3],['plains_rock_v2_0_lg',3]],density:0.060,minH:0,maxH:1,cluster:true,clusterR:2,clusterFill:0.65,centersP100:0.8},
+ ]},
+{biome:'beach',id:'beach_driftwood',name:'Driftwood Shore',mob:'Razorwing Gull',
+ tint:'#8a7a40',relief:'shore',maxH:2,freq:0.10,accentRate:0.05,
+ heightBands:[
+  {h:0,tiles:[['water_deep',50],['water_shallow',22]]},
+  {h:1,tiles:[['sand_06',50],['beach_sand_wet',18],['sand_04',14],['sand_05',10],['beach_pebble',8]]},
+  {h:2,tiles:[['sand_06',45],['sand_09',22],['sand_11',18],['sand_05',12],['sand_04',10]]},
+ ],
+ baseTiles:[['sand_06',50],['sand_09',25],['sand_11',20],['sand_05',15],['sand_04',12]],
+ accentTiles:[['sand_11',5],['beach_pebble',4],['sand_09',3]],
+ props:[
+  {id:'driftwood',pool:[['log',5],['stump',3]],density:0.022,minH:0,maxH:1,cluster:false,minSpacing:4},
+  {id:'rocks',    pool:[['shore_stone',3],['plains_rock_v2_0_lg',2]],density:0.045,minH:0,maxH:1,cluster:true,clusterR:1.5,clusterFill:0.55,centersP100:0.6},
+ ]},
+// ── DUNGEON ────────────────────────────────────────────────────────────────
+{biome:'dungeon',id:'dungeon_vault',name:'Stone Vault',mob:'Crypt Shambler',
+ tint:'#2a2440',relief:'flat',maxH:1,freq:0.10,accentRate:0.14,
+ baseTiles:[['dungeon2_00',25],['dungeon2_01',20],['dungeon2_02',18],['dungeon2_03',15],['dungeon2_12',12]],
+ accentTiles:[['dungeon2_08',5],['dungeon2_09',4],['dungeon2_10',3]],
+ props:[
+  {id:'chests',pool:[['dungeon_chest_wood',1]],density:0.004,minH:0,maxH:1,cluster:false,minSpacing:5},
+  {id:'lights',pool:[['candle_lantern',2],['brazier',1]],density:0.008,minH:0,maxH:1,cluster:false,minSpacing:4},
+ ]},
+{biome:'dungeon',id:'dungeon_lava',name:'Lava Vein Depths',mob:'Emberskin Crawler',
+ tint:'#2a2440',relief:'flat',maxH:1,freq:0.10,accentRate:0.14,
+ baseTiles:[['dungeon2_05',30],['dungeon2_04',25],['dungeon2_00',20],['dungeon2_01',15],['dungeon2_06',12]],
+ accentTiles:[['dungeon2_05',6],['dungeon2_07',5],['dungeon2_04',4]],
+ props:[
+  {id:'braziers',pool:[['brazier',1]],density:0.010,minH:0,maxH:1,cluster:false,minSpacing:4},
+  {id:'ores',   pool:[['ore_copper',1]],density:0.006,minH:0,maxH:1,cluster:false,minSpacing:5},
+ ]},
+{biome:'dungeon',id:'dungeon_corrupted',name:'Corrupted Halls',mob:'Veinmold Lurker',
+ tint:'#2a2440',relief:'flat',maxH:1,freq:0.11,accentRate:0.16,
+ baseTiles:[['dungeon2_08',30],['dungeon2_15',25],['dungeon2_03',20],['dungeon2_09',15],['dungeon2_10',12]],
+ accentTiles:[['dungeon2_15',6],['dungeon2_08',5],['dungeon2_10',4]],
+ props:[
+  {id:'mushrooms',pool:[['forest_mushrooms',3]],density:0.014,minH:0,maxH:1,cluster:false,minSpacing:3},
+  {id:'wisps',    pool:[['wisp',1]],density:0.006,minH:0,maxH:1,cluster:false,minSpacing:5},
+  {id:'chests',   pool:[['dungeon_chest_wood',1]],density:0.003,minH:0,maxH:1,cluster:false,minSpacing:6},
+ ]},
+{biome:'dungeon',id:'dungeon_sanctum',name:'Crystal Sanctum',mob:'Prismatic Sentinel',
+ tint:'#2a2440',relief:'flat',maxH:1,freq:0.10,accentRate:0.12,
+ baseTiles:[['dungeon2_11',30],['dungeon2_12',25],['dungeon2_13',20],['dungeon2_14',15],['dungeon2_00',12]],
+ accentTiles:[['dungeon2_12',5],['dungeon2_13',4],['dungeon2_11',3]],
+ props:[
+  {id:'crystals',pool:[['ore_manacrystal',1]],density:0.012,minH:0,maxH:1,cluster:true,clusterR:1.5,clusterFill:0.50,centersP100:0.8},
+  {id:'lights',  pool:[['candle_lantern',1]],density:0.008,minH:0,maxH:1,cluster:false,minSpacing:4},
+  {id:'chests',  pool:[['dungeon_chest_wood',1]],density:0.003,minH:0,maxH:1,cluster:false,minSpacing:6},
+ ]},
+];
+
+const BIOME_ORDER=['meadow','forest','mountain','snow','beach','dungeon'];
+
+// ============================================================
+// SEEDED RNG + NOISE
+// ============================================================
+function mulberry32(seed){
+  let a=seed>>>0;
+  return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; };
+}
+function hash2(ix,iy,seed){
+  let h=(Math.imul(ix,374761393)+Math.imul(iy,668265263)+Math.imul(seed,982451653))>>>0;
+  h=Math.imul(h^(h>>>13),1274126177)>>>0; return(h>>>0)/4294967296;
+}
+function vnoise(x,y,seed){
+  const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+  const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
+  const a=hash2(ix,iy,seed),b=hash2(ix+1,iy,seed),c=hash2(ix,iy+1,seed),d=hash2(ix+1,iy+1,seed);
+  return a*(1-u)*(1-v)+b*u*(1-v)+c*(1-u)*v+d*u*v;
+}
+function fbm(x,y,seed,oct,ridged){
+  let amp=0.5,freq=1,sum=0,norm=0;
+  for(let o=0;o<oct;o++){
+    let n=vnoise(x*freq,y*freq,seed+o*131);
+    if(ridged){n=1-Math.abs(2*n-1); n*=n;}
+    sum+=n*amp; norm+=amp; amp*=0.5; freq*=2;
+  }
+  return sum/norm;
+}
+const RELIEF={flat:{amp:0.08,ridged:false,center:0},gentle:{amp:0.45,ridged:false,center:0},rolling:{amp:0.70,ridged:false,center:0},massif:{amp:1.0,ridged:true,center:0.62},shore:{amp:0.04,ridged:false,center:0,shore:true},cone:{amp:0.14,ridged:false,center:0,cone:true}};
+
+function pickW(pool,r){
+  if(!pool||!pool.length)return null;
+  let tot=0; for(const e of pool)tot+=Math.max(0,e[1]);
+  if(tot<=0)return pool[0][0];
+  let x=r()*tot;
+  for(const e of pool){x-=Math.max(0,e[1]); if(x<0)return e[0];}
+  return pool[pool.length-1][0];
+}
+
+// ============================================================
+// GENERATOR
+// ============================================================
+function generateGrid(def, N, seed, densityMult){
+  const rng=mulberry32(seed);
+  const cfg=RELIEF[def.relief]||RELIEF.gentle;
+  const scale=(def.freq||0.16)*(13/N+0.3);
+  const cx=(N-1)/2,cy=(N-1)/2,R=Math.max(1,(N-1)/2);
+
+  const hf=[];
+  if(cfg.shore){
+    // Shore: diagonal gradient water(top-left)→sand(bottom-right) + organic wobble
+    for(let r=0;r<N;r++){
+      hf.push([]);
+      for(let c=0;c<N;c++){
+        const t=(r+c)/(2*(N-1));
+        const wobble=vnoise(c*0.55+seed*0.001,r*0.55,seed+3)*0.30-0.08;
+        const raw=Math.max(0,Math.min(1,t+wobble));
+        let h=0; if(raw>0.38)h=1; if(raw>0.65)h=2;
+        hf[r].push(Math.min(h,def.maxH));
+      }
+    }
+  } else if(cfg.cone){
+    // Cone: radial gradient from center + gentle noise — smooth mountain shape
+    for(let r=0;r<N;r++){
+      hf.push([]);
+      for(let c=0;c<N;c++){
+        const dx=(c-cx)/R, dy=(r-cy)/R;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        const base=Math.max(0, 1-Math.pow(dist,1.15));
+        const noise=fbm(c*scale,r*scale,seed,3,false)*cfg.amp;
+        const raw=Math.max(0,Math.min(1, base+noise));
+        hf[r].push(Math.round(raw*def.maxH));
+      }
+    }
+  } else {
+    const raw=[];
+    let mn=1e9,mx=-1e9;
+    for(let r=0;r<N;r++){
+      raw.push([]);
+      for(let c=0;c<N;c++){
+        const wx=c+4*(vnoise(c*0.18+11,r*0.18,seed+7)-0.5);
+        const wy=r+4*(vnoise(c*0.18,r*0.18+11,seed+9)-0.5);
+        let n=fbm(wx*scale,wy*scale,seed,4,cfg.ridged);
+        n=n*(1+cfg.amp)-cfg.amp*0.5+cfg.center;
+        const dx=(c-cx)/R,dy=(r-cy)/R;
+        n-=Math.sqrt(dx*dx+dy*dy)*dx*dx*0.18;
+        raw[r].push(n);
+        if(n<mn)mn=n; if(n>mx)mx=n;
+      }
+    }
+    for(let r=0;r<N;r++){
+      hf.push([]);
+      for(let c=0;c<N;c++){
+        hf[r].push(Math.round(((raw[r][c]-mn)/(mx-mn+1e-9))*def.maxH));
+      }
+    }
+  }
+
+  // Smooth pass: raise any isolated divot (prevents 1-tile drop traps for player)
+  for(let pass=0;pass<4;pass++){
+    for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+      const ns=[
+        r>0?hf[r-1][c]:hf[r][c], r<N-1?hf[r+1][c]:hf[r][c],
+        c>0?hf[r][c-1]:hf[r][c], c<N-1?hf[r][c+1]:hf[r][c]
+      ];
+      const minN=Math.min(...ns);
+      if(hf[r][c]<minN-1) hf[r][c]=minN-1;
+    }
+  }
+
+  const tileGrid=[];
+  for(let r=0;r<N;r++){
+    tileGrid.push([]);
+    for(let c=0;c<N;c++){
+      const h=hf[r][c];
+      let tile;
+      if(def.heightBands){
+        let band=def.heightBands[0];
+        for(const b of def.heightBands){ if(h>=b.h)band=b; }
+        tile=pickW(band.tiles,rng);
+      } else {
+        const useAccent=rng()<(def.accentRate||0);
+        tile=useAccent&&def.accentTiles&&def.accentTiles.length
+          ? pickW(def.accentTiles,rng) : pickW(def.baseTiles,rng);
+      }
+      tileGrid[r].push(tile);
+    }
+  }
+
+  const propGrid=Array.from({length:N},()=>new Array(N).fill(null));
+  const occupied=Array.from({length:N},()=>new Array(N).fill(false));
+  const showProps=document.getElementById('showProps').checked;
+  if(showProps&&def.props){
+    for(const pd of def.props){
+      const effDensity=(pd.density||0)*densityMult;
+      if(pd.cluster){
+        const totalCells=N*N;
+        const nCenters=Math.max(0,Math.round((pd.centersP100||1.3)*totalCells/100*densityMult));
+        const centers=[];
+        for(let att=0;att<nCenters*8&&centers.length<nCenters;att++){
+          const cr=Math.floor(rng()*N),cc=Math.floor(rng()*N);
+          const ch=hf[cr][cc];
+          if(ch<(pd.minH||0)||ch>(pd.maxH||99))continue;
+          const minD=(pd.clusterR||3)*1.6;
+          let ok=true;
+          for(const [er,ec] of centers){ if(Math.hypot(cr-er,cc-ec)<minD){ok=false;break;} }
+          if(ok)centers.push([cr,cc]);
+        }
+        const Rc=pd.clusterR||3,fill=pd.clusterFill||0.55;
+        for(const [cr,cc] of centers){
+          for(let dr=-Math.ceil(Rc);dr<=Math.ceil(Rc);dr++){
+            for(let dc=-Math.ceil(Rc);dc<=Math.ceil(Rc);dc++){
+              const nr=cr+dr,nc=cc+dc;
+              if(nr<0||nr>=N||nc<0||nc>=N||occupied[nr][nc])continue;
+              if(Math.hypot(dr,dc)>Rc)continue;
+              const ch=hf[nr][nc];
+              if(ch<(pd.minH||0)||ch>(pd.maxH||99))continue;
+              const prob=fill*Math.pow(1-Math.hypot(dr,dc)/Rc,0.4);
+              if(rng()<prob){ propGrid[nr][nc]=pickW(pd.pool,rng); occupied[nr][nc]=true; }
+            }
+          }
+        }
+      } else {
+        const minSp=pd.minSpacing||2;
+        for(let r=0;r<N;r++){
+          for(let c=0;c<N;c++){
+            if(occupied[r][c])continue;
+            const h=hf[r][c];
+            if(h<(pd.minH||0)||h>(pd.maxH||99))continue;
+            if(rng()>effDensity)continue;
+            let tooClose=false;
+            for(let sr=Math.max(0,r-minSp);sr<=Math.min(N-1,r+minSp)&&!tooClose;sr++)
+              for(let sc=Math.max(0,c-minSp);sc<=Math.min(N-1,c+minSp)&&!tooClose;sc++)
+                if(propGrid[sr][sc])tooClose=true;
+            if(!tooClose){ propGrid[r][c]=pickW(pd.pool,rng); occupied[r][c]=true; }
+          }
+        }
+      }
+    }
+  }
+  return{tiles:tileGrid,props:propGrid,heights:hf};
+}
+
+// ============================================================
+// RENDERER
+// ============================================================
+const META={},imgs={};
+if(typeof ASSETS!=='undefined'){
+  ASSETS.forEach(a=>{ META[a.name]=a; const i=new Image(); i.src=a.path; imgs[a.name]=i; });
+}
+function tileSize(N,W,H,maxH){
+  const TW=Math.max(12,Math.min(52,Math.floor((W-30)/N),Math.floor((H-60)/(N*thRatio/2+maxH*hsRatio+1))));
+  return TW%2===0?TW:TW-1;
+}
+function renderGrid(ctx,grid,N,TW,TH,HS,showH,tint,biomeId){
+  const W=ctx.canvas.width,H=ctx.canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#12141a'; ctx.fillRect(0,0,W,H);
+  const ox=W/2,oy=55;
+  function iso(c,r,h){ return{x:ox+(c-r)*TW/2,y:oy+(c+r)*TH/2-h*HS}; }
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const h=grid.heights[r][c],p=iso(c,r,h);
+    if(h>0){
+      const pb=iso(c,r,0);
+      ctx.fillStyle='#1e1810'; ctx.beginPath();
+      ctx.moveTo(p.x-TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+      ctx.lineTo(pb.x,pb.y+TH); ctx.lineTo(pb.x-TW/2,pb.y+TH/2);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#26201a'; ctx.beginPath();
+      ctx.moveTo(p.x+TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+      ctx.lineTo(pb.x,pb.y+TH); ctx.lineTo(pb.x+TW/2,pb.y+TH/2);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+    ctx.lineTo(p.x-TW/2,p.y+TH/2); ctx.closePath(); ctx.stroke();
+    const tname=grid.tiles[r][c];
+    if(tname&&imgs[tname]&&imgs[tname].complete&&imgs[tname].naturalWidth){
+      const im=imgs[tname],w=TW,tw=im.height/im.width*TW;
+      const isCliffTile=tname.includes('cliff');
+      if(isCliffTile&&coolCliffs) ctx.filter='hue-rotate(180deg) saturate(0.35) brightness(1.05)';
+      ctx.drawImage(im,p.x-w/2,p.y+TH-tw,w,tw);
+      if(isCliffTile&&coolCliffs) ctx.filter='none';
+    } else if(tname){
+      ctx.fillStyle=tint+'88'; ctx.beginPath();
+      ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+      ctx.lineTo(p.x-TW/2,p.y+TH/2); ctx.closePath(); ctx.fill();
+    }
+    if(showH&&h>0){
+      ctx.fillStyle='rgba(232,196,104,0.7)'; ctx.font=`${Math.max(7,TW/5)}px monospace`;
+      ctx.fillText(h,p.x-3,p.y+TH/2+3);
+    }
+  }
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const pname=grid.props[r][c]; if(!pname)continue;
+    const h=grid.heights[r][c],p=iso(c,r,h);
+    const im=imgs[pname]; if(!im||!im.complete||!im.naturalWidth)continue;
+    const meta=META[pname];
+    const s=(meta?(TW/meta.ppu):(TW/Math.max(32,im.width)))*propScale;
+    const bx=meta?meta.bx:0,by=meta?meta.by:0,bw=meta?meta.bw:im.width,bh=meta?meta.bh:im.height;
+    const w=bw*s,dh=bh*s;
+    const footY=p.y+TH/2+2;
+    // ground shadow
+    ctx.save(); ctx.globalAlpha=0.25; ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.ellipse(p.x,footY,w*0.44,w*0.14,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    // biome tint
+    ctx.save();
+    const _bf=BIOME_FILTERS[biomeId]||'';
+    if(_bf) ctx.filter=_bf;
+    ctx.drawImage(im,bx,by,bw,bh,p.x-w/2,footY-dh,w,dh);
+    ctx.filter='none';
+    ctx.restore();
+  }
+
+  // player reference silhouette
+  if(document.getElementById('showPlayer')?.checked !== false){
+    const cr=Math.floor(N/2), cc=Math.floor(N/2);
+    const ch=Math.min(1, grid.heights[cr][cc]);
+    const footPos=iso(cc,cr,ch);
+    const playerX=footPos.x;
+    const playerY=footPos.y+TH/2;
+    // shadow
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(playerX, playerY, TW*0.28, TH*0.18, 0, 0, Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.35)';
+    ctx.fill();
+    // body
+    ctx.fillStyle='#e8c468';
+    ctx.strokeStyle='#1a1400';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.rect(playerX-TW*0.19, playerY-TW*1.25, TW*0.38, TW*1.25);
+    ctx.fill(); ctx.stroke();
+    // head
+    ctx.beginPath();
+    ctx.arc(playerX, playerY-TW*1.25-TW*0.18, TW*0.15, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    // label
+    ctx.fillStyle='#fff';
+    ctx.font=`bold ${Math.max(8,TW*0.35)}px monospace`;
+    ctx.textAlign='center';
+    ctx.fillText('P', playerX, playerY-TW*1.1);
+    ctx.restore();
+  }
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let N=13,densityMult=1.0,currentFocus=null,activeFilter='all';
+let propScale=1.0;
+let coolCliffs=false;
+let thRatio=0.5;
+let hsRatio=0.28;
+
+const BIOME_FILTERS={
+  meadow:  'saturate(1.1)',
+  forest:  'saturate(1.3) brightness(0.88)',
+  mountain:'saturate(0.6) brightness(0.88)',
+  snow:    'saturate(0.35) brightness(1.12) hue-rotate(195deg)',
+  beach:   'saturate(0.8) hue-rotate(18deg) brightness(1.05)',
+  dungeon: 'saturate(0.3) brightness(0.55)',
+};
+const SEEDS={},GRIDS={},CANVASES={};
+function freshSeed(){ return(Math.random()*0xFFFFFF)|0; }
+VARIANT_DEFS.forEach(v=>{ SEEDS[v.id]=freshSeed(); });
+
+function regenVariant(v){ GRIDS[v.id]=generateGrid(v,N,SEEDS[v.id],densityMult); }
+function regenAll(){ VARIANT_DEFS.forEach(v=>regenVariant(v)); }
+
+function renderAll(){
+  const sh=document.getElementById('showH').checked;
+  VARIANT_DEFS.forEach(v=>{
+    const cv=CANVASES[v.id]; if(!cv)return;
+    const TW=tileSize(N,cv.width,cv.height,v.maxH);
+    const TH=TW*thRatio,HS=Math.round(TW*hsRatio);
+    if(GRIDS[v.id]) renderGrid(cv.getContext('2d'),GRIDS[v.id],N,TW,TH,HS,sh,v.tint,v.biome);
+  });
+  requestAnimationFrame(renderAll);
+}
+
+// ============================================================
+// UI BUILDER
+// ============================================================
+function buildUI(){
+  const gallery=document.getElementById('gallery');
+  gallery.innerHTML='';
+  BIOME_ORDER.forEach(biome=>{
+    const variants=VARIANT_DEFS.filter(v=>v.biome===biome);
+    const section=document.createElement('div');
+    section.className='biome-section';
+    section.dataset.biome=biome;
+    section.innerHTML=`<h2>${BIOME_LABELS[biome]} — ${variants.length} variants</h2>`;
+    const row=document.createElement('div');
+    row.className='variant-row';
+
+    variants.forEach(v=>{
+      const card=document.createElement('div');
+      card.className='variant-card'; card.id='card-'+v.id; card.dataset.biome=v.biome;
+
+      const head=document.createElement('div'); head.className='card-head';
+      head.innerHTML=`<span class="vtag ${v.biome}">${v.biome}</span>
+        <span class="vname">${v.name}</span>
+        <span style="font-size:10px;color:#556">H0–${v.maxH}</span>
+        <button class="reroll-btn" data-id="${v.id}">⟳</button>`;
+
+      const wrap=document.createElement('div');
+      wrap.className='canvas-wrap';
+      wrap.innerHTML='<span class="loading">loading…</span>';
+      const cv=document.createElement('canvas');
+      cv.style.width='100%'; cv.style.height='100%'; cv.style.display='none';
+      wrap.appendChild(cv);
+      CANVASES[v.id]=cv;
+
+      wrap.addEventListener('click',()=>focusVariant(v.id));
+      wrap.addEventListener('contextmenu',e=>{ e.preventDefault(); SEEDS[v.id]=freshSeed(); regenVariant(v); });
+
+      const footer=document.createElement('div'); footer.className='card-footer';
+      const tiles=v.heightBands?v.heightBands[0].tiles:(v.baseTiles||[]);
+      tiles.slice(0,3).forEach(([n])=>{ const c=document.createElement('span'); c.className='legend-chip tile'; c.textContent=n; footer.appendChild(c); });
+      (v.props||[]).forEach(pd=>{ const c=document.createElement('span'); c.className='legend-chip prop'; c.textContent=pd.id; footer.appendChild(c); });
+      const mc=document.createElement('span'); mc.className='mob-chip'; mc.textContent='⚔ '+v.mob; footer.appendChild(mc);
+
+      card.appendChild(head); card.appendChild(wrap); card.appendChild(footer);
+      row.appendChild(card);
+
+      requestAnimationFrame(()=>{
+        const W=wrap.clientWidth||260,H=wrap.clientHeight||180;
+        cv.width=W; cv.height=H; cv.style.display='block';
+        wrap.querySelector('.loading').style.display='none';
+      });
+    });
+
+    section.appendChild(row);
+    gallery.appendChild(section);
+  });
+
+  gallery.addEventListener('click',e=>{
+    const btn=e.target.closest('.reroll-btn');
+    if(btn){ e.stopPropagation(); const id=btn.dataset.id; const v=VARIANT_DEFS.find(x=>x.id===id); if(v){ SEEDS[id]=freshSeed(); regenVariant(v); } }
+  });
+}
+
+function focusVariant(id){
+  currentFocus=(currentFocus===id)?null:id;
+  document.querySelectorAll('.variant-card').forEach(card=>{
+    const focused=card.id==='card-'+currentFocus;
+    card.classList.toggle('focused',focused);
+    if(focused){
+      setTimeout(()=>{
+        const cv=CANVASES[id]; if(!cv)return;
+        cv.width=cv.parentElement.clientWidth||600;
+        cv.height=cv.parentElement.clientHeight||420;
+      },50);
+    }
+  });
+}
+
+function applyFilter(biome){
+  activeFilter=biome;
+  document.querySelectorAll('.biome-section').forEach(s=>{
+    s.style.display=(biome==='all'||s.dataset.biome===biome)?'':'none';
+  });
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+document.getElementById('rerollAll').onclick=()=>{
+  Object.keys(SEEDS).forEach(id=>{ SEEDS[id]=freshSeed(); });
+  regenAll();
+};
+document.getElementById('densitySlider').oninput=function(){
+  densityMult=parseFloat(this.value);
+  document.getElementById('densityVal').textContent='×'+densityMult.toFixed(1);
+  regenAll();
+};
+document.getElementById('gridSize').onchange=function(){ N=parseInt(this.value); regenAll(); };
+document.getElementById('showH').onchange=()=>regenAll();
+document.getElementById('showProps').onchange=()=>regenAll();
+document.getElementById('propScaleSlider').oninput=function(){ propScale=parseFloat(this.value); document.getElementById('propScaleVal').textContent='×'+propScale.toFixed(2); renderAll(); };
+document.getElementById('thSlider').oninput=function(){ thRatio=parseFloat(this.value); document.getElementById('thVal').textContent=thRatio.toFixed(2); renderAll(); };
+document.getElementById('hsSlider').oninput=function(){ hsRatio=parseFloat(this.value); document.getElementById('hsVal').textContent=hsRatio.toFixed(2); renderAll(); };
+document.getElementById('showPlayer').onchange=()=>regenAll();
+document.getElementById('coolCliffs').onchange=function(){ coolCliffs=this.checked; renderAll(); };
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilter(btn.dataset.biome);
+  });
+});
+
+// INIT
+buildUI();
+regenAll();
+renderAll();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

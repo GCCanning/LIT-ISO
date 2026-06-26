@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO — Biome World Overview</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;min-height:100vh}
+header{background:#1d2027;border-bottom:1px solid #2a2f3a;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:15px;font-weight:700;color:#e8c468}
+header .sub{font-size:11px;color:#889}
+#globalbar{background:#191c22;border-bottom:1px solid #2a2f3a;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#globalbar button,#globalbar select{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px}
+#globalbar button:hover{border-color:#888}
+#globalbar button.primary{background:#2d5a2d;border-color:#4a4}
+#globalbar label{font-size:11px;color:#9aa;display:flex;align-items:center;gap:5px}
+#globalbar input[type=range]{width:90px;accent-color:#e8c468}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:14px}
+.biome-card{background:#1d2027;border:2px solid #2a2f3a;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.biome-card:hover{border-color:#444}
+.biome-card.focused{border-color:#e8c468;grid-column:1/-1}
+.card-head{padding:7px 10px;display:flex;align-items:center;gap:8px;background:#22262e}
+.bname{font-size:13px;font-weight:600;flex:1}
+.card-head button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px}
+.card-head button:hover{border-color:#888}
+.card-head a{background:#2a2f3a;color:#9cc4ff;border:1px solid #444;border-radius:4px;padding:3px 8px;font-size:11px;text-decoration:none}
+.card-head a:hover{border-color:#9cc4ff}
+.canvas-wrap{flex:1;position:relative;min-height:180px;background:#12141a;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.canvas-wrap canvas{display:block;image-rendering:pixelated}
+.canvas-wrap .loading{position:absolute;color:#667;font-size:11px;pointer-events:none}
+.biome-card.focused .canvas-wrap{min-height:420px}
+.card-footer{padding:6px 10px;background:#191c22;border-top:1px solid #23262d;display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-height:32px}
+.legend-chip{font-size:9px;color:#9aa;background:#22262e;border-radius:3px;padding:1px 5px;white-space:nowrap}
+.legend-chip.tile{border-left:3px solid #4a7a4a}
+.legend-chip.prop{border-left:3px solid #c8863a}
+.stat-chip{font-size:9px;color:#778;background:#22262e;border-radius:3px;padding:1px 5px}
+/* focus badge */
+.focus-badge{position:absolute;top:6px;right:8px;background:rgba(232,196,104,.15);color:#e8c468;font-size:10px;border-radius:4px;padding:2px 6px;pointer-events:none}
+
+/* world quality guide */
+#guide{margin:0 14px 14px;background:#1d2027;border:1px solid #2a2f3a;border-radius:8px;padding:14px}
+#guide h2{font-size:13px;font-weight:700;color:#e8c468;margin-bottom:10px;cursor:pointer;user-select:none}
+#guide-body{display:none}
+#guide-body.open{display:block}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:10px}
+.guide-card{background:#191c22;border:1px solid #2a2f3a;border-radius:6px;padding:10px}
+.guide-card h3{font-size:11px;font-weight:600;color:#9cc4ff;margin-bottom:6px}
+.guide-card p,.guide-card ul{font-size:11px;color:#9aa;line-height:1.55}
+.guide-card ul{padding-left:14px}
+.guide-card ul li{margin:2px 0}
+.bad{color:#c06060}
+.good{color:#6cba6c}
+.key{color:#e8c468}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⬛ Biome World Overview</h1>
+  <span class="sub">All biomes side-by-side · generated from canonical worldgen tile &amp; prop pools</span>
+</header>
+
+<div id="globalbar">
+  <button id="rerollAll" class="primary">⟳ Reroll All</button>
+  <label>Prop density
+    <input type="range" id="densitySlider" min="0.1" max="2.0" step="0.1" value="1.0">
+    <span id="densityVal">×1.0</span>
+  </label>
+  <label>Grid size
+    <select id="gridSize">
+      <option value="9">9×9</option>
+      <option value="13" selected>13×13</option>
+      <option value="17">17×17</option>
+    </select>
+  </label>
+  <label><input type="checkbox" id="showH" checked> heights</label>
+  <label><input type="checkbox" id="showProps" checked> props</label>
+  <label><input type="checkbox" id="showPlayer" checked> player ref</label>
+  <label><input type="checkbox" id="coolCliffs"> cool cliffs</label>
+  <label style="display:flex;align-items:center;gap:4px">prop ×<input type="range" id="propScaleSlider" min="0.4" max="2.5" step="0.05" value="1.0" style="width:66px"> <span id="propScaleVal">×1.0</span></label>
+  <label style="display:flex;align-items:center;gap:4px">angle<input type="range" id="thSlider" min="0.3" max="0.8" step="0.025" value="0.5" style="width:60px"> <span id="thVal">0.50</span></label>
+  <label style="display:flex;align-items:center;gap:4px">step<input type="range" id="hsSlider" min="0.12" max="0.5" step="0.01" value="0.28" style="width:56px"> <span id="hsVal">0.28</span></label>
+  <button id="collapseAll">Collapse all</button>
+  <span style="flex:1"></span>
+  <span style="font-size:11px;color:#556">Click any biome canvas to focus · right-click = reroll that biome</span>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<div id="guide">
+  <h2 id="guideToggle">▸ World Quality Guide — Why biomes feel noisy &amp; how to fix it</h2>
+  <div id="guide-body">
+    <div class="guide-grid">
+      <div class="guide-card">
+        <h3>The Noisy World Problem</h3>
+        <p>When every cell independently rolls for props, the result looks like <span class="bad">salt-and-pepper scatter</span>. Real landscapes have <span class="good">structure at multiple scales</span>: big zones → clusters → individual plants.</p>
+        <ul>
+          <li><span class="bad">Bad:</span> 40% of cells get a random prop</li>
+          <li><span class="good">Good:</span> 3 grove clusters of density 0.6, surrounded by 70% bare ground</li>
+        </ul>
+      </div>
+      <div class="guide-card">
+        <h3>Density Budgets per Biome</h3>
+        <p>Total prop coverage (cells with a prop / total cells):</p>
+        <ul>
+          <li>Meadow: <span class="key">15–20%</span> — flowers + tufts in patches, open lanes</li>
+          <li>Forest: <span class="key">35–50%</span> inside groves; <span class="key">&lt;8%</span> between (clearings)</li>
+          <li>Mountain: <span class="key">12–22%</span> rocks scale with height; ores sparse</li>
+          <li>Snow: <span class="key">8–12%</span> — pines + rocks + fallen logs only</li>
+          <li>Beach: <span class="key">&lt;5%</span> — shore rocks at water edge only</li>
+        </ul>
+      </div>
+      <div class="guide-card">
+        <h3>Negative Space = Traversal</h3>
+        <p>Every biome needs <span class="key">clear traversal lanes</span> — paths the player can walk without weaving. The worldgen feature system suppresses props near water edges, paths, and spawn safety zones. Key rules:</p>
+        <ul>
+          <li>Carve a cross-shaped clear lane through every chunk first</li>
+          <li>Feature clusters must not block ALL routes through a chunk</li>
+          <li>Small decor (flowers, tufts) can be denser than blocking props</li>
+        </ul>
+      </div>
+      <div class="guide-card">
+        <h3>Cluster Before You Scatter</h3>
+        <p>Each prop type should have <span class="key">cluster seeds</span> (blue-noise placed), a radius, and a fill density. Props outside cluster influence = zero chance.</p>
+        <ul>
+          <li>Forest grove: radius 5, fillDensity 0.60, 1.8 centers/100, spacing≥7</li>
+          <li>Meadow flower patch: radius 2, fillDensity 0.45, 1.8 centers/100, spacing≥8</li>
+          <li>Rock outcrop: radius 2, fillDensity 0.70, 0.8 centers/100, spacing≥10</li>
+        </ul>
+        <p style="margin-top:5px">Groves should overlap only at edges, never their centers.</p>
+      </div>
+      <div class="guide-card">
+        <h3>Feature Priority &amp; Suppression</h3>
+        <p>Place features in order: <span class="key">Big → Medium → Small</span>. Each feature reserves footprint cells before the next category runs.</p>
+        <ul>
+          <li>1. Tree groves (reserve trunk + surrounding cells)</li>
+          <li>2. Rock outcrops (reserve 1×1)</li>
+          <li>3. Bush patches (skip if near tree)</li>
+          <li>4. Flowers/tufts (skip if near any prop)</li>
+          <li>5. Decor (can overlap with small decor)</li>
+        </ul>
+      </div>
+      <div class="guide-card">
+        <h3>Biome Identity Rules</h3>
+        <p>Each biome should be identifiable at a glance by <span class="key">1–2 signature features</span>, not all features at equal density:</p>
+        <ul>
+          <li>Meadow = <span class="good">flower patches + tufts</span> — no trees; open pastoral feel</li>
+          <li>Forest = <span class="good">plains2 floor + dense grove canopy</span> + clearings carved between</li>
+          <li>Mountain = <span class="good">stratified height bands</span> (rock→grass→alpine→stone) + ores by elevation</li>
+          <li>Snow = <span class="good">open snowfields</span> + lone pines + fallen logs (Gary's desolate feel)</li>
+          <li>Beach = <span class="good">water at h0 + clean sand at h1</span> — minimal props</li>
+        </ul>
+        <p style="margin-top:5px">If all features fire at the same density, the biome reads as "stuff everywhere."</p>
+      </div>
+      <div class="guide-card">
+        <h3>Transition Quality</h3>
+        <p>The feature <span class="key">density ramp</span> in each biome JSON controls how features fade across the transition band. Key issues:</p>
+        <ul>
+          <li>Trees should fade out 4–7 cells before biome border</li>
+          <li>Accent tiles (flowers, leaf litter) should cross-fade across the same band</li>
+          <li>No abrupt prop wall at the biome edge</li>
+        </ul>
+        <p style="margin-top:5px">Tune this in <a href="biome_preview.html" style="color:#9cc4ff">Biome Preview + Editor</a> using the accent rate and grove density sliders.</p>
+      </div>
+      <div class="guide-card">
+        <h3>How to Use This Tool</h3>
+        <ul>
+          <li>Use <span class="key">⟳ Reroll All</span> to see many seeds — if most look noisy, the density rules need fixing</li>
+          <li>Drag the <span class="key">Prop density</span> slider left to see the target "sparse" look</li>
+          <li>Click a biome canvas to <span class="good">focus</span> it larger; right-click to reroll just that biome</li>
+          <li>Click <span class="key">Open Editor →</span> on any biome to open the full tile/prop editor</li>
+          <li>Save reference vignettes in <a href="index.html" style="color:#9cc4ff">Biome Sketch (freehand)</a> once you have a look you like</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets.js"></script>
+<script>
+// ---------------------------------------------------------------------------
+// BIOME DEFINITIONS — derived from biomes/*.json + features/*.json (worldgen)
+// Each biome defines tile pools (base + accents), height profile, and prop rules.
+// prop.cluster=true = grove-style blue-noise cluster placement
+// prop.cluster=false = sparse individual scatter with minSpacing
+// ---------------------------------------------------------------------------
+const BIOME_DEFS = {
+  meadow: {
+    // meadow.json: open/pastoral, no trees (Gary zeroed), flower patches = signature
+    label:'Meadow', tint:'#3a6e3a',
+    relief:'gentle', maxH:2, freq:0.16, accentRate:0.10,
+    baseTiles:[['plains2_02',60],['plains2_05',16],['plains2_07',14],['plains2_11',12],['plains2_15',10],['plains2_08',8],['plains2_14',8],['plains2_02_new01',5],['plains2_05_new02',4],['plains2_07_new01',4],['plains2_11_new03',3],['plains2_14_new01',3]],
+    accentTiles:[['plains2_04',6,['grasscliff',4],['stoneclifftuft',3]],['plains2_00',5],['plains2_10',5],['plains2_03',4],['plains2_01',4],['plains_flower_grass',3],['plains_grass_tufts',3],['plains2_13',2],['plains2_12',2],['plains2_04_new02',2]],
+    props:[
+      // flowers = biome signature — defined patches, not scatter
+      {id:'flowers', pool:[['flower',4],['flower_tulip',3],['plains_grass_tufts',2],['tuft',1]],
+       density:0.45, minH:0, maxH:1, cluster:true, clusterR:2, clusterFill:0.45, centersP100:1.8},
+      // long grass — filler between flower patches, lower priority
+      {id:'tufts', pool:[['tuft',4],['plains_grass_tufts',3]],
+       density:0.38, minH:0, maxH:2, cluster:true, clusterR:3, clusterFill:0.38, centersP100:1.4},
+      // bushes — occasional clusters, rare
+      {id:'bushes', pool:[['plains_bush_v2_0',4],['plains_bush_v2_1',2],['plains_bush_v2_2',3],['plains_bush',1],['plains_dry_bush',1],['plains_bush_v2_0_big',1]],
+       density:0.30, minH:0, maxH:2, cluster:true, clusterR:2, clusterFill:0.30, centersP100:1.5},
+      // rocks — landmark clusters only, never solo
+      {id:'rocks', pool:[['plains_rock_v2_0',3],['plains_rock_v2_2',3],['plains_rock_v2_1',2],['plains_rock',1],['shared_gray_rock',1]],
+       density:0.70, minH:0, maxH:2, cluster:true, clusterR:2, clusterFill:0.70, centersP100:0.8},
+    ]
+  },
+  forest: {
+    // forest.json: Gary's rethink — plains2 floor + heavy tree canopy. Floor = lush, identity = canopy.
+    label:'Forest', tint:'#1f5c2e',
+    relief:'gentle', maxH:2, freq:0.15, accentRate:0.22,
+    // Gary's floor: plains2 variants, not dedicated forest tiles
+    baseTiles:[['plains2_11',40],['plains2_13',24],['plains2_15',20],['plains2_08',20],['plains2_06',20],['plains2_10',18],['plains2_12',10],['plains2_02',10]],
+    accentTiles:[['forest_leaf_litter',7,['stonecliffmoss',5],['grasscliff',3]],['forest_dark_underbrush',4],['forest_grass_tufts',4],['plains2_05',4],['forest_floor',3],['forest_moss_grass',3]],
+    props:[
+      // groves: primary identity giver — dense, large radius, carved clearings between
+      {id:'groves', pool:[['forest_oak_tree',5],['forest_deep_oak_tree',3],['forest_pine',2],['forest_pine_young',2],['forest_moss_bush',2],['forest_fern',1],['forest_dead_tree',1]],
+       density:0.60, minH:0, maxH:2, cluster:true, clusterR:5, clusterFill:0.60, centersP100:1.8},
+      // understory: ferns + moss bushes clustered near (but not inside) grove walls
+      {id:'understory', pool:[['forest_fern',4],['forest_moss_bush',3],['forest_mushrooms',2]],
+       density:0.18, minH:0, maxH:2, cluster:true, clusterR:2.5, clusterFill:0.45, centersP100:1.2},
+      // litter: logs/stumps/dead trees scattered across the floor
+      {id:'litter', pool:[['log',5],['stump',3],['forest_stump',2],['forest_dead_tree',2]],
+       density:0.022, minH:0, maxH:2, cluster:false, minSpacing:4},
+    ]
+  },
+  mountain: {
+    // mountain.json: Gary's stratified tile approach — h0=rock, h1=grass, h2=alpine meadow, h3=windswept
+    label:'Mountain', tint:'#5a5f62',
+    relief:'cone', maxH:6, freq:0.13, accentRate:0.06,
+    // Gary's height bands — mixed stone+plains2 at each elevation level
+    heightBands:[
+      {h:0, tiles:[['mountain_stone_09',50],['mountain_stone_08',25],['mountain_stone_12',20],['mountain_stone_09_new01',8],['mountain_stone_08_new02',6]]},
+      {h:1, tiles:[['grass_3',45],['plains_pale_stone_path',20],['mountain_stone_09',20],['plains2_04',10],['mountain_stone_08_new01',6]]},
+      {h:2, tiles:[['plains2_00',30],['plains2_14_new01',25],['plains2_04',20],['plains2_08_new01',15],['mountain_stone_08',10],['plains2_02_new03',6]]},
+      {h:3, tiles:[['plains2_02_new03',22],['plains2_08_new01',18],['mountain_stone_13_new03',18],['plains2_04',12],['mountain_stone_03',10],['mountain_stone_05',8],['stonecliffmoss',7],['crackedcliff',5]]},
+      {h:4, tiles:[['mountain_stone_05',38],['mountain_stone_13_new03',22],['plains2_02_new03',12],['mountain_stone_14',12],['stone_snowcap',7],['crackedcliff',9]]},
+      {h:5, tiles:[['mountain_stone_14',50],['mountain_stone_05',30],['stone_snowcap',18],['mountain_stone_14_new01',10]]},
+      {h:6, tiles:[['mountain_stone_14',60],['stone_snowcap',28],['mountain_stone_05',12]]},
+    ],
+    accentTiles:[], accentRate:0,
+    props:[
+      // treeline — sparse pines at low slopes only (h0-1)
+      {id:'pines', pool:[['forest_pine',3],['forest_pine_young',2]],
+       density:0.04, minH:0, maxH:1, cluster:true, clusterR:2, clusterFill:0.3, centersP100:0.4},
+      // rock outcrops — verified assets, moderate density; bare above h4
+      {id:'rocks', pool:[['plains_rock_v2_0_big',3],['plains_rock_v2_0_lg',2],['plains_rock_v2_0_sm',1]],
+       density:0.28, minH:0, maxH:4, cluster:true, clusterR:2, clusterFill:0.55, centersP100:0.9},
+      // isolated boulders at high elevation
+      {id:'boulders', pool:[['plains_rock_v2_0_big',1]],
+       density:0.08, minH:4, maxH:6, cluster:false, minSpacing:3},
+      // ores by elevation
+      {id:'copper',   pool:[['ore_copper',1]],   density:0.030, minH:0, maxH:3, cluster:false, minSpacing:3},
+      {id:'iron',     pool:[['ore_iron',1]],     density:0.018, minH:2, maxH:5, cluster:false, minSpacing:4},
+      {id:'silver',   pool:[['ore_silver',1]],   density:0.010, minH:3, maxH:6, cluster:false, minSpacing:5},
+      {id:'starmetal',pool:[['ore_starmetal',1]],density:0.005, minH:5, maxH:6, cluster:false, minSpacing:7},
+    ]
+  },
+  snow: {
+    // snow.json: Gary added logs/stumps for desolate feel. More tile variants. Sparse pines + deadfall.
+    label:'Snow', tint:'#8899aa',
+    relief:'rolling', maxH:4, freq:0.17, accentRate:0.09,
+    baseTiles:[['snow2_03',55],['snow2_04',30],['snow2_07',25],['snow2_00',12],['snow2_01',10],['snow2_02',10],['snow2_05',8],['snow2_06',8],['snow2_12',6],['snow2_13',6],['snow2_03_new01',8],['snow2_04_new02',6],['snow2_07_new01',5],['snow2_00_new03',4],['snow2_03_new03',4]],
+    accentTiles:[['snow2_10',8],['snow2_11',7],['snow2_08',5],['snow2_09',4],['snow2_14',4],['snow2_15',3]],
+    props:[
+      // pines — lone silhouettes, Gary's 0.06 density
+      {id:'pines', pool:[['forest_pine',4],['pine',3],['forest_pine_young',2]],
+       density:0.06, minH:0, maxH:3, cluster:true, clusterR:2.5, clusterFill:0.55, centersP100:1.2},
+      // rocks — clusters only
+      {id:'rocks', pool:[['plains_rock_v2_0',2],['plains_rock_v2_2',2],['plains_rock',2],['shared_gray_rock',2]],
+       density:0.70, minH:0, maxH:4, cluster:true, clusterR:2, clusterFill:0.70, centersP100:0.8},
+      // snow debris — Gary's addition: fallen logs + dead trees across open snow
+      {id:'debris', pool:[['log',5],['stump',3],['forest_stump',2],['forest_dead_tree',2]],
+       density:0.030, minH:0, maxH:2, cluster:false, minSpacing:6},
+    ]
+  },
+  beach: {
+    // beach.json: directional shore gradient — water at h0, wet sand at h1, dry sand at h2
+    label:'Beach / Coast', tint:'#8a7a40',
+    relief:'shore', maxH:2, freq:0.10, accentRate:0.05,
+    // Shore uses heightBandOverrides: h0=water, h1=wet sand, h2=dry sand
+    heightBands:[
+      {h:0, tiles:[['water_deep',60],['water_shallow',25]]},
+      {h:1, tiles:[['sand_06',55],['beach_sand_wet',20],['sand_04',12],['sand_05',8],['beach_pebble',5]]},
+      {h:2, tiles:[['sand_06',50],['sand_04',20],['sand_05',15],['sand_09',8],['sand_11',7]]},
+    ],
+    baseTiles:[['sand_06',55],['water_deep',40],['water_shallow',18],['sand_04',14],['sand_05',10]],
+    accentTiles:[['sand_05',5],['sand_09',4],['sand_11',3],['beach_pebble',3]],
+    props:[
+      {id:'rocks', pool:[['shore_stone',4],['shared_gray_rock',3],['plains_rock_v2_0',2]],
+       density:0.050, minH:0, maxH:1, cluster:true, clusterR:1.5, clusterFill:0.60, centersP100:0.6},
+    ]
+  },
+  dungeon: {
+    label:'Dungeon', tint:'#2a2440',
+    relief:'flat', maxH:1, freq:0.10, accentRate:0.14,
+    baseTiles:[['dungeon2_00',20],['dungeon2_01',20],['dungeon2_02',15],['dungeon2_03',10],['dungeon2_04',10],['dungeon2_05',10],['dungeon2_07',8],['dungeon2_06',5]],
+    accentTiles:[['dungeon2_08',6],['dungeon2_09',5],['dungeon2_10',4],['dungeon2_11',3]],
+    props:[
+      {id:'chests', pool:[['dungeon_chest_wood',1]],
+       density:0.004, minH:0, maxH:1, cluster:false, minSpacing:4},
+      {id:'lights', pool:[['candle_lantern',2],['brazier',1]],
+       density:0.006, minH:0, maxH:1, cluster:false, minSpacing:5},
+    ]
+  }
+};
+const BIOME_ORDER = ['meadow','forest','mountain','snow','beach','dungeon'];
+
+// ---------------------------------------------------------------------------
+// SEEDED RNG + NOISE  (same as biome_preview.html)
+// ---------------------------------------------------------------------------
+function mulberry32(seed){
+  let a=seed>>>0;
+  return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; };
+}
+function hash2(ix,iy,seed){
+  let h=(Math.imul(ix,374761393)+Math.imul(iy,668265263)+Math.imul(seed,982451653))>>>0;
+  h=Math.imul(h^(h>>>13),1274126177)>>>0; return(h>>>0)/4294967296;
+}
+function vnoise(x,y,seed){
+  const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+  const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
+  const a=hash2(ix,iy,seed),b=hash2(ix+1,iy,seed),c=hash2(ix,iy+1,seed),d=hash2(ix+1,iy+1,seed);
+  return a*(1-u)*(1-v)+b*u*(1-v)+c*(1-u)*v+d*u*v;
+}
+function fbm(x,y,seed,oct,ridged){
+  let amp=0.5,freq=1,sum=0,norm=0;
+  for(let o=0;o<oct;o++){
+    let n=vnoise(x*freq,y*freq,seed+o*131);
+    if(ridged){n=1-Math.abs(2*n-1); n*=n;}
+    sum+=n*amp; norm+=amp; amp*=0.5; freq*=2;
+  }
+  return sum/norm;
+}
+
+const RELIEF={
+  flat:{amp:0.08,ridged:false,center:0},
+  gentle:{amp:0.45,ridged:false,center:0},
+  rolling:{amp:0.70,ridged:false,center:0},
+  massif:{amp:1.0,ridged:true,center:0.62},
+  shore:{amp:0.04,ridged:false,center:0,shore:true}, // directional gradient: water→sand
+  cone:{amp:0.14,ridged:false,center:0,cone:true},   // radial mountain cone
+};
+
+function pickW(pool,r){
+  if(!pool||!pool.length)return null;
+  let tot=0; for(const e of pool)tot+=Math.max(0,e[1]);
+  if(tot<=0)return pool[0][0];
+  let x=r()*tot;
+  for(const e of pool){x-=Math.max(0,e[1]); if(x<0)return e[0];}
+  return pool[pool.length-1][0];
+}
+
+// ---------------------------------------------------------------------------
+// GENERATOR
+// ---------------------------------------------------------------------------
+function generateGrid(biomeId, N, seed, densityMult){
+  const def=BIOME_DEFS[biomeId];
+  const rng=mulberry32(seed);
+  const cfg=RELIEF[def.relief]||RELIEF.gentle;
+  const scale=(def.freq||0.16)*(13/N+0.3);
+  const cx=(N-1)/2,cy=(N-1)/2,R=Math.max(1,(N-1)/2);
+
+  // 1. Heightfield
+  const hf=[];
+  if(cfg.shore){
+    // Shore: diagonal gradient water→sand. Water at top-left, sand at bottom-right.
+    // Tiny noise wobble on the boundary for organic shoreline feel.
+    for(let r=0;r<N;r++){
+      hf.push([]);
+      for(let c=0;c<N;c++){
+        // Diagonal t: 0=top-left(water), 1=bottom-right(sand)
+        const t=(r+c)/(2*(N-1));
+        // Small noise perturbation on the waterline only
+        const wobble=vnoise(c*0.55+seed*0.001,r*0.55,seed+3)*0.30-0.08;
+        const raw=Math.max(0,Math.min(1,t+wobble));
+        // Map to height bands: 0→h0(water), 0.38→h1(wet sand), 0.65→h2(dry sand)
+        let h=0;
+        if(raw>0.38)h=1;
+        if(raw>0.65)h=2;
+        h=Math.min(h,def.maxH);
+        hf[r].push(h);
+      }
+    }
+  } else if(cfg.cone){
+    // Cone: radial gradient from center + gentle noise — smooth mountain shape
+    for(let r=0;r<N;r++){
+      hf.push([]);
+      for(let c=0;c<N;c++){
+        const dx=(c-cx)/R, dy=(r-cy)/R;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        const base=Math.max(0, 1-Math.pow(dist,1.15));
+        const noise=fbm(c*scale,r*scale,seed,3,false)*cfg.amp;
+        const raw=Math.max(0,Math.min(1, base+noise));
+        hf[r].push(Math.round(raw*def.maxH));
+      }
+    }
+  } else {
+    const raw=[];
+    let mn=1e9,mx=-1e9;
+    for(let r=0;r<N;r++){
+      raw.push([]);
+      for(let c=0;c<N;c++){
+        const wx=c+4*(vnoise(c*0.18+11,r*0.18,seed+7)-0.5);
+        const wy=r+4*(vnoise(c*0.18,r*0.18+11,seed+9)-0.5);
+        let n=fbm(wx*scale,wy*scale,seed,4,cfg.ridged);
+        n=n*(1+cfg.amp)-cfg.amp*0.5+cfg.center;
+        // radial gradient so edges are lower (avoid cropped-off peaks)
+        const dx=(c-cx)/R, dy=(r-cy)/R;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        n-=dist*dist*0.22;
+        raw[r].push(n);
+        if(n<mn)mn=n; if(n>mx)mx=n;
+      }
+    }
+    for(let r=0;r<N;r++){
+      hf.push([]);
+      for(let c=0;c<N;c++){
+        const norm=(raw[r][c]-mn)/(mx-mn+1e-9);
+        hf[r].push(Math.round(norm*def.maxH));
+      }
+    }
+  }
+
+  // 2. Tile selection
+  // Smooth pass: raise any isolated divot (prevents 1-tile drop traps for player)
+  for(let pass=0;pass<4;pass++){
+    for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+      const ns=[
+        r>0?hf[r-1][c]:hf[r][c], r<N-1?hf[r+1][c]:hf[r][c],
+        c>0?hf[r][c-1]:hf[r][c], c<N-1?hf[r][c+1]:hf[r][c]
+      ];
+      const minN=Math.min(...ns);
+      if(hf[r][c]<minN-1) hf[r][c]=minN-1;
+    }
+  }
+
+  const tileGrid=[];
+  for(let r=0;r<N;r++){
+    tileGrid.push([]);
+    for(let c=0;c<N;c++){
+      const h=hf[r][c];
+      let tile;
+      if(def.heightBands){
+        // mountain stratification
+        // pick highest band whose .h threshold is <= this cell's height
+        let band=def.heightBands[0];
+        for(const b of def.heightBands){ if(h>=b.h)band=b; }
+        tile=pickW(band.tiles,rng);
+      } else {
+        const useAccent = rng() < (def.accentRate||0);
+        tile = useAccent
+          ? (def.accentTiles&&def.accentTiles.length ? pickW(def.accentTiles,rng) : pickW(def.baseTiles,rng))
+          : pickW(def.baseTiles,rng);
+      }
+      tileGrid[r].push(tile);
+    }
+  }
+
+  // 3. Prop placement
+  const propGrid=Array.from({length:N},()=>new Array(N).fill(null));
+  const occupied=Array.from({length:N},()=>new Array(N).fill(false));
+
+  const showProps=document.getElementById('showProps').checked;
+  if(showProps && def.props){
+    for(const pd of def.props){
+      const effDensity=(pd.density||0)*densityMult;
+      if(pd.cluster){
+        // cluster seeding: place cluster centers via blue-noise approx
+        const totalCells=N*N;
+        const nCenters=Math.max(0,Math.round((pd.centersP100||1.3)*totalCells/100*densityMult));
+        const centers=[];
+        // poisson-disk lite: candidate generation
+        for(let att=0;att<nCenters*8 && centers.length<nCenters;att++){
+          const cr=Math.floor(rng()*N), cc=Math.floor(rng()*N);
+          const ch=hf[cr][cc];
+          if(ch<(pd.minH||0)||ch>(pd.maxH||99))continue;
+          // min distance between centers = radius
+          const minD=(pd.clusterR||3)*1.6;
+          let ok=true;
+          for(const [er,ec] of centers){
+            if(Math.hypot(cr-er,cc-ec)<minD){ok=false;break;}
+          }
+          if(ok)centers.push([cr,cc]);
+        }
+        // fill each cluster
+        const R=pd.clusterR||3;
+        const fill=pd.clusterFill||0.55;
+        for(const [cr,cc] of centers){
+          for(let dr=-Math.ceil(R);dr<=Math.ceil(R);dr++){
+            for(let dc=-Math.ceil(R);dc<=Math.ceil(R);dc++){
+              const nr=cr+dr, nc=cc+dc;
+              if(nr<0||nr>=N||nc<0||nc>=N)continue;
+              if(occupied[nr][nc])continue;
+              const d=Math.hypot(dr,dc);
+              if(d>R)continue;
+              const ch=hf[nr][nc];
+              if(ch<(pd.minH||0)||ch>(pd.maxH||99))continue;
+              // density falloff from center
+              const prob=fill*Math.pow(1-d/R,0.4);
+              if(rng()<prob){
+                propGrid[nr][nc]=pickW(pd.pool,rng);
+                occupied[nr][nc]=true;
+              }
+            }
+          }
+        }
+      } else {
+        // scattered: per-cell density test with minimum spacing
+        const minSp=pd.minSpacing||2;
+        for(let r=0;r<N;r++){
+          for(let c=0;c<N;c++){
+            if(occupied[r][c])continue;
+            const h=hf[r][c];
+            if(h<(pd.minH||0)||h>(pd.maxH||99))continue;
+            if(rng()>effDensity)continue;
+            // check min spacing
+            let tooClose=false;
+            for(let sr=Math.max(0,r-minSp);sr<=Math.min(N-1,r+minSp)&&!tooClose;sr++){
+              for(let sc=Math.max(0,c-minSp);sc<=Math.min(N-1,c+minSp)&&!tooClose;sc++){
+                if(propGrid[sr][sc])tooClose=true;
+              }
+            }
+            if(!tooClose){
+              propGrid[r][c]=pickW(pd.pool,rng);
+              occupied[r][c]=true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return {tiles:tileGrid, props:propGrid, heights:hf};
+}
+
+// ---------------------------------------------------------------------------
+// RENDERER
+// ---------------------------------------------------------------------------
+const META={}, imgs={};
+if(typeof ASSETS!=='undefined'){
+  ASSETS.forEach(a=>{
+    META[a.name]=a;
+    const i=new Image(); i.src=a.path; imgs[a.name]=i;
+  });
+}
+
+function tileSize(N, canvasW, canvasH, maxH){
+  const TW=Math.max(14,Math.min(52,
+    Math.floor((canvasW-40)/N),
+    Math.floor((canvasH-80)/(N*thRatio/2 + maxH*hsRatio + 1))));
+  return TW%2===0?TW:TW-1;
+}
+
+function renderGrid(ctx, grid, N, TW, TH, HS, showH, focused, biomeId){
+  const W=ctx.canvas.width, H=ctx.canvas.height;
+  ctx.clearRect(0,0,W,H);
+  // background
+  ctx.fillStyle='#12141a'; ctx.fillRect(0,0,W,H);
+
+  const ox=W/2, oy=70;
+  function iso(c,r,h){ return{x:ox+(c-r)*TW/2, y:oy+(c+r)*TH/2-h*HS}; }
+
+  // draw tiles back-to-front
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const h=grid.heights[r][c], p=iso(c,r,h);
+    // cliff face
+    if(h>0){
+      const pb=iso(c,r,0);
+      ctx.fillStyle='#1e1810';
+      ctx.beginPath();
+      ctx.moveTo(p.x-TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+      ctx.lineTo(pb.x,pb.y+TH); ctx.lineTo(pb.x-TW/2,pb.y+TH/2);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#26201a';
+      ctx.beginPath();
+      ctx.moveTo(p.x+TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+      ctx.lineTo(pb.x,pb.y+TH); ctx.lineTo(pb.x+TW/2,pb.y+TH/2);
+      ctx.closePath(); ctx.fill();
+    }
+    // grid outline
+    ctx.strokeStyle=grid.tiles[r][c]?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.12)';
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+    ctx.lineTo(p.x-TW/2,p.y+TH/2); ctx.closePath(); ctx.stroke();
+    // tile sprite
+    const tname=grid.tiles[r][c];
+    if(tname&&imgs[tname]&&imgs[tname].complete&&imgs[tname].naturalWidth){
+      const im=imgs[tname]; const w=TW, tw=im.height/im.width*TW;
+      const isCliffTile=tname.includes('cliff');
+      if(isCliffTile&&coolCliffs) ctx.filter='hue-rotate(180deg) saturate(0.35) brightness(1.05)';
+      ctx.drawImage(im,p.x-w/2,p.y+TH-tw,w,tw);
+      if(isCliffTile&&coolCliffs) ctx.filter='none';
+    } else if(tname){
+      // fallback flat colour
+      const def=BIOME_DEFS[currentFocus||'meadow'];
+      ctx.fillStyle=def.tint+'88';
+      ctx.beginPath();
+      ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+TW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH);
+      ctx.lineTo(p.x-TW/2,p.y+TH/2); ctx.closePath(); ctx.fill();
+    }
+    // height label (focused or showH)
+    if(showH && h>0){
+      ctx.fillStyle='rgba(232,196,104,0.75)'; ctx.font=`${Math.max(7,TW/5)}px monospace`;
+      ctx.fillText(h, p.x-3, p.y+TH/2+3);
+    }
+  }
+
+  // second pass: props (so tall sprites don't get overdrawn)
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const pname=grid.props[r][c];
+    if(!pname)continue;
+    const h=grid.heights[r][c], p=iso(c,r,h);
+    const im=imgs[pname];
+    if(!im||!im.complete||!im.naturalWidth)continue;
+    const meta=META[pname];
+    const s=(meta?(TW/meta.ppu):(TW/Math.max(32,im.width)))*propScale;
+    const bx=meta?meta.bx:0, by=meta?meta.by:0,
+          bw=meta?meta.bw:im.width, bh=meta?meta.bh:im.height;
+    const w=bw*s, dh=bh*s;
+    const footY=p.y+TH/2+2;
+    // ground contact shadow
+    ctx.save(); ctx.globalAlpha=0.25; ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.ellipse(p.x,footY,w*0.44,w*0.14,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    // prop with biome tint
+    ctx.save();
+    const _bf=BIOME_FILTERS[biomeId]||'';
+    if(_bf) ctx.filter=_bf;
+    ctx.drawImage(im,bx,by,bw,bh, p.x-w/2, footY-dh, w, dh);
+    ctx.filter='none';
+    ctx.restore();
+  }
+
+  // player reference silhouette
+  if(document.getElementById('showPlayer')?.checked !== false){
+    const cr=Math.floor(N/2), cc=Math.floor(N/2);
+    const ch=Math.min(1, grid.heights[cr][cc]);
+    const footPos=iso(cc,cr,ch);
+    const playerX=footPos.x;
+    const playerY=footPos.y+TH/2;
+    // shadow
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(playerX, playerY, TW*0.28, TH*0.18, 0, 0, Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.35)';
+    ctx.fill();
+    // body
+    ctx.fillStyle='#e8c468';
+    ctx.strokeStyle='#1a1400';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.rect(playerX-TW*0.19, playerY-TW*1.25, TW*0.38, TW*1.25);
+    ctx.fill(); ctx.stroke();
+    // head
+    ctx.beginPath();
+    ctx.arc(playerX, playerY-TW*1.25-TW*0.18, TW*0.15, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    // label
+    ctx.fillStyle='#fff';
+    ctx.font=`bold ${Math.max(8,TW*0.35)}px monospace`;
+    ctx.textAlign='center';
+    ctx.fillText('P', playerX, playerY-TW*1.1);
+    ctx.restore();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------------------
+let N=13, densityMult=1.0, showH=true, currentFocus=null;
+let propScale=1.0;
+let coolCliffs=false;
+let thRatio=0.5;   // TH = TW * thRatio  (0.3 flat top-down → 0.8 steep side-on)
+let hsRatio=0.28;  // HS = TW * hsRatio  (height step visual size)
+
+const BIOME_FILTERS={
+  meadow:  'saturate(1.1)',
+  forest:  'saturate(1.3) brightness(0.88)',
+  mountain:'saturate(0.6) brightness(0.88)',
+  snow:    'saturate(0.35) brightness(1.12) hue-rotate(195deg)',
+  beach:   'saturate(0.8) hue-rotate(18deg) brightness(1.05)',
+  dungeon: 'saturate(0.3) brightness(0.55)',
+};
+const SEEDS={}, GRIDS={}, CANVASES={};
+
+function freshSeed(){ return (Math.random()*0xFFFFFF)|0; }
+BIOME_ORDER.forEach(id=>{ SEEDS[id]=freshSeed(); });
+
+function regenBiome(id){
+  GRIDS[id]=generateGrid(id,N,SEEDS[id],densityMult);
+}
+function regenAll(){ BIOME_ORDER.forEach(id=>regenBiome(id)); }
+
+// ---------------------------------------------------------------------------
+// RENDER LOOP — continuously refresh (images may load async)
+// ---------------------------------------------------------------------------
+function renderAll(){
+  const sh=document.getElementById('showH').checked;
+  BIOME_ORDER.forEach(id=>{
+    const cv=CANVASES[id];
+    if(!cv)return;
+    const def=BIOME_DEFS[id];
+    const TW=tileSize(N, cv.width, cv.height, def.maxH);
+    const TH=TW*thRatio, HS=Math.round(TW*hsRatio);
+    if(GRIDS[id]) renderGrid(cv.getContext('2d'),GRIDS[id],N,TW,TH,HS,sh,id===currentFocus,id);
+  });
+}
+
+// ---------------------------------------------------------------------------
+// UI BUILDER
+// ---------------------------------------------------------------------------
+function buildUI(){
+  const gallery=document.getElementById('gallery');
+  gallery.innerHTML='';
+  BIOME_ORDER.forEach(id=>{
+    const def=BIOME_DEFS[id];
+    const card=document.createElement('div');
+    card.className='biome-card';
+    card.id='card-'+id;
+
+    const head=document.createElement('div');
+    head.className='card-head';
+    head.innerHTML=`
+      <span class="bname" style="color:${def.tint}">${def.label}</span>
+      <span style="font-size:10px;color:#667">H0–${def.maxH} · ${def.relief}</span>
+      <button class="reroll-btn" data-id="${id}">⟳</button>
+      <a href="biome_preview.html" target="_blank">Editor →</a>`;
+
+    const wrap=document.createElement('div');
+    wrap.className='canvas-wrap';
+    wrap.innerHTML='<span class="loading">loading…</span>';
+
+    const cv=document.createElement('canvas');
+    cv.style.width='100%'; cv.style.height='100%';
+    cv.style.display='none';
+    wrap.appendChild(cv);
+    CANVASES[id]=cv;
+
+    // Focus on click (left), reroll on right-click
+    wrap.addEventListener('click', ()=>focusBiome(id));
+    wrap.addEventListener('contextmenu', e=>{ e.preventDefault(); SEEDS[id]=freshSeed(); regenBiome(id); });
+
+    const footer=document.createElement('div');
+    footer.className='card-footer';
+    const bt=def.heightBands ? def.heightBands[0].tiles : (def.baseTiles||[]);
+    bt.slice(0,4).forEach(([n])=>{ const c=document.createElement('span'); c.className='legend-chip tile'; c.textContent=n; footer.appendChild(c); });
+    (def.props||[]).forEach(pd=>{
+      const c=document.createElement('span'); c.className='legend-chip prop'; c.textContent=pd.id; footer.appendChild(c);
+    });
+    const sh=document.createElement('span'); sh.className='stat-chip';
+    sh.textContent=`${(def.props||[]).length} prop group${(def.props||[]).length!==1?'s':''}`;
+    footer.appendChild(sh);
+
+    card.appendChild(head);
+    card.appendChild(wrap);
+    card.appendChild(footer);
+    gallery.appendChild(card);
+
+    requestAnimationFrame(()=>{
+      const W=wrap.clientWidth||320, H=wrap.clientHeight||200;
+      cv.width=W; cv.height=H;
+      cv.style.display='block';
+      wrap.querySelector('.loading').style.display='none';
+    });
+  });
+
+  gallery.addEventListener('click', e=>{
+    const btn=e.target.closest('.reroll-btn');
+    if(btn){ e.stopPropagation(); const id=btn.dataset.id; SEEDS[id]=freshSeed(); regenBiome(id); }
+  });
+}
+
+function focusBiome(id){
+  if(currentFocus===id){ currentFocus=null; }
+  else { currentFocus=id; }
+  BIOME_ORDER.forEach(bid=>{
+    const card=document.getElementById('card-'+bid);
+    if(!card)return;
+    card.classList.toggle('focused', bid===currentFocus);
+    setTimeout(()=>{
+      const cv=CANVASES[bid];
+      const wrap=cv&&cv.parentElement;
+      if(cv&&wrap){ cv.width=wrap.clientWidth||320; cv.height=wrap.clientHeight||200; }
+    },50);
+  });
+}
+
+// ---------------------------------------------------------------------------
+// CONTROLS
+// ---------------------------------------------------------------------------
+document.getElementById('rerollAll').onclick=()=>{ BIOME_ORDER.forEach(id=>{ SEEDS[id]=freshSeed(); }); regenAll(); };
+document.getElementById('densitySlider').oninput=function(){
+  densityMult=parseFloat(this.value);
+  document.getElementById('densityVal').textContent='×'+densityMult.toFixed(1);
+  regenAll();
+};
+document.getElementById('gridSize').onchange=function(){ N=parseInt(this.value); regenAll(); };
+document.getElementById('showH').onchange=()=>regenAll();
+document.getElementById('showProps').onchange=()=>regenAll();
+document.getElementById('coolCliffs').onchange=function(){ coolCliffs=this.checked; renderAll(); };
+document.getElementById('propScaleSlider').oninput=function(){ propScale=parseFloat(this.value); document.getElementById('propScaleVal').textContent='×'+propScale.toFixed(2); renderAll(); };
+document.getElementById('thSlider').oninput=function(){ thRatio=parseFloat(this.value); document.getElementById('thVal').textContent=thRatio.toFixed(2); renderAll(); };
+document.getElementById('hsSlider').oninput=function(){ hsRatio=parseFloat(this.value); document.getElementById('hsVal').textContent=hsRatio.toFixed(2); renderAll(); };
+document.getElementById('collapseAll').onclick=()=>{
+  currentFocus=null;
+  BIOME_ORDER.forEach(id=>{ const c=document.getElementById('card-'+id); if(c)c.classList.remove('focused'); });
+};
+document.getElementById('guideToggle').onclick=()=>{ document.getElementById('guide-body').classList.toggle('open'); };
+
+// ---------------------------------------------------------------------------
+// INIT
+// ---------------------------------------------------------------------------
+buildUI();
+regenAll();
+renderAll();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

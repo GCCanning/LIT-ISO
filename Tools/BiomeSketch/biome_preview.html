@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO Biome Preview + Editor (v3: pl_ tileset)</title>
+<style>
+ *{box-sizing:border-box}
+ body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
+ #side{width:360px;min-width:360px;background:#1d2027;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+ .title{font-size:15px;font-weight:600;color:#e8c468}
+ .sub{font-size:11px;color:#889;line-height:1.4}
+ a.toolLink{color:#9cc4ff;font-size:11px}
+ #recipe{flex:1;overflow-y:auto;padding-right:4px}
+ .rsec{margin-bottom:10px;border-bottom:1px solid #2a2f3a;padding-bottom:8px}
+ .rsec h4{margin:0 0 6px;font-size:12px;color:#e8c468;display:flex;justify-content:space-between;align-items:center}
+ .rsec h4 span{color:#778;font-weight:400;font-size:10px}
+ .row{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:11px}
+ .row img{width:30px;height:30px;image-rendering:pixelated;object-fit:contain;background:#262a33;border-radius:3px;flex:none}
+ .row .nm{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#bcd}
+ .row input[type=range]{width:70px}
+ .row .val{width:28px;text-align:right;color:#9aa;font-variant-numeric:tabular-nums}
+ .row .x{cursor:pointer;color:#a66;padding:0 4px;font-weight:700}
+ .row .x:hover{color:#f88}
+ .band{border:1px solid #2a2f3a;border-radius:6px;padding:5px 6px;margin:4px 0;background:#191c22}
+ .band.tgt{border-color:#e8c468;background:#23200f}
+ .band .bh{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#cdd;margin-bottom:2px}
+ .miniadd{font-size:10px;color:#9cc4ff;cursor:pointer;border:1px dashed #3a4150;border-radius:4px;padding:2px 6px}
+ .miniadd:hover{border-color:#9cc4ff}
+ .num{width:34px;background:#262a33;color:#ddd;border:1px solid #444;border-radius:3px;font-size:11px;padding:2px}
+ #palWrap{display:none;flex-direction:column;gap:6px;flex:1;overflow:hidden}
+ #palWrap.show{display:flex}
+ #pal{flex:1;overflow-y:auto;align-content:start}
+ .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px}
+ .sw{background:#262a33;border:2px solid #333;border-radius:5px;cursor:grab;padding:3px 2px;text-align:center}
+ .sw:active{cursor:grabbing}
+ #cv.dragover{outline:2px dashed #e8c468;outline-offset:-2px}
+ .sw:hover{border-color:#666}
+ .sw img{max-width:48px;max-height:44px;image-rendering:pixelated;display:block;margin:0 auto}
+ .sw div{font-size:8px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ .sw.sel{border-color:#e8c468;background:#33301f}
+ .ghead{position:sticky;top:0;background:#1d2027;color:#e8c468;font-size:11px;font-weight:600;padding:5px 4px;cursor:pointer;border-bottom:1px solid #333;z-index:2}
+ #main{flex:1;display:flex;flex-direction:column;min-width:0}
+ #tabs{display:flex;gap:4px;padding:8px 12px 0;flex-wrap:wrap}
+ .tab{background:#2a2f3a;color:#cdd;border:1px solid #3a4150;border-bottom:none;border-radius:6px 6px 0 0;padding:6px 14px;cursor:pointer;font-size:12px}
+ .tab.on{background:#15171c;color:#e8c468;border-color:#5b4d20}
+ #bar{padding:8px 12px;background:#1d2027;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #2a2f3a}
+ button,select,input[type=text]{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
+ button.on{background:#5b4d20;border-color:#e8c468}
+ button.primary{background:#2d5a2d;border-color:#4a4}
+ #cv{flex:1;cursor:crosshair;min-height:0}
+ #help{font-size:11px;color:#889;padding:5px 12px;background:#1a1d23}
+ #help b{color:#bcd}
+ .pill{font-size:10px;color:#778;background:#23262d;border-radius:10px;padding:2px 8px}
+ #swapbar{display:none;align-items:center;gap:8px;background:#23200f;border:1px solid #e8c468;border-radius:6px;padding:4px 10px;font-size:11px;color:#e8c468}
+ #swapbar.show{display:flex}
+</style>
+</head>
+<body>
+<div id="side">
+  <div class="title">Biome Preview + Editor <span class="pill">v3</span></div>
+  <div class="sub">Each biome generates a seeded <b>heightfield (0&ndash;6)</b> with <b>per-height tile bands</b>, clustered accents and grove-clustered props &mdash; close to the in-game sampler. Assign tiles to bands, tune rules, click a generated tile to swap it, then Export.</div>
+  <a class="toolLink" href="index.html" target="_blank">&#8599; Open freehand Biome Sketch</a>
+  <div style="display:flex;gap:6px">
+    <button id="modeRecipe" class="on" style="flex:1">Rules</button>
+    <button id="modePalette" style="flex:1">Tile palette</button>
+  </div>
+  <div id="recipe"></div>
+  <div id="palWrap">
+    <div class="sub" id="palHint">Click a tile to use as brush &middot; or drag onto the grid. When an <b>+ add</b> target is armed, clicking a tile adds it there.</div>
+    <input type="text" id="search" placeholder="search all art...">
+    <div id="pal"></div>
+  </div>
+</div>
+
+<div id="main">
+  <div id="tabs"></div>
+  <div id="bar">
+    <button id="reroll">&#8635; Reroll seed</button>
+    <label class="pill">grid
+      <select id="gsize" style="padding:2px 4px">
+        <option value="9">9 &times; 9</option>
+        <option value="13">13 &times; 13</option>
+        <option value="17">17 &times; 17</option>
+        <option value="21">21 &times; 21</option>
+        <option value="29">29 &times; 29</option>
+      </select>
+    </label>
+    <button id="density">Density: Representative</button>
+    <label class="pill"><input type="checkbox" id="heightOn" checked> height</label>
+    <span style="flex:1"></span>
+    <select id="paintMode">
+      <option value="swap">Click cell: swap tile-type</option>
+      <option value="tile">Paint tile (brush)</option>
+      <option value="prop">Place prop (brush)</option>
+      <option value="height">Raise/lower height</option>
+      <option value="erase">Erase</option>
+    </select>
+    <select id="shape" title="Brush shape when painting">
+      <option value="cell">Brush: cell</option>
+      <option value="row">Brush: row</option>
+      <option value="col">Brush: column</option>
+      <option value="rect">Brush: rectangle</option>
+      <option value="bucket">Brush: fill area</option>
+    </select>
+    <button id="zoomout" title="Zoom out">&minus;</button>
+    <button id="zoomin" title="Zoom in">+</button>
+    <button id="resetview" title="Reset zoom &amp; pan">Reset view</button>
+    <button id="reset">Reset biome</button>
+    <button id="loadbtn" title="Load a biome_preview_export.json back in">Load JSON</button>
+    <input type="file" id="loadf" accept=".json,application/json" style="display:none">
+    <button id="csharp" title="Copy this biome's pools/spawns as C#">Copy C#</button>
+    <button id="export" class="primary">Export JSON</button>
+  </div>
+  <div id="swapbar"><span id="swaptxt"></span><button id="swapcancel" style="padding:2px 8px">Cancel</button></div>
+  <canvas id="cv"></canvas>
+  <div id="help"><b>Click cell: swap tile-type</b> = click a generated tile, then click a palette tile to replace it everywhere in this biome &middot; arm <b>+ add</b> in a band/accents to add tiles there &middot; <b>drag</b> a swatch onto the grid &middot; <b>wheel</b>=zoom, <b>middle/Space+drag</b>=pan &middot; sliders re-roll live &middot; Export sends edits back.</div>
+</div>
+
+<script src="assets.js"></script>
+<script>
+window.addEventListener('error', function(ev){
+  var bar=document.getElementById('help')||document.body;
+  if(bar) bar.innerHTML='<b style="color:#ff8080">Tool error:</b> '+
+    (ev.message||ev.error||ev)+' &nbsp; ('+String(ev.filename||'').split('/').pop()+':'+(ev.lineno||'?')+')';
+});
+
+// ---------------------------------------------------------------------------
+// BIOME RULES (v2). Each biome has a heightfield (relief + maxHeight) and a
+// per-height tile BAND pool, plus clustered accents, a slope/scree tile, and
+// props gated by height range + grove clustering. Mirrors the direction of
+// IsoTerrainSampler (dominant base, sparse clustered accents, grove props).
+// ---------------------------------------------------------------------------
+function P(...e){ return e; }                 // pool literal helper
+function bandsFlat(pool, maxH){ const a=[]; for(let h=0;h<=maxH;h++) a.push(JSON.parse(JSON.stringify(pool))); return a; }
+
+const DEFAULTS = {
+  meadow: {
+    tint:'#66b366', relief:'rolling', maxHeight:5, heightFreq:0.05,
+    accentRate:0.08, accentClump:0.55, scree:'pl_reddirt_02Cracked', slopeThresh:4,
+    bands: bandsFlat([['pl_meado_01',55],['pl_meadow_02',28],['pl_grass_01',17]], 5),
+    accents:[['pl_grass_02',6],['pl_reddirt_02Cracked',4],['pl_forestgrass_02',3]],
+    props:[ p('plains_bush_v2',0.018,0,6,false), p('flower',0.02,0,6,false), p('flower_tulip',0.009,0,5,false), p('plains_tree_v2_1_sm',0.001,0,5,false) ]
+  },
+  forest: {
+    tint:'#3f8c4c', relief:'massif', maxHeight:6, heightFreq:0.18,
+    accentRate:0.10, accentClump:0.60, scree:'pl_reddirt_02Cracked', slopeThresh:4,
+    bands:[
+      [['pl_forestgrass_02',55],['pl_grass_01',25],['pl_grass_02',20]],
+      [['pl_forestgrass_02',13],['pl_grass_01',25],['pl_grass_02',20]],
+      [['pl_forestgrass_02',17],['pl_grass_01',25],['pl_grass_02',20]],
+      [['pl_forestgrass_02', 5],['pl_grass_01',25],['pl_grass_02',20]],
+      [['pl_forestgrass_02', 5],['pl_grass_01',25],['pl_grass_02',20]],
+      [['pl_forestgrass_02', 5],['pl_grass_01',25],['pl_grass_02',20]],
+      [['pl_forestgrass_02', 5],['pl_grass_01',25],['pl_grass_02',20]]
+    ],
+    accents:[['pl_meado_01',6],['pl_reddirt_02Cracked',5],['pl_meadow_02',4]],
+    props:[ p('tree',0.10,0,2,true), p('rock',0.02,0,3,false) ]
+  },
+  desert: {
+    tint:'#d9c873', relief:'gentle', maxHeight:5, heightFreq:0.14,
+    accentRate:0.06, accentClump:0.50, scree:'pl_reddirt_02Cracked', slopeThresh:2,
+    bands: bandsFlat([['pl_sandd_01',60]],5),
+    accents:[['pl_reddirt_02Cracked',5]],
+    props:[ p('rock',0.006,0,5,false) ]
+  },
+  beach: {
+    tint:'#e6d68c', relief:'flat', maxHeight:1, heightFreq:0.12,
+    accentRate:0.05, accentClump:0.50, scree:'sand_13', slopeThresh:2,
+    bands: bandsFlat([['sand_03',20],['sand_01',20],['sand_06',20],['sand_11',20]], 1),
+    accents:[['sand_13',4]],
+    props:[ p('rock',0.004,0,1,false) ]
+  },
+  snow: {
+    tint:'#e6eef7', relief:'rolling', maxHeight:3, heightFreq:0.17,
+    accentRate:0.06, accentClump:0.55, scree:'pl_stone_03', slopeThresh:2,
+    bands: bandsFlat([['pl_snoww_01',60],['pl_snoww_02',28],['pl_stone_01',12]], 3),
+    accents:[['pl_stone_01',5],['pl_stonecracked_04',3]],
+    props:[ p('rock',0.03,0,3,false) ]
+  },
+  mountain: {
+    tint:'#868c90', relief:'massif', maxHeight:6, heightFreq:0.20,
+    accentRate:0.05, accentClump:0.50, scree:'pl_stonecracked_04', slopeThresh:2,
+    bands:[
+      [['pl_grass_01',55],['pl_stone_01',25],['pl_meado_01',20]],
+      [['pl_stone_01',55],['pl_stonee_03',25],['pl_reddirt_02Cracked',20]],
+      [['pl_stoneel_01',55],['pl_stone_01',25],['pl_stonecracked_04',20]],
+      [['pl_stone_03',55],['pl_stoneel_01',25],['pl_stonee_03',20]],
+      [['pl_stonecracked_04',55],['pl_stone_03',30],['pl_stoneel_01',15]],
+      [['pl_stonee_03',55],['pl_stonecracked_04',25],['pl_snoww_01',20]],
+      [['pl_stonee_03',45],['pl_snoww_01',35],['pl_stone_03',20]]
+    ],
+    accents:[['pl_reddirt_02Cracked',4],['pl_stonecracked_04',3]],
+    props:[ p('rock',0.14,0,6,false) ]
+  }
+};
+function p(id,chance,minH,maxH,cluster){ return {id,chance,minH,maxH,cluster:!!cluster}; }
+const BIOME_IDS = ['meadow','forest','desert','beach','snow','mountain'];
+const RELIEFS = ['flat','gentle','rolling','hilly','massif','peak'];
+let N = 13;
+
+// ---- asset lookup ----------------------------------------------------------
+const META = {}; const imgs = {};
+if(typeof ASSETS!=='undefined'){ ASSETS.forEach(a=>{ META[a.name]=a; const i=new Image(); i.src=a.path; imgs[a.name]=i; }); }
+else { document.addEventListener('DOMContentLoaded',()=>{ (document.getElementById('help')||document.body).innerHTML=
+  '<b style="color:#ff8080">assets.js did not load</b> &mdash; open biome_preview.html from inside the BiomeSketch folder.'; }); }
+function ensureImg(name){ if(name && !imgs[name] && META[name]){ const i=new Image(); i.src=META[name].path; imgs[name]=i; } }
+
+// ---- seeded rng + noise ----------------------------------------------------
+function mulberry32(seed){ let a=seed>>>0; return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function pickWeighted(pool, r){ if(!pool||!pool.length)return null; let tot=0; for(const e of pool)tot+=Math.max(0,e[1]); if(tot<=0)return pool[0][0]; let x=r()*tot; for(const e of pool){ x-=Math.max(0,e[1]); if(x<0)return e[0]; } return pool[pool.length-1][0]; }
+function hash2(ix,iy,seed){ let h=(Math.imul(ix,374761393)+Math.imul(iy,668265263)+Math.imul(seed,982451653))>>>0; h=Math.imul(h^(h>>>13),1274126177)>>>0; return (h>>>0)/4294967296; }
+function vnoise(x,y,seed){ const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy; const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
+  const a=hash2(ix,iy,seed),b=hash2(ix+1,iy,seed),c=hash2(ix,iy+1,seed),d=hash2(ix+1,iy+1,seed);
+  return a*(1-u)*(1-v)+b*u*(1-v)+c*(1-u)*v+d*u*v; }
+function fbm(x,y,seed,oct,ridged){ let amp=0.5,freq=1,sum=0,norm=0; for(let o=0;o<oct;o++){ let n=vnoise(x*freq,y*freq,seed+o*131); if(ridged){ n=1-Math.abs(2*n-1); n*=n; } sum+=n*amp; norm+=amp; amp*=0.5; freq*=2; } return sum/norm; }
+
+// ---- heightfield (all biomes) ---------------------------------------------
+// warpAmp: domain-warp amplitude in cells; powerCurve: <1 pulls distribution high (sharper peaks)
+const RELIEF_CFG={
+  flat:    {amp:0.10, ridged:false, warpAmp:0,  powerCurve:1.0, octaves:3},
+  gentle:  {amp:0.45, ridged:false, warpAmp:3,  powerCurve:1.0, octaves:4},
+  rolling: {amp:0.70, ridged:false, warpAmp:5,  powerCurve:0.9, octaves:4},
+  hilly:   {amp:0.92, ridged:false, warpAmp:7,  powerCurve:0.8, octaves:4},
+  massif:  {amp:1.00, ridged:true,  warpAmp:14, powerCurve:0.6, octaves:5},
+  peak:    {amp:1.00, ridged:true,  warpAmp:20, powerCurve:0.5, octaves:6}
+};
+function heightField(rules, seed){
+  const cfg=RELIEF_CFG[rules.relief]||RELIEF_CFG.gentle;
+  const scale=(rules.heightFreq||0.16)*(13/N+0.3);
+  const wA=cfg.warpAmp||0;
+  const f=Array.from({length:N},()=>new Array(N).fill(0));
+  let mn=1e9,mx=-1e9;
+  for(let row=0;row<N;row++)for(let col=0;col<N;col++){
+    // Domain warp — larger amplitude for massif/peak so ridgelines twist naturally.
+    const wx=col+wA*(vnoise(col*0.14+11,row*0.14,seed+7)-0.5);
+    const wy=row+wA*(vnoise(col*0.14,row*0.14+11,seed+9)-0.5);
+    // Primary FBM pass (ridged for mountain relief).
+    let n=fbm(wx*scale, wy*scale, seed, cfg.octaves||4, cfg.ridged);
+    // Second ridge pass at lower frequency: carves deep valleys between massif spurs.
+    if(cfg.ridged){
+      const wx2=col+wA*0.5*(vnoise(col*0.09+31,row*0.09,seed+41)-0.5);
+      const wy2=row+wA*0.5*(vnoise(col*0.09,row*0.09+31,seed+43)-0.5);
+      const n2=fbm(wx2*scale*0.55, wy2*scale*0.55, seed+200, 3, true);
+      n=n*0.65+n2*0.35; // blend: primary ridges + broad valley structure
+    }
+    // Power curve: <1 pulls distribution toward high values for dramatic peaks.
+    let e=Math.pow(Math.max(0,n), cfg.powerCurve||1.0);
+    e*=cfg.amp;
+    f[row][col]=e; if(e<mn)mn=e; if(e>mx)mx=e;
+  }
+  const span=Math.max(1e-4,mx-mn);
+  for(let row=0;row<N;row++)for(let col=0;col<N;col++) f[row][col]=(f[row][col]-mn)/span;
+  return f;
+}
+
+// ---- generation ------------------------------------------------------------
+function emptyGrid(){ return Array.from({length:N},()=>Array.from({length:N},()=>({t:null,d:null,h:0,f:false}))); }
+function bandFor(rules,h){ const i=Math.max(0,Math.min(rules.bands.length-1,h)); let b=rules.bands[i]; if((!b||!b.length)){ for(let k=i;k>=0;k--){ if(rules.bands[k]&&rules.bands[k].length){b=rules.bands[k];break;} } } return b&&b.length?b:[['dirt',1]]; }
+function generate(rules, seed, showcase){
+  const r=mulberry32(seed>>>0), g=emptyGrid();
+  const maxH=Math.max(0,rules.maxHeight|0);
+  const hf=heightField(rules, seed);
+  const H=Array.from({length:N},()=>new Array(N).fill(0));
+  for(let row=0;row<N;row++)for(let col=0;col<N;col++) H[row][col]=Math.round(hf[row][col]*maxH);
+  const accentRate=showcase?Math.min(0.5,(rules.accentRate||0)*2.6+0.1):(rules.accentRate||0);
+  const clumpThresh=1-Math.max(0,Math.min(1,rules.accentClump==null?0.55:rules.accentClump));
+  // surface
+  for(let row=0;row<N;row++)for(let col=0;col<N;col++){
+    const cell=g[row][col]; cell.h=H[row][col];
+    let slope=0; for(const o of [[-1,0],[1,0],[0,-1],[0,1]]){ const nr=row+o[0],nc=col+o[1]; if(nr>=0&&nr<N&&nc>=0&&nc<N) slope=Math.max(slope,Math.abs(H[row][col]-H[nr][nc])); }
+    let t=pickWeighted(bandFor(rules,cell.h), r);
+    if(rules.accents&&rules.accents.length){ const m=vnoise(col*0.28,row*0.28,seed+57); if(m>clumpThresh && r()<accentRate){ const at=pickWeighted(rules.accents,r); if(at)t=at; } }
+    if(rules.scree && slope>=(rules.slopeThresh||2)) t=rules.scree;
+    cell.t=t; ensureImg(t);
+  }
+  // props: grove-clustered, height-gated
+  const mult=showcase?2.2:1;
+  for(let row=0;row<N;row++)for(let col=0;col<N;col++){
+    const h=H[row][col];
+    const grove=fbm(col*0.12,row*0.12,seed+333,3,false);
+    const allowed=[]; let total=0;
+    for(const pr of rules.props){ if(!(pr.chance>0))continue; if(h<pr.minH||h>pr.maxH)continue; const gate=pr.cluster?(grove>0.52?1:0):1; if(gate<=0)continue; const w=pr.chance*gate*mult; allowed.push([pr.id,w]); total+=w; }
+    if(total>0 && r()<Math.min(0.85,total)){ const id=pickWeighted(allowed,r); g[row][col].d=id; ensureImg(id); }
+  }
+  if(showcase) ensureCoverage(g, rules, r);
+  return g;
+}
+function ensureCoverage(g, rules, r){
+  const haveT=new Set(), haveD=new Set();
+  for(const row of g)for(const c of row){ if(c.t)haveT.add(c.t); if(c.d)haveD.add(c.d); }
+  const wantT=[]; rules.bands.forEach(b=>b.forEach(e=>wantT.push(e[0]))); (rules.accents||[]).forEach(e=>wantT.push(e[0])); if(rules.scree)wantT.push(rules.scree);
+  const wantD=rules.props.filter(p=>p.chance>0).map(p=>p.id);
+  const freeT=[],freeD=[];
+  for(let row=0;row<N;row++)for(let col=0;col<N;col++){ freeT.push([row,col]); if(!g[row][col].d)freeD.push([row,col]); }
+  shuffle(freeT,r); shuffle(freeD,r);
+  [...new Set(wantT)].forEach(t=>{ if(!haveT.has(t)){ const s=freeT.pop(); if(s){ g[s[0]][s[1]].t=t; ensureImg(t);} } });
+  [...new Set(wantD)].forEach(d=>{ if(!haveD.has(d)){ const s=freeD.pop(); if(s){ g[s[0]][s[1]].d=d; ensureImg(d);} } });
+}
+function shuffle(a,r){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); const t=a[i];a[i]=a[j];a[j]=t; } }
+
+// ---- per-biome editable state ---------------------------------------------
+function freshRules(id){ const o=JSON.parse(JSON.stringify(DEFAULTS[id])); return o; }
+function fixBands(R){ const mh=Math.max(0,R.maxHeight|0); if(!R.bands)R.bands=[]; while(R.bands.length<mh+1){ const last=R.bands[R.bands.length-1]; R.bands.push(last?JSON.parse(JSON.stringify(last)):[['dirt',1]]); } if(R.bands.length>mh+1) R.bands.length=mh+1; }
+const STATE={}; BIOME_IDS.forEach((id,i)=>{ STATE[id]={ seed:1337+i*101, rules:freshRules(id), grid:null }; });
+let current='meadow', showcase=false, brush=null, heightOn=true;
+let addTarget=null;     // {kind:'band',h} | {kind:'accents'} | {kind:'scree'} | {kind:'prop'}
+let swapFrom=null;      // tile id chosen on the grid, awaiting a palette pick
+function st(){ return STATE[current]; }
+function regen(id){ const s=STATE[id]; fixBands(s.rules); s.grid=generate(s.rules, s.seed, showcase); saveSoon(); }
+
+// ---- autosave / restore ----------------------------------------------------
+const LS_KEY='lit_biome_preview_v5'; let _saveT=null;
+function saveState(){ try{ const d={N, showcase, heightOn, biomes:{}}; BIOME_IDS.forEach(id=>{ const s=STATE[id]; d.biomes[id]={seed:s.seed, rules:s.rules, grid:s.grid}; }); localStorage.setItem(LS_KEY, JSON.stringify(d)); }catch(e){} }
+function saveSoon(){ clearTimeout(_saveT); _saveT=setTimeout(saveState, 400); }
+function restoreState(){ try{ const raw=localStorage.getItem(LS_KEY); if(!raw) return false; const d=JSON.parse(raw);
+  if(d.N) N=d.N; if(typeof d.showcase==='boolean') showcase=d.showcase; if(typeof d.heightOn==='boolean') heightOn=d.heightOn;
+  BIOME_IDS.forEach(id=>{ const b=d.biomes&&d.biomes[id]; if(b){ STATE[id].rules=Object.assign(freshRules(id), b.rules||{}); fixBands(STATE[id].rules); if(b.seed!=null)STATE[id].seed=b.seed; STATE[id].grid=b.grid||null; } });
+  return true; }catch(e){ return false; } }
+function loadFromExport(obj){ if(!obj||!obj.biomes){ alert('Not a biome export (no "biomes").'); return; }
+  if(typeof obj.density==='string') showcase=(obj.density==='showcase');
+  BIOME_IDS.forEach(id=>{ const b=obj.biomes[id]; if(b&&b.rules){ STATE[id].rules=Object.assign(freshRules(id), b.rules); fixBands(STATE[id].rules);
+    if(b.seed!=null)STATE[id].seed=b.seed;
+    STATE[id].grid=b.grid?b.grid.map(row=>row.map(c=>({t:c.t,d:c.d,h:c.h||0,f:false}))):null;
+    if(!STATE[id].grid) regen(id); } });
+  buildRecipe(); layoutMain(); drawMain(); saveState(); }
+
+// ---- id -> FoundationContent node var --------------------------------------
+const NODE_VAR={ tree:'tree', rock:'rock', bush:'bush', copper_vein:'copperVein', pine:'pine', flower:'flower',
+  stump:'stump', log:'log', shore_stone:'shoreStone', tuft:'tuft', flower_tulip:'tulip',
+  ore_iron:'ironVein', ore_silver:'silverVein', ore_gold:'goldVein', ore_manacrystal:'manacrystalVein', ore_starmetal:'starmetalVein',
+  forest_dead_tree:'forestDeadTree', forest_stump:'forestStump' };
+function fmtF(x){ let s=(+x).toFixed(3).replace(/0+$/,'').replace(/\.$/,''); return s.indexOf('.')<0?s+'.0':s; }
+function mergedBase(R){ const m={}; R.bands.forEach(b=>b.forEach(e=>{ m[e[0]]=(m[e[0]]||0)+e[1]; })); return Object.entries(m).sort((a,b)=>b[1]-a[1]); }
+function csharpFor(id){
+  const R=STATE[id].rules, v=id+'Biome';
+  const pool=arr=>arr.filter(e=>e[1]>0).map(e=>'("'+e[0]+'", '+Math.round(e[1])+')').join(', ');
+  let s='// '+id+' — paste into FoundationContent.cs (v2 band model)\n';
+  s+='// relief='+R.relief+' maxHeight='+R.maxHeight+' heightFreq='+fmtF(R.heightFreq)+'\n';
+  R.bands.forEach((b,h)=>{ if(b&&b.length) s+='// height '+h+': '+b.map(e=>e[0]+'×'+e[1]).join(', ')+'\n'; });
+  s+=v+'.surfaceBasePool = Pool('+pool(mergedBase(R))+'); // merged dominant base across bands\n';
+  if(R.accents&&R.accents.length) s+=v+'.surfaceAccents = Pool('+pool(R.accents)+');\n';
+  s+=v+'.accentRate = '+fmtF(R.accentRate)+'f; // clustered (clump='+fmtF(R.accentClump)+')\n';
+  if(R.scree) s+='// scree (steep slope >= '+(R.slopeThresh||2)+'): '+R.scree+'\n';
+  const ns=R.props.filter(p=>p.chance>0).map(p=>'NS('+(NODE_VAR[p.id]||('/*?*/'+p.id))+', '+fmtF(p.chance)+'f) /*h'+p.minH+'-'+p.maxH+(p.cluster?' grove':'')+'*/').join(', ');
+  s+='// node spawns: '+ns+'\n';
+  return s;
+}
+function showCsharp(){ let txt=''; BIOME_IDS.forEach(id=>{ txt+=csharpFor(id)+'\n'; });
+  let ov=document.getElementById('csov'); if(!ov){ ov=document.createElement('div'); ov.id='csov';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:flex;align-items:center;justify-content:center';
+    ov.innerHTML='<div style="background:#1d2027;border:1px solid #3a4150;border-radius:10px;padding:14px;width:min(760px,92vw)"><div style="color:#e8c468;font-weight:600;margin-bottom:6px">C# for FoundationContent.cs <span style="float:right;cursor:pointer;color:#9aa" id="cscls">✕</span></div><textarea id="cstxt" style="width:100%;height:50vh;background:#0f1115;color:#cde;border:1px solid #333;border-radius:6px;font:12px monospace;padding:8px"></textarea><div style="font-size:11px;color:#889;margin-top:6px">Per-height bands are comments (the live sampler uses one base pool + accents); the merged dominant base + accents + node spawns are ready to paste. Wire bands when the sampler gains per-height tiles (see WORLDGEN upgrade prompt).</div></div>';
+    document.body.appendChild(ov); ov.addEventListener('click',e=>{ if(e.target===ov||e.target.id==='cscls') ov.style.display='none'; }); }
+  ov.style.display='flex'; const ta=document.getElementById('cstxt'); ta.value=txt; ta.focus(); ta.select(); }
+function missingIds(R){ const ids=[]; R.bands.forEach(b=>b.forEach(e=>ids.push(e[0]))); (R.accents||[]).forEach(e=>ids.push(e[0])); (R.props||[]).forEach(e=>ids.push(e.id)); if(R.scree)ids.push(R.scree);
+  return ids.filter((x,i)=>ids.indexOf(x)===i && !META[x]); }
+
+// ---- isometric renderer ----------------------------------------------------
+function drawGrid(cx, grid, n, TW, tint, px, py){
+  const TH=TW/2, HS=Math.round(TW*0.28), W=cx.canvas.width, H=cx.canvas.height;
+  cx.imageSmoothingEnabled=false; cx.clearRect(0,0,W,H);
+  const ox=W/2+(px||0), oy=Math.max(70,H*0.16)+(py||0);
+  const iso=(c,r,h)=>({x:ox+(c-r)*TW/2, y:oy+(c+r)*TH/2-(heightOn?h:0)*HS});
+  for(let row=0;row<n;row++)for(let col=0;col<n;col++){
+    const cell=grid[row][col], p=iso(col,row,cell.h);
+    if(heightOn && cell.h>0){ const pb=iso(col,row,0);
+      cx.fillStyle='#241d15'; cx.beginPath(); cx.moveTo(p.x-TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH); cx.lineTo(pb.x,pb.y+TH); cx.lineTo(pb.x-TW/2,pb.y+TH/2); cx.closePath(); cx.fill();
+      cx.fillStyle='#2e251a'; cx.beginPath(); cx.moveTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH); cx.lineTo(pb.x,pb.y+TH); cx.lineTo(pb.x+TW/2,pb.y+TH/2); cx.closePath(); cx.fill();
+    }
+    cx.beginPath(); cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH); cx.lineTo(p.x-TW/2,p.y+TH/2); cx.closePath();
+    cx.fillStyle=cell.t?(tint||'#3a3f48'):'#23262d'; cx.fill();
+    cx.strokeStyle=cell.t?'rgba(255,255,255,0.07)':'rgba(255,255,255,0.13)'; cx.stroke();
+    const im=imgs[cell.t]; if(cell.t&&im&&im.complete&&im.naturalWidth){ const w=TW,h=w*im.height/im.width; cx.drawImage(im,p.x-w/2,p.y+TH-h,w,h); }
+    if(heightOn && cell.h>0){ cx.fillStyle='rgba(232,196,104,0.7)'; cx.font='9px monospace'; cx.fillText(cell.h, p.x-3, p.y+TH/2+3); }
+  }
+  for(let row=0;row<n;row++)for(let col=0;col<n;col++){
+    const cell=grid[row][col]; const im=imgs[cell.d]; if(!cell.d||!im||!im.complete||!im.naturalWidth) continue;
+    const p=iso(col,row,cell.h), m=META[cell.d]; const s=m?(TW/m.ppu):(TW/Math.max(32,im.width));
+    const bx=m?m.bx:0,by=m?m.by:0,bw=m?m.bw:im.width,bh=m?m.bh:im.height; const w=bw*s,h=bh*s, footY=p.y+TH/2+3;
+    cx.drawImage(im,bx,by,bw,bh,p.x-w/2,footY-h,w,h);
+  }
+  return iso;
+}
+
+// ---- main canvas -----------------------------------------------------------
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+let isoFn=null, TWmain=64, curTW=64, hover=null, zoom=1, panX=0, panY=0;
+function layoutMain(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight; TWmain=Math.max(12,Math.min(70,Math.floor((cv.width-60)/N),Math.floor(((cv.height-130)*2)/(N+2)))); TWmain-=TWmain%2; }
+function drawMain(){ if(!st().grid) regen(current); curTW=Math.max(4,Math.round(TWmain*zoom)); curTW-=curTW%2||0;
+  isoFn=drawGrid(ctx, st().grid, N, curTW, st().rules.tint, panX, panY);
+  if(hover){ const cell=st().grid[hover.r][hover.c]; const TH=curTW/2; const p=isoFn(hover.c,hover.r,cell.h);
+    ctx.strokeStyle='rgba(232,196,104,0.95)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+curTW/2,p.y+TH/2); ctx.lineTo(p.x,p.y+TH); ctx.lineTo(p.x-curTW/2,p.y+TH/2); ctx.closePath(); ctx.stroke(); ctx.lineWidth=1; } }
+function cellAt(mx,my){ const TH=curTW/2; for(let r=N-1;r>=0;r--)for(let c=N-1;c>=0;c--){ const p=isoFn(c,r,st().grid[r][c].h); const dx=Math.abs(mx-p.x),dy=Math.abs(my-(p.y+TH/2)); if(dx/(curTW/2)+dy/(TH/2)<=1)return{r,c}; } return null; }
+
+let painting=false,pbtn=0,lastCell=null,rectAnchor=null,spaceDown=false,panning=false,panStart=null;
+function shapeMode(){ return document.getElementById('shape').value; }
+function paintModeV(){ return document.getElementById('paintMode').value; }
+function applyCellRC(r,c,rmb){ if(r<0||c<0||r>=N||c>=N)return; const cell=st().grid[r][c]; const pm=paintModeV();
+  if(pm==='height'){ cell.h=Math.max(0,Math.min(6,cell.h+(rmb?-1:1))); return; }
+  if(rmb||pm==='erase'){ if(cell.d)cell.d=null; else cell.t=null; return; }
+  if(pm==='tile'&&brush){ cell.t=brush; ensureImg(brush); }
+  else if(pm==='prop'&&brush){ cell.d=brush; ensureImg(brush); } }
+function floodFill(r,c,rmb){ const grid=st().grid, target=grid[r][c].t, q=[[r,c]], seen={};
+  while(q.length){ const p=q.pop(),y=p[0],x=p[1]; if(y<0||x<0||y>=N||x>=N)continue; const k=y+','+x; if(seen[k])continue; seen[k]=1; if(grid[y][x].t!==target)continue; applyCellRC(y,x,rmb); q.push([y+1,x],[y-1,x],[y,x+1],[y,x-1]); } }
+function applyAt(mx,my,rmb){ if(!isoFn)return; const hit=cellAt(mx,my); if(!hit)return;
+  if(paintModeV()==='swap'){ if(!rmb){ const cell=st().grid[hit.r][hit.c]; if(cell.t){ swapFrom=cell.t; showSwapBar(); } } return; }
+  const sh=shapeMode();
+  if(sh==='rect') return;
+  if(sh==='cell'){ if(lastCell&&lastCell.r===hit.r&&lastCell.c===hit.c)return; lastCell=hit; applyCellRC(hit.r,hit.c,rmb); }
+  else if(sh==='row'){ for(let c=0;c<N;c++) applyCellRC(hit.r,c,rmb); }
+  else if(sh==='col'){ for(let r=0;r<N;r++) applyCellRC(r,hit.c,rmb); }
+  else if(sh==='bucket'){ floodFill(hit.r,hit.c,rmb); }
+  drawMain(); saveSoon(); }
+function applyRect(a,b,rmb){ const r0=Math.min(a.r,b.r),r1=Math.max(a.r,b.r),c0=Math.min(a.c,b.c),c1=Math.max(a.c,b.c); for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++) applyCellRC(r,c,rmb); drawMain(); saveSoon(); }
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('wheel',e=>{ e.preventDefault(); const b=cv.getBoundingClientRect(), mx=e.clientX-b.left,my=e.clientY-b.top, old=zoom;
+  zoom=Math.max(0.15,Math.min(12, zoom*(e.deltaY<0?1.18:1/1.18))); const f=zoom/old, W=cv.width, oyB=Math.max(70,cv.height*0.16);
+  panX=(mx-f*(mx-(W/2+panX)))-W/2; panY=(my-f*(my-(oyB+panY)))-oyB; drawMain(); },{passive:false});
+cv.addEventListener('mousedown',e=>{ const b=cv.getBoundingClientRect(), mx=e.clientX-b.left,my=e.clientY-b.top;
+  if(e.button===1||(e.button===0&&spaceDown)){ panning=true; panStart={x:e.clientX,y:e.clientY,px:panX,py:panY}; e.preventDefault(); return; }
+  painting=true;pbtn=e.button;lastCell=null;
+  if(paintModeV()!=='swap'&&shapeMode()==='rect'){ rectAnchor=cellAt(mx,my); return; }
+  applyAt(mx,my,e.button===2); });
+cv.addEventListener('mousemove',e=>{ const b=cv.getBoundingClientRect(), mx=e.clientX-b.left,my=e.clientY-b.top;
+  if(panning){ panX=panStart.px+(e.clientX-panStart.x); panY=panStart.py+(e.clientY-panStart.y); drawMain(); return; }
+  if(!isoFn)return; const h=cellAt(mx,my); if(!hover||!h||h.r!==hover.r||h.c!==hover.c){hover=h;drawMain();}
+  if(painting&&paintModeV()!=='swap'&&shapeMode()!=='rect') applyAt(mx,my,pbtn===2); });
+window.addEventListener('mouseup',()=>{ if(panning){panning=false;return;} if(painting&&paintModeV()!=='swap'&&shapeMode()==='rect'&&rectAnchor&&hover){ applyRect(rectAnchor,hover,pbtn===2); } rectAnchor=null; painting=false;lastCell=null; });
+window.addEventListener('keydown',e=>{ if(e.code==='Space'&&document.activeElement.tagName!=='INPUT'){ spaceDown=true; e.preventDefault(); }
+  if(document.activeElement.tagName==='INPUT') return;
+  if(e.key==='='||e.key==='+'){ zoom=Math.min(12,zoom*1.25); drawMain(); }
+  if(e.key==='-'){ zoom=Math.max(0.15,zoom/1.25); drawMain(); }
+  if(e.key==='0'){ zoom=1;panX=0;panY=0; drawMain(); }
+  if(e.key==='Escape'){ cancelSwap(); cancelAdd(); } });
+window.addEventListener('keyup',e=>{ if(e.code==='Space') spaceDown=false; });
+
+// ---- swap tile-type --------------------------------------------------------
+function showSwapBar(){ const bar=document.getElementById('swapbar'); document.getElementById('swaptxt').innerHTML='Swap <b>'+swapFrom+'</b> &rarr; now click a tile in the Tile palette (replaces it in every band/accent of <b>'+current+'</b>).'; bar.classList.add('show'); openPalette(); }
+function cancelSwap(){ swapFrom=null; document.getElementById('swapbar').classList.remove('show'); }
+function replaceTileInRules(from,to){ const R=st().rules; let changed=0;
+  R.bands.forEach(b=>b.forEach(e=>{ if(e[0]===from){ e[0]=to; changed++; } }));
+  (R.accents||[]).forEach(e=>{ if(e[0]===from){ e[0]=to; changed++; } });
+  if(R.scree===from){ R.scree=to; changed++; }
+  return changed; }
+
+// ---- add-target arming -----------------------------------------------------
+function armAdd(t){ addTarget=t; openPalette(); refreshAddHint(); buildRecipe(); }
+function cancelAdd(){ addTarget=null; refreshAddHint(); buildRecipe(); }
+function refreshAddHint(){ const h=document.getElementById('palHint');
+  if(addTarget){ const lbl=addTarget.kind==='band'?('height '+addTarget.h):addTarget.kind; h.innerHTML='<b style="color:#e8c468">Adding to '+lbl+'</b> &mdash; click a tile to add it. <span style="cursor:pointer;color:#9cc4ff" onclick="cancelAdd()">[cancel]</span>'; }
+  else h.innerHTML='Click a tile to use as brush &middot; or drag onto the grid. Arm <b>+ add</b> in a band to add tiles there.'; }
+function paletteClick(a){
+  if(swapFrom){ if(a.cat==='tile'){ const n=replaceTileInRules(swapFrom,a.name); regen(current); buildRecipe(); drawMain(); } cancelSwap(); return; }
+  if(addTarget){ addTileToTarget(a.name); return; }
+  brush=a.name; document.getElementById('paintMode').value=(a.cat==='tile')?'tile':'prop'; renderPal(); }
+function addTileToTarget(name){ const R=st().rules; const t=addTarget;
+  if(t.kind==='band'){ const b=R.bands[t.h]; if(b && !b.some(e=>e[0]===name)) b.push([name,20]); }
+  else if(t.kind==='accents'){ if(!R.accents)R.accents=[]; if(!R.accents.some(e=>e[0]===name)) R.accents.push([name,4]); }
+  else if(t.kind==='scree'){ R.scree=name; }
+  else if(t.kind==='prop'){ if(!R.props.some(pp=>pp.id===name)) R.props.push(p(name,0.02,0,R.maxHeight,false)); }
+  ensureImg(name); addTarget=null; refreshAddHint(); regen(current); buildRecipe(); drawMain(); }
+
+// ---- recipe panel ----------------------------------------------------------
+function buildRecipe(){
+  const R=st().rules, host=document.getElementById('recipe'); host.innerHTML='';
+  const miss=missingIds(R);
+  if(miss.length){ const w=document.createElement('div'); w.style.cssText='background:#3a1f1f;border:1px solid #a44;border-radius:6px;padding:6px 8px;margin-bottom:8px;font-size:11px;color:#ffb0b0';
+    w.innerHTML='&#9888; '+miss.length+' id'+(miss.length>1?'s':'')+' have no art (magenta in-game): '+miss.join(', '); host.appendChild(w); }
+  const mk=(label,extra)=>{ const d=document.createElement('div'); d.className='rsec'; d.innerHTML='<h4>'+label+'<span>'+(extra||'')+'</span></h4>'; return d; };
+  const slider=(parent,label,min,max,val,fmt,on)=>{ const row=document.createElement('div'); row.className='row';
+    row.innerHTML='<div class="nm">'+label+'</div>'; const sl=document.createElement('input'); sl.type='range'; sl.min=min; sl.max=max; sl.value=val;
+    const v=document.createElement('span'); v.className='val'; v.textContent=fmt(val); sl.oninput=()=>{ v.textContent=fmt(+sl.value); on(+sl.value); }; row.append(sl,v); parent.appendChild(row); };
+
+  // Terrain
+  const ter=mk('Terrain height','relief + max');
+  const trow=document.createElement('div'); trow.className='row'; trow.innerHTML='<div class="nm">relief shape</div>';
+  const rsel=document.createElement('select'); RELIEFS.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; if(R.relief===o)op.selected=true; rsel.appendChild(op); });
+  rsel.onchange=()=>{ R.relief=rsel.value; regen(current); drawMain(); }; trow.appendChild(rsel); ter.appendChild(trow);
+  slider(ter,'max height',0,6,R.maxHeight,x=>x,x=>{ R.maxHeight=x; fixBands(R); buildRecipe(); regen(current); drawMain(); });
+  slider(ter,'height frequency',4,40,Math.round(R.heightFreq*100),x=>x,x=>{ R.heightFreq=x/100; regen(current); drawMain(); });
+  host.appendChild(ter);
+
+  // Accents
+  const ac=mk('Accents','clustered overlay');
+  slider(ac,'accent rate %',0,60,Math.round(R.accentRate*100),x=>x+'%',x=>{ R.accentRate=x/100; regen(current); drawMain(); });
+  slider(ac,'patch size',0,100,Math.round((R.accentClump==null?0.55:R.accentClump)*100),x=>x+'%',x=>{ R.accentClump=x/100; regen(current); drawMain(); });
+  poolRows(ac, R.accents, {kind:'accents'}, 80);
+  const aadd=document.createElement('div'); aadd.className='miniadd'; aadd.textContent='+ add accent tile'; aadd.onclick=()=>armAdd({kind:'accents'}); ac.appendChild(aadd);
+  host.appendChild(ac);
+
+  // Per-height bands
+  const bsec=mk('Tiles by height','band per elevation');
+  for(let h=R.bands.length-1; h>=0; h--){ const band=document.createElement('div'); band.className='band'+(addTarget&&addTarget.kind==='band'&&addTarget.h===h?' tgt':'');
+    const bh=document.createElement('div'); bh.className='bh'; bh.innerHTML='<span>height '+h+(h===0?' (ground)':'')+'</span>'; const add=document.createElement('span'); add.className='miniadd'; add.textContent='+ add'; add.onclick=()=>armAdd({kind:'band',h}); bh.appendChild(add); band.appendChild(bh);
+    poolRows(band, R.bands[h], {kind:'band',h}, 80); bsec.appendChild(band); }
+  host.appendChild(bsec);
+
+  // Slope / scree
+  const sc=mk('Steep slope','cliff faces');
+  const srow=document.createElement('div'); srow.className='row';
+  if(R.scree){ ensureImg(R.scree); const im=document.createElement('img'); im.src=META[R.scree]?META[R.scree].path:''; const nm=document.createElement('div'); nm.className='nm'; nm.textContent=R.scree; if(!META[R.scree])nm.style.color='#ff8080'; const x=document.createElement('span'); x.className='x'; x.textContent='✕'; x.title='clear scree'; x.onclick=()=>{ R.scree=''; regen(current); buildRecipe(); drawMain(); }; srow.append(im,nm,x); }
+  else { srow.innerHTML='<div class="nm" style="color:#889">no scree tile</div>'; const a=document.createElement('span'); a.className='miniadd'; a.textContent='+ set'; a.onclick=()=>armAdd({kind:'scree'}); srow.appendChild(a); }
+  sc.appendChild(srow);
+  slider(sc,'slope threshold (steps)',1,4,R.slopeThresh||2,x=>x,x=>{ R.slopeThresh=x; regen(current); drawMain(); });
+  host.appendChild(sc);
+
+  // Props
+  const ps=mk('Props / nodes','chance · height · grove');
+  R.props.forEach((pr,i)=>{ const row=document.createElement('div'); row.className='row'; ensureImg(pr.id);
+    const im=document.createElement('img'); im.src=META[pr.id]?META[pr.id].path:''; const nm=document.createElement('div'); nm.className='nm'; nm.textContent=pr.id; if(!META[pr.id])nm.style.color='#ff8080';
+    const sl=document.createElement('input'); sl.type='range'; sl.min=0; sl.max=200; sl.value=Math.round(pr.chance*1000); const v=document.createElement('span'); v.className='val'; v.textContent=(pr.chance*100).toFixed(1);
+    sl.oninput=()=>{ pr.chance=+sl.value/1000; v.textContent=(pr.chance*100).toFixed(1); regen(current); drawMain(); };
+    const x=document.createElement('span'); x.className='x'; x.textContent='✕'; x.onclick=()=>{ R.props.splice(i,1); regen(current); buildRecipe(); drawMain(); };
+    row.append(im,nm,sl,v,x); ps.appendChild(row);
+    const row2=document.createElement('div'); row2.className='row'; row2.style.marginLeft='36px';
+    const lo=document.createElement('input'); lo.className='num'; lo.type='number'; lo.min=0; lo.max=6; lo.value=pr.minH; lo.title='min height'; lo.oninput=()=>{ pr.minH=Math.max(0,Math.min(6,+lo.value||0)); regen(current); drawMain(); };
+    const hi=document.createElement('input'); hi.className='num'; hi.type='number'; hi.min=0; hi.max=6; hi.value=pr.maxH; hi.title='max height'; hi.oninput=()=>{ pr.maxH=Math.max(0,Math.min(6,+hi.value||0)); regen(current); drawMain(); };
+    const cl=document.createElement('label'); cl.style.cssText='font-size:10px;color:#9aa;display:flex;align-items:center;gap:3px'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=pr.cluster; cb.onchange=()=>{ pr.cluster=cb.checked; regen(current); drawMain(); }; cl.append(cb,document.createTextNode('grove'));
+    row2.append(document.createTextNode('h'),lo,document.createTextNode('–'),hi,cl); ps.appendChild(row2);
+  });
+  const padd=document.createElement('div'); padd.className='miniadd'; padd.textContent='+ add prop'; padd.onclick=()=>armAdd({kind:'prop'}); ps.appendChild(padd);
+  host.appendChild(ps);
+  refreshAddHint();
+}
+function poolRows(parent, arr, target, maxw){ if(!arr)return; arr.forEach((entry,i)=>{ const row=document.createElement('div'); row.className='row'; ensureImg(entry[0]);
+  const im=document.createElement('img'); im.src=META[entry[0]]?META[entry[0]].path:''; const nm=document.createElement('div'); nm.className='nm'; nm.textContent=entry[0]; if(!META[entry[0]])nm.style.color='#ff8080';
+  const sl=document.createElement('input'); sl.type='range'; sl.min=0; sl.max=maxw; sl.value=entry[1]; const v=document.createElement('span'); v.className='val'; v.textContent=entry[1];
+  sl.oninput=()=>{ entry[1]=+sl.value; v.textContent=sl.value; regen(current); drawMain(); };
+  const x=document.createElement('span'); x.className='x'; x.textContent='✕'; x.onclick=()=>{ arr.splice(i,1); regen(current); buildRecipe(); drawMain(); };
+  row.append(im,nm,sl,v,x); parent.appendChild(row); }); }
+
+// ---- palette ---------------------------------------------------------------
+const pal=document.getElementById('pal');
+function renderPal(){ const q=document.getElementById('search').value.toLowerCase(); pal.innerHTML='';
+  const items=(typeof ASSETS!=='undefined'?ASSETS:[]).filter(a=>(a.cat==='tile'||a.cat==='prop'||a.cat==='decor')&&a.name.toLowerCase().includes(q)).slice(0,500);
+  const groups={}; items.forEach(a=>{(groups[a.cat]||=[]).push(a);});
+  ['tile','prop','decor'].forEach(cat=>{ if(!groups[cat])return; const h=document.createElement('div'); h.className='ghead'; h.textContent=cat+' ('+groups[cat].length+')'; pal.appendChild(h);
+    const grid=document.createElement('div'); grid.className='pgrid';
+    groups[cat].forEach(a=>{ const d=document.createElement('div'); d.className='sw'+(brush===a.name?' sel':''); d.title='click to add/brush · drag onto grid\n'+a.name; d.innerHTML='<img src="'+a.path+'" draggable="false"><div>'+a.name+'</div>';
+      d.draggable=true;
+      d.ondragstart=ev=>{ dragAsset={name:a.name,cat:a.cat}; ev.dataTransfer.setData('text/plain',a.name); ev.dataTransfer.effectAllowed='copy'; if(ev.dataTransfer.setDragImage){ ev.dataTransfer.setDragImage(d.querySelector('img'),20,20); } };
+      d.ondragend=()=>{ dragAsset=null; };
+      d.onclick=()=>paletteClick(a); grid.appendChild(d); });
+    pal.appendChild(grid); }); }
+function openPalette(){ document.getElementById('recipe').style.display='none'; document.getElementById('palWrap').classList.add('show'); document.getElementById('modePalette').classList.add('on'); document.getElementById('modeRecipe').classList.remove('on'); renderPal(); }
+document.getElementById('search').oninput=renderPal;
+document.getElementById('modeRecipe').onclick=()=>{ document.getElementById('recipe').style.display='block'; document.getElementById('palWrap').classList.remove('show'); document.getElementById('modeRecipe').classList.add('on'); document.getElementById('modePalette').classList.remove('on'); };
+document.getElementById('modePalette').onclick=openPalette;
+
+// ---- drag-and-drop onto grid ----------------------------------------------
+let dragAsset=null;
+cv.addEventListener('dragenter',e=>{ e.preventDefault(); cv.classList.add('dragover'); });
+cv.addEventListener('dragleave',e=>{ if(e.target===cv){ cv.classList.remove('dragover'); hover=null; drawMain(); } });
+cv.addEventListener('dragover',e=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; if(!isoFn)return; const b=cv.getBoundingClientRect(); const h=cellAt(e.clientX-b.left,e.clientY-b.top); if(h&&(!hover||h.r!==hover.r||h.c!==hover.c)){ hover=h; drawMain(); } });
+cv.addEventListener('drop',e=>{ e.preventDefault(); cv.classList.remove('dragover'); const name=e.dataTransfer.getData('text/plain'); const asset=dragAsset||(META[name]?{name,cat:META[name].cat}:null); if(!asset||!isoFn)return;
+  const b=cv.getBoundingClientRect(); const hit=cellAt(e.clientX-b.left,e.clientY-b.top); if(!hit)return; const isProp=(asset.cat!=='tile');
+  const cell=st().grid[hit.r][hit.c]; if(isProp) cell.d=asset.name; else cell.t=asset.name; ensureImg(asset.name); dragAsset=null; drawMain(); saveSoon(); });
+
+// ---- tabs ------------------------------------------------------------------
+const tabsEl=document.getElementById('tabs');
+function buildTabs(){ tabsEl.innerHTML=''; BIOME_IDS.forEach(id=>{ const b=document.createElement('div'); b.className='tab'+(id===current?' on':''); b.textContent=id;
+    b.onclick=()=>{ current=id; cancelSwap(); cancelAdd(); if(!st().grid)regen(id); buildTabs(); buildRecipe(); layoutMain(); drawMain(); }; tabsEl.appendChild(b); }); }
+
+// ---- controls --------------------------------------------------------------
+document.getElementById('reroll').onclick=()=>{ st().seed=Math.floor(Math.random()*1e6); regen(current); drawMain(); };
+document.getElementById('gsize').onchange=function(){ N=+this.value; BIOME_IDS.forEach(regen); layoutMain(); drawMain(); };
+document.getElementById('density').onclick=function(){ showcase=!showcase; this.textContent='Density: '+(showcase?'Showcase (all art shown)':'Representative'); this.classList.toggle('on',showcase); BIOME_IDS.forEach(regen); drawMain(); };
+document.getElementById('heightOn').onchange=function(){ heightOn=this.checked; drawMain(); };
+document.getElementById('reset').onclick=()=>{ st().rules=freshRules(current); regen(current); buildRecipe(); drawMain(); };
+document.getElementById('zoomin').onclick=()=>{ zoom=Math.min(12,zoom*1.25); drawMain(); };
+document.getElementById('zoomout').onclick=()=>{ zoom=Math.max(0.15,zoom/1.25); drawMain(); };
+document.getElementById('resetview').onclick=()=>{ zoom=1;panX=0;panY=0; drawMain(); };
+document.getElementById('csharp').onclick=showCsharp;
+document.getElementById('swapcancel').onclick=cancelSwap;
+document.getElementById('loadbtn').onclick=()=>document.getElementById('loadf').click();
+document.getElementById('loadf').onchange=e=>{ const f=e.target.files[0]; if(!f)return; f.text().then(t=>{ try{ loadFromExport(JSON.parse(t)); }catch(err){ alert('Could not load JSON: '+err.message); } }); e.target.value=''; };
+
+// ---- export ----------------------------------------------------------------
+document.getElementById('export').onclick=()=>{
+  const out={ generatedBy:'biome_preview.html v2', date:new Date().toISOString(), density:showcase?'showcase':'representative', biomes:{} };
+  BIOME_IDS.forEach(id=>{ const s=STATE[id]; if(!s.grid)regen(id); const R=s.rules;
+    const tiles={},props={}; s.grid.forEach(row=>row.forEach(c=>{ if(c.t)tiles[c.t]=(tiles[c.t]||0)+1; if(c.d)props[c.d]=(props[c.d]||0)+1; }));
+    out.biomes[id]={ seed:s.seed, rules:R, mergedBase:mergedBase(R), placedTileCounts:tiles, placedPropCounts:props,
+      grid:s.grid.map(row=>row.map(c=>({t:c.t,d:c.d,h:c.h}))) };
+  });
+  const blob=new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='biome_preview_export.json'; a.click();
+};
+
+// ---- boot ------------------------------------------------------------------
+window.onresize=()=>{ layoutMain(); drawMain(); };
+restoreState();
+BIOME_IDS.forEach(id=>{ fixBands(STATE[id].rules); if(!STATE[id].grid) regen(id); });
+document.getElementById('gsize').value=String(N);
+(function(){ const db=document.getElementById('density'); db.textContent='Density: '+(showcase?'Showcase (all art shown)':'Representative'); db.classList.toggle('on',showcase); document.getElementById('heightOn').checked=heightOn; })();
+buildTabs(); buildRecipe();
+setTimeout(()=>{ layoutMain(); drawMain(); },120);
+setInterval(()=>{ drawMain(); },800);
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           

@@ -137,6 +137,112 @@ FAMILIES = {
         ("bedroll",
          "simple rolled-out camping bedroll with a blanket, base fits within 2x1 tiles"),
     ],
+    # Building exteriors (catalog section I, REVISED 2026-06-11): footprint
+    # GROWS with rank (2x2 -> 3x3 -> 4x4) but the DOOR stays on the same cell —
+    # buildings expand back/right away from the door anchor. Door: lower-left
+    # face, near the left corner, identical across ranks.
+    "buildings": [
+        ("tavern_r1",
+         "small cozy medieval tavern building, timber frame and plaster, hanging mug "
+         "sign, single front door on the lower-left face near the left corner, "
+         "base fits within 2x2 tiles"),
+        ("tavern_r2",
+         "medium prosperous medieval tavern building, two gables, timber frame, hanging "
+         "mug sign, same single front door on the lower-left face near the left corner, "
+         "base fits within 3x3 tiles"),
+        ("tavern_r3",
+         "grand medieval tavern inn, two storeys, balcony, warm window light, hanging mug "
+         "sign, same single front door on the lower-left face near the left corner, "
+         "base fits within 4x4 tiles"),
+        ("guild_hall_r1",
+         "small stone guild hall with a banner over the entrance, single front door on "
+         "the lower-left face near the left corner, base fits within 2x2 tiles"),
+        ("guild_hall_r2",
+         "medium fortified stone guild hall, twin banners, crenellated trim, same single "
+         "front door on the lower-left face near the left corner, base fits within 3x3 tiles"),
+        ("guild_hall_r3",
+         "grand stone guild hall with a tower, large heraldic banners, gilded trim, same "
+         "single front door on the lower-left face near the left corner, "
+         "base fits within 4x4 tiles"),
+        ("library_r1",
+         "small scholarly library building with a round window, single front door on the "
+         "lower-left face near the left corner, base fits within 2x2 tiles"),
+        ("library_r2",
+         "medium library building with a domed skylight and tall arched windows, same "
+         "single front door on the lower-left face near the left corner, "
+         "base fits within 3x3 tiles"),
+        ("library_r3",
+         "grand arcane library with an observatory dome and glowing blue windows, same "
+         "single front door on the lower-left face near the left corner, "
+         "base fits within 4x4 tiles"),
+        ("shop_r1",
+         "small general store with an awning and crate display, single front door on the "
+         "lower-left face near the left corner, base fits within 2x2 tiles"),
+        ("shop_r2",
+         "medium general store with striped awning, window display and chimney, same "
+         "single front door on the lower-left face near the left corner, "
+         "base fits within 3x3 tiles"),
+        ("shop_r3",
+         "grand emporium store with double striped awnings, ornate signage, lantern "
+         "posts, same single front door on the lower-left face near the left corner, "
+         "base fits within 4x4 tiles"),
+    ],
+    # Crafting stations — every profession's interactable workbench
+    "stations": [
+        ("crafting_table",
+         "sturdy wooden crafting workbench with tools, hammer and pliers on top, "
+         "base fits within 2x1 tiles"),
+        ("furnace",
+         "stone smelting furnace with a glowing orange ember mouth and small chimney, "
+         "base fits within 1 tile"),
+        ("anvil",
+         "blacksmith iron anvil mounted on a heavy wooden stump, base fits within 1 tile"),
+        ("tanning_rack",
+         "wooden tanning rack frame with a stretched animal hide laced by cords, "
+         "base fits within 2x1 tiles"),
+        ("rune_station",
+         "arcane runecrafting altar, stone lectern carved with glowing blue runes and a "
+         "floating crystal, base fits within 1 tile"),
+        ("alchemy_table",
+         "alchemy workbench with glass alembics, bubbling potions and herb bundles, "
+         "base fits within 2x1 tiles"),
+        ("cooking_station",
+         "cooking station with a hanging cauldron over coals and a spit rack, "
+         "base fits within 2x1 tiles"),
+        ("loom",
+         "wooden weaving loom with stretched threads and a cloth in progress, "
+         "base fits within 2x1 tiles"),
+        ("sawmill_bench",
+         "carpentry saw bench with a large saw blade and stacked cut planks, "
+         "base fits within 2x1 tiles"),
+        ("grindstone",
+         "pedal-driven sharpening grindstone wheel on a wooden frame, "
+         "base fits within 1 tile"),
+    ],
+    # Light sources. NOTE: an animated campfire already exists in-game
+    # (Resources/FoundationCampfire/campfire-Sheet.png) — campfire_new here is
+    # the style-matched upgrade; flame flicker is animated at runtime by
+    # FoundationCampfireAnimator-style glow, or later via animate-with-text.
+    "lights": [
+        ("campfire_new",
+         "small campfire with stacked stones ring, burning logs and bright orange "
+         "flames, warm glow on the ground, base fits within 1 tile"),
+        ("torch_standing",
+         "standing wooden torch post with a burning flame head, warm glow, "
+         "base fits within 1 tile"),
+        ("torch_wall",
+         "wall-mounted iron torch sconce with a burning flame, drawn as a standalone "
+         "sprite, base fits within 1 tile"),
+        ("brazier",
+         "iron fire brazier bowl on three legs filled with glowing coals and flame, "
+         "base fits within 1 tile"),
+        ("lantern_post",
+         "tall wrought-iron street lantern post with a warm glowing glass lamp, "
+         "base fits within 1 tile"),
+        ("candle_lantern",
+         "small portable candle lantern sitting on the ground, soft warm glow, "
+         "base fits within 1 tile"),
+    ],
     # tiny night-ambient sprites; runtime animates them (drift + alpha pulse)
     "ambient": [
         ("glowbug",
@@ -165,6 +271,10 @@ def style_refs(family):
                   os.path.join(OUT, "plains", "plains_tree_v2", "frame_0.png")]
     if family == "chest":
         candidates.reverse()  # chest is not rock-like; lead with the general ref
+    if family == "buildings":
+        # the in-game tavern is the building style anchor
+        candidates = [r"C:\Projects\Unity-Projects\LIT-ISO\Assets\Resources\FoundationBuildings\tavern_building.png",
+                      os.path.join(OUT, "plains", "plains_tree_v2", "frame_0.png")]
     refs = []
     for p in candidates:
         if os.path.exists(p):
@@ -201,11 +311,19 @@ def submit(tok, family, dry_run=False):
         if dry_run:
             print(json.dumps(payload_preview(payload), indent=2))
             continue
-        resp = call(tok, "POST", "/create-1-direction-object", payload, fatal=False)
-        if "_error" in resp:
-            if resp["_error"] == 402: sys.exit("Out of generations.")
+        resp = None
+        for attempt in range(20):
+            resp = call(tok, "POST", "/create-1-direction-object", payload, fatal=False)
+            if "_error" not in resp:
+                break
+            if resp["_error"] == 402:
+                sys.exit("Out of generations.")
+            if resp["_error"] == 429:
+                print("  all 8 job slots busy - waiting 30s ..."); time.sleep(30); continue
             rejected += 1
-            print("  rejected - paste the error above to Claude."); continue
+            print("  rejected - paste the error above to Claude."); resp = None; break
+        if resp is None:
+            continue
         oid = resp.get("object_id") or resp.get("id")
         if not oid:
             print("  no object id:", str(resp)[:400]); continue

@@ -4,256 +4,653 @@
 <meta charset="utf-8">
 <title>LIT-ISO Biome Sketch</title>
 <style>
- body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
- #side{width:300px;min-width:300px;background:#1d2027;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
- #pal{flex:1;overflow-y:auto;align-content:start}
- .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px}
- .sw{background:#262a33;border:2px solid #333;border-radius:5px;cursor:pointer;padding:4px 2px;text-align:center}
- .sw:hover{border-color:#666}
- .sw img{max-width:64px;max-height:56px;image-rendering:pixelated;display:block;margin:0 auto}
- .sw div{font-size:9px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:2px}
- .sw.sel{border-color:#e8c468;background:#33301f}
- .ghead{position:sticky;top:0;background:#1d2027;color:#e8c468;font-size:12px;font-weight:600;
-        padding:6px 4px 4px;cursor:pointer;user-select:none;border-bottom:1px solid #333;z-index:2}
- .ghead .arrow{color:#778;margin-right:6px}
- #main{flex:1;display:flex;flex-direction:column}
- #bar{padding:8px 12px;background:#1d2027;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
- button,select,input[type=text]{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
- button.on{background:#5b4d20;border-color:#e8c468}
- #cv{flex:1;cursor:crosshair}
- #help{font-size:11px;color:#889;padding:4px 12px}
- input[type=text]{width:160px}
- #cats button{padding:3px 8px;font-size:11px}
+/* ---- layout ---- */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
+
+/* ---- sidebar ---- */
+#side{
+  width:340px;min-width:200px;max-width:600px;
+  background:#1d2027;display:flex;flex-direction:column;
+  overflow:hidden;flex-shrink:0;position:relative;
+}
+#side-header{padding:8px 10px 6px;background:#22262e;border-bottom:1px solid #2a2f3a;flex-shrink:0}
+#side-header .title{font-size:14px;font-weight:700;color:#e8c468;margin-bottom:6px}
+
+/* biome quick-filter pills */
+#biome-filter{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+#biome-filter button{
+  background:#262a33;color:#9aa;border:1px solid #333;border-radius:12px;
+  padding:2px 9px;font-size:11px;cursor:pointer;line-height:1.5
+}
+#biome-filter button:hover{border-color:#888;color:#ddd}
+#biome-filter button.on{background:#3a3010;border-color:#e8c468;color:#e8c468}
+
+/* type filter */
+#type-filter{display:flex;gap:4px;margin-bottom:6px}
+#type-filter button{
+  flex:1;background:#262a33;color:#9aa;border:1px solid #333;border-radius:4px;
+  padding:3px 6px;font-size:11px;cursor:pointer
+}
+#type-filter button:hover{border-color:#888;color:#ddd}
+#type-filter button.on{background:#3a3010;border-color:#e8c468;color:#e8c468}
+
+/* search + size row */
+#pal-controls{display:flex;gap:5px;align-items:center}
+#search{
+  flex:1;background:#262a33;color:#ddd;border:1px solid #444;border-radius:4px;
+  padding:5px 8px;font-size:12px;outline:none;min-width:0
+}
+#search:focus{border-color:#666}
+#size-btns{display:flex;gap:2px;flex-shrink:0}
+#size-btns button{
+  background:#262a33;color:#9aa;border:1px solid #333;border-radius:4px;
+  padding:3px 7px;font-size:11px;cursor:pointer;min-width:26px
+}
+#size-btns button.on{background:#3a3010;border-color:#e8c468;color:#e8c468}
+
+/* asset count badge */
+#pal-count{font-size:10px;color:#556;padding:2px 0 4px;flex-shrink:0}
+
+/* ---- palette scroller — THE FIX: min-height:0 lets flex child scroll ---- */
+#pal{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  min-height:0;   /* critical: without this flex child won't shrink below content height */
+  padding:4px 6px 8px;
+}
+#pal::-webkit-scrollbar{width:6px}
+#pal::-webkit-scrollbar-track{background:#191c22}
+#pal::-webkit-scrollbar-thumb{background:#3a4150;border-radius:3px}
+#pal::-webkit-scrollbar-thumb:hover{background:#5a6170}
+
+/* group headers */
+.ghead{
+  position:sticky;top:0;
+  background:#1d2027;color:#c8a84a;font-size:11px;font-weight:600;
+  padding:5px 4px 4px;cursor:pointer;user-select:none;
+  border-bottom:1px solid #2a2f3a;z-index:2;
+  display:flex;align-items:center;gap:4px
+}
+.ghead .arrow{color:#556;font-size:10px;width:10px;text-align:center}
+.ghead .gcnt{color:#556;font-weight:400;margin-left:auto;font-size:10px}
+
+/* swatch grid — columns auto-fit by swatch size */
+.pgrid{display:grid;gap:5px;margin:5px 0 8px}
+.pgrid.sz-s{grid-template-columns:repeat(auto-fill,minmax(52px,1fr))}
+.pgrid.sz-m{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}
+.pgrid.sz-l{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+
+/* swatches */
+.sw{
+  background:#262a33;border:2px solid #2e3240;border-radius:5px;
+  cursor:pointer;padding:4px 3px 3px;text-align:center;
+  transition:border-color .1s
+}
+.sw:hover{border-color:#6a7080;background:#2e3344}
+.sw.sel{border-color:#e8c468;background:#33301f}
+.sw img{
+  display:block;margin:0 auto;image-rendering:pixelated;
+  object-fit:contain;width:100%;
+}
+.sz-s .sw img{height:44px}
+.sz-m .sw img{height:62px}
+.sz-l .sw img{height:90px}
+.sw .label{
+  font-size:8px;color:#7a8899;overflow:hidden;white-space:nowrap;
+  text-overflow:ellipsis;margin-top:3px;line-height:1.2
+}
+.sz-l .sw .label{font-size:9px}
+
+/* current brush display */
+#brush-bar{
+  background:#191c22;border-top:1px solid #2a2f3a;padding:6px 10px;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;min-height:42px
+}
+#brush-preview{width:32px;height:32px;image-rendering:pixelated;background:#262a33;border-radius:4px;border:1px solid #3a4150}
+#brush-name{font-size:11px;color:#9cc4ff;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#brush-mode{font-size:10px;color:#778;background:#262a33;border-radius:3px;padding:1px 5px;flex-shrink:0}
+
+/* resize handle */
+#resize-handle{
+  position:absolute;right:0;top:0;width:5px;height:100%;
+  cursor:col-resize;z-index:10;background:transparent
+}
+#resize-handle:hover{background:rgba(232,196,104,.15)}
+
+/* ---- hover tooltip ---- */
+#tip{
+  position:fixed;pointer-events:none;display:none;z-index:9999;
+  background:#22262e;border:1px solid #3a4150;border-radius:6px;
+  padding:6px;box-shadow:0 4px 18px rgba(0,0,0,.6);
+  flex-direction:column;align-items:center;gap:4px;
+  max-width:160px
+}
+#tip.show{display:flex}
+#tip img{width:96px;height:96px;image-rendering:pixelated;object-fit:contain}
+#tip .tname{font-size:10px;color:#bcd;text-align:center;word-break:break-all;line-height:1.3}
+#tip .tcat{font-size:9px;color:#667;margin-top:1px}
+
+/* ---- main area ---- */
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#bar{
+  padding:7px 12px;background:#1d2027;
+  display:flex;gap:7px;align-items:center;flex-wrap:wrap;
+  border-bottom:1px solid #2a2f3a;flex-shrink:0
+}
+#bar button,#bar select,#bar input[type=text],#bar a.toolLink{
+  background:#2a2f3a;color:#ddd;border:1px solid #444;
+  border-radius:4px;padding:4px 9px;cursor:pointer;font-size:12px;
+  text-decoration:none
+}
+#bar button:hover{border-color:#888}
+#bar button.on{background:#5b4d20;border-color:#e8c468}
+#cv{flex:1;cursor:crosshair;min-height:0;display:block}
+#help{font-size:11px;color:#889;padding:4px 12px;background:#191c22;flex-shrink:0;border-top:1px solid #2a2f3a}
 </style>
 </head>
 <body>
+
+<!-- ========== SIDEBAR ========== -->
 <div id="side">
-  <div style="font-size:15px;font-weight:600;color:#e8c468">LIT-ISO Biome Sketch</div>
-  <div id="cats">
-    <button data-c="all" class="on">All</button>
-    <button data-c="tile">Tiles</button>
-    <button data-c="prop">Props</button>
-    <button data-c="decor">Decor</button>
+  <div id="side-header">
+    <div class="title">LIT-ISO Biome Sketch</div>
+
+    <!-- Biome quick-filters -->
+    <div id="biome-filter">
+      <button data-b="all" class="on">All</button>
+      <button data-b="meadow">🌿 Meadow</button>
+      <button data-b="forest">🌲 Forest</button>
+      <button data-b="mountain">⛰ Mountain</button>
+      <button data-b="snow">❄ Snow</button>
+      <button data-b="beach">🏖 Beach</button>
+      <button data-b="dungeon">🪨 Dungeon</button>
+      <button data-b="buildings">🏠 Buildings</button>
+    </div>
+
+    <!-- Type filter -->
+    <div id="type-filter">
+      <button data-c="all" class="on">All types</button>
+      <button data-c="tile">Tiles</button>
+      <button data-c="prop">Props</button>
+      <button data-c="decor">Decor</button>
+    </div>
+
+    <!-- Search + swatch size -->
+    <div id="pal-controls">
+      <input type="text" id="search" placeholder="search name…">
+      <div id="size-btns">
+        <button data-sz="s">S</button>
+        <button data-sz="m" class="on">M</button>
+        <button data-sz="l">L</button>
+      </div>
+    </div>
   </div>
-  <input type="text" id="search" placeholder="search...">
+
+  <div id="pal-count">Loading…</div>
+
+  <!-- THE SCROLLABLE PALETTE -->
   <div id="pal"></div>
+
+  <!-- Current brush strip -->
+  <div id="brush-bar">
+    <img id="brush-preview" src="" alt="">
+    <span id="brush-name">No brush selected</span>
+    <span id="brush-mode">—</span>
+  </div>
+
+  <!-- Drag-to-resize handle -->
+  <div id="resize-handle"></div>
 </div>
+
+<!-- ========== HOVER TOOLTIP ========== -->
+<div id="tip"><img id="tip-img" src=""><div class="tname" id="tip-name"></div><div class="tcat" id="tip-cat"></div></div>
+
+<!-- ========== MAIN CANVAS AREA ========== -->
 <div id="main">
   <div id="bar">
     <select id="mode">
       <option value="tile">Paint tile</option>
-      <option value="decor">Place decor/prop</option>
-      <option value="height">Height (+1 / RMB -1)</option>
+      <option value="decor">Place prop/decor</option>
+      <option value="height">Height (+1 / RMB −1)</option>
       <option value="erase">Erase</option>
     </select>
-    <button id="flip">Flip brush: OFF (R)</button>
-    <select id="gsize"><option value="9">9 x 9</option><option value="13">13 x 13</option><option value="17">17 x 17</option><option value="25">25 x 25</option><option value="33">33 x 33</option></select>
+    <button id="flip">Flip: OFF (R)</button>
+    <select id="gsize">
+      <option value="9">9×9</option>
+      <option value="13">13×13</option>
+      <option value="17">17×17</option>
+      <option value="25">25×25</option>
+      <option value="33">33×33</option>
+    </select>
     <button id="nums" class="on">Heights</button>
     <button id="pguide">Player: OFF (P)</button>
-    <input type="text" id="vname" placeholder="vignette name (e.g. river_bank_v1)">
+    <button id="coolcliffsBtn">Cool Cliffs: OFF</button>
+    <input type="text" id="vname" placeholder="vignette name…" style="width:150px">
     <button id="save">Save JSON</button>
     <button id="load">Load JSON</button>
     <input type="file" id="loadf" style="display:none" accept=".json">
     <button id="png">Export PNG</button>
     <button id="clear">Clear</button>
-    <select id="presets"><option value="">Claude's proposals...</option></select>
+    <select id="presets"><option value="">Biome/rule presets…</option></select>
+    <a class="toolLink" href="biome_preview.html" target="_blank" style="margin-left:4px">Preview Editor ↗</a>
   </div>
   <canvas id="cv"></canvas>
-  <div id="help">LMB = apply brush · RMB = erase / lower height · pick a tile then "Paint tile", a prop then "Place decor" · heights 0-6 render as elevation. Save JSON and send the file to Claude.</div>
+  <div id="help">LMB = paint · RMB = erase/lower height · pick tile → Paint tile mode auto-activates · heights 0–6 render as elevation · R = flip brush · P = player guide</div>
 </div>
+
 <script src="assets.js"></script>
 <script src="vignettes.js"></script>
+<script src="rule_presets.js"></script>
 <script>
+// ============================================================
+// BIOME KEYWORD FILTERS
+// Maps biome button → function(asset) returning true if it belongs
+// ============================================================
+const BIOME_MATCH = {
+  all:       ()=>true,
+  meadow:    a=> /plains|meadow|flower|tulip|tuft|willow/i.test(a.name+' '+a.group),
+  forest:    a=> /forest|oak_tree|moss_bush|canopy|leaf_litter|underbrush/i.test(a.name+' '+a.group),
+  mountain:  a=> /mountain|stone_|badlands|stone_cracked|stone_scree|stone_mossy|snowcap|stone_block|ore_/i.test(a.name+' '+a.group),
+  snow:      a=> /snow/i.test(a.name+' '+a.group),
+  beach:     a=> /beach|shore|sand_/i.test(a.name+' '+a.group),
+  dungeon:   a=> /dungeon/i.test(a.name+' '+a.group),
+  buildings: a=> /(buildings|tavern|library|guild|stations|camp|town|tent|market|shop|dock)/i.test(a.name+' '+a.group),
+};
+
+// ============================================================
+// STATE
+// ============================================================
 let TW=64, TH=32, HS=18;
 let N=9, mode='tile', brush=null, flip=false, showNums=true;
-function layout(){
-  // adaptive zoom: bigger grids shrink tiles to fit the canvas
-  TW=Math.max(18, Math.min(64,
-      Math.floor((cv.width-80)/N),
-      Math.floor(((cv.height-140)*2)/(N+2))));
-  TW-=TW%2; TH=TW/2; HS=Math.round(TW*0.28);
-}
-let grid=mk(N);
+let catFilter='all', biomeFilter='all', swSize='m';
+const collapsed=new Set();
+
 const imgs={};
 ASSETS.forEach(a=>{const i=new Image(); i.src=a.path; imgs[a.name]=i; a.img=i;});
 
-function mk(n){return Array.from({length:n},()=>Array.from({length:n},()=>({t:null,d:null,h:0,f:false,df:false})));}
+function mk(n){
+  return Array.from({length:n},()=>Array.from({length:n},()=>({t:null,d:null,h:0,f:false,df:false})));
+}
+let grid=mk(N);
 
-const pal=document.getElementById('pal');
-let cat='all';
-const collapsed=new Set();
-const GROUP_ORDER=['plains v2 (new)','snow (new)','mountain stone (new)','dungeon (new)','blends (new)','farming (new)','plains props v2 (new)',
-                   'variants - lush','variants - dry','variants - autumn','variants - frost','variants - moss','variants - dusk',
-                   'texture variants - tiles','gradient blends - tiles',
-                   'plains','ground','forest','water','sand','stone & high','dungeon','misc','props','decor'];
+// ============================================================
+// PALETTE RENDER
+// ============================================================
+const GROUP_ORDER=[
+  'plains v2 (new)','snow (new)','mountain stone (new)','dungeon (new)','farming (new)','plains props v2 (new)',
+  'synced ready tiles','synced ready props',
+  'synced ready tiles - beach','synced ready tiles - dungeon (new)','synced ready tiles - dungeon_stone',
+  'synced ready tiles - farming (new)','synced ready tiles - mountain stone (new)',
+  'synced ready props - forest','synced ready props - plains','synced ready props - stations',
+  'synced ready props - tavern','synced ready props - camp','synced ready props - guild',
+  'synced ready props - town','synced ready props - library','synced ready props - ores',
+  'synced ready props - chest','synced ready props - lights','synced ready props - ambient',
+  'synced conflict tiles','synced conflict props','synced held tiles','synced held props',
+  'pixellab tiles - plains','pixellab tiles - plains v2 (new)',
+  'pixellab tiles - mountain_stone','pixellab tiles - mountain stone (new)',
+  'pixellab tiles - snow','pixellab tiles - snow (new)','pixellab tiles - beach',
+  'pixellab tiles - dungeon_stone','pixellab tiles - dungeon (new)',
+  'pixellab tiles - interior','pixellab tiles - planks','pixellab tiles - farming','pixellab tiles - farming (new)',
+  'pixellab props - buildings','pixellab props - tavern','pixellab props - stations',
+  'pixellab props - camp','pixellab props - guild','pixellab props - town','pixellab props - library',
+  'pixellab props - ores','pixellab props - chest','pixellab props - lights',
+  'pixellab props - ambient','pixellab props - forest','pixellab props - plains',
+  'pixellab props - plains props v2 (new)',
+  'unity generated tiles - Forest','unity generated tiles - Plains','unity generated tiles - Shared',
+  'unity generated props - Forest','unity generated props - Plains','unity generated props - Shared',
+  'biomesketch existing tiles - biomesketch_tile','biomesketch existing props - biomesketch_prop',
+  'variants - lush','variants - dry','variants - autumn','variants - frost','variants - moss','variants - dusk',
+  'new variants - tiles','texture variants - tiles',
+  'plains','ground','forest','water','sand','stone & high','dungeon','misc','props','decor'
+];
+
 function renderPal(){
-  const q=document.getElementById('search').value.toLowerCase();
-  pal.innerHTML='';
-  const items=ASSETS.filter(a=>(cat==='all'||a.cat===cat)&&a.name.toLowerCase().includes(q));
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const palEl=document.getElementById('pal');
+  palEl.innerHTML='';
+
+  const biomeFn=BIOME_MATCH[biomeFilter]||BIOME_MATCH.all;
+  const items=ASSETS.filter(a=>{
+    if(catFilter!=='all' && a.cat!==catFilter) return false;
+    if(!biomeFn(a)) return false;
+    if(q && !a.name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // Group
   const groups={};
-  items.forEach(a=>{(groups[a.group||'misc'] ||= []).push(a);});
+  items.forEach(a=>{(groups[a.group||'misc']||=[]).push(a);});
   const keys=Object.keys(groups).sort((a,b)=>{
     const ia=GROUP_ORDER.indexOf(a), ib=GROUP_ORDER.indexOf(b);
-    return (ia<0?99:ia)-(ib<0?99:ib);});
+    return (ia<0?999:ia)-(ib<0?999:ib);
+  });
+
+  // Count badge
+  document.getElementById('pal-count').textContent=
+    `${items.length} asset${items.length!==1?'s':''} in ${keys.length} group${keys.length!==1?'s':''}`;
+
+  if(items.length===0){
+    palEl.innerHTML='<div style="padding:12px;font-size:11px;color:#556">No assets match. Try clearing the search or changing filters.</div>';
+    return;
+  }
+
+  // Auto-expand first group when biome filter changes (and search is empty)
+  // Keep the collapsed set but open first group if nothing is open
+  const openGroups=keys.filter(k=>!collapsed.has(k));
+  if(openGroups.length===0 && !q){ collapsed.delete(keys[0]); }
+
+  const szClass='sz-'+swSize;
+
   keys.forEach(g=>{
+    const closed=collapsed.has(g) && !q;
+
+    // Group header
     const head=document.createElement('div');
     head.className='ghead';
-    const closed=collapsed.has(g) && !q;   // searching expands everything
-    head.innerHTML=`<span class="arrow">${closed?'▸':'▾'}</span>${g} <span style="color:#667">(${groups[g].length})</span>`;
-    head.onclick=()=>{closed?collapsed.delete(g):collapsed.add(g); renderPal();};
-    pal.appendChild(head);
+    head.innerHTML=`<span class="arrow">${closed?'▸':'▾'}</span><span style="flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${g}</span><span class="gcnt">${groups[g].length}</span>`;
+    head.onclick=()=>{ closed?collapsed.delete(g):collapsed.add(g); renderPal(); };
+    palEl.appendChild(head);
+
     if(closed) return;
-    const grid=document.createElement('div');
-    grid.className='pgrid';
+
+    // Grid of swatches
+    const gridEl=document.createElement('div');
+    gridEl.className='pgrid '+szClass;
     groups[g].forEach(a=>{
       const d=document.createElement('div');
       d.className='sw'+(brush===a.name?' sel':'');
-      d.title=a.name;
-      d.innerHTML=`<img src="${a.path}"><div>${a.name}</div>`;
-      d.onclick=()=>{brush=a.name;
-        mode = a.cat==='tile' ? 'tile' : 'decor';
+      const imgEl=document.createElement('img');
+      imgEl.src=a.path;
+      imgEl.alt=a.name;
+      const lbl=document.createElement('div');
+      lbl.className='label';
+      lbl.textContent=a.name;
+      d.appendChild(imgEl);
+      d.appendChild(lbl);
+
+      // Click → select brush
+      d.addEventListener('click',()=>{
+        brush=a.name;
+        mode=a.cat==='tile'?'tile':'decor';
         document.getElementById('mode').value=mode;
-        renderPal();};
-      grid.appendChild(d);
+        updateBrushBar();
+        renderPal();
+      });
+
+      // Hover tooltip
+      d.addEventListener('mouseenter', ev=>showTip(a, ev));
+      d.addEventListener('mousemove',  ev=>moveTip(ev));
+      d.addEventListener('mouseleave', hideTip);
+
+      gridEl.appendChild(d);
     });
-    pal.appendChild(grid);
+    palEl.appendChild(gridEl);
   });
 }
-document.querySelectorAll('#cats button').forEach(b=>b.onclick=()=>{
-  cat=b.dataset.c;
-  document.querySelectorAll('#cats button').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on'); renderPal();});
-document.getElementById('search').oninput=renderPal;
+
+// ============================================================
+// HOVER TOOLTIP
+// ============================================================
+const tip=document.getElementById('tip');
+const tipImg=document.getElementById('tip-img');
+const tipName=document.getElementById('tip-name');
+const tipCat=document.getElementById('tip-cat');
+
+function showTip(a, ev){
+  tipImg.src=a.path;
+  tipName.textContent=a.name;
+  tipCat.textContent=(a.cat||'')+(a.group?' · '+a.group:'');
+  tip.classList.add('show');
+  moveTip(ev);
+}
+function moveTip(ev){
+  const vw=window.innerWidth, vh=window.innerHeight;
+  let x=ev.clientX+18, y=ev.clientY-10;
+  if(x+165>vw) x=ev.clientX-170;
+  if(y+130>vh) y=vh-135;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+function hideTip(){ tip.classList.remove('show'); }
+
+// ============================================================
+// BRUSH BAR
+// ============================================================
+function updateBrushBar(){
+  const a=brush?ASSETS.find(x=>x.name===brush):null;
+  document.getElementById('brush-preview').src=a?a.path:'';
+  document.getElementById('brush-name').textContent=a?a.name:'No brush selected';
+  document.getElementById('brush-mode').textContent=
+    mode==='tile'?'TILE':mode==='decor'?'PROP':'—';
+}
+
+// ============================================================
+// FILTER CONTROLS
+// ============================================================
+document.querySelectorAll('#biome-filter button').forEach(b=>b.addEventListener('click',()=>{
+  biomeFilter=b.dataset.b;
+  document.querySelectorAll('#biome-filter button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  renderPal();
+}));
+document.querySelectorAll('#type-filter button').forEach(b=>b.addEventListener('click',()=>{
+  catFilter=b.dataset.c;
+  document.querySelectorAll('#type-filter button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  renderPal();
+}));
+document.querySelectorAll('#size-btns button').forEach(b=>b.addEventListener('click',()=>{
+  swSize=b.dataset.sz;
+  document.querySelectorAll('#size-btns button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  renderPal();
+}));
+document.getElementById('search').addEventListener('input', renderPal);
+
+// Clear search with Escape
+document.getElementById('search').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ e.target.value=''; renderPal(); }
+});
+
 renderPal();
 
+// ============================================================
+// RESIZE HANDLE
+// ============================================================
+(function(){
+  const handle=document.getElementById('resize-handle');
+  const side=document.getElementById('side');
+  let dragging=false, startX=0, startW=0;
+  handle.addEventListener('mousedown',e=>{
+    dragging=true; startX=e.clientX; startW=side.offsetWidth;
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const w=Math.max(200,Math.min(600,startW+(e.clientX-startX)));
+    side.style.width=w+'px';
+  });
+  window.addEventListener('mouseup',()=>{
+    dragging=false;
+    document.body.style.cursor='';
+    document.body.style.userSelect='';
+  });
+})();
+
+// ============================================================
+// CANVAS SETUP
+// ============================================================
 const cv=document.getElementById('cv'), cx=cv.getContext('2d');
-function resize(){cv.width=cv.clientWidth; cv.height=cv.clientHeight; layout(); draw();}
-window.onresize=resize;
+cx.imageSmoothingEnabled=false;
 
-function origin(){return {x:cv.width/2, y:90};}
-function isoPos(c,r,h){const o=origin();
-  return {x:o.x+(c-r)*TW/2, y:o.y+(c+r)*TH/2-h*HS};}
+function layout(){
+  TW=Math.max(18,Math.min(64,
+    Math.floor((cv.width-80)/N),
+    Math.floor(((cv.height-80)*2)/(N+2))));
+  TW-=TW%2; TH=TW/2; HS=Math.round(TW*0.28);
+}
+function resize(){
+  cv.width=cv.clientWidth||cv.offsetWidth;
+  cv.height=cv.clientHeight||cv.offsetHeight;
+  layout(); draw();
+}
+window.addEventListener('resize',resize);
 
+function origin(){return{x:cv.width/2,y:90};}
+function isoPos(c,r,h){
+  const o=origin();
+  return{x:o.x+(c-r)*TW/2, y:o.y+(c+r)*TH/2-h*HS};
+}
+
+// ============================================================
+// DRAW
+// ============================================================
 function draw(){
   cx.imageSmoothingEnabled=false;
-  cx.fillStyle='#15171c'; cx.fillRect(0,0,cv.width,cv.height);
-  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+  cx.fillStyle='#15171c';
+  cx.fillRect(0,0,cv.width,cv.height);
+
+  // Tile pass
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
     const cell=grid[r][c], p=isoPos(c,r,cell.h);
-    if(cell.h>0){ // cliff face
+    if(cell.h>0){
       const pb=isoPos(c,r,0);
       cx.fillStyle='#241d15';
       cx.beginPath();
       cx.moveTo(p.x-TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
-      cx.lineTo(pb.x,pb.y+TH); cx.lineTo(pb.x-TW/2,pb.y+TH/2); cx.closePath(); cx.fill();
+      cx.lineTo(pb.x,pb.y+TH);       cx.lineTo(pb.x-TW/2,pb.y+TH/2);
+      cx.closePath(); cx.fill();
       cx.fillStyle='#2e251a';
       cx.beginPath();
       cx.moveTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
-      cx.lineTo(pb.x,pb.y+TH); cx.lineTo(pb.x+TW/2,pb.y+TH/2); cx.closePath(); cx.fill();
+      cx.lineTo(pb.x,pb.y+TH);       cx.lineTo(pb.x+TW/2,pb.y+TH/2);
+      cx.closePath(); cx.fill();
     }
-    // diamond outline
-    cx.strokeStyle=cell.t?'rgba(255,255,255,0.06)':'rgba(255,255,255,0.15)';
+    cx.strokeStyle=cell.t?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.14)';
     cx.beginPath();
-    cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
-    cx.lineTo(p.x-TW/2,p.y+TH/2); cx.closePath(); cx.stroke();
+    cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2);
+    cx.lineTo(p.x,p.y+TH); cx.lineTo(p.x-TW/2,p.y+TH/2);
+    cx.closePath(); cx.stroke();
     if(cell.t&&imgs[cell.t]&&imgs[cell.t].complete){
       const im=imgs[cell.t], w=TW, h=w*im.height/im.width;
+      const isCliffTile=cell.t.includes('cliff');
       cx.save();
       if(cell.f){cx.translate(p.x,0); cx.scale(-1,1); cx.translate(-p.x,0);}
-      cx.drawImage(im, p.x-w/2, p.y+TH-h, w, h);
+      if(isCliffTile&&window.coolCliffs) cx.filter='hue-rotate(180deg) saturate(0.35) brightness(1.05)';
+      cx.drawImage(im,p.x-w/2,p.y+TH-h,w,h);
       cx.restore();
     }
     if(showNums&&cell.h>0){
       cx.fillStyle='rgba(232,196,104,0.85)'; cx.font='10px monospace';
-      cx.fillText(cell.h, p.x-3, p.y+TH/2+3);
+      cx.fillText(cell.h,p.x-3,p.y+TH/2+3);
     }
   }
-  // second pass: decorations/props on top so tall sprites are never
-  // overdrawn by the tiles of rows in front of them
-  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+
+  // Prop/decor pass (on top so tall sprites aren't overdrawn)
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
     const cell=grid[r][c];
     if(!cell.d||!imgs[cell.d]||!imgs[cell.d].complete) continue;
     const p=isoPos(c,r,cell.h), im=imgs[cell.d];
     const meta=ASSETS.find(a=>a.name===cell.d);
-    // PPU-true scale: world width (cells) = pngWidth / spritePixelsToUnits,
-    // exactly as Unity's renderer sizes these sprites. 1 cell = TW screen px.
-    const s=meta ? (TW/meta.ppu) : (TW/Math.max(32,im.width));
-    // draw only the content bbox so transparent canvas padding doesn't float
+    const s=meta?(TW/meta.ppu):(TW/Math.max(32,im.width));
     const bx=meta?meta.bx:0, by=meta?meta.by:0,
           bw=meta?meta.bw:im.width, bh=meta?meta.bh:im.height;
     const w=bw*s, h=bh*s;
-    // bottom-center pivot standing on the tile surface, like in-engine placeables
     const footY=p.y+TH/2+3;
     cx.save();
     if(cell.df){cx.translate(p.x,0); cx.scale(-1,1); cx.translate(-p.x,0);}
-    cx.drawImage(im, bx, by, bw, bh, p.x-w/2, footY-h, w, h);
+    cx.drawImage(im,bx,by,bw,bh,p.x-w/2,footY-h,w,h);
     cx.restore();
   }
-  // player height guide: mage idle frame at PPU-true scale follows the cursor
+
+  // Player guide
   if(window.showPlayer&&hoverCell&&window.playerImg&&window.playerImg.complete){
     const gcell=grid[hoverCell.r][hoverCell.c];
     const gp=isoPos(hoverCell.c,hoverCell.r,gcell.h);
-    const gs=TW/100; // player sheet imports at PPU 100 in-engine
+    const gs=TW/100;
     const gw=window.playerImg.width*gs, gh=window.playerImg.height*gs;
     const gfootY=gp.y+TH/2+3;
     cx.globalAlpha=0.92;
     cx.drawImage(window.playerImg,gp.x-gw/2,gfootY-gh,gw,gh);
     cx.globalAlpha=1;
     cx.strokeStyle='rgba(120,200,255,0.9)';
-    cx.beginPath();cx.moveTo(gp.x+gw/2+6,gfootY);cx.lineTo(gp.x+gw/2+6,gfootY-gh);cx.stroke();
-    cx.fillStyle='rgba(120,200,255,0.95)';cx.font='11px monospace';
+    cx.beginPath(); cx.moveTo(gp.x+gw/2+6,gfootY); cx.lineTo(gp.x+gw/2+6,gfootY-gh); cx.stroke();
+    cx.fillStyle='rgba(120,200,255,0.95)'; cx.font='11px monospace';
     cx.fillText('player 1.14u',gp.x+gw/2+10,gfootY-gh/2);
   }
-  // hover highlight: shows exactly which tile receives the brush
+
+  // Hover highlight
   if(hoverCell){
     const cell=grid[hoverCell.r][hoverCell.c];
     const p=isoPos(hoverCell.c,hoverCell.r,cell.h);
     cx.strokeStyle='rgba(232,196,104,0.95)'; cx.lineWidth=2;
     cx.beginPath();
-    cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2); cx.lineTo(p.x,p.y+TH);
-    cx.lineTo(p.x-TW/2,p.y+TH/2); cx.closePath(); cx.stroke();
+    cx.moveTo(p.x,p.y); cx.lineTo(p.x+TW/2,p.y+TH/2);
+    cx.lineTo(p.x,p.y+TH); cx.lineTo(p.x-TW/2,p.y+TH/2);
+    cx.closePath(); cx.stroke();
     cx.lineWidth=1;
   }
 }
+
 let hoverCell=null;
 
-// player guide toggle (P)
+// ============================================================
+// PLAYER GUIDE
+// ============================================================
 window.showPlayer=false;
+window.coolCliffs=false;
+const ccBtn=document.getElementById('coolcliffsBtn');
+ccBtn.onclick=()=>{
+  window.coolCliffs=!window.coolCliffs;
+  ccBtn.textContent='Cool Cliffs: '+(window.coolCliffs?'ON':'OFF');
+  ccBtn.classList.toggle('on',window.coolCliffs);
+  draw();
+};
 window.playerImg=new Image(); window.playerImg.src='assets/player_guide.png';
 const pgBtn=document.getElementById('pguide');
-pgBtn.onclick=()=>{window.showPlayer=!window.showPlayer;
+pgBtn.onclick=()=>{
+  window.showPlayer=!window.showPlayer;
   pgBtn.textContent='Player: '+(window.showPlayer?'ON':'OFF')+' (P)';
-  pgBtn.classList.toggle('on',window.showPlayer); draw();};
+  pgBtn.classList.toggle('on',window.showPlayer);
+  draw();
+};
 window.addEventListener('keydown',e=>{
-  if((e.key==='p'||e.key==='P')&&document.activeElement.tagName!=='INPUT')pgBtn.onclick();});
+  if((e.key==='p'||e.key==='P')&&document.activeElement.tagName!=='INPUT') pgBtn.onclick();
+});
 
+// ============================================================
+// HIT TESTING
+// ============================================================
 function cellAt(mx,my){
-  // test from front to back so the topmost (visually nearest) cell wins
-  for(let r=N-1;r>=0;r--)for(let c=N-1;c>=0;c--){
+  for(let r=N-1;r>=0;r--) for(let c=N-1;c>=0;c--){
     const p=isoPos(c,r,grid[r][c].h);
     const dx=Math.abs(mx-p.x), dy=Math.abs(my-(p.y+TH/2));
-    if(dx/(TW/2)+dy/(TH/2)<=1) return {r,c};
+    if(dx/(TW/2)+dy/(TH/2)<=1) return{r,c};
   }
   return null;
 }
 
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 let painting=false, paintBtn=0, lastCell=null;
+
 function applyAt(mx,my,rmb){
   const hit=cellAt(mx,my);
   if(!hit) return;
-  if(lastCell&&lastCell.r===hit.r&&lastCell.c===hit.c) return; // once per cell
+  if(lastCell&&lastCell.r===hit.r&&lastCell.c===hit.c) return;
   lastCell=hit;
   const cell=grid[hit.r][hit.c];
-  if(mode==='height'){cell.h=Math.max(0,Math.min(6,cell.h+(rmb?-1:1)));}
+  if(mode==='height')  { cell.h=Math.max(0,Math.min(6,cell.h+(rmb?-1:1))); }
   else if(mode==='erase'||rmb){ if(cell.d) cell.d=null; else cell.t=null; }
-  else if(mode==='tile'&&brush){cell.t=brush; cell.f=flip;}
-  else if(mode==='decor'&&brush){cell.d=brush; cell.df=flip;}
+  else if(mode==='tile'&&brush) { cell.t=brush; cell.f=flip; }
+  else if(mode==='decor'&&brush){ cell.d=brush; cell.df=flip; }
   draw();
 }
+
 cv.addEventListener('mousedown',e=>{
   painting=true; paintBtn=e.button; lastCell=null;
   const r=cv.getBoundingClientRect();
-  applyAt(e.clientX-r.left, e.clientY-r.top, e.button===2);
+  applyAt(e.clientX-r.left,e.clientY-r.top,e.button===2);
 });
 cv.addEventListener('mousemove',e=>{
   const r=cv.getBoundingClientRect();
@@ -264,47 +661,68 @@ cv.addEventListener('mousemove',e=>{
 });
 window.addEventListener('mouseup',()=>{painting=false; lastCell=null;});
 
-document.getElementById('mode').onchange=e=>mode=e.target.value;
-document.getElementById('gsize').onchange=e=>{N=+e.target.value; grid=mk(N); layout(); draw();};
-document.getElementById('nums').onclick=e=>{showNums=!showNums; e.target.classList.toggle('on'); draw();};
-document.getElementById('flip').onclick=()=>setFlip(!flip);
-function setFlip(v){flip=v; document.getElementById('flip').textContent='Flip brush: '+(v?'ON':'OFF')+' (R)';
-  document.getElementById('flip').classList.toggle('on',v);}
-window.addEventListener('keydown',e=>{if(e.key==='r'||e.key==='R')setFlip(!flip);});
+// ============================================================
+// TOOLBAR CONTROLS
+// ============================================================
+document.getElementById('mode').addEventListener('change',e=>mode=e.target.value);
+document.getElementById('gsize').addEventListener('change',e=>{
+  N=+e.target.value; grid=mk(N); layout(); draw();
+});
+document.getElementById('nums').addEventListener('click',e=>{
+  showNums=!showNums; e.target.classList.toggle('on'); draw();
+});
+function setFlip(v){
+  flip=v;
+  document.getElementById('flip').textContent='Flip: '+(v?'ON':'OFF')+' (R)';
+  document.getElementById('flip').classList.toggle('on',v);
+}
+document.getElementById('flip').addEventListener('click',()=>setFlip(!flip));
+window.addEventListener('keydown',e=>{
+  if((e.key==='r'||e.key==='R')&&document.activeElement.tagName!=='INPUT') setFlip(!flip);
+});
 
-document.getElementById('clear').onclick=()=>{grid=mk(N); draw();};
-document.getElementById('save').onclick=()=>{
+document.getElementById('clear').addEventListener('click',()=>{grid=mk(N); draw();});
+
+document.getElementById('save').addEventListener('click',()=>{
   const name=document.getElementById('vname').value||'vignette';
   const blob=new Blob([JSON.stringify({name,size:N,grid},null,1)],{type:'application/json'});
-  dl(URL.createObjectURL(blob), name+'.json');
-};
-document.getElementById('load').onclick=()=>document.getElementById('loadf').click();
-document.getElementById('loadf').onchange=e=>{
-  const f=e.target.files[0]; if(!f)return;
-  f.text().then(t=>{const j=JSON.parse(t); N=j.size; grid=j.grid;
+  dl(URL.createObjectURL(blob),name+'.json');
+});
+document.getElementById('load').addEventListener('click',()=>document.getElementById('loadf').click());
+document.getElementById('loadf').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  f.text().then(t=>{
+    const j=JSON.parse(t); N=j.size; grid=j.grid;
     document.getElementById('vname').value=j.name||'';
-    document.getElementById('gsize').value=String(N); layout(); draw();});
-};
-document.getElementById('png').onclick=()=>{
-  const name=document.getElementById('vname').value||'vignette';
-  dl(cv.toDataURL('image/png'), name+'.png');
-};
-function dl(url,fn){const a=document.createElement('a'); a.href=url; a.download=fn; a.click();}
-
-if(typeof PRESETS!=='undefined'){
-  const sel=document.getElementById('presets');
-  PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.name;sel.appendChild(o);});
-  sel.onchange=e=>{
-    if(e.target.value==='')return;
-    const p=PRESETS[+e.target.value];
-    N=p.size; grid=JSON.parse(JSON.stringify(p.grid));
-    document.getElementById('vname').value=p.name.replace('PROPOSAL_','');
     document.getElementById('gsize').value=String(N);
     layout(); draw();
-  };
+  });
+});
+document.getElementById('png').addEventListener('click',()=>{
+  const name=document.getElementById('vname').value||'vignette';
+  dl(cv.toDataURL('image/png'),name+'.png');
+});
+function dl(url,fn){const a=document.createElement('a'); a.href=url; a.download=fn; a.click();}
+
+// Presets dropdown
+if(typeof PRESETS!=='undefined'){
+  const sel=document.getElementById('presets');
+  PRESETS.forEach((p,i)=>{
+    const o=document.createElement('option');
+    o.value=i; o.textContent=p.name;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change',e=>{
+    if(e.target.value==='') return;
+    const p=PRESETS[+e.target.value];
+    N=p.size; grid=p.grid.map(row=>row.map(c=>({...c})));
+    document.getElementById('vname').value=p.name||'';
+    document.getElementById('gsize').value=String(N);
+    layout(); draw();
+    sel.value='';
+  });
 }
-setTimeout(resize,150);
-setInterval(draw,800); // repaint as images finish loading
 </script>
+<script src="nav.js"></script>
 </body>
 </html>

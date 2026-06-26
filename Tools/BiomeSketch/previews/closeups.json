@@ -1,0 +1,42 @@
+[
+ {
+  "file": "previews/closeup_meadow.png",
+  "title": "CLOSE-UP: meadow surface + blue-noise props",
+  "note": "Real art, 48x48 cells. plains2 base/accent pool (rate 0.15) with plains_flower_grass/tufts accents; trees/bushes/rocks/flowers placed by the C2 blue-noise contract (no clumps, min spacing)."
+ },
+ {
+  "file": "previews/closeup_forest.png",
+  "title": "CLOSE-UP: forest floor + canopy patches + props",
+  "note": "forest_grass_base with floor/leaf-litter/moss/underbrush accents (rate 0.30); canopy_1-3 tile patches form dense groves; forest_pine / oak / deep-oak trees plus bushes, mushrooms and stumps between them."
+ },
+ {
+  "file": "previews/closeup_blend_forest_meadow.png",
+  "title": "CLOSE-UP: forest -> meadow blend band (B1-B4)",
+  "note": "6-cell dithered crossfade of the real base/accent pools; tree density ramps down to lone trees at the border, meadow flowers ramp up on the other side."
+ },
+ {
+  "file": "previews/closeup_blend_snow_meadow.png",
+  "title": "CLOSE-UP: snow -> meadow blend band (B1-B3, A5)",
+  "note": "legal cold/temperate adjacency; snow2 pool dither-fades into the plains2 pool instead of a hard palette switch; gray rocks on the snow side, tufts/bushes on the meadow side."
+ },
+ {
+  "file": "previews/closeup_coast.png",
+  "title": "CLOSE-UP: coastline water -> sand -> meadow (B6)",
+  "note": "water_deep with deep-variant accents, water_swell_1/2 overlays on the 4-cell rim band, sand_1/sand_2 beach, dithered sand->meadow blend; shore stones on wet sand. NOTE: water art sits ~7px lower than land in-game (sunken-water look); normalized here so the bands read cleanly."
+ },
+ {
+  "file": "previews/closeup_town_core.png",
+  "title": "CLOSE-UP: town core (D2-D4) with real buildings",
+  "note": "stone_path cross roads on dirt with dirt shoulders, 9x9 plaza; tavern/shop/guild-hall/library r1 sprites on dirt pads, market stalls and lantern posts on the plaza rim, notice board + campfire; decor suppressed inside the core (C4/D7), meadow scatter outside."
+ },
+ {
+  "file": "previews/closeup_dungeon.png",
+  "title": "CLOSE-UP: dungeon island on the void (planned rework)",
+  "note": "Irregular walkable island of dungeon2_* floors on a pure #0a0c10 void; dark block tiles (dungeon2_00/01/10/13) form the rim, mossy/rune accents and rare lava cracks inside; braziers, torches, chests and lanterns kept off the edge."
+ },
+ {
+  "file": "previews/closeup_mountain.png",
+  "title": "CLOSE-UP: meadow -> mountain strata (placeholder stone art)",
+  "note": "NOTE: the proposal's stone_scree/stone_mossy/stone_cracked ids have NO promoted art in Resources/Tiles, so this render substitutes badlands_1/badlands_2 + stone_block. Judge the blend/strata shape and ore scatter, not the rock palette."
+ }
+]

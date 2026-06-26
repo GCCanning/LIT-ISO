@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO Interior Editor</title>
+<style>
+ *{box-sizing:border-box}
+ body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
+ #side{width:310px;min-width:310px;background:#1d2027;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+ .title{font-size:15px;font-weight:600;color:#e8c468}
+ .sub{font-size:11px;color:#889;line-height:1.4}
+ a.toolLink{color:#9cc4ff;font-size:11px}
+ select,input[type=text]{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 8px;font-size:12px}
+ #search{width:100%}
+ #palscroll{flex:1;overflow-y:auto;padding-right:4px}
+ .phead{position:sticky;top:0;background:#1d2027;color:#e8c468;font-size:11px;font-weight:600;padding:5px 4px;border-bottom:1px solid #333;z-index:2;cursor:pointer;user-select:none}
+ .ptype{font-size:10px;color:#9aa;margin:5px 2px 2px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer}
+ .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:2px 0 6px}
+ .pgrid.b4{grid-template-columns:repeat(4,1fr)}
+ .sw{background:#262a33;border:2px solid #333;border-radius:5px;cursor:grab;padding:3px 2px;text-align:center}
+ .sw img{max-width:54px;max-height:50px;image-rendering:pixelated;display:block;margin:0 auto}
+ .sw div{font-size:8px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ .sw.sel{border-color:#e8c468;background:#33301f}
+ #main{flex:1;display:flex;flex-direction:column;min-width:0}
+ #tabs{display:flex;gap:4px;padding:8px 12px 0;flex-wrap:wrap}
+ .tab{background:#2a2f3a;color:#cdd;border:1px solid #3a4150;border-bottom:none;border-radius:6px 6px 0 0;padding:6px 14px;cursor:pointer;font-size:12px}
+ .tab.on{background:#15171c;color:#e8c468;border-color:#5b4d20}
+ #bar{padding:8px 12px;background:#1d2027;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #2a2f3a}
+ button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
+ button.on{background:#5b4d20;border-color:#e8c468;color:#e8c468}
+ button.primary{background:#2d5a2d;border-color:#4a4}
+ .pill{font-size:10px;color:#778;background:#23262d;border-radius:10px;padding:3px 9px}
+ #cv{flex:1;cursor:crosshair;min-height:0}
+ #cv.dragover{outline:2px dashed #e8c468;outline-offset:-2px}
+ #help{font-size:11px;color:#889;padding:5px 12px;background:#1a1d23}
+</style>
+</head>
+<body>
+<div id="side">
+  <div class="title">Interior Editor</div>
+  <div class="sub">Design the inside of each building: paint the floor to shape the room (walls auto-draw on the edge), then place furniture. Edits autosave; Export sends layouts to Claude.</div>
+  <a class="toolLink" href="settlement_editor.html" target="_blank">&#8599; Settlement Editor</a>
+  <input type="text" id="search" placeholder="search ALL art...">
+  <div id="palscroll"></div>
+</div>
+<div id="main">
+  <div id="tabs"></div>
+  <div id="bar">
+    <span class="pill" id="info"></span>
+    <span class="pill">brush: <span id="brushlbl">none</span></span>
+    <span style="flex:1"></span>
+    <select id="paintMode"><option value="place">Place brush</option><option value="wall">Wall (height)</option><option value="tune">Tune sprite</option><option value="player">Move player</option><option value="erase">Erase</option><option value="flip">Flip furniture</option></select>
+    <select id="shape"><option value="cell">Brush: cell</option><option value="row">Brush: row</option><option value="col">Brush: column</option><option value="rect">Brush: rectangle</option><option value="bucket">Brush: fill floor</option></select>
+    <span class="pill">wall H <input id="wallH" type="number" min="1" max="6" value="2" style="width:40px;background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px"></span>
+    <button id="backwalls" title="Place the current brush as walls along the two back edges (NW + NE)">Back walls</button>
+    <span class="pill">scale <input id="propScale" type="range" min="0.4" max="2.5" step="0.05" value="1" style="width:78px;vertical-align:middle"></span>
+    <span class="pill">lift <input id="propLift" type="range" min="0" max="4" step="0.25" value="0" style="width:66px;vertical-align:middle"></span>
+    <span class="pill">x-nudge <input id="propNudgeX" type="range" min="-4" max="4" step="0.1" value="0" style="width:78px;vertical-align:middle"></span>
+    <button id="flipBtn" title="Flip new furniture (R)">Flip new: OFF</button>
+    <button id="playerBtn" class="on" title="Show a player silhouette for scale">Player: ON</button>
+    <button id="zoomout">&minus;</button><button id="zoomin">+</button><button id="resetview">Reset view</button>
+    <span class="pill">size <button id="wminus">W&minus;</button><button id="wplus">W+</button><button id="hminus">H&minus;</button><button id="hplus">H+</button></span>
+    <button id="reshape" title="Reset this room to a rectangular floor">Reset room</button>
+    <button id="presets" title="Load Claude's authored furnished layouts into every room">★ Load presets</button>
+    <button id="packroom" title="Load the pre-assembled Tavern Pack room">★ Tavern (pack)</button>
+    <button id="loadbtn">Load JSON</button><input type="file" id="loadf" accept=".json,application/json" style="display:none">
+    <button id="export" class="primary">Export JSON</button>
+  </div>
+  <canvas id="cv"></canvas>
+  <div id="help"><b>Paint floor</b> (Floor tiles section) to shape the room &middot; walls auto-draw on the edge &middot; place <b>furniture</b> on top &middot; RMB erases &middot; brush shapes, flip (R), wheel=zoom, middle/Space-drag=pan &middot; Export sends every room to Claude.</div>
+</div>
+
+<script src="assets.js"></script>
+<script>
+window.addEventListener('error',function(ev){ var b=document.getElementById('help')||document.body; if(b) b.innerHTML='<b style="color:#ff8080">Tool error:</b> '+(ev.message||ev)+' ('+(String(ev.filename||'').split('/').pop())+':'+(ev.lineno||'?')+')'; });
+
+const ROOMS=[
+  { id:'tavern',     w:18, h:14, floor:'interior_00' },
+  { id:'guild_hall', w:16, h:13, floor:'interior_04' },
+  { id:'library',    w:15, h:12, floor:'interior_08' },
+  { id:'shop',       w:12, h:10, floor:'interior_02' },
+  { id:'blacksmith', w:13, h:11, floor:'interior_06' },
+  { id:'inn',        w:15, h:12, floor:'interior_10' }
+];
+// curated furniture per building (ids verified present in assets.js)
+const FURN={
+  tavern:['bar_counter','keg_rack','brazier','candle_lantern','cooking_station','crafting_table','guild_round_table','bedroll'],
+  guild_hall:['guild_round_table','guild_banner_stand','guild_notice_board','trophy_pedestal','bookshelf_short','brazier','candle_lantern'],
+  library:['bookshelf_tall','bookshelf_short','book_stack','candelabra_standing','candle_lantern','guild_round_table'],
+  shop:['market_stall_red','market_stall_blue','crafting_table','book_stack','keg_rack','candle_lantern'],
+  blacksmith:['anvil','furnace','grindstone','crafting_table','keg_rack','brazier'],
+  inn:['bedroll','tent_common','candle_lantern','brazier','crafting_table','keg_rack']
+};
+const FLOOR_TILES=Array.from({length:16},(_,i)=>'interior_'+String(i).padStart(2,'0'));
+const GRID_TILE='__grid__';   // a blank grid-look floor tile (no art) for shaping / extending rooms
+function getWallH(){ const v=parseInt((document.getElementById('wallH')||{}).value,10); return isNaN(v)?2:Math.max(1,Math.min(6,v)); }
+
+// Authored furnished layouts (Claude), informed by isometric medieval-RPG interior
+// references. Each entry is [furnitureId, x, y, flip?]. Floor is the full room
+// rectangle (walls auto-draw on the edge). Load via the "Load presets" button.
+const PRESETS={
+  tavern:[ // bar along the back wall, scattered round tables, hearth braziers
+    ['bar_counter',2,1],['bar_counter',3,1],['bar_counter',4,1],['bar_counter',5,1],
+    ['keg_rack',6,1],['keg_rack',15,1],['cooking_station',8,1],
+    ['candle_lantern',10,1],['candle_lantern',13,1],['candle_lantern',2,6],['candle_lantern',15,6],
+    ['guild_round_table',3,4],['guild_round_table',7,4],['guild_round_table',11,4],
+    ['guild_round_table',3,8],['guild_round_table',7,8],['guild_round_table',11,8],['guild_round_table',14,6],
+    ['brazier',15,11],['brazier',2,11],['bedroll',15,9] ],
+  guild_hall:[ // banners + notice board on back wall, central round tables, trophies
+    ['guild_banner_stand',2,1],['guild_banner_stand',13,1],['guild_notice_board',4,1],
+    ['trophy_pedestal',7,1],['trophy_pedestal',10,1],
+    ['guild_round_table',7,5],['guild_round_table',5,8],['guild_round_table',9,8],
+    ['bookshelf_short',2,5],['bookshelf_short',2,7],['bookshelf_short',13,5],['bookshelf_short',13,7],
+    ['brazier',2,10],['brazier',13,10],['candle_lantern',7,3],['candle_lantern',4,8],['candle_lantern',10,8] ],
+  library:[ // rows of tall shelves at the back, reading tables, candelabra light
+    ['bookshelf_tall',2,1],['bookshelf_tall',2,2],['bookshelf_tall',4,1],['bookshelf_tall',4,2],
+    ['bookshelf_tall',6,1],['bookshelf_tall',6,2],['bookshelf_tall',8,1],['bookshelf_tall',8,2],
+    ['bookshelf_tall',10,1],['bookshelf_tall',10,2],['bookshelf_short',12,2],['bookshelf_short',12,4],
+    ['guild_round_table',4,6],['guild_round_table',9,6],['book_stack',5,6],['book_stack',10,6],
+    ['candelabra_standing',2,9],['candelabra_standing',12,9],['candelabra_standing',7,4] ],
+  shop:[ // counters/stalls along the walls, crates and goods in the middle
+    ['market_stall_red',2,2],['market_stall_red',2,4],['market_stall_blue',9,2],['market_stall_blue',9,4],
+    ['crafting_table',5,6],['keg_rack',3,6],['keg_rack',7,6],['book_stack',5,2],
+    ['candle_lantern',5,1],['candle_lantern',2,7],['candle_lantern',9,7] ],
+  blacksmith:[ ['furnace',3,2],['anvil',6,4],['anvil',8,4],['grindstone',10,4],
+    ['crafting_table',6,7],['keg_rack',2,7],['brazier',11,2],['brazier',2,9] ],
+  inn:[ ['bedroll',2,2],['bedroll',2,4],['bedroll',2,6],['bedroll',12,2],['bedroll',12,4],['bedroll',12,6],
+    ['tent_common',7,3],['candle_lantern',7,1],['candle_lantern',2,8],['candle_lantern',12,8],
+    ['crafting_table',7,8],['keg_rack',5,9] ]
+};
+function applyPresets(){ ROOMS.forEach(rm=>{ const p=PRESETS[rm.id]; if(!p)return; const L=freshRoom(rm);
+  p.forEach(it=>{ const x=it[1],y=it[2]; if(L.g[y]&&L.g[y][x]&&META[it[0]]){ L.g[y][x].d=it[0]; L.g[y][x].f=!!it[3]; ensureImg(it[0]); } });
+  STATE[rm.id]={layout:L}; }); }
+
+// Pre-assembled room built from the imported Tavern Pack art (loadable via the button).
+const PACK_ROOMS={interiors:[{building:"tavern",W:8,H:8,floorTile:"tp_floor_brick",
+  floorCells:(function(){var a=[];for(var y=1;y<=6;y++)for(var x=1;x<=6;x++)a.push([x,y]);return a;})(),
+  props:[{id:"tp_wall_windows",x:2,y:2,flip:false,scale:1.35,lift:0.2},
+    {id:"tp_floor_wood",x:5,y:5},{id:"tp_floor_wood",x:6,y:5},{id:"tp_floor_wood",x:5,y:6},{id:"tp_floor_wood",x:6,y:6},
+    {id:"tp_bar",x:6,y:3},{id:"tp_bar",x:6,y:4},
+    {id:"tp_table_long",x:2,y:3},{id:"tp_table_round",x:4,y:5},{id:"tp_table_round",x:2,y:5},{id:"tp_table_long",x:4,y:2},
+    {id:"tp_sconce",x:2,y:1,lift:1.0},{id:"tp_sconce",x:5,y:1,lift:1.0}],walls:[]}]};
+
+const META={}, imgs={};
+const HAS=(typeof ASSETS!=='undefined');
+if(HAS) ASSETS.forEach(a=>{ META[a.name]=a; });
+// Modular wall pieces: render-time sub-rect crops of the corner-wall PNGs (no image
+// processing needed). NW = left half, NE = right half, corner = centre apex. Place these
+// per-cell along the back edges to build walls of any length, with window/door variants.
+// Paths point at the Interiors folder where you saved the slices (relative to this HTML,
+// which lives in C:\Projects\...\Tools\BiomeSketch). If the wall thumbnails don't appear,
+// the browser is blocking cross-folder file:// images — in that case copy the 6 PNGs into
+// assets/tavern_pack/ and change these paths to "assets/tavern_pack/<file>".
+const IP="../../../../../Users/garyc/OneDrive/Desktop/PixelArt/Interiors/";
+const MODULAR_WALLS=[
+  {cat:"prop",name:"tp_wall_left_plain",   path:IP+"tp_wall_left_plain.png",   ppu:32,group:"tavern pack - walls (modular)"},
+  {cat:"prop",name:"tp_wall_right_plain",  path:IP+"tp_wall_right_plain.png",  ppu:32,group:"tavern pack - walls (modular)"},
+  {cat:"prop",name:"tp_wall_left_window",  path:IP+"tp_wall_left_windows.png", ppu:32,group:"tavern pack - walls (modular)"},
+  {cat:"prop",name:"tp_wall_right_window", path:IP+"tp_wall_right_windows.png",ppu:32,group:"tavern pack - walls (modular)"},
+  {cat:"prop",name:"tp_wall_left_door",    path:IP+"tp_wall_left_doors.png",   ppu:32,group:"tavern pack - walls (modular)"},
+  {cat:"prop",name:"tp_wall_right_door",   path:IP+"tp_wall_right_doors.png",  ppu:32,group:"tavern pack - walls (modular)"}
+];
+MODULAR_WALLS.forEach(a=>{ META[a.name]=a; if(HAS) ASSETS.push(a); });
+function ensureImg(n){ if(n && !imgs[n] && META[n]){ const i=new Image(); i.src=META[n].path; imgs[n]=i; } }
+function isTile(n){ return META[n] && META[n].cat==='tile'; }
+
+// ---- state: one room per building -----------------------------------------
+const STATE={};
+let cur='tavern', brush=null, fBrush=false, GEN=false;
+function room(){ return ROOMS.find(r=>r.id===cur); }
+function freshRoom(rm){ const g=[]; for(let y=0;y<rm.h;y++){ const row=[]; for(let x=0;x<rm.w;x++){
+  const edge=(x===0||y===0||x===rm.w-1||y===rm.h-1); row.push({t:edge?null:rm.floor,d:null,f:false,w:null,wh:0}); } g.push(row); } return {g,W:rm.w,H:rm.h,floor:rm.floor}; }
+function st(){ if(!STATE[cur]) STATE[cur]={layout:freshRoom(room())}; return STATE[cur]; }
+
+// ---- autosave / restore ----------------------------------------------------
+const LS_KEY='lit_interior_editor_v1'; let _saveT=null;
+function saveState(){ try{ const d={cur, v:{}}; Object.keys(STATE).forEach(k=>{ const L=STATE[k].layout; d.v[k]={W:L.W,H:L.H,floor:L.floor,cells:L.g.map(row=>row.map(c=>[c.t,c.d,c.f?1:0,c.w||null,c.wh||0,c.s||1,c.oy||0,c.ox||0]))}; }); localStorage.setItem(LS_KEY,JSON.stringify(d)); }catch(e){} }
+function saveSoon(){ clearTimeout(_saveT); _saveT=setTimeout(saveState,500); }
+function cellsToLayout(e){ const g=e.cells.map(row=>row.map(cc=>{ if(cc[1])ensureImg(cc[1]); if(cc[0])ensureImg(cc[0]); if(cc[3])ensureImg(cc[3]); return {t:cc[0],d:cc[1],f:!!cc[2],w:cc[3]||null,wh:cc[4]||0,s:cc[5]||1,oy:cc[6]||0,ox:cc[7]||0}; })); return {g,W:e.W,H:e.H,floor:e.floor}; }
+function restoreState(){ try{ const raw=localStorage.getItem(LS_KEY); if(!raw)return false; const d=JSON.parse(raw);
+  if(d.v) Object.keys(d.v).forEach(k=>{ const e=d.v[k]; if(e&&e.cells) STATE[k]={layout:cellsToLayout(e)}; });
+  if(d.cur)cur=d.cur; return true; }catch(e){ return false; } }
+function loadFromExport(obj){ if(!obj||!obj.interiors){ alert('Not an interior export (missing "interiors").'); return; }
+  obj.interiors.forEach(it=>{ const rm=ROOMS.find(r=>r.id===it.building); if(!rm)return; const W=it.W||rm.w,H=it.H||rm.h,fl=it.floorTile||rm.floor;
+    const g=[]; for(let y=0;y<H;y++){ const row=[]; for(let x=0;x<W;x++) row.push({t:null,d:null,f:false,w:null,wh:0}); g.push(row); }
+    (it.floorCells||[]).forEach(p=>{ if(g[p[1]]&&g[p[1]][p[0]]){ g[p[1]][p[0]].t=fl; ensureImg(fl); } });
+    (it.props||[]).forEach(p=>{ if(g[p.y]&&g[p.y][p.x]){ g[p.y][p.x].d=p.id; g[p.y][p.x].f=!!p.flip; g[p.y][p.x].s=p.scale||1; g[p.y][p.x].oy=p.lift||0; g[p.y][p.x].ox=p.nudgeX||0; ensureImg(p.id); } });
+    (it.walls||[]).forEach(p=>{ if(g[p.y]&&g[p.y][p.x]){ g[p.y][p.x].w=p.id; g[p.y][p.x].wh=p.h||2; ensureImg(p.id); } });
+    STATE[it.building]={layout:{g,W,H,floor:fl}}; });
+  layout(); buildInfo(); draw(); saveState(); }
+
+// ---- render ----------------------------------------------------------------
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+let TW=24, isoData=null, zoom=1, panX=0, panY=0, hoverCell=null, rectAnchor=null, spaceDown=false, panning=false, panStart=null;
+let selCell=null, showPlayer=true, playerCell=null;
+function layout(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight; const L=st().layout;
+  TW=Math.max(8, Math.min(46, Math.floor((cv.width-40)/(L.W+L.H)*2), Math.floor((cv.height-120)/(L.W+L.H)))); TW-=TW%2; }
+function effTW(){ let t=Math.max(4,Math.round(TW*zoom)); return t-(t%2); }
+function isFloor(L,x,y){ return x>=0&&y>=0&&x<L.W&&y<L.H&&L.g[y][x].t; }
+function draw(){ const L=st().layout, W=L.W, H=L.H, tw=effTW(), THh=tw/2;
+  ctx.imageSmoothingEnabled=false; ctx.fillStyle='#0d0f13'; ctx.fillRect(0,0,cv.width,cv.height);
+  const ox=cv.width/2+panX, oy=Math.max(50,cv.height*0.14)+panY;
+  const iso=(x,y)=>({x:ox+(x-y)*tw/2, y:oy+(x+y)*THh/2}); isoData={iso,W,H,TW:tw};
+  // floor
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(!c.t)continue; const p=iso(x,y);
+    ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+tw/2,p.y+THh/2); ctx.lineTo(p.x,p.y+THh); ctx.lineTo(p.x-tw/2,p.y+THh/2); ctx.closePath();
+    if(c.t===GRID_TILE){ ctx.fillStyle=((x+y)&1)?'#23262d':'#1b1e24'; ctx.fill(); ctx.strokeStyle='rgba(232,196,104,0.30)'; ctx.stroke(); continue; }
+    ctx.fillStyle='#5a4a36'; ctx.fill(); ctx.strokeStyle='rgba(0,0,0,0.18)'; ctx.stroke();
+    const im=imgs[c.t]; if(im&&im.complete&&im.naturalWidth){ const w=tw,h=w*im.height/im.width; ctx.drawImage(im,p.x-w/2,p.y+THh-h,w,h); } }
+  // walls: stroke floor-mask boundary edges
+  ctx.strokeStyle='#cdbb90'; ctx.lineWidth=Math.max(2,tw*0.12);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(!isFloor(L,x,y))continue; const p=iso(x,y);
+    const top={x:p.x,y:p.y},rt={x:p.x+tw/2,y:p.y+THh/2},bot={x:p.x,y:p.y+THh},lf={x:p.x-tw/2,y:p.y+THh/2};
+    const seg=(a,b)=>{ ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); };
+    if(!isFloor(L,x-1,y)) seg(top,lf);   // NW edge
+    if(!isFloor(L,x,y-1)) seg(top,rt);   // NE edge
+    if(!isFloor(L,x+1,y)) seg(rt,bot);   // SE edge
+    if(!isFloor(L,x,y+1)) seg(lf,bot);   // SW edge
+  }
+  ctx.lineWidth=1;
+  // walls: proper iso height blocks — the wall tile is mapped onto the two
+  // camera-facing faces (SW + SE) and stacked one level per c.wh (same as raising
+  // a floor tile from height 0->1, repeated).
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(!c.w||!c.wh)continue; drawWallBlock(iso(x,y), c.wh, c.w, tw, THh); }
+  // furniture (per-sprite scale c.s + vertical lift c.oy in half-tiles)
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(!c.d)continue; const im=imgs[c.d], m=META[c.d], p=iso(x,y);
+    if(im&&im.complete&&im.naturalWidth){ const sc=c.s||1, s=(m?(tw/m.ppu):(tw/Math.max(32,im.width)))*sc; const bx=(m&&m.bx!=null)?m.bx:0,by=(m&&m.by!=null)?m.by:0,bw=(m&&m.bw)?m.bw:im.width,bh=(m&&m.bh)?m.bh:im.height; const w=bw*s,h=bh*s,footY=p.y+THh/2+2-(c.oy||0)*(THh*0.5),footX=p.x+(c.ox||0)*(tw*0.5);
+      ctx.save(); if(c.f){ ctx.translate(footX,0); ctx.scale(-1,1); ctx.translate(-footX,0); } ctx.drawImage(im,bx,by,bw,bh,footX-w/2,footY-h,w,h); ctx.restore(); }
+    else { ctx.fillStyle='#caa45a'; ctx.fillRect(p.x-tw/4,p.y,tw/2,tw/2); }
+    if(selCell&&selCell.x===x&&selCell.y===y){ ctx.strokeStyle='#4ad6ff'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+tw/2,p.y+THh/2); ctx.lineTo(p.x,p.y+THh); ctx.lineTo(p.x-tw/2,p.y+THh/2); ctx.closePath(); ctx.stroke(); ctx.lineWidth=1; } }
+  // player scale reference (game player is ~1.3 tiles tall, ~0.45 wide)
+  if(showPlayer){ const pc=playerCell||{x:Math.floor(W/2),y:Math.floor(H/2)}; const p=iso(pc.x,pc.y); drawPlayer(p.x,p.y+THh/2,tw); }
+  if(hoverCell){ const p=iso(hoverCell.x,hoverCell.y); const pm=pmode(), gm=brush?META[brush]:null;
+    // placement ghost: translucent preview of the selected asset where it will land
+    if(brush && pm!=='tune' && pm!=='player' && pm!=='erase'){
+      if(brush===GRID_TILE){ ctx.save(); ctx.fillStyle='rgba(232,196,104,0.18)'; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+tw/2,p.y+THh/2); ctx.lineTo(p.x,p.y+THh); ctx.lineTo(p.x-tw/2,p.y+THh/2); ctx.closePath(); ctx.fill(); ctx.restore(); }
+      else if(gm){ ensureImg(brush); const gi=imgs[brush];
+        if(gi&&gi.complete&&gi.naturalWidth){ ctx.save(); ctx.globalAlpha=0.5;
+          if(gm.cat==='tile'){ const w=tw,h=w*gi.naturalHeight/gi.naturalWidth; ctx.drawImage(gi,p.x-w/2,p.y+THh-h,w,h); }
+          else { const s=tw/(gm.ppu||32); const bx=(gm.bx!=null)?gm.bx:0,by=(gm.by!=null)?gm.by:0,bw=gm.bw||gi.naturalWidth,bh=gm.bh||gi.naturalHeight; const w=bw*s,h=bh*s,footY=p.y+THh/2+2; ctx.drawImage(gi,bx,by,bw,bh,p.x-w/2,footY-h,w,h); }
+          ctx.globalAlpha=1; ctx.restore(); } }
+    }
+    // tile-edge outline so you can line pieces up to the cell edge
+    ctx.strokeStyle='rgba(232,196,104,0.95)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+tw/2,p.y+THh/2); ctx.lineTo(p.x,p.y+THh); ctx.lineTo(p.x-tw/2,p.y+THh/2); ctx.closePath(); ctx.stroke(); ctx.lineWidth=1;
+  }
+}
+function drawPlayer(cx,footY,tw){ const h=tw*1.3, w=tw*0.45, topY=footY-h;
+  ctx.save(); ctx.globalAlpha=0.9;
+  ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(cx,footY,w*0.6,w*0.22,0,0,7); ctx.fill(); // shadow
+  ctx.fillStyle='#2a2f3a'; ctx.fillRect(cx-w*0.34,footY-h*0.26,w*0.28,h*0.26); ctx.fillRect(cx+w*0.06,footY-h*0.26,w*0.28,h*0.26); // legs
+  ctx.fillStyle='#3a6ea5'; ctx.fillRect(cx-w/2,topY+h*0.30,w,h*0.46); // torso
+  ctx.fillStyle='#e3b58a'; ctx.beginPath(); ctx.arc(cx,topY+h*0.18,h*0.15,0,7); ctx.fill(); // head
+  ctx.globalAlpha=1; ctx.restore();
+  ctx.fillStyle='rgba(74,214,255,0.95)'; ctx.font='bold 10px Segoe UI'; ctx.textAlign='center'; ctx.fillText('player',cx,topY-4); ctx.textAlign='left';
+}
+// Map a wall tile onto one iso face (parallelogram o -> uEnd top edge, o -> vEnd down edge).
+function wallFace(o,uEnd,vEnd,im,shade){ const ux=uEnd.x-o.x,uy=uEnd.y-o.y,vx=vEnd.x-o.x,vy=vEnd.y-o.y;
+  const path=()=>{ ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(uEnd.x,uEnd.y); ctx.lineTo(uEnd.x+vx,uEnd.y+vy); ctx.lineTo(vEnd.x,vEnd.y); ctx.closePath(); };
+  if(im&&im.complete&&im.naturalWidth){ const iw=im.naturalWidth,ih=im.naturalHeight;
+    ctx.save(); path(); ctx.clip(); ctx.transform(ux/iw,uy/iw,vx/ih,vy/ih,o.x,o.y); ctx.drawImage(im,0,0,iw,ih); ctx.restore();
+    ctx.save(); path(); ctx.fillStyle='rgba(0,0,0,'+shade+')'; ctx.fill(); ctx.restore(); }
+  else { path(); ctx.fillStyle=shade>0.25?'#4a3f30':'#5e4f3c'; ctx.fill(); ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.stroke(); } }
+// A wall = N stacked iso height-cubes; each level shows the tile on the two camera-facing faces.
+function drawWallBlock(p,levels,tileId,tw,THh){ const im=imgs[tileId], HSTEP=Math.max(6,Math.round(tw*0.5));
+  const g={Top:{x:p.x,y:p.y},Right:{x:p.x+tw/2,y:p.y+THh/2},Bot:{x:p.x,y:p.y+THh},Left:{x:p.x-tw/2,y:p.y+THh/2}};
+  const lift=(pt,h)=>({x:pt.x,y:pt.y-h});
+  for(let lvl=0;lvl<levels;lvl++){ const b=lvl*HSTEP,t=(lvl+1)*HSTEP;
+    const uLeft=lift(g.Left,t),uBot=lift(g.Bot,t),uRight=lift(g.Right,t),lLeft=lift(g.Left,b),lBot=lift(g.Bot,b);
+    wallFace(uLeft,uBot,lLeft,im,0.18);   // SW (left) face
+    wallFace(uBot,uRight,lBot,im,0.36); }  // SE (right) face
+  const t=levels*HSTEP,tTop=lift(g.Top,t),tRight=lift(g.Right,t),tBot=lift(g.Bot,t),tLeft=lift(g.Left,t);
+  ctx.beginPath(); ctx.moveTo(tTop.x,tTop.y); ctx.lineTo(tRight.x,tRight.y); ctx.lineTo(tBot.x,tBot.y); ctx.lineTo(tLeft.x,tLeft.y); ctx.closePath();
+  ctx.fillStyle=im?'#6e5d46':'#7a6850'; ctx.fill(); ctx.strokeStyle='rgba(0,0,0,0.25)'; ctx.stroke(); }
+function cellAt(mx,my){ if(!isoData)return null; const L=st().layout, tw=isoData.TW, THh=tw/2;
+  for(let y=L.H-1;y>=0;y--)for(let x=L.W-1;x>=0;x--){ const p=isoData.iso(x,y); const dx=Math.abs(mx-p.x),dy=Math.abs(my-(p.y+THh/2)); if(dx/(tw/2)+dy/(THh/2)<=1)return{x,y}; } return null; }
+
+// ---- editing ---------------------------------------------------------------
+function pmode(){ return document.getElementById('paintMode').value; }
+function smode(){ return document.getElementById('shape').value; }
+function setCell(x,y,name,rmb,flipMode){ const L=st().layout; if(x<0||y<0||!L.g[y]||!L.g[y][x])return false; const c=L.g[y][x];
+  const mode=pmode();
+  if(mode==='wall'){
+    if(rmb){ if(c.w){c.w=null;c.wh=0;return true;} return false; }
+    if(!name||name===GRID_TILE) return false;
+    c.w=name; c.wh=getWallH(); ensureImg(name); return true; }
+  if(flipMode){ if(c.d){ c.f=!c.f; return true; } return false; }
+  if(rmb){ if(c.w){c.w=null;c.wh=0;return true;} if(c.d){c.d=null;c.f=false;return true;} if(c.t){c.t=null;return true;} return false; }
+  if(!name) return false;
+  if(name===GRID_TILE){ c.t=GRID_TILE; return true; }
+  if(isTile(name)){ c.t=name; ensureImg(name); return true; }
+  if(META[name]){ c.d=name; c.f=fBrush; ensureImg(name); return true; }
+  return false; }
+function floodFill(x,y,name,rmb){ const L=st().layout, g=L.g, target=g[y][x].t, q=[[x,y]], seen={};
+  while(q.length){ const p=q.pop(),X=p[0],Y=p[1]; if(X<0||Y<0||Y>=L.H||X>=L.W)continue; const k=X+','+Y; if(seen[k])continue; seen[k]=1; if(g[Y][X].t!==target)continue; setCell(X,Y,name,rmb,false); q.push([X+1,Y],[X-1,Y],[X,Y+1],[X,Y-1]); } }
+function placeShape(hit,name,rmb){ if(!hit)return; const fm=pmode()==='flip', sh=smode(), L=st().layout; let ch=false;
+  if(sh==='rect')return;
+  if(sh==='cell') ch=setCell(hit.x,hit.y,name,rmb,fm);
+  else if(sh==='row'){ for(let x=0;x<L.W;x++) if(setCell(x,hit.y,name,rmb,fm))ch=true; }
+  else if(sh==='col'){ for(let y=0;y<L.H;y++) if(setCell(hit.x,y,name,rmb,fm))ch=true; }
+  else if(sh==='bucket'){ floodFill(hit.x,hit.y,name,rmb); ch=true; }
+  if(ch) saveSoon(); }
+function placeRect(a,b,name,rmb){ const fm=pmode()==='flip', x0=Math.min(a.x,b.x),x1=Math.max(a.x,b.x),y0=Math.min(a.y,b.y),y1=Math.max(a.y,b.y); let ch=false;
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++) if(setCell(x,y,name,rmb,fm))ch=true; if(ch)saveSoon(); }
+let painting=false,pbtn=0;
+function erasing(){ return pmode()==='erase'; }
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('wheel',e=>{ e.preventDefault(); const b=cv.getBoundingClientRect(),mx=e.clientX-b.left,my=e.clientY-b.top,old=zoom;
+  zoom=Math.max(0.3,Math.min(5,zoom*(e.deltaY<0?1.15:1/1.15))); const f=zoom/old,oyB=Math.max(50,cv.height*0.14);
+  panX=(mx-f*(mx-(cv.width/2+panX)))-cv.width/2; panY=(my-f*(my-(oyB+panY)))-oyB; draw(); },{passive:false});
+cv.addEventListener('mousedown',e=>{ const b=cv.getBoundingClientRect(),mx=e.clientX-b.left,my=e.clientY-b.top;
+  if(e.button===1||(e.button===0&&spaceDown)){ panning=true; panStart={x:e.clientX,y:e.clientY,px:panX,py:panY}; e.preventDefault(); return; }
+  const M=pmode(), hit0=cellAt(mx,my);
+  if(M==='tune'){ if(hit0){ const c=st().layout.g[hit0.y]&&st().layout.g[hit0.y][hit0.x]; if(c&&c.d){ selCell={x:hit0.x,y:hit0.y}; document.getElementById('propScale').value=c.s||1; document.getElementById('propLift').value=c.oy||0; document.getElementById('propNudgeX').value=c.ox||0; } else selCell=null; draw(); } return; }
+  if(M==='player'){ if(hit0){ playerCell={x:hit0.x,y:hit0.y}; showPlayer=true; const pb=document.getElementById('playerBtn'); pb.textContent='Player: ON'; pb.classList.add('on'); draw(); } return; }
+  painting=true;pbtn=e.button; if(smode()==='rect'){ rectAnchor=cellAt(mx,my); return; }
+  placeShape(cellAt(mx,my),brush,e.button===2||erasing()); draw(); });
+cv.addEventListener('mousemove',e=>{ const b=cv.getBoundingClientRect(),mx=e.clientX-b.left,my=e.clientY-b.top;
+  if(panning){ panX=panStart.px+(e.clientX-panStart.x); panY=panStart.py+(e.clientY-panStart.y); draw(); return; }
+  const h=cellAt(mx,my); if(!hoverCell||!h||h.x!==hoverCell.x||h.y!==hoverCell.y){ hoverCell=h; draw(); }
+  if(painting&&smode()!=='rect'){ placeShape(h,brush,pbtn===2||erasing()); draw(); } });
+window.addEventListener('mouseup',()=>{ if(panning){panning=false;return;} if(painting&&smode()==='rect'&&rectAnchor&&hoverCell){ placeRect(rectAnchor,hoverCell,brush,pbtn===2||erasing()); draw(); } rectAnchor=null; painting=false; });
+window.addEventListener('keydown',e=>{ if(document.activeElement&&document.activeElement.tagName==='INPUT')return; if(e.code==='Space')spaceDown=true;
+  else if(e.key==='r'||e.key==='R'){ fBrush=!fBrush; const fb=document.getElementById('flipBtn'); fb.textContent='Flip new: '+(fBrush?'ON':'OFF'); fb.classList.toggle('on',fBrush); } });
+window.addEventListener('keyup',e=>{ if(e.code==='Space')spaceDown=false; });
+let dragAsset=null;
+cv.addEventListener('dragover',e=>{ e.preventDefault(); cv.classList.add('dragover'); });
+cv.addEventListener('dragleave',e=>{ if(e.target===cv) cv.classList.remove('dragover'); });
+cv.addEventListener('drop',e=>{ e.preventDefault(); cv.classList.remove('dragover'); const name=dragAsset||e.dataTransfer.getData('text/plain'); if(!name)return; const b=cv.getBoundingClientRect(); const hit=cellAt(e.clientX-b.left,e.clientY-b.top); if(hit){ if(setCell(hit.x,hit.y,name,false,false))saveSoon(); } dragAsset=null; draw(); });
+
+// ---- tabs / palette / info -------------------------------------------------
+const tabsEl=document.getElementById('tabs');
+function buildTabs(){ tabsEl.innerHTML=''; ROOMS.forEach(rm=>{ const b=document.createElement('div'); b.className='tab'+(rm.id===cur?' on':''); b.textContent=rm.id.replace('_',' ');
+  b.onclick=()=>{ cur=rm.id; st(); buildTabs(); buildInfo(); renderPal(); layout(); draw(); saveSoon(); }; tabsEl.appendChild(b); }); }
+function buildInfo(){ const L=st().layout; let fl=0,fu=0; L.g.forEach(r=>r.forEach(c=>{ if(c.t)fl++; if(c.d)fu++; }));
+  document.getElementById('info').innerHTML='<b style="color:#e8c468">'+cur.replace('_',' ')+'</b> &middot; '+L.W+'&times;'+L.H+' &middot; '+fl+' floor &middot; '+fu+' furniture'; }
+const palscroll=document.getElementById('palscroll');
+let collapsed={all_tile:true,all_prop:true,all_decor:true}, gopen={};
+function swatch(name){ const a=META[name]; if(!a)return null; const d=document.createElement('div'); d.className='sw'+(brush===name?' sel':''); d.title=name;
+  d.innerHTML='<img src="'+a.path+'" draggable="false"><div>'+name+'</div>'; d.draggable=true;
+  d.ondragstart=ev=>{ dragAsset=name; ev.dataTransfer.setData('text/plain',name); };
+  d.onclick=()=>{ brush=name; document.getElementById('brushlbl').textContent=name; renderPal(); }; return d; }
+function section(title,key,render){ const sec=document.createElement('div'); const h=document.createElement('div'); h.className='phead'; const open=!collapsed[key];
+  h.innerHTML=(open?'▾ ':'▸ ')+title; h.onclick=()=>{ collapsed[key]=open; renderPal(); }; sec.appendChild(h); if(open)render(sec); palscroll.appendChild(sec); }
+function gridOf(items){ const g=document.createElement('div'); g.className='pgrid b4'; items.forEach(n=>{ const s=swatch(n); if(s)g.appendChild(s); }); return g; }
+function allAssetsSection(catId,label){ const items=(HAS?ASSETS:[]).filter(a=>a.cat===catId);
+  section('All '+label+' ('+items.length+')','all_'+catId,sec=>{ const groups={}; items.forEach(a=>{ const g=a.group||'(other)'; (groups[g]||(groups[g]=[])).push(a); });
+    Object.keys(groups).sort().forEach(g=>{ const gk='g_'+catId+'_'+g, op=!!gopen[gk]; const gh=document.createElement('div'); gh.className='ptype'; gh.textContent=(op?'▾ ':'▸ ')+g+' ('+groups[g].length+')'; gh.onclick=()=>{ gopen[gk]=!op; renderPal(); }; sec.appendChild(gh); if(op)sec.appendChild(gridOf(groups[g].map(a=>a.name))); }); }); }
+function renderPal(){ palscroll.innerHTML='';
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  if(q){ const items=(HAS?ASSETS:[]).filter(a=>(a.cat==='tile'||a.cat==='prop'||a.cat==='decor')&&a.name.toLowerCase().indexOf(q)>=0).slice(0,200).map(a=>a.name);
+    section('Search ('+items.length+')','search',sec=>sec.appendChild(gridOf(items))); return; }
+  section('★ Tavern Pack (new art)','tpack',sec=>{ const items=(HAS?ASSETS:[]).filter(a=>a&&a.name&&a.name.indexOf('tp_')===0).map(a=>a.name);
+    if(!items.length){ const d=document.createElement('div'); d.className='sub'; d.textContent='tavern pack assets not found in assets.js'; sec.appendChild(d); return; }
+    sec.appendChild(gridOf(items)); });
+  section('Floor tiles','floor',sec=>{ const g=document.createElement('div'); g.className='pgrid b4'; g.appendChild(gridSwatch()); FLOOR_TILES.forEach(n=>{ const s=swatch(n); if(s)g.appendChild(s); }); sec.appendChild(g); });
+  section(cur.replace('_',' ')+' furniture','furn',sec=>sec.appendChild(gridOf(FURN[cur]||[])));
+  section('All furniture','allfurn',sec=>{ const set=new Set(); ['stations','library','guild','camp','tavern','lights','town'].forEach(grp=>{ (HAS?ASSETS:[]).forEach(a=>{ if(a.cat==='prop'&&(a.group||'').indexOf(grp)>=0 && !/_frame_\d/.test(a.name)) set.add(a.name); }); }); sec.appendChild(gridOf([...set])); });
+  allAssetsSection('tile','tiles'); allAssetsSection('prop','props'); allAssetsSection('decor','decor');
+}
+document.getElementById('search').oninput=renderPal;
+
+// ---- controls + export -----------------------------------------------------
+document.getElementById('zoomin').onclick=()=>{ zoom=Math.min(5,zoom*1.2); draw(); };
+document.getElementById('zoomout').onclick=()=>{ zoom=Math.max(0.3,zoom/1.2); draw(); };
+document.getElementById('resetview').onclick=()=>{ zoom=1;panX=0;panY=0; draw(); };
+document.getElementById('reshape').onclick=()=>{ STATE[cur]={layout:freshRoom(room())}; buildInfo(); draw(); saveSoon(); };
+document.getElementById('presets').onclick=()=>{ if(!confirm('Replace ALL rooms with Claude’s authored furnished layouts? Your current edits will be overwritten.'))return; applyPresets(); buildTabs(); buildInfo(); layout(); draw(); saveState(); };
+document.getElementById('packroom').onclick=()=>{ cur='tavern'; loadFromExport(JSON.parse(JSON.stringify(PACK_ROOMS))); buildTabs(); renderPal(); };
+document.getElementById('backwalls').onclick=fillBackWalls;
+document.getElementById('propScale').oninput=function(){ if(selCell){ const c=st().layout.g[selCell.y][selCell.x]; c.s=parseFloat(this.value); draw(); saveSoon(); } };
+document.getElementById('propLift').oninput=function(){ if(selCell){ const c=st().layout.g[selCell.y][selCell.x]; c.oy=parseFloat(this.value); draw(); saveSoon(); } };
+document.getElementById('propNudgeX').oninput=function(){ if(selCell){ const c=st().layout.g[selCell.y][selCell.x]; c.ox=parseFloat(this.value); draw(); saveSoon(); } };
+document.getElementById('playerBtn').onclick=function(){ showPlayer=!showPlayer; this.textContent='Player: '+(showPlayer?'ON':'OFF'); this.classList.toggle('on',showPlayer); draw(); };
+document.getElementById('wplus').onclick=()=>resizeRoom(1,0); document.getElementById('wminus').onclick=()=>resizeRoom(-1,0);
+document.getElementById('hplus').onclick=()=>resizeRoom(0,1); document.getElementById('hminus').onclick=()=>resizeRoom(0,-1);
+function fillBackWalls(){ const L=st().layout; if(!brush||brush===GRID_TILE){ alert('Pick a wall tile/sprite in the palette first, then click Back walls.'); return; }
+  const h=getWallH(); let ch=false;
+  for(let y=0;y<L.H;y++)for(let x=0;x<L.W;x++){ if(!L.g[y][x].t)continue; if(!isFloor(L,x-1,y)||!isFloor(L,x,y-1)){ L.g[y][x].w=brush; L.g[y][x].wh=h; ensureImg(brush); ch=true; } }
+  if(ch){ draw(); saveSoon(); } }
+function resizeRoom(dw,dh){ const L=st().layout, nW=Math.max(6,Math.min(40,L.W+dw)), nH=Math.max(6,Math.min(40,L.H+dh)); const g=[];
+  for(let y=0;y<nH;y++){ const row=[]; for(let x=0;x<nW;x++){ const old=(L.g[y]&&L.g[y][x])?L.g[y][x]:null; const edge=(x===0||y===0||x===nW-1||y===nH-1); row.push(old||{t:edge?null:L.floor,d:null,f:false,w:null,wh:0}); } g.push(row); }
+  L.g=g; L.W=nW; L.H=nH; layout(); buildInfo(); draw(); saveSoon(); }
+function gridSwatch(){ const d=document.createElement('div'); d.className='sw'+(brush===GRID_TILE?' sel':''); d.title='Blank grid tile — paint to shape / extend the room';
+  d.innerHTML='<div style="width:48px;height:30px;margin:0 auto;background:repeating-conic-gradient(#23262d 0% 25%,#1b1e24 0% 50%) 0/12px 12px;border:1px solid #3a4150;border-radius:3px"></div><div>grid</div>';
+  d.onclick=()=>{ brush=GRID_TILE; document.getElementById('brushlbl').textContent='blank grid'; renderPal(); }; return d; }
+document.getElementById('flipBtn').onclick=function(){ fBrush=!fBrush; this.textContent='Flip new: '+(fBrush?'ON':'OFF'); this.classList.toggle('on',fBrush); };
+document.getElementById('paintMode').onchange=()=>{};
+document.getElementById('loadbtn').onclick=()=>document.getElementById('loadf').click();
+document.getElementById('loadf').onchange=e=>{ const f=e.target.files[0]; if(!f)return; f.text().then(t=>{ try{ loadFromExport(JSON.parse(t)); }catch(err){ alert('Could not load JSON: '+err.message); } }); e.target.value=''; };
+document.getElementById('export').onclick=()=>{
+  const out={ generatedBy:'interior_editor.html', date:new Date().toISOString(), interiors:[] };
+  Object.keys(STATE).forEach(k=>{ const L=STATE[k].layout; const floorCells=[], props=[], walls=[];
+    L.g.forEach((row,y)=>row.forEach((c,x)=>{ if(c.t)floorCells.push([x,y]);
+      if(c.d)props.push({id:c.d,x,y,flip:!!c.f,scale:+(c.s||1).toFixed(2),lift:+(c.oy||0).toFixed(2),nudgeX:+(c.ox||0).toFixed(2)});
+      if(c.w&&c.wh)walls.push({id:c.w,x,y,h:c.wh}); }));
+    out.interiors.push({ building:k, W:L.W, H:L.H, floorTile:L.floor, floorCells, props, walls }); });
+  const blob=new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='interior_export.json'; a.click();
+};
+
+// ---- boot ------------------------------------------------------------------
+window.onresize=()=>{ layout(); draw(); };
+if(!restoreState()) applyPresets();   // first open: show the authored furnished layouts
+st();
+buildTabs(); buildInfo(); renderPal();
+setTimeout(()=>{ layout(); draw(); },120);
+setInterval(draw, 700);
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

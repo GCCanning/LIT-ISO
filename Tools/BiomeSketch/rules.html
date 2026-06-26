@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO — Biome Rules Editor</title>
+<style>
+  :root {
+    --bg:#14171c; --panel:#1c2128; --panel2:#22282f; --line:#323a44;
+    --text:#d8dde3; --dim:#8a93a0; --accent:#e8a33d; --ok:#6cc46c; --warn:#d96a6a;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:13px/1.45 "Segoe UI", system-ui, sans-serif; }
+  header { position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap; gap:10px;
+           align-items:center; padding:10px 14px; background:var(--panel);
+           border-bottom:1px solid var(--line); }
+  header h1 { font-size:15px; margin:0 12px 0 0; color:var(--accent); }
+  header input[type=search] { background:var(--bg); color:var(--text); border:1px solid var(--line);
+           border-radius:4px; padding:5px 8px; width:200px; }
+  button, label.btn { background:var(--panel2); color:var(--text); border:1px solid var(--line);
+           border-radius:4px; padding:5px 10px; cursor:pointer; font-size:12.5px; }
+  button:hover, label.btn:hover { border-color:var(--accent); }
+  .hint { color:var(--dim); font-size:12px; }
+  #board { display:flex; gap:10px; padding:12px; overflow-x:auto; align-items:flex-start; }
+  .col { min-width:250px; max-width:250px; background:var(--panel); border:1px solid var(--line);
+         border-radius:8px; }
+  .col h2 { font-size:13.5px; margin:0; padding:8px 10px; border-bottom:1px solid var(--line);
+            text-transform:capitalize; display:flex; justify-content:space-between; }
+  .col h2 .count { color:var(--dim); font-weight:normal; }
+  .col.unassigned h2 { color:var(--warn); }
+  .notes { width:100%; background:var(--bg); color:var(--dim); border:none;
+           border-bottom:1px solid var(--line); padding:5px 10px; font-size:11.5px; resize:vertical;
+           min-height:24px; }
+  .sec { padding:6px 8px 10px; }
+  .sec h3 { font-size:10.5px; letter-spacing:.08em; color:var(--dim); margin:4px 0 6px;
+            text-transform:uppercase; }
+  .zone { min-height:34px; display:flex; flex-wrap:wrap; gap:4px; border:1px dashed transparent;
+          border-radius:6px; padding:3px; }
+  .zone.dragover { border-color:var(--accent); background:rgba(232,163,61,.07); }
+  .card { position:relative; width:72px; background:var(--panel2); border:1px solid var(--line);
+          border-radius:5px; padding:3px 3px 2px; cursor:grab; }
+  .card:hover { border-color:var(--accent); }
+  .card.hidden { display:none; }
+  .card .thumb { width:64px; height:48px; display:flex; align-items:center; justify-content:center;
+          background:#0d0f12; border-radius:3px; overflow:hidden; image-rendering:pixelated; }
+  .card .thumb img { max-width:64px; max-height:48px; image-rendering:pixelated; }
+  .card .thumb .noart { font-size:10px; color:var(--dim); }
+  .card .nm { font-size:9.5px; line-height:1.15; color:var(--text); word-break:break-all;
+          margin-top:2px; max-height:22px; overflow:hidden; }
+  .card .x { position:absolute; top:-5px; right:-5px; width:14px; height:14px; line-height:12px;
+          text-align:center; font-size:10px; background:var(--warn); color:#fff; border-radius:50%;
+          display:none; cursor:pointer; }
+  .card:hover .x { display:block; }
+  .card.noartflag { border-color:var(--warn); }
+  footer { padding:8px 14px 20px; color:var(--dim); font-size:12px; }
+  .pill { display:inline-block; padding:1px 7px; border-radius:9px; background:var(--panel2);
+          border:1px solid var(--line); margin-left:6px; font-size:11px; }
+
+  /* ---- tabs ---- */
+  .tabs { display:flex; gap:6px; }
+  .tabs button { background:var(--panel2); }
+  .tabs button.active { background:var(--accent); color:#1a1d22; border-color:var(--accent); font-weight:600; }
+  .view { display:none; }
+  .view.active { display:block; }
+
+  /* ---- preview tab ---- */
+  #previewBoard { display:flex; gap:14px; padding:12px; overflow-x:auto; align-items:flex-start; }
+  .pcol { min-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+  .pcol h2 { font-size:13.5px; margin:0; padding:8px 10px; border-bottom:1px solid var(--line);
+             text-transform:capitalize; display:flex; justify-content:space-between; align-items:center; gap:6px; }
+  .pcol .pcol-actions { display:flex; gap:4px; }
+  .pcol .pcol-actions button { padding:3px 8px; font-size:11.5px; }
+  .pcol .meta { padding:6px 10px; color:var(--dim); font-size:11px; border-bottom:1px solid var(--line); }
+  .pcol .meta b { color:var(--text); }
+  .grid9 { display:grid; grid-template-columns: repeat(9, 1fr); gap:1px; padding:8px;
+           background:var(--line); }
+  .pcell { position:relative; aspect-ratio:1/1; background:#0d0f12; overflow:hidden;
+           image-rendering:pixelated; cursor:pointer; }
+  .pcell img { width:100%; height:100%; object-fit:cover; image-rendering:pixelated; display:block; }
+  .pcell .pname { position:absolute; bottom:0; left:0; right:0; font-size:7px; line-height:1.2;
+           color:#fff; background:rgba(0,0,0,.55); padding:0 1px; text-align:center;
+           overflow:hidden; white-space:nowrap; pointer-events:none; opacity:0; }
+  .pcell:hover .pname { opacity:1; }
+  .pcell.dragover { outline:2px solid var(--accent); outline-offset:-2px; }
+  .pcell.override::after { content:""; position:absolute; top:0; right:0; width:0; height:0;
+           border-style:solid; border-width:0 9px 9px 0; border-color:transparent var(--accent) transparent transparent; }
+  .pcell .prop-badge { position:absolute; top:1px; left:1px; width:38%; height:38%;
+           border-radius:2px; overflow:hidden; image-rendering:pixelated; box-shadow:0 0 0 1px rgba(0,0,0,.6); }
+  .pcell .prop-badge img { width:100%; height:100%; object-fit:contain; background:rgba(0,0,0,.35); }
+  .pcell .prop-badge.dot { display:flex; align-items:center; justify-content:center;
+           background:var(--ok); color:#06200a; font-size:6px; font-weight:700; }
+  .pcell .prop-stack { position:absolute; top:1px; left:1px; display:flex; flex-direction:column; gap:1px; }
+  .pcell .prop-stack .prop-badge { position:static; width:14px; height:14px; }
+  .pnodata { padding:14px 10px; color:var(--dim); font-size:12px; }
+  .ptable { width:100%; border-collapse:collapse; font-size:11px; margin-top:4px; }
+  .ptable th, .ptable td { padding:2px 6px; border-bottom:1px solid var(--line); text-align:left; }
+  .ptable th { color:var(--dim); font-weight:normal; }
+  details.poolinfo { padding:6px 10px; border-bottom:1px solid var(--line); }
+  details.poolinfo summary { cursor:pointer; color:var(--dim); font-size:11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Biome Rules Editor</h1>
+  <div class="tabs">
+    <button id="tabAssign" class="active">Assign</button>
+    <button id="tabPreview">9x9 Sample</button>
+  </div>
+  <input type="search" id="search" placeholder="filter tiles / props...">
+  <label class="btn"><input type="checkbox" id="copyMode"> copy on drag</label>
+  <button id="exportBtn">Export JSON</button>
+  <button id="copyBtn">Copy JSON</button>
+  <label class="btn">Import<input type="file" id="importFile" accept=".json" hidden></label>
+  <button id="resetBtn" title="Discard local edits, reload generated seed">Reset to seed</button>
+  <span class="hint">drag cards between biomes · × sends back to unassigned ·
+    edits autosave locally<span class="pill" id="seedStamp"></span></span>
+</header>
+<div id="board" class="view active"></div>
+<div id="previewView" class="view">
+  <div id="previewBoard"></div>
+</div>
+<footer>
+  Export feeds the worldgen rule refinement pass (base = surfaceBase pool, accent = surfaceAccents,
+  props = feature entries). Red-bordered cards have no thumbnail in the BiomeSketch registry —
+  check the id or promote the art. Regenerate the seed with
+  <code>python3 Tools/BiomeSketch/build_biome_rules_data.py</code>.<br>
+  <b>9x9 Sample</b> tab: each cell is a weighted roll mirroring
+  <code>BiomeDefinition.PickWeighted</code> (surfaceBasePool, then surfaceAccents at accentRate,
+  plus independent per-cell node rolls for props). Drag a tile card from the Assign tab's pools
+  onto a cell to override it (amber corner = overridden). Export dumps the grid + pools +
+  overrides as JSON for tuning <code>FoundationContent.cs</code>.
+</footer>
+<script src="biome_rules_data.js"></script>
+<script>
+(function () {
+  const LS_KEY = "litiso.biomeRules.working.v1";
+  const seed = BIOME_RULES_SEED;
+  document.getElementById("seedStamp").textContent = "seed " + seed.generatedAt;
+
+  // working state: { assignments: {biome:{base,accent,props,notes}}, unassigned:{tiles,props} }
+  let state = loadState();
+
+  function freshFromSeed() {
+    const a = {};
+    for (const [k, v] of Object.entries(seed.assignments))
+      a[k] = { base:[...v.base], accent:[...v.accent], props:[...v.props], notes:v.notes || "" };
+    return { assignments:a,
+             unassigned:{ tiles:[...seed.unassigned.tiles], props:[...seed.unassigned.props] } };
+  }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s && s.assignments) return s;
+      }
+    } catch (e) {}
+    return freshFromSeed();
+  }
+  function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+  const kindOf = id => {};
+  // a list ref by path: ["biome","meadow","base"] or ["unassigned","tiles"]
+  function getList(ref) {
+    return ref[0] === "unassigned"
+      ? state.unassigned[ref[1]]
+      : state.assignments[ref[1]][ref[2]];
+  }
+
+  const board = document.getElementById("board");
+  const search = document.getElementById("search");
+
+  function thumb(id) {
+    const p = seed.assetIndex[id];
+    if (p) return `<div class="thumb"><img loading="lazy" src="${p}" alt=""></div>`;
+    return `<div class="thumb"><span class="noart">no art</span></div>`;
+  }
+
+  function card(id, ref, kind) {
+    const noart = seed.assetIndex[id] ? "" : " noartflag";
+    return `<div class="card${noart}" draggable="true" data-id="${id}" data-kind="${kind}"
+      data-ref='${JSON.stringify(ref)}'>${thumb(id)}<div class="nm">${id}</div>
+      <div class="x" title="send to unassigned">×</div></div>`;
+  }
+
+  function zone(ref, ids, kind, label) {
+    return `<div class="sec"><h3>${label} <span class="count">(${ids.length})</span></h3>
+      <div class="zone" data-kind="${kind}" data-ref='${JSON.stringify(ref)}'>
+        ${ids.map(id => card(id, ref, kind)).join("")}</div></div>`;
+  }
+
+  function render() {
+    let html = "";
+    // unassigned first so it's always visible
+    html += `<div class="col unassigned"><h2>unassigned
+        <span class="count">${state.unassigned.tiles.length + state.unassigned.props.length}</span></h2>`;
+    html += zone(["unassigned","tiles"], state.unassigned.tiles, "tile", "tiles");
+    html += zone(["unassigned","props"], state.unassigned.props, "prop", "props");
+    html += `</div>`;
+
+    const order = seed.biomeOrder.filter(b => state.assignments[b])
+      .concat(Object.keys(state.assignments).filter(b => !seed.biomeOrder.includes(b)));
+    for (const b of order) {
+      const a = state.assignments[b];
+      const n = a.base.length + a.accent.length + a.props.length;
+      html += `<div class="col"><h2>${b}<span class="count">${n}</span></h2>
+        <textarea class="notes" data-biome="${b}" placeholder="rule notes for ${b}...">${a.notes || ""}</textarea>`;
+      html += zone(["biome",b,"base"], a.base, "tile", "base tiles");
+      html += zone(["biome",b,"accent"], a.accent, "tile", "accent tiles");
+      html += zone(["biome",b,"props"], a.props, "prop", "props");
+      html += `</div>`;
+    }
+    board.innerHTML = html;
+    applyFilter();
+  }
+
+  function applyFilter() {
+    const q = search.value.trim().toLowerCase();
+    board.querySelectorAll(".card").forEach(c => {
+      c.classList.toggle("hidden", q !== "" && !c.dataset.id.toLowerCase().includes(q));
+    });
+  }
+  search.addEventListener("input", applyFilter);
+
+  // ---- drag & drop ----
+  let drag = null;
+  board.addEventListener("dragstart", e => {
+    const c = e.target.closest(".card");
+    if (!c) return;
+    drag = { id:c.dataset.id, kind:c.dataset.kind, from:JSON.parse(c.dataset.ref) };
+    e.dataTransfer.effectAllowed = "move";
+  });
+  board.addEventListener("dragover", e => {
+    const z = e.target.closest(".zone");
+    if (!z || !drag) return;
+    if (z.dataset.kind !== drag.kind) return;     // tiles only to tile zones, props to prop zones
+    e.preventDefault();
+    z.classList.add("dragover");
+  });
+  board.addEventListener("dragleave", e => {
+    const z = e.target.closest(".zone");
+    if (z) z.classList.remove("dragover");
+  });
+  board.addEventListener("drop", e => {
+    const z = e.target.closest(".zone");
+    if (!z || !drag) return;
+    z.classList.remove("dragover");
+    if (z.dataset.kind !== drag.kind) return;
+    e.preventDefault();
+    const to = JSON.parse(z.dataset.ref);
+    const fromList = getList(drag.from), toList = getList(to);
+    if (toList.includes(drag.id)) { drag = null; return; }
+    const copy = document.getElementById("copyMode").checked;
+    if (!copy) {
+      const i = fromList.indexOf(drag.id);
+      if (i >= 0) fromList.splice(i, 1);
+    }
+    toList.push(drag.id);
+    drag = null;
+    save(); render();
+  });
+
+  // ---- card × -> unassigned ; notes ----
+  board.addEventListener("click", e => {
+    const x = e.target.closest(".x");
+    if (!x) return;
+    const c = x.closest(".card");
+    const ref = JSON.parse(c.dataset.ref);
+    const list = getList(ref);
+    const i = list.indexOf(c.dataset.id);
+    if (i >= 0) list.splice(i, 1);
+    const pool = c.dataset.kind === "tile" ? state.unassigned.tiles : state.unassigned.props;
+    if (!pool.includes(c.dataset.id)) pool.push(c.dataset.id);
+    save(); render();
+  });
+  board.addEventListener("input", e => {
+    if (e.target.classList.contains("notes")) {
+      state.assignments[e.target.dataset.biome].notes = e.target.value;
+      save();
+    }
+  });
+
+  // ---- export / import / reset ----
+  function exportObj() {
+    return {
+      schema: "litiso.biome_rules_assignments.v1",
+      exportedAt: new Date().toISOString(),
+      seedGeneratedAt: seed.generatedAt,
+      assignments: state.assignments,
+      unassigned: state.unassigned,
+    };
+  }
+  document.getElementById("exportBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(exportObj(), null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "biome_assignments.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  document.getElementById("copyBtn").addEventListener("click", async e => {
+    await navigator.clipboard.writeText(JSON.stringify(exportObj(), null, 2));
+    e.target.textContent = "Copied!";
+    setTimeout(() => e.target.textContent = "Copy JSON", 1200);
+  });
+  document.getElementById("importFile").addEventListener("change", e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    f.text().then(t => {
+      const d = JSON.parse(t);
+      if (!d.assignments) { alert("Not a biome_assignments export."); return; }
+      state = { assignments:d.assignments, unassigned:d.unassigned || { tiles:[], props:[] } };
+      save(); render();
+    });
+  });
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!confirm("Discard local edits and reload the generated seed?")) return;
+    state = freshFromSeed();
+    save(); render();
+  });
+
+  render();
+
+  // ---- tab switching ----
+  const tabAssign = document.getElementById("tabAssign");
+  const tabPreview = document.getElementById("tabPreview");
+  const boardView = document.getElementById("board");
+  const previewView = document.getElementById("previewView");
+  tabAssign.addEventListener("click", () => {
+    tabAssign.classList.add("active"); tabPreview.classList.remove("active");
+    boardView.classList.add("active"); previewView.classList.remove("active");
+  });
+  tabPreview.addEventListener("click", () => {
+    tabPreview.classList.add("active"); tabAssign.classList.remove("active");
+    previewView.classList.add("active"); boardView.classList.remove("active");
+    if (window.initPreview) window.initPreview();
+  });
+
+  // expose for the preview module (shares thumb()/seed.assetIndex/drag state)
+  window.__biomeRules = { seed, thumb, getDragCardId: () => drag, clearDrag: () => { drag = null; } };
+})();
+</script>
+<script>
+(function () {
+  // ---- biome surface/accent/node data, mirrored from FoundationContent.cs BuildDefault() ----
+  // (Pool() weights + accentRate + nodes, as of 2026-06-14 / forest+snow surface promotion)
+  const PROP_ICON = {
+    tree: "assets/decor/tree.png",
+    pine: "assets/decor/pine.png",
+    rock: "assets/decor/rock.png",
+    bush: "assets/decor/bush.png",
+    flower: "assets/decor/flower.png",
+    tulip: "assets/decor/flower_tulip.png",
+    tuft: "assets/decor/tuft.png",
+    log: "assets/decor/log.png",
+    stump: "assets/decor/stump.png",
+    forestStump: "assets/prop/review_sync/ready_no_overwrite/forest/forest_stump.png",
+    copperVein: "assets/decor/copper_vein.png",
+    // no BiomeSketch art for these yet -> rendered as labeled dot badges
+    ironVein: null, silverVein: null, goldVein: null,
+    manacrystalVein: null, starmetalVein: null,
+  };
+  const PROP_LABEL = {
+    tree:"tree", pine:"pine", rock:"rock", bush:"bush", flower:"flower", tulip:"tulip",
+    tuft:"tuft", log:"log", stump:"stump", forestStump:"f.stump", copperVein:"Cu",
+    ironVein:"Fe", silverVein:"Ag", goldVein:"Au", manacrystalVein:"mana", starmetalVein:"star",
+  };
+
+  const BIOMES = {
+    meadow: {
+      surfaceBasePool: [
+        ["plains2_02",20],["plains2_05",20],["plains2_07",20],["plains2_11",20],
+        ["plains2_15",20],["plains2_08",12],["plains2_14",12]],
+      surfaceAccents: [
+        ["plains2_04",6],["plains2_00",6],["plains2_10",6],["plains2_03",5],
+        ["plains2_01",5],["plains2_13",3],["plains2_12",3],["plains2_06",3],
+        ["plains2_09",3],["plains_flower_grass",2],["plains_grass_tufts",2]],
+      accentRate: 0.15,
+      nodes: [["tree",0.05],["rock",0.02],["bush",0.05],["flower",0.03],["tulip",0.012],
+              ["tuft",0.03],["log",0.005],["stump",0.005]],
+    },
+    forest: {
+      surfaceBasePool: [["forest_grass_base",60],["forest_floor",20],["forest_moss_grass",20]],
+      surfaceAccents: [
+        ["forest_floor",14],["forest_leaf_litter",12],["forest_moss_grass",10],
+        ["forest_dark_underbrush",6],["forest_grass_tufts",6]],
+      accentRate: 0.15,
+      nodes: [["tree",0.14],["bush",0.06],["rock",0.02],["copperVein",0.01],["flower",0.012],
+              ["tuft",0.02],["log",0.01],["stump",0.01],["forestStump",0.01]],
+    },
+    beach: {
+      surfaceBasePool: [
+        ["beach_02",40],["beach_08",35],["beach_14",15],["beach_03",10],["beach_00",30],
+        ["beach_12",25],["beach_06",15],["beach_01",12],["beach_07",10],["beach_13",8]],
+      surfaceAccents: [
+        ["beach_05",6],["beach_11",6],["beach_09",4],["beach_15",4],["beach_04",3],["beach_10",3]],
+      accentRate: 0.12,
+      nodes: [["rock",0.02]],
+    },
+    snow: {
+      surfaceBasePool: [
+        ["snow2_03",16],["snow2_04",16],["snow2_07",16],["snow2_12",16],["snow2_13",16],
+        ["snow2_00",7],["snow2_01",7],["snow2_02",7],["snow2_05",7],["snow2_06",7],
+        ["snow2_14",5],["snow2_15",5]],
+      surfaceAccents: [["snow2_08",6],["snow2_09",4],["snow2_10",2],["snow2_11",2]],
+      accentRate: 0.15,
+      nodes: [["tree",0.04],["pine",0.05],["rock",0.03],["copperVein",0.008],["tuft",0.02],
+              ["log",0.008],["stump",0.008]],
+    },
+    mountain: {
+      // stratification[0] (band 3-4) near-interior pool only - single-entry pools.
+      surfaceBasePool: [["grass_3",1]],
+      surfaceAccents: [["stone_mossy",8]],
+      accentRate: 0.10, // NOTE: source has 0.10, not 0.15 as in earlier task summary
+      nodes: [["rock",0.16],["copperVein",0.04],["pine",0.012],["stump",0.006],
+              ["ironVein",0.02],["silverVein",0.01],["goldVein",0.005],
+              ["manacrystalVein",0.002],["starmetalVein",0.001]],
+    },
+    desert: {
+      // no surfaceBasePool/surfaceAccents declared - desert uses badlandsGroup at runtime.
+      surfaceBasePool: null,
+      surfaceAccents: null,
+      accentRate: 0,
+      nodes: [["rock",0.05],["copperVein",0.015]],
+    },
+  };
+  const BIOME_ORDER = ["meadow","forest","beach","snow","mountain","desert"];
+
+  // ---- tiny seeded RNG (mulberry32) - reproducible per "Reroll" seed ----
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function weightedPick(pool, rng) {
+    if (!pool || !pool.length) return null;
+    let total = 0;
+    for (const [, w] of pool) total += w;
+    let r = rng() * total;
+    for (const [id, w] of pool) { r -= w; if (r <= 0) return id; }
+    return pool[pool.length - 1][0];
+  }
+
+  // ---- per-biome generated state ----
+  // previewState[biome] = { seedNum, grid: [{tile, base, isAccent, props:[ids], overridden:bool}], }
+  const previewState = {};
+
+  function generateGrid(biomeId, seedNum) {
+    const def = BIOMES[biomeId];
+    const rng = mulberry32(seedNum);
+    const cells = [];
+    for (let i = 0; i < 81; i++) {
+      let tile, isAccent = false;
+      if (def.surfaceBasePool) {
+        tile = weightedPick(def.surfaceBasePool, rng);
+        if (def.surfaceAccents && def.surfaceAccents.length && rng() < def.accentRate) {
+          const acc = weightedPick(def.surfaceAccents, rng);
+          if (acc) { tile = acc; isAccent = true; }
+        }
+      } else {
+        tile = null; // desert: no weighted pool, fallback message
+      }
+      const props = [];
+      for (const [propId, chance] of def.nodes) {
+        if (rng() < chance) props.push(propId);
+      }
+      cells.push({ base: tile, tile, isAccent, props, overridden: false });
+    }
+    return cells;
+  }
+
+  function ensureGenerated(biomeId, forceNew) {
+    if (!previewState[biomeId] || forceNew) {
+      const seedNum = forceNew
+        ? ((Date.now() ^ (Math.random() * 1e9)) | 0)
+        : (hashStr(biomeId + ":litiso-preview-v1"));
+      previewState[biomeId] = { seedNum, grid: generateGrid(biomeId, seedNum) };
+    }
+    return previewState[biomeId];
+  }
+  function hashStr(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+    return h;
+  }
+
+  // ---- rendering ----
+  const previewBoard = document.getElementById("previewBoard");
+  let initialized = false;
+
+  function tileImgSrc(tileId) {
+    if (!tileId) return null;
+    const api = window.__biomeRules;
+    return api && api.seed && api.seed.assetIndex ? api.seed.assetIndex[tileId] : undefined;
+  }
+
+  function propBadgeHtml(propId) {
+    const src = PROP_ICON[propId];
+    const label = PROP_LABEL[propId] || propId;
+    if (src) return `<div class="prop-badge" title="${propId}"><img src="${src}" alt=""></div>`;
+    return `<div class="prop-badge dot" title="${propId}">${label.slice(0,3)}</div>`;
+  }
+
+  function cellHtml(biomeId, idx, cell) {
+    const src = tileImgSrc(cell.tile);
+    const inner = src
+      ? `<img src="${src}" alt="">`
+      : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);font-size:8px;text-align:center;padding:2px;">${cell.tile || "no pool"}</div>`;
+    let badges = "";
+    if (cell.props.length === 1) badges = propBadgeHtml(cell.props[0]);
+    else if (cell.props.length > 1)
+      badges = `<div class="prop-stack">${cell.props.map(propBadgeHtml).join("")}</div>`;
+    const ov = cell.overridden ? " override" : "";
+    return `<div class="pcell${ov}" data-biome="${biomeId}" data-idx="${idx}" title="${cell.tile}${cell.isAccent ? ' (accent)' : ''}${cell.props.length ? ' + ' + cell.props.join(', ') : ''}">
+      ${inner}${badges}<div class="pname">${cell.tile || ''}</div>
+    </div>`;
+  }
+
+  function poolTable(pool, label) {
+    if (!pool || !pool.length) return "";
+    const total = pool.reduce((s, [,w]) => s + w, 0);
+    return `<table class="ptable"><tr><th colspan="3">${label} (sum=${total})</th></tr>` +
+      pool.map(([id,w]) => `<tr><td>${id}</td><td>${w}</td><td>${(100*w/total).toFixed(1)}%</td></tr>`).join("") +
+      `</table>`;
+  }
+
+  function renderBiomeCol(biomeId) {
+    const def = BIOMES[biomeId];
+    const state = ensureGenerated(biomeId);
+    if (!def.surfaceBasePool) {
+      return `<div class="pcol" data-biome="${biomeId}">
+        <h2>${biomeId}<span class="pcol-actions">
+          <button data-act="reroll" data-biome="${biomeId}">Reroll</button>
+          <button data-act="export" data-biome="${biomeId}">Export</button>
+        </span></h2>
+        <div class="pnodata">No weighted surfaceBasePool / surfaceAccents declared for "${biomeId}" —
+        runtime uses <code>badlandsGroup</code> (surfaceGroup fallback) for surface tiles.
+        Nodes: ${def.nodes.map(([id,c]) => `${id} (${c})`).join(", ")}.</div>
+      </div>`;
+    }
+    const grid = `<div class="grid9">${state.grid.map((c,i) => cellHtml(biomeId, i, c)).join("")}</div>`;
+    return `<div class="pcol" data-biome="${biomeId}">
+      <h2>${biomeId}<span class="pcol-actions">
+        <button data-act="reroll" data-biome="${biomeId}">Reroll</button>
+        <button data-act="export" data-biome="${biomeId}">Export</button>
+      </span></h2>
+      <div class="meta">accentRate=<b>${def.accentRate}</b> · seed <b>${state.seedNum}</b></div>
+      <details class="poolinfo"><summary>pools &amp; nodes</summary>
+        ${poolTable(def.surfaceBasePool, "surfaceBasePool")}
+        ${poolTable(def.surfaceAccents, "surfaceAccents")}
+        <table class="ptable"><tr><th colspan="2">nodes (chancePerCell)</th></tr>
+          ${def.nodes.map(([id,c]) => `<tr><td>${id}</td><td>${c}</td></tr>`).join("")}</table>
+      </details>
+      ${grid}
+    </div>`;
+  }
+
+  function renderAll() {
+    previewBoard.innerHTML = BIOME_ORDER.map(renderBiomeCol).join("");
+  }
+
+  function initPreview() {
+    if (initialized) return;
+    initialized = true;
+    renderAll();
+
+    // reroll / export buttons
+    previewBoard.addEventListener("click", e => {
+      const btn = e.target.closest("button[data-act]");
+      if (!btn) return;
+      const biomeId = btn.dataset.biome;
+      if (btn.dataset.act === "reroll") {
+        ensureGenerated(biomeId, true);
+        renderAll();
+      } else if (btn.dataset.act === "export") {
+        exportBiomePreview(biomeId);
+      }
+    });
+
+    // drag-drop: dragstart originates from .card in the Assign board (data-id/data-kind="tile")
+    previewBoard.addEventListener("dragover", e => {
+      const cell = e.target.closest(".pcell");
+      if (!cell) return;
+      const api = window.__biomeRules;
+      const drag = api && api.getDragCardId();
+      if (!drag || drag.kind !== "tile") return;
+      e.preventDefault();
+      cell.classList.add("dragover");
+    });
+    previewBoard.addEventListener("dragleave", e => {
+      const cell = e.target.closest(".pcell");
+      if (cell) cell.classList.remove("dragover");
+    });
+    previewBoard.addEventListener("drop", e => {
+      const cell = e.target.closest(".pcell");
+      if (!cell) return;
+      const api = window.__biomeRules;
+      const drag = api && api.getDragCardId();
+      if (!drag || drag.kind !== "tile") return;
+      e.preventDefault();
+      cell.classList.remove("dragover");
+      const biomeId = cell.dataset.biome;
+      const idx = +cell.dataset.idx;
+      const st = previewState[biomeId];
+      const c = st.grid[idx];
+      c.tile = drag.id;
+      c.overridden = true;
+      c.isAccent = false;
+      if (api.clearDrag) api.clearDrag();
+      // re-render just this column for cheapness
+      const col = previewBoard.querySelector(`.pcol[data-biome="${biomeId}"]`);
+      if (col) col.outerHTML = renderBiomeCol(biomeId);
+    });
+  }
+
+  function exportBiomePreview(biomeId) {
+    const def = BIOMES[biomeId];
+    const st = ensureGenerated(biomeId);
+    const overrides = [];
+    st.grid.forEach((c, i) => {
+      if (c.overridden) {
+        overrides.push({ row: Math.floor(i / 9), col: i % 9, oldTileId: c.base, newTileId: c.tile });
+      }
+    });
+    const out = {
+      schema: "litiso.biome_9x9_preview.v1",
+      exportedAt: new Date().toISOString(),
+      biomeId,
+      seed: st.seedNum,
+      surfaceBasePool: def.surfaceBasePool
+        ? def.surfaceBasePool.map(([id,w]) => ({ tile: id, weight: w })) : null,
+      surfaceAccents: def.surfaceAccents
+        ? def.surfaceAccents.map(([id,w]) => ({ tile: id, weight: w })) : null,
+      accentRate: def.accentRate,
+      nodes: def.nodes.map(([id,c]) => ({ node: id, chancePerCell: c })),
+      grid: st.grid.map((c, i) => ({
+        row: Math.floor(i / 9), col: i % 9,
+        tile: c.tile, isAccent: c.isAccent, props: c.props, overridden: c.overridden,
+      })),
+      overrides,
+    };
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `biome_preview_${biomeId}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // expose init for the tab-switch handler in the first script block
+  window.initPreview = initPreview;
+})();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

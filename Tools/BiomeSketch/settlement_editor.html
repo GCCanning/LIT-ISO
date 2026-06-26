@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO Settlement Editor</title>
+<style>
+ *{box-sizing:border-box}
+ body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
+ #side{width:320px;min-width:320px;background:#1d2027;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+ .title{font-size:15px;font-weight:600;color:#e8c468}
+ .sub{font-size:11px;color:#889;line-height:1.4}
+ a.toolLink{color:#9cc4ff;font-size:11px}
+ select,input[type=text]{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 8px;font-size:12px}
+ .selrow{display:flex;gap:6px} .selrow>label{flex:1;font-size:11px;color:#9aa}
+ .selrow select{width:100%}
+ #palscroll{flex:1;overflow-y:auto;padding-right:4px}
+ .psec{margin-bottom:6px}
+ .phead{position:sticky;top:0;background:#1d2027;color:#e8c468;font-size:11px;font-weight:600;padding:5px 4px;border-bottom:1px solid #333;z-index:2;cursor:pointer;user-select:none}
+ .ptype{font-size:10px;color:#9aa;margin:5px 2px 2px;text-transform:uppercase;letter-spacing:.5px}
+ .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:2px 0 6px}
+ .pgrid.b4{grid-template-columns:repeat(4,1fr)}
+ .sw{background:#262a33;border:2px solid #333;border-radius:5px;cursor:grab;padding:3px 2px;text-align:center}
+ .sw:active{cursor:grabbing}
+ .sw img{max-width:54px;max-height:50px;image-rendering:pixelated;display:block;margin:0 auto}
+ .sw div{font-size:8px;color:#9aa;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ .sw.sel{border-color:#e8c468;background:#33301f}
+ #main{flex:1;display:flex;flex-direction:column;min-width:0}
+ #bar{padding:8px 12px;background:#1d2027;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #2a2f3a}
+ button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
+ button.primary{background:#2d5a2d;border-color:#4a4}
+ button.on{background:#5b4d20;border-color:#e8c468;color:#e8c468}
+ .pill{font-size:10px;color:#778;background:#23262d;border-radius:10px;padding:3px 9px}
+ #cv{flex:1;cursor:crosshair;min-height:0}
+ #cv.dragover{outline:2px dashed #e8c468;outline-offset:-2px}
+ #help{font-size:11px;color:#889;padding:5px 12px;background:#1a1d23}
+ #brushlbl{color:#e8c468}
+</style>
+</head>
+<body>
+<div id="side">
+  <div class="title">Settlement Editor</div>
+  <div class="sub">Design fully-custom town layouts per tier, then per biome so each town fits its surroundings. Place buildings, paths and any biome prop.</div>
+  <a class="toolLink" href="biome_preview.html" target="_blank">&#8599; Biome Preview</a>
+  <div class="selrow">
+    <label>Tier<select id="tierSel"></select></label>
+    <label>Biome<select id="biomeSel"></select></label>
+  </div>
+  <div style="display:flex;gap:6px">
+    <button id="modePal" class="on" style="flex:1">Palette</button>
+    <button id="modeRules" style="flex:1">Rules</button>
+  </div>
+  <input type="text" id="search" placeholder="search ALL art (tiles, props, decor)...">
+  <div id="palscroll"></div>
+  <div id="rulesscroll" style="display:none;flex:1;overflow-y:auto;padding-right:4px"></div>
+</div>
+<div id="main">
+  <div id="bar">
+    <span class="pill" id="info"></span>
+    <span class="pill">brush: <span id="brushlbl">none</span></span>
+    <span style="flex:1"></span>
+    <button id="regenBtn" title="Fresh random skeleton + buildings">&#8635; Regen layout</button>
+    <button id="rerollBtn" class="primary" title="Keep pinned paths/buildings, re-roll the rest within your rules">&#8635; Reroll within rules</button>
+    <button id="clearFillerBtn" title="Remove all un-pinned (generated) props/buildings">Clear filler</button>
+    <button id="unpinBtn" title="Unpin everything so a reroll can replace it">Unpin all</button>
+    <button id="clearBtn">Clear to ground</button>
+    <select id="paintMode" style="background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 8px;font-size:12px">
+      <option value="place">Place brush</option>
+      <option value="erase">Erase prop</option>
+      <option value="flip">Flip building</option>
+    </select>
+    <select id="shape" title="Brush shape" style="background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:5px 8px;font-size:12px">
+      <option value="cell">Brush: cell</option>
+      <option value="row">Brush: row</option>
+      <option value="col">Brush: column</option>
+      <option value="rect">Brush: rectangle</option>
+      <option value="bucket">Brush: fill area</option>
+    </select>
+    <button id="flipBtn" title="Toggle horizontal flip for new buildings (R)">Flip new: OFF</button>
+    <button id="zoomout" title="Zoom out">&minus;</button>
+    <button id="zoomin" title="Zoom in">+</button>
+    <button id="resetview" title="Reset zoom &amp; pan">Reset view</button>
+    <button id="loadbtn" title="Load a settlement_export.json back in">Load JSON</button>
+    <input type="file" id="loadf" accept=".json,application/json" style="display:none">
+    <button id="export" class="primary">Export JSON</button>
+  </div>
+  <canvas id="cv"></canvas>
+  <div id="help"><b>Click a swatch</b> then paint cells &middot; or <b>drag</b> onto the map &middot; RMB removes &middot; <b>Brush shape</b> row/column/rect/fill &middot; <b>Flip building</b> mode (or R toggles flip-new) &middot; <b>wheel</b>=zoom, <b>middle/Space-drag</b>=pan &middot; switch Tier/Biome for each variant &middot; placed items are <b>pinned</b> (gold dot); set per-asset <b>Rules</b>, then <b>Reroll within rules</b> fills around your pins &middot; Export sends all variants + rules to Claude.</div>
+</div>
+
+<script src="assets.js"></script>
+<script>
+window.addEventListener('error',function(ev){ var b=document.getElementById('help')||document.body; if(b) b.innerHTML='<b style="color:#ff8080">Tool error:</b> '+(ev.message||ev)+' ('+(String(ev.filename||'').split('/').pop())+':'+(ev.lineno||'?')+')'; });
+
+// ---- data (mirrors IsoSettlementSampler bands + buildingPool) --------------
+const TIERS=[
+  { id:'campsite', fx:12, fy:12, plaza:1, ranks:[],          cmin:3,  cmax:5,  camp:['tent_common','tent_epic','bedroll','campfire_new','keg_rack','market_stall_red'] },
+  { id:'hamlet',   fx:18, fy:18, plaza:2, ranks:['r1'],      cmin:2,  cmax:4  },
+  { id:'village',  fx:28, fy:24, plaza:3, ranks:['r1','r2'], cmin:4,  cmax:8  },
+  { id:'town',     fx:42, fy:36, plaza:4, ranks:['r2','r3'], cmin:8,  cmax:14 },
+  { id:'city',     fx:58, fy:48, plaza:5, ranks:['r2','r3'], cmin:14, cmax:24 }
+];
+const BUILD_TYPES=[
+  { type:'Tavern',       ids:['tavern_r1','tavern_r2','tavern_r3'] },
+  { type:'Guild Hall',   ids:['guild_hall_r1','guild_hall_r2','guild_hall_r3'] },
+  { type:'Library',      ids:['library_r1','library_r2','library_r3'] },
+  { type:'Shop',         ids:['shop_r1','shop_r2','shop_r3'] },
+  { type:'Market Stall', ids:['market_stall_red','market_stall_blue'] }
+];
+const FOOT={ r1:2, r2:3, r3:4 };
+const BIOMES=['meadow','forest','desert','snow','beach','mountain'];
+const BIOME_GROUND={ meadow:'plains2_00', forest:'forest_grass_base', desert:'sand_00', snow:'snow2_03', beach:'sand_07', mountain:'grass_3' };
+const BIOME_TINT={ meadow:'#4e7a3e', forest:'#3f6b3a', desert:'#c9b06a', snow:'#cdd8e6', beach:'#d9c98a', mountain:'#7a7e82' };
+const PATH_TILES=['stone_path','plains_bare_dirt','dirt'];
+const DECOR=['lantern_post','candle_lantern','brazier','campfire_new','guild_banner_stand','guild_notice_board','guild_round_table','bar_counter','keg_rack','crafting_table','anvil','furnace','grindstone','loom','cooking_station','alchemy_table','book_stack','dock_post'];
+const PLAZA='plains_bare_dirt', ROAD='stone_path';
+
+const META={}, imgs={};
+const HAS = (typeof ASSETS!=='undefined');
+if(HAS) ASSETS.forEach(a=>{ META[a.name]=a; });
+function ensureImg(n){ if(n && !imgs[n] && META[n]){ const i=new Image(); i.src=META[n].path; imgs[n]=i; } }
+function rankOf(id){ const m=/_r([123])\b/.exec(id||''); return m?('r'+m[1]):null; }
+function footOf(id){ const r=rankOf(id); return r?FOOT[r]:1; }
+function isTile(n){ return META[n] && META[n].cat==='tile'; }
+// biome-flavoured prop sets pulled live from the asset library
+function biomeProps(b){
+  const A=HAS?ASSETS.filter(a=>a.cat==='prop'):[];
+  const pat={
+    forest:n=>/^forest_/.test(n)||['tree','bush','log','stump','flower','tuft','pine'].indexOf(n)>=0,
+    meadow:n=>/^plains_/.test(n)||['flower','flower_tulip','tuft','bush','tree','log','stump'].indexOf(n)>=0,
+    desert:n=>/^cactus_/.test(n)||['rock','copper_vein','shared_gray_rock'].indexOf(n)>=0,
+    snow:n=>['pine','forest_pine','tree','rock','stump','log','tuft'].indexOf(n)>=0,
+    mountain:n=>/^ore_/.test(n)||['rock','shared_gray_rock','pine','stump','copper_vein'].indexOf(n)>=0,
+    beach:n=>['shore_stone','rock'].indexOf(n)>=0||/^plains_bush/.test(n)
+  }[b]||(()=>false);
+  const seen={}, out=[];
+  A.forEach(a=>{ if(pat(a.name)&&!seen[a.name]){ seen[a.name]=1; out.push(a); } });
+  return out;
+}
+
+function mulberry32(seed){ let a=seed>>>0; return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function ri(r,lo,hi){ return lo+Math.floor(r()*(hi-lo+1)); }
+function pick(arr,r){ return arr[Math.floor(r()*arr.length)]; }
+
+// ---- layout generation (biome-aware ground) --------------------------------
+function genLayout(tier, biome, seed){
+  const r=mulberry32(seed), W=tier.fx, H=tier.fy, GROUND=BIOME_GROUND[biome]||'plains2_00';
+  const g=Array.from({length:H},()=>Array.from({length:W},()=>({t:GROUND,d:null,occ:false,b:null,f:false,pin:false})));
+  const cx=Math.floor(W/2), cy=Math.floor(H/2), pr=tier.plaza;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ if(Math.abs(x-cx)<=pr&&Math.abs(y-cy)<=pr){ g[y][x].t=PLAZA; g[y][x].occ=true; } }
+  for(let x=0;x<W;x++){ if(g[cy][x].t===GROUND) g[cy][x].t=ROAD; }
+  for(let y=0;y<H;y++){ if(g[y][cx].t===GROUND) g[y][cx].t=ROAD; }
+  const isCamp = tier.camp && tier.camp.length;
+  const byRank={}; BUILD_TYPES.forEach(bt=>bt.ids.forEach(id=>{ const rk=rankOf(id); if(rk){(byRank[rk]||(byRank[rk]=[])).push(id);} }));
+  const lots=[]; const step=isCamp?3:5, marg=isCamp?1:4, off=isCamp?0:2;
+  for(let ay=1;ay<H-marg;ay+=step)for(let ax=1;ax<W-marg;ax+=step){ const d=Math.hypot(ax+off-cx,ay+off-cy); if(d>pr+1) lots.push([ax,ay,d]); }
+  lots.sort((a,b)=>a[2]-b[2]);
+  const count=ri(r,tier.cmin,tier.cmax); let placed=0;
+  for(const lot of lots){ if(placed>=count)break; const ax=lot[0], ay=lot[1]; let id, fp, rk;
+    if(isCamp){ id=pick(tier.camp,r); fp=1; rk=''; }
+    else { rk=pick(tier.ranks,r); const pool=byRank[rk]||[]; if(!pool.length)continue; id=pick(pool,r); fp=FOOT[rk]; }
+    if(ax+fp>W||ay+fp>H)continue;
+    let free=true; for(let dy=0;dy<fp;dy++)for(let dx=0;dx<fp;dx++){ if(g[ay+dy][ax+dx].occ)free=false; }
+    if(!free)continue;
+    for(let dy=0;dy<fp;dy++)for(let dx=0;dx<fp;dx++){ g[ay+dy][ax+dx].occ=true; if(!isCamp)g[ay+dy][ax+dx].t=PLAZA; }
+    g[ay+fp-1][ax].d=id; g[ay+fp-1][ax].b={id,rank:rk,fp}; ensureImg(id); placed++;
+  }
+  return { g, W, H, count:placed, biome, ground:GROUND };
+}
+function clearLayout(L){ const G=BIOME_GROUND[L.biome]; L.g.forEach(row=>row.forEach(c=>{ c.t=G; c.d=null; c.occ=false; c.b=null; c.f=false; })); }
+
+// ---- state: one variant per (tier x biome) ---------------------------------
+const STATE={};
+function key(t,b){ return t+'|'+b; }
+let curTier='hamlet', curBiome='meadow', brush=null, RULES={};
+function tierDef(){ return TIERS.find(t=>t.id===curTier); }
+function st(){ const k=key(curTier,curBiome); if(!STATE[k]){ STATE[k]={ seed:(curTier.length*131+curBiome.length*17+7)>>>0, layout:null }; } const s=STATE[k]; if(!s.layout){ s.layout=genLayout(tierDef(),curBiome,s.seed); saveSoon(); } return s; }
+
+// ---- autosave / restore (localStorage) -------------------------------------
+const LS_KEY='lit_settlement_editor_v1'; let _saveT=null;
+function saveState(){ try{ const d={tier:curTier, biome:curBiome, v:{}}; Object.keys(STATE).forEach(k=>{ const s=STATE[k]; if(!s.layout)return; const L=s.layout; d.v[k]={seed:s.seed, W:L.W, H:L.H, biome:L.biome, ground:L.ground, count:L.count, cells:L.g.map(row=>row.map(c=>[c.t,c.d,c.f?1:0,c.pin?1:0])) }; }); d.rules=RULES; localStorage.setItem(LS_KEY, JSON.stringify(d)); }catch(e){} }
+function saveSoon(){ clearTimeout(_saveT); _saveT=setTimeout(saveState, 500); }
+function ensurePieces(L){ L.g.forEach(row=>row.forEach(c=>{ if(c.t)ensureImg(c.t); if(c.d)ensureImg(c.d); })); }
+function cellsToLayout(e){ const g=e.cells.map(row=>row.map(cc=>{ const dd=cc[1], rk=rankOf(dd); return {t:cc[0], d:dd, occ:false, b: dd?{id:dd,rank:rk||'',fp:footOf(dd)}:null, f:!!cc[2], pin:!!cc[3]}; })); const L={g,W:e.W,H:e.H,count:e.count||0,biome:e.biome,ground:e.ground}; ensurePieces(L); return L; }
+function restoreState(){ try{ const raw=localStorage.getItem(LS_KEY); if(!raw)return false; const d=JSON.parse(raw);
+  if(d.rules) RULES=d.rules;
+  if(d.v) Object.keys(d.v).forEach(k=>{ const e=d.v[k]; if(e&&e.cells) STATE[k]={seed:e.seed, layout:cellsToLayout(e)}; });
+  if(d.tier)curTier=d.tier; if(d.biome)curBiome=d.biome; return true; }catch(e){ return false; } }
+// import a settlement_export.json back into the editor
+function loadFromExport(obj){ if(!obj||!obj.variants){ alert('Not a settlement export (missing "variants").'); return; }
+  if(obj.rules) RULES=obj.rules;
+  obj.variants.forEach(vr=>{ const t=TIERS.find(x=>x.id===vr.tier); if(!t)return;
+    const W=(vr.footprint&&vr.footprint[0])||t.fx, H=(vr.footprint&&vr.footprint[1])||t.fy, grd=vr.ground, g=[];
+    for(let y=0;y<H;y++){ const row=[]; for(let x=0;x<W;x++){ row.push({t:(grd&&grd[y]&&grd[y][x])||BIOME_GROUND[vr.biome]||'plains2_00', d:null, occ:false, b:null, f:false, pin:false}); } g.push(row); }
+    (vr.buildings||[]).forEach(b=>{ if(g[b.y]&&g[b.y][b.x]){ g[b.y][b.x].d=b.id; g[b.y][b.x].b={id:b.id,rank:b.rank||rankOf(b.id)||'',fp:b.footprint||footOf(b.id)}; g[b.y][b.x].f=!!b.flip; g[b.y][b.x].pin=!!b.pin; } });
+    (vr.props||[]).forEach(p=>{ if(g[p.y]&&g[p.y][p.x]){ g[p.y][p.x].d=p.id; g[p.y][p.x].b={id:p.id,rank:rankOf(p.id)||'',fp:footOf(p.id)}; g[p.y][p.x].f=!!p.flip; g[p.y][p.x].pin=!!p.pin; } });
+    const L={g,W,H,count:(vr.buildings||[]).length,biome:vr.biome,ground:BIOME_GROUND[vr.biome]}; ensurePieces(L);
+    STATE[key(vr.tier,vr.biome)]={seed:1, layout:L}; });
+  layout(); buildInfo(); renderPal(); draw(); saveState(); }
+function missingHere(){ const set={}, L=st().layout; L.g.forEach(row=>row.forEach(c=>{ if(c.t&&!META[c.t])set[c.t]=1; if(c.d&&!META[c.d])set[c.d]=1; })); return Object.keys(set); }
+
+// ---- isometric render ------------------------------------------------------
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+let TW=24, isoData=null, zoom=1, panX=0, panY=0, fBrush=false, hoverCell=null, rectAnchor=null, spaceDown=false, panning=false, panStart=null;
+function layout(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight; const L=st().layout;
+  TW=Math.max(8, Math.min(40, Math.floor((cv.width-40)/(L.W+L.H)*2), Math.floor((cv.height-120)/(L.W+L.H)))); TW-=TW%2; }
+function effTW(){ let t=Math.max(4, Math.round(TW*zoom)); return t-(t%2); }
+function draw(){
+  const L=st().layout, W=L.W, H=L.H, tw=effTW(), THh=tw/2, tint=BIOME_TINT[L.biome]||'#4e7a3e';
+  ctx.imageSmoothingEnabled=false; ctx.fillStyle='#101216'; ctx.fillRect(0,0,cv.width,cv.height);
+  const ox=cv.width/2+panX, oy=Math.max(50, cv.height*0.12)+panY;
+  const iso=(x,y)=>({x:ox+(x-y)*tw/2, y:oy+(x+y)*THh/2}); isoData={iso,W,H,TW:tw};
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x], p=iso(x,y);
+    ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+tw/2,p.y+THh/2); ctx.lineTo(p.x,p.y+THh); ctx.lineTo(p.x-tw/2,p.y+THh/2); ctx.closePath();
+    ctx.fillStyle = c.t===PLAZA?'#6b5a3c' : c.t===ROAD?'#7c7c84' : tint; ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.18)'; ctx.stroke();
+    const im=imgs[c.t]; if(im&&im.complete&&im.naturalWidth){ const w=tw,h=w*im.height/im.width; ctx.drawImage(im,p.x-w/2,p.y+THh-h,w,h); } }
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(!c.d)continue; const im=imgs[c.d], m=META[c.d], p=iso(x,y);
+    if(im&&im.complete&&im.naturalWidth){ const s=m?(tw/m.ppu):(tw/Math.max(32,im.width)); const bx=m?m.bx:0,by=m?m.by:0,bw=m?m.bw:im.width,bh=m?m.bh:im.height; const w=bw*s,h=bh*s,footY=p.y+THh/2+2;
+      ctx.save(); if(c.f){ ctx.translate(p.x,0); ctx.scale(-1,1); ctx.translate(-p.x,0); } ctx.drawImage(im,bx,by,bw,bh,p.x-w/2,footY-h,w,h); ctx.restore(); }
+    else { ctx.fillStyle='#caa45a'; ctx.fillRect(p.x-tw/4,p.y,tw/2,tw/2); }
+    if(c.pin){ ctx.fillStyle='rgba(232,196,104,0.95)'; ctx.beginPath(); ctx.arc(p.x, p.y+THh/2, Math.max(1.5,tw*0.08), 0, 6.3); ctx.fill(); } }
+  if(hoverCell){ const p=iso(hoverCell.x,hoverCell.y); ctx.strokeStyle='rgba(232,196,104,0.9)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+tw/2,p.y+THh/2); ctx.lineTo(p.x,p.y+THh); ctx.lineTo(p.x-tw/2,p.y+THh/2); ctx.closePath(); ctx.stroke(); ctx.lineWidth=1; }
+}
+function cellAt(mx,my){ if(!isoData)return null; const L=st().layout, tw=isoData.TW, THh=tw/2;
+  for(let y=L.H-1;y>=0;y--)for(let x=L.W-1;x>=0;x--){ const p=isoData.iso(x,y); const dx=Math.abs(mx-p.x),dy=Math.abs(my-(p.y+THh/2)); if(dx/(tw/2)+dy/(THh/2)<=1)return{x,y}; } return null; }
+
+// ---- editing ---------------------------------------------------------------
+function pmode(){ return document.getElementById('paintMode').value; }
+function smode(){ return document.getElementById('shape').value; }
+let GEN=false; // true while the rule generator is writing (so it doesn't pin its output)
+function setCell(x,y,name,rmb,flipMode){ const L=st().layout; if(x<0||y<0||!L.g[y]||!L.g[y][x])return false; const c=L.g[y][x];
+  if(flipMode){ if(c.d){ c.f=!c.f; return true; } return false; }
+  if(rmb){ if(c.d){c.d=null;c.b=null;c.f=false;c.pin=false;return true;} return false; }
+  if(!name) return false;
+  if(isTile(name)){ c.t=name; if(!GEN)c.pin=true; ensureImg(name); return true; }
+  if(META[name]){ c.d=name; c.b={id:name,rank:rankOf(name)||'',fp:footOf(name)}; c.f=fBrush; if(!GEN)c.pin=true; ensureImg(name); return true; }
+  return false; }
+function floodFill(x,y,name,rmb){ const g=st().layout.g, target=g[y][x].t, q=[[x,y]], seen={};
+  while(q.length){ const p=q.pop(),X=p[0],Y=p[1]; if(X<0||Y<0||Y>=g.length||X>=g[0].length)continue; const k=X+','+Y; if(seen[k])continue; seen[k]=1; if(g[Y][X].t!==target)continue; setCell(X,Y,name,rmb,false); q.push([X+1,Y],[X-1,Y],[X,Y+1],[X,Y-1]); } }
+function placeShape(hit,name,rmb){ if(!hit)return; const fm=pmode()==='flip', sh=smode(), L=st().layout; let ch=false;
+  if(sh==='rect') return;
+  if(sh==='cell') ch=setCell(hit.x,hit.y,name,rmb,fm);
+  else if(sh==='row'){ for(let x=0;x<L.W;x++) if(setCell(x,hit.y,name,rmb,fm))ch=true; }
+  else if(sh==='col'){ for(let y=0;y<L.H;y++) if(setCell(hit.x,y,name,rmb,fm))ch=true; }
+  else if(sh==='bucket'){ floodFill(hit.x,hit.y,name,rmb); ch=true; }
+  if(ch) saveSoon(); }
+function placeRect(a,b,name,rmb){ const fm=pmode()==='flip', x0=Math.min(a.x,b.x),x1=Math.max(a.x,b.x),y0=Math.min(a.y,b.y),y1=Math.max(a.y,b.y); let ch=false;
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++) if(setCell(x,y,name,rmb,fm))ch=true; if(ch)saveSoon(); }
+let painting=false,pbtn=0;
+function erasing(){ return pmode()==='erase'; }
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('wheel',e=>{ e.preventDefault(); const b=cv.getBoundingClientRect(), mx=e.clientX-b.left,my=e.clientY-b.top, old=zoom;
+  zoom=Math.max(0.3,Math.min(5, zoom*(e.deltaY<0?1.15:1/1.15))); const f=zoom/old, oyB=Math.max(50,cv.height*0.12);
+  panX=(mx-f*(mx-(cv.width/2+panX)))-cv.width/2; panY=(my-f*(my-(oyB+panY)))-oyB; draw(); },{passive:false});
+cv.addEventListener('mousedown',e=>{ const b=cv.getBoundingClientRect(), mx=e.clientX-b.left,my=e.clientY-b.top;
+  if(e.button===1||(e.button===0&&spaceDown)){ panning=true; panStart={x:e.clientX,y:e.clientY,px:panX,py:panY}; e.preventDefault(); return; }
+  painting=true;pbtn=e.button;
+  if(smode()==='rect'){ rectAnchor=cellAt(mx,my); return; }
+  placeShape(cellAt(mx,my), brush, e.button===2||erasing()); draw(); });
+cv.addEventListener('mousemove',e=>{ const b=cv.getBoundingClientRect(), mx=e.clientX-b.left,my=e.clientY-b.top;
+  if(panning){ panX=panStart.px+(e.clientX-panStart.x); panY=panStart.py+(e.clientY-panStart.y); draw(); return; }
+  const h=cellAt(mx,my); if(!hoverCell||!h||h.x!==hoverCell.x||h.y!==hoverCell.y){ hoverCell=h; draw(); }
+  if(painting&&smode()!=='rect'){ placeShape(h, brush, pbtn===2||erasing()); draw(); } });
+window.addEventListener('mouseup',()=>{ if(panning){panning=false;return;} if(painting&&smode()==='rect'&&rectAnchor&&hoverCell){ placeRect(rectAnchor,hoverCell,brush,pbtn===2||erasing()); draw(); } rectAnchor=null; painting=false; });
+window.addEventListener('keydown',e=>{ const inp=document.activeElement&&document.activeElement.tagName==='INPUT'; if(inp)return;
+  if(e.code==='Space') spaceDown=true;
+  else if(e.key==='r'||e.key==='R'){ fBrush=!fBrush; const fb=document.getElementById('flipBtn'); if(fb){ fb.textContent='Flip new: '+(fBrush?'ON':'OFF'); fb.classList.toggle('on',fBrush); } } });
+window.addEventListener('keyup',e=>{ if(e.code==='Space')spaceDown=false; });
+let dragAsset=null;
+cv.addEventListener('dragover',e=>{ e.preventDefault(); cv.classList.add('dragover'); });
+cv.addEventListener('dragleave',e=>{ if(e.target===cv) cv.classList.remove('dragover'); });
+cv.addEventListener('drop',e=>{ e.preventDefault(); cv.classList.remove('dragover'); const name=dragAsset||e.dataTransfer.getData('text/plain'); if(!name)return; const b=cv.getBoundingClientRect(); const hit=cellAt(e.clientX-b.left,e.clientY-b.top); if(hit){ if(setCell(hit.x,hit.y,name,false,false)) saveSoon(); } dragAsset=null; draw(); });
+
+// ---- selectors + palette ---------------------------------------------------
+const tierSel=document.getElementById('tierSel'), biomeSel=document.getElementById('biomeSel');
+TIERS.forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=t.id.replace('_',' '); tierSel.appendChild(o); });
+BIOMES.forEach(b=>{ const o=document.createElement('option'); o.value=b; o.textContent=b; biomeSel.appendChild(o); });
+tierSel.value=curTier; biomeSel.value=curBiome;
+tierSel.onchange=()=>{ curTier=tierSel.value; layout(); buildInfo(); renderPal(); draw(); saveSoon(); };
+biomeSel.onchange=()=>{ curBiome=biomeSel.value; layout(); buildInfo(); renderPal(); draw(); saveSoon(); };
+
+function buildInfo(){ const t=tierDef(); let h='<b style="color:#e8c468">'+t.id.replace('_',' ')+'</b> &middot; '+curBiome+' &middot; '+t.fx+'&times;'+t.fy+' &middot; ranks '+t.ranks.join('/')+' &middot; '+st().layout.count+' buildings';
+  const miss=missingHere(); if(miss.length) h+=' &middot; <span style="color:#ff8080">&#9888; '+miss.length+' missing art: '+miss.slice(0,6).join(', ')+'</span>';
+  document.getElementById('info').innerHTML=h; }
+
+const palscroll=document.getElementById('palscroll');
+let collapsed={all_tile:true,all_prop:true,all_decor:true}, gopen={};
+function swatch(name){ const a=META[name]; if(!a)return null; const d=document.createElement('div'); d.className='sw'+(brush===name?' sel':''); d.title=name;
+  d.innerHTML='<img src="'+a.path+'" draggable="false"><div>'+name+'</div>'; d.draggable=true;
+  d.ondragstart=ev=>{ dragAsset=name; ev.dataTransfer.setData('text/plain',name); };
+  d.onclick=()=>{ brush=name; document.getElementById('brushlbl').textContent=name; renderPal(); }; return d; }
+function section(title, key, render){ const sec=document.createElement('div'); sec.className='psec';
+  const h=document.createElement('div'); h.className='phead'; const open=!collapsed[key];
+  h.innerHTML=(open?'▾ ':'▸ ')+title; h.onclick=()=>{ collapsed[key]=open; renderPal(); }; sec.appendChild(h);
+  if(open) render(sec); palscroll.appendChild(sec); }
+function gridOf(items, cols){ const g=document.createElement('div'); g.className='pgrid'+(cols===4?' b4':''); items.forEach(n=>{ const s=swatch(n); if(s)g.appendChild(s); }); return g; }
+// full browsable library: every asset of a category, grouped, each group lazily expandable
+function allAssetsSection(catId, label){ const items=(HAS?ASSETS:[]).filter(a=>a.cat===catId);
+  section('All '+label+' ('+items.length+')','all_'+catId, sec=>{
+    const groups={}; items.forEach(a=>{ const g=a.group||'(other)'; (groups[g]||(groups[g]=[])).push(a); });
+    Object.keys(groups).sort().forEach(g=>{ const gk='g_'+catId+'_'+g, op=!!gopen[gk];
+      const gh=document.createElement('div'); gh.className='ptype'; gh.style.cursor='pointer';
+      gh.textContent=(op?'▾ ':'▸ ')+g+' ('+groups[g].length+')';
+      gh.onclick=()=>{ gopen[gk]=!op; renderPal(); }; sec.appendChild(gh);
+      if(op) sec.appendChild(gridOf(groups[g].map(a=>a.name),4)); });
+  }); }
+
+function renderPal(){ palscroll.innerHTML='';
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  if(q){ const items=(HAS?ASSETS:[]).filter(a=>(a.cat==='tile'||a.cat==='prop'||a.cat==='decor')&&a.name.toLowerCase().indexOf(q)>=0).slice(0,200).map(a=>a.name);
+    section('Search: "'+q+'" ('+items.length+')','search',sec=>sec.appendChild(gridOf(items,4))); return; }
+  // Buildings by type -> tier
+  section('Buildings','build',sec=>{ BUILD_TYPES.forEach(bt=>{ const lab=document.createElement('div'); lab.className='ptype'; lab.textContent=bt.type; sec.appendChild(lab); sec.appendChild(gridOf(bt.ids,3)); }); });
+  // Ground & paths (biome-aware)
+  section('Ground & paths','ground',sec=>{ sec.appendChild(gridOf([BIOME_GROUND[curBiome]].concat(PATH_TILES),4)); });
+  // Biome props (pick which biome's flora to pull from)
+  section('Biome props','bprops',sec=>{ const row=document.createElement('div'); row.className='selrow'; row.style.margin='2px 0 4px';
+    const sel=document.createElement('select'); sel.style.width='100%'; BIOMES.forEach(b=>{ const o=document.createElement('option'); o.value=b; o.textContent=b+' flora'; if(b===palBiome)o.selected=true; sel.appendChild(o); });
+    sel.onchange=()=>{ palBiome=sel.value; renderPal(); }; row.appendChild(sel); sec.appendChild(row);
+    sec.appendChild(gridOf(biomeProps(palBiome).map(a=>a.name),4)); });
+  // Town decor
+  section('Town decor','decor',sec=>{ sec.appendChild(gridOf(DECOR,4)); });
+  // Full browsable library — every asset, grouped
+  allAssetsSection('tile','tiles');
+  allAssetsSection('prop','props');
+  allAssetsSection('decor','decor');
+}
+let palBiome='forest';
+document.getElementById('search').oninput=renderPal;
+
+// ---- controls + export -----------------------------------------------------
+document.getElementById('regenBtn').onclick=()=>{ const s=st(); s.seed=Math.floor(Math.random()*1e6); s.layout=genLayout(tierDef(),curBiome,s.seed); buildInfo(); draw(); saveSoon(); };
+document.getElementById('clearBtn').onclick=()=>{ clearLayout(st().layout); buildInfo(); draw(); saveSoon(); };
+document.getElementById('zoomin').onclick=()=>{ zoom=Math.min(5,zoom*1.2); draw(); };
+document.getElementById('zoomout').onclick=()=>{ zoom=Math.max(0.3,zoom/1.2); draw(); };
+document.getElementById('resetview').onclick=()=>{ zoom=1;panX=0;panY=0; draw(); };
+document.getElementById('flipBtn').onclick=function(){ fBrush=!fBrush; this.textContent='Flip new: '+(fBrush?'ON':'OFF'); this.classList.toggle('on',fBrush); };
+document.getElementById('paintMode').onchange=()=>{};
+document.getElementById('loadbtn').onclick=()=>document.getElementById('loadf').click();
+document.getElementById('loadf').onchange=e=>{ const f=e.target.files[0]; if(!f)return; f.text().then(t=>{ try{ loadFromExport(JSON.parse(t)); }catch(err){ alert('Could not load JSON: '+err.message); } }); e.target.value=''; };
+document.getElementById('export').onclick=()=>{
+  const out={ generatedBy:'settlement_editor.html', date:new Date().toISOString(), rules:RULES, variants:[] };
+  Object.keys(STATE).forEach(k=>{ const s=STATE[k]; if(!s.layout)return; const [tid,biome]=k.split('|'); const t=TIERS.find(x=>x.id===tid);
+    const buildings=[], props=[]; s.layout.g.forEach((row,y)=>row.forEach((c,x)=>{ if(c.b&&rankOf(c.b.id)) buildings.push({id:c.b.id,rank:c.b.rank,x,y,footprint:c.b.fp,flip:!!c.f,pin:!!c.pin}); else if(c.d) props.push({id:c.d,x,y,flip:!!c.f,pin:!!c.pin}); }));
+    out.variants.push({ tier:tid, biome, footprint:[t.fx,t.fy], plaza:t.plaza, buildingCount:buildings.length, buildings, props,
+      ground:s.layout.g.map(row=>row.map(c=>c.t)) }); });
+  const blob=new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='settlement_export.json'; a.click();
+};
+
+// ---- rules + template-reroll generator -------------------------------------
+function shuffle(a,r){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); const t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function defaultRule(id){ const isB=!!rankOf(id); return { surface:'ground', min:isB?1:0, max:isB?2:6, weight:1, spacing:isB?3:1, clearance:isB?1:0, bias:'none', cluster:false }; }
+function classifySurface(c,x,y,W,H){ if(c.t===ROAD)return 'path'; if(c.t===PLAZA)return 'plaza'; return (x<3||y<3||x>=W-3||y>=H-3)?'edge':'ground'; }
+function ruleReroll(){ const L=st().layout, W=L.W, H=L.H, r=mulberry32(((st().seed||1)*2654435761>>>0)^0x9e3779b9);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(!c.pin){ c.d=null; c.b=null; c.f=false; } }
+  const placedOf={};
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(c.d)(placedOf[c.d]||(placedOf[c.d]=[])).push([x,y]); }
+  const clearOK=(x,y,rad)=>{ for(let dy=-rad;dy<=rad;dy++)for(let dx=-rad;dx<=rad;dx++){ const ny=y+dy,nx=x+dx; if(ny<0||nx<0||ny>=H||nx>=W)continue; if(L.g[ny][nx].d)return false; } return true; };
+  const spaceOK=(id,x,y,sp)=>{ const arr=placedOf[id]; if(!arr)return true; for(const p of arr){ if(Math.abs(p[0]-x)+Math.abs(p[1]-y)<sp)return false; } return true; };
+  GEN=true;
+  const ids=Object.keys(RULES).sort((a,b)=>((rankOf(b)?1:0)-(rankOf(a)?1:0)));
+  const cx=W/2, cy=H/2;
+  const distPath=(x,y)=>{ let best=99; for(let yy=Math.max(0,y-4);yy<=Math.min(H-1,y+4);yy++)for(let xx=Math.max(0,x-4);xx<=Math.min(W-1,x+4);xx++){ if(L.g[yy][xx].t===ROAD)best=Math.min(best,Math.abs(xx-x)+Math.abs(yy-y)); } return best; };
+  for(const id of ids){ if(!META[id]||isTile(id))continue; const ru=RULES[id]; const cnt=ri(r, ru.min|0, Math.max(ru.min|0,ru.max|0)); if(cnt<=0)continue;
+    let cand=[]; for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=L.g[y][x]; if(c.pin||c.d)continue; const surf=classifySurface(c,x,y,W,H); if(ru.surface!=='any'&&surf!==ru.surface)continue; cand.push([x,y]); }
+    if(!cand.length)continue;
+    if(ru.bias==='plaza') cand.sort((a,b)=>Math.hypot(a[0]-cx,a[1]-cy)-Math.hypot(b[0]-cx,b[1]-cy));
+    else if(ru.bias==='edge') cand.sort((a,b)=>Math.hypot(b[0]-cx,b[1]-cy)-Math.hypot(a[0]-cx,a[1]-cy));
+    else if(ru.bias==='paths') cand.sort((a,b)=>distPath(a[0],a[1])-distPath(b[0],b[1]));
+    else shuffle(cand,r);
+    let placed=0;
+    for(const p of cand){ if(placed>=cnt)break; const x=p[0],y=p[1]; if(L.g[y][x].d)continue;
+      if(ru.clearance>0 && !clearOK(x,y,ru.clearance))continue;
+      if(!ru.cluster && ru.spacing>0 && !spaceOK(id,x,y,ru.spacing))continue;
+      L.g[y][x].d=id; L.g[y][x].b={id,rank:rankOf(id)||'',fp:footOf(id)}; ensureImg(id); (placedOf[id]||(placedOf[id]=[])).push([x,y]); placed++; }
+  }
+  GEN=false; buildInfo(); draw(); saveSoon();
+}
+
+// ---- rules panel -----------------------------------------------------------
+let sideMode='pal';
+function setSideMode(m){ sideMode=m;
+  document.getElementById('palscroll').style.display=m==='pal'?'block':'none';
+  document.getElementById('search').style.display=m==='pal'?'block':'none';
+  document.getElementById('rulesscroll').style.display=m==='rules'?'block':'none';
+  document.getElementById('modePal').classList.toggle('on',m==='pal');
+  document.getElementById('modeRules').classList.toggle('on',m==='rules');
+  if(m==='rules') renderRules(); }
+function renderRules(){ const host=document.getElementById('rulesscroll'); host.innerHTML='';
+  const add=document.createElement('button'); add.textContent='+ Add current brush to rules'; add.style.cssText='width:100%;margin-bottom:6px';
+  add.onclick=()=>{ if(!brush){ alert('Pick an asset in the Palette first.'); return; } if(!RULES[brush])RULES[brush]=defaultRule(brush); saveSoon(); renderRules(); };
+  host.appendChild(add);
+  const note=document.createElement('div'); note.className='sub'; note.style.margin='0 0 8px'; note.textContent='Pin paths/buildings on the map (anything you place is pinned), then "Reroll within rules" fills the rest using these rules.';
+  host.appendChild(note);
+  const ids=Object.keys(RULES);
+  if(!ids.length){ const e=document.createElement('div'); e.className='sub'; e.textContent='No rules yet — pick an asset in the Palette, switch back here, and Add it.'; host.appendChild(e); return; }
+  ids.forEach(id=>{ const ru=RULES[id]; const box=document.createElement('div'); box.style.cssText='background:#23262d;border:1px solid #2a2f3a;border-radius:6px;padding:6px;margin-bottom:6px';
+    const hd=document.createElement('div'); hd.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:4px';
+    const im=document.createElement('img'); im.src=META[id]?META[id].path:''; im.style.cssText='width:26px;height:26px;image-rendering:pixelated;object-fit:contain;background:#15171c;border-radius:3px';
+    const nm=document.createElement('div'); nm.textContent=id; nm.style.cssText='flex:1;font-size:11px;color:#cde;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'; if(!META[id])nm.style.color='#ff8080';
+    const rm=document.createElement('span'); rm.textContent='✕'; rm.style.cssText='cursor:pointer;color:#9aa'; rm.onclick=()=>{ delete RULES[id]; saveSoon(); renderRules(); };
+    hd.append(im,nm,rm); box.appendChild(hd);
+    const mkSel=(label,key,opts)=>{ const w=document.createElement('label'); w.style.cssText='font-size:10px;color:#9aa;display:flex;justify-content:space-between;align-items:center;margin:2px 0';
+      const s=document.createElement('select'); s.style.cssText='font-size:11px;background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:3px'; opts.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; if(ru[key]===o)op.selected=true; s.appendChild(op); }); s.onchange=()=>{ ru[key]=s.value; saveSoon(); }; w.append(document.createTextNode(label),s); return w; };
+    const mkNum=(label,key,mn,mx)=>{ const w=document.createElement('label'); w.style.cssText='font-size:10px;color:#9aa;display:flex;justify-content:space-between;align-items:center;margin:2px 0';
+      const s=document.createElement('input'); s.type='number'; s.min=mn; s.max=mx; s.value=ru[key]; s.style.cssText='width:56px;font-size:11px;background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:3px'; s.oninput=()=>{ ru[key]=+s.value; saveSoon(); }; w.append(document.createTextNode(label),s); return w; };
+    box.appendChild(mkSel('surface','surface',['ground','path','plaza','edge','any']));
+    const r1=document.createElement('div'); r1.style.cssText='display:flex;gap:6px'; r1.append(mkNum('min','min',0,99),mkNum('max','max',0,99)); box.appendChild(r1);
+    const r2=document.createElement('div'); r2.style.cssText='display:flex;gap:6px'; r2.append(mkNum('spacing','spacing',0,20),mkNum('clearance','clearance',0,8)); box.appendChild(r2);
+    box.appendChild(mkSel('bias','bias',['none','plaza','edge','paths']));
+    const cl=document.createElement('label'); cl.style.cssText='font-size:10px;color:#9aa;display:flex;gap:6px;align-items:center;margin-top:2px'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!ru.cluster; cb.onchange=()=>{ ru.cluster=cb.checked; saveSoon(); }; cl.append(cb,document.createTextNode('cluster (allow adjacency)')); box.appendChild(cl);
+    host.appendChild(box); });
+}
+document.getElementById('modePal').onclick=()=>setSideMode('pal');
+document.getElementById('modeRules').onclick=()=>setSideMode('rules');
+document.getElementById('rerollBtn').onclick=()=>{ st().seed=Math.floor(Math.random()*1e6); ruleReroll(); };
+document.getElementById('clearFillerBtn').onclick=()=>{ const L=st().layout; for(const row of L.g)for(const c of row){ if(!c.pin){ c.d=null;c.b=null;c.f=false; } } buildInfo(); draw(); saveSoon(); };
+document.getElementById('unpinBtn').onclick=()=>{ const L=st().layout; for(const row of L.g)for(const c of row) c.pin=false; draw(); saveSoon(); };
+
+// ---- boot ------------------------------------------------------------------
+window.onresize=()=>{ layout(); draw(); };
+restoreState(); tierSel.value=curTier; biomeSel.value=curBiome;
+buildInfo(); renderPal();
+setTimeout(()=>{ layout(); draw(); },120);
+setInterval(draw, 700);
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

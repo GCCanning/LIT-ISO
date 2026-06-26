@@ -1,0 +1,489 @@
+{
+  "schema": "litiso.biome_rules_assignments.v1",
+  "exportedAt": "2026-06-13T04:22:33",
+  "seedGeneratedAt": "2026-06-12T17:19:45",
+  "assignments": {
+    "beach": {
+      "base": [
+        "water_deep",
+        "sand_2",
+        "sand_1"
+      ],
+      "accent": [],
+      "props": [
+        "shore_stone",
+        "rock_outcrop"
+      ],
+      "notes": ""
+    },
+    "coast": {
+      "base": [
+        "water_deep",
+        "sand_2",
+        "dirt"
+      ],
+      "accent": [],
+      "props": [
+        "shore_stone",
+        "rock"
+      ],
+      "notes": ""
+    },
+    "forest": {
+      "base": [
+        "forest_grass_base"
+      ],
+      "accent": [
+        "forest_floor",
+        "forest_leaf_litter",
+        "forest_moss_grass",
+        "forest_dark_underbrush",
+        "forest_grass_tufts",
+        "canopy_1",
+        "canopy_2",
+        "canopy_3",
+        "forest_mud_path"
+      ],
+      "props": [
+        "forest_oak_tree",
+        "forest_deep_oak_tree",
+        "forest_pine",
+        "forest_moss_bush",
+        "forest_bush",
+        "plains_rock_v2_0",
+        "plains_rock_v2_1",
+        "plains_rock_v2_2",
+        "plains_rock_v2_3",
+        "plains_rock",
+        "shared_gray_rock",
+        "forest_mushrooms",
+        "stump",
+        "log",
+        "bush",
+        "campfire_new",
+        "forest_dead_tree",
+        "forest_stump",
+        "glowbug",
+        "ore_copper",
+        "plains_rock_v2",
+        "plains_rock_v2_0_big",
+        "plains_rock_v2_1_big",
+        "plains_rock_v2_2_big",
+        "plains_rock_v2_3_big",
+        "tree",
+        "wisp"
+      ],
+      "notes": ""
+    },
+    "meadow": {
+      "base": [
+        "plains2_02",
+        "plains2_05",
+        "plains2_07",
+        "plains2_11",
+        "plains2_15",
+        "plains2_08",
+        "plains2_14",
+        "grass_1"
+      ],
+      "accent": [
+        "plains2_04",
+        "plains2_00",
+        "plains2_10",
+        "plains2_03",
+        "plains2_01",
+        "plains2_13",
+        "plains2_12",
+        "plains2_06",
+        "plains2_09",
+        "plains_flower_grass",
+        "plains_grass_tufts",
+        "grass_2",
+        "soil",
+        "stone_path"
+      ],
+      "props": [
+        "plains_tree_v2_0",
+        "plains_tree_v2_1",
+        "plains_tree_v2_3",
+        "plains_tree_v2_0_young",
+        "plains_tree_v2_1_young",
+        "plains_tree_v2_3_young",
+        "plains_willow",
+        "plains_tree",
+        "plains_small_tree",
+        "flower",
+        "flower_tulip",
+        "tuft",
+        "plains_bush_v2_0",
+        "plains_bush_v2_1",
+        "plains_bush_v2_2",
+        "plains_bush_v2_3",
+        "plains_bush",
+        "plains_dry_bush",
+        "plains_rock_v2_0",
+        "plains_rock_v2_1",
+        "plains_rock_v2_2",
+        "plains_rock_v2_3",
+        "plains_rock",
+        "shared_gray_rock",
+        "bush",
+        "campfire_new",
+        "glowbug",
+        "plains_bush_v2_0_big",
+        "plains_bush_v2_1_big",
+        "plains_bush_v2_2_big",
+        "plains_bush_v2_3_big",
+        "plains_rock_v2",
+        "plains_rock_v2_0_big",
+        "plains_rock_v2_1_big",
+        "plains_rock_v2_2_big",
+        "plains_rock_v2_3_big",
+        "plains_tree_v2",
+        "tree",
+        "wisp"
+      ],
+      "notes": ""
+    },
+    "mountain": {
+      "base": [
+        "grass_3",
+        "stone_scree",
+        "stone_cracked"
+      ],
+      "accent": [
+        "stone_mossy",
+        "badlands_1",
+        "stone_snowcap",
+        "stone_block"
+      ],
+      "props": [
+        "plains_rock_v2_0",
+        "plains_rock_v2_1",
+        "plains_rock_v2_2",
+        "plains_rock_v2_3",
+        "plains_rock",
+        "shared_gray_rock",
+        "copper_vein",
+        "pine",
+        "ore_copper",
+        "ore_gold",
+        "ore_iron",
+        "ore_manacrystal",
+        "ore_silver",
+        "ore_starmetal",
+        "plains_rock_v2",
+        "plains_rock_v2_0_big",
+        "plains_rock_v2_1_big",
+        "plains_rock_v2_2_big",
+        "plains_rock_v2_3_big"
+      ],
+      "notes": ""
+    },
+    "snow": {
+      "base": [
+        "snow2_03",
+        "snow2_04",
+        "snow2_07",
+        "snow2_12",
+        "snow2_13",
+        "snow2_00",
+        "snow2_01",
+        "snow2_02",
+        "snow2_05",
+        "snow2_06",
+        "snow2_14",
+        "snow2_15"
+      ],
+      "accent": [
+        "snow2_08",
+        "snow2_09",
+        "snow2_10",
+        "snow2_11"
+      ],
+      "props": [
+        "pine",
+        "plains_rock_v2_0",
+        "plains_rock_v2_1",
+        "plains_rock_v2_2",
+        "plains_rock_v2_3",
+        "plains_rock",
+        "shared_gray_rock",
+        "ore_gold",
+        "ore_silver",
+        "plains_rock_v2",
+        "plains_rock_v2_0_big",
+        "plains_rock_v2_1_big",
+        "plains_rock_v2_2_big",
+        "plains_rock_v2_3_big"
+      ],
+      "notes": ""
+    },
+    "water": {
+      "base": [
+        "water",
+        "water_deep",
+        "water_deep_2",
+        "water_deep_3",
+        "water_swell_1",
+        "water_swell_2"
+      ],
+      "accent": [],
+      "props": [
+        "shore_stone"
+      ],
+      "notes": ""
+    },
+    "dungeon": {
+      "base": [
+        "dungeon2_00",
+        "dungeon2_01",
+        "dungeon2_02",
+        "dungeon2_03",
+        "dungeon2_04",
+        "dungeon2_05",
+        "dungeon2_06",
+        "dungeon2_07",
+        "dungeon2_08",
+        "dungeon2_09",
+        "dungeon2_10",
+        "dungeon2_11",
+        "dungeon2_12",
+        "dungeon2_13",
+        "dungeon2_14",
+        "dungeon2_15"
+      ],
+      "accent": [],
+      "props": [
+        "dungeon_chest_wood",
+        "ore_manacrystal",
+        "ore_starmetal"
+      ],
+      "notes": ""
+    }
+  },
+  "unassigned": {
+    "tiles": [
+      "badlands_2",
+      "dungeon_floor_1",
+      "dungeon_floor_2",
+      "dungeon_floor_3",
+      "dungeon_floor_4",
+      "dungeon_floor_5"
+    ],
+    "props": [
+      "alchemy_table",
+      "anvil",
+      "bar_counter",
+      "book_stack",
+      "brazier",
+      "candle_lantern",
+      "cooking_station",
+      "crafting_table",
+      "furnace",
+      "grindstone",
+      "guild_banner_stand",
+      "guild_hall_r1",
+      "guild_hall_r2",
+      "guild_hall_r3",
+      "guild_notice_board",
+      "guild_round_table",
+      "keg_rack",
+      "lantern_post",
+      "library_r1",
+      "library_r2",
+      "library_r3",
+      "loom",
+      "market_stall_blue",
+      "market_stall_red",
+      "rune_station",
+      "sawmill_bench",
+      "shop_r1",
+      "shop_r2",
+      "shop_r3",
+      "tanning_rack",
+      "tavern_r1",
+      "tavern_r2",
+      "tavern_r3",
+      "tavern_table",
+      "torch_standing",
+      "torch_wall",
+      "weapon_rack"
+    ],
+    "notes": "Remaining ids are retire candidates (see retireCandidates) pending D2/D5/D6 settlement-interior milestones or cleanup-item dedup; not yet deleted from assetIndex."
+  },
+  "retireCandidates": [
+    {
+      "id": "alchemy_table",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "anvil",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "bar_counter",
+      "reason": "tavern interior furniture (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "book_stack",
+      "reason": "library interior furniture (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "brazier",
+      "reason": "interior/dungeon lighting prop, belongs to D6 interiors / dungeon room dressing \u2014 not outdoor scatter"
+    },
+    {
+      "id": "candle_lantern",
+      "reason": "interior lighting prop, belongs to D6 interiors \u2014 not outdoor scatter"
+    },
+    {
+      "id": "cooking_station",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "crafting_table",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "furnace",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "grindstone",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "guild_banner_stand",
+      "reason": "guild exterior/interior decor (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "guild_hall_r1",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "guild_hall_r2",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "guild_hall_r3",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "guild_notice_board",
+      "reason": "guild interior decor (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "guild_round_table",
+      "reason": "guild interior furniture (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "keg_rack",
+      "reason": "tavern interior furniture (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "lantern_post",
+      "reason": "settlement/road lighting prop, belongs to D2/D4 town & road dressing \u2014 not implemented yet"
+    },
+    {
+      "id": "library_r1",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "library_r2",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "library_r3",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "loom",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "market_stall_blue",
+      "reason": "town lot prop (D2/D5 settlements not implemented)"
+    },
+    {
+      "id": "market_stall_red",
+      "reason": "town lot prop (D2/D5 settlements not implemented)"
+    },
+    {
+      "id": "rune_station",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "sawmill_bench",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "shop_r1",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "shop_r2",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "shop_r3",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "tanning_rack",
+      "reason": "interior crafting station (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "tavern_r1",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "tavern_r2",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "tavern_r3",
+      "reason": "settlement building art, ranked variant (D2 town lots not implemented)"
+    },
+    {
+      "id": "tavern_table",
+      "reason": "tavern interior furniture (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "torch_standing",
+      "reason": "interior/dungeon lighting prop, belongs to D6 interiors / dungeon room dressing \u2014 not outdoor scatter"
+    },
+    {
+      "id": "torch_wall",
+      "reason": "wall-mounted lighting prop, belongs to D6 interiors / dungeon room dressing \u2014 not outdoor scatter"
+    },
+    {
+      "id": "weapon_rack",
+      "reason": "guild interior furniture (D6 settlement interiors, not yet wired)"
+    },
+    {
+      "id": "badlands_2",
+      "reason": "desert/badlands biome not implemented (cleanup item 5); only 2 badlands tiles exist, insufficient for a base pool"
+    },
+    {
+      "id": "dungeon_floor_1",
+      "reason": "duplicates promoted dungeon2_* tile family; also mis-sized (256x512 at PPU32) per cleanup item 2 \u2014 retire candidate"
+    },
+    {
+      "id": "dungeon_floor_2",
+      "reason": "duplicates promoted dungeon2_* tile family; also mis-sized (256x512 at PPU32) per cleanup item 2 \u2014 retire candidate"
+    },
+    {
+      "id": "dungeon_floor_3",
+      "reason": "duplicates promoted dungeon2_* tile family; also mis-sized (256x512 at PPU32) per cleanup item 2 \u2014 retire candidate"
+    },
+    {
+      "id": "dungeon_floor_4",
+      "reason": "duplicates promoted dungeon2_* tile family; also mis-sized (256x512 at PPU32) per cleanup item 2 \u2014 retire candidate"
+    },
+    {
+      "id": "dungeon_floor_5",
+      "reason": "duplicates promoted dungeon2_* tile family; also mis-sized (256x512 at PPU32) per cleanup item 2 \u2014 retire candidate"
+    }
+  ]
+}

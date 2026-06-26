@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wall Slicer — split corner walls into separate left/right pieces</title>
+<style>
+  body{margin:0;background:#15171c;color:#ddd;font:13px Segoe UI,Arial,sans-serif;padding:14px}
+  h1{font-size:16px;color:#e8c468;margin:0 0 4px}
+  .sub{color:#889;font-size:12px;margin-bottom:12px;line-height:1.5;max-width:760px}
+  .ctl{background:#1d2027;border:1px solid #333;border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .ctl label{color:#9aa}
+  input[type=range]{width:240px;vertical-align:middle}
+  .val{color:#e8c468;font-weight:600}
+  .row{display:flex;gap:18px;align-items:flex-start;background:#1d2027;border:1px solid #2a2f3a;border-radius:8px;padding:12px;margin-bottom:14px;flex-wrap:wrap}
+  .cell{text-align:center}
+  .cell h3{font-size:12px;color:#e8c468;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+  canvas{image-rendering:pixelated;background:repeating-conic-gradient(#22252c 0% 25%,#1a1d23 0% 50%) 0/16px 16px;border:1px solid #3a4150;border-radius:4px}
+  button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:5px;padding:6px 12px;cursor:pointer;font-size:12px;margin-top:6px}
+  button:hover{background:#33384a}
+  button.primary{background:#2d5a2d;border-color:#4a4}
+  a.toolLink{color:#9cc4ff;font-size:12px}
+  .note{color:#778;font-size:11px;margin-top:8px}
+</style>
+</head>
+<body>
+<h1>Wall Slicer</h1>
+<div class="sub">Each source is a back-corner where a <b>left</b> wall and a <b>right</b> wall meet. Drag the
+<b>seam</b> to the exact column where they join (default = centre); the left/right previews update live.
+Download each half — they save as clean separate wall pieces (tight-cropped, transparent). Then drop the
+PNGs into <code>assets/tavern_pack/</code> and tell Claude "walls sliced" to register them.</div>
+
+<div class="ctl">
+  <label>Seam X (source px): <span class="val" id="seamVal">64</span></label>
+  <input type="range" id="seam" min="20" max="108" value="64">
+  <label><input type="checkbox" id="trim" checked> tight-crop downloads</label>
+  <label>clean noise <span class="val" id="thVal">60</span></label>
+  <input type="range" id="alphaTh" min="0" max="200" value="60" style="width:150px">
+  <label>trim bottom <span class="val" id="tbVal">0</span></label>
+  <input type="range" id="trimBottom" min="0" max="48" value="0" style="width:120px">
+  <button class="primary" id="dlall">⤓ Download all 6</button>
+  <a class="toolLink" href="interior_editor.html">→ Interior Editor</a>
+</div>
+
+<div id="rows"></div>
+<div class="note">Tip: the seam is shared across all three (the art is aligned). If one needs a different cut, slice it, nudge the seam, and re-download just that one.</div>
+
+<script>
+const SRC=[
+  {key:'plain',   file:'assets/tavern_pack/tp_wall_plain.png'},
+  {key:'windows', file:'assets/tavern_pack/tp_wall_windows.png'},
+  {key:'doors',   file:'assets/tavern_pack/tp_wall_doors.png'}
+];
+const SCALE=3;
+const rowsEl=document.getElementById('rows');
+const imgs={};
+let seam=64;
+
+function loadAll(cb){ let n=0; SRC.forEach(s=>{ const im=new Image(); im.onload=()=>{ imgs[s.key]=im; if(++n===SRC.length)cb(); };
+  im.onerror=()=>{ if(++n===SRC.length)cb(); }; im.src=s.file; }); }
+
+function sideCanvas(im, side, seamX, trim){
+  // full-size scratch with only the kept side
+  const w=im.naturalWidth,h=im.naturalHeight; const c=document.createElement('canvas'); c.width=w;c.height=h;
+  const x=c.getContext('2d'); x.imageSmoothingEnabled=false; x.drawImage(im,0,0);
+  const id=x.getImageData(0,0,w,h); const d=id.data;
+  const TH=(window._alphaTh!=null)?window._alphaTh:60;
+  // 1) keep only this side, and clear faint/semi-transparent noise below the threshold
+  for(let i=0;i<w*h;i++){ const xx=i%w; const keep = side==='left' ? xx<seamX : xx>=seamX; if(!keep || d[i*4+3]<TH) d[i*4+3]=0; }
+  // 1b) optionally chop stray pixels off the bottom of the frame
+  const TB=(window._trimBottom!=null)?window._trimBottom:0;
+  if(TB>0)for(let yy=Math.max(0,h-TB);yy<h;yy++)for(let xx=0;xx<w;xx++) d[(yy*w+xx)*4+3]=0;
+  // 2) despeckle: clear lone opaque pixels (fewer than 2 opaque orthogonal neighbours) — kills stray bottom dots
+  const op=new Uint8Array(w*h); for(let i=0;i<w*h;i++) op[i]=d[i*4+3]>0?1:0;
+  for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){ const i=yy*w+xx; if(!op[i])continue;
+    let n=0; if(xx>0&&op[i-1])n++; if(xx<w-1&&op[i+1])n++; if(yy>0&&op[i-w])n++; if(yy<h-1&&op[i+w])n++;
+    if(n<2) d[i*4+3]=0; }
+  x.putImageData(id,0,0);
+  if(!trim) return c;
+  // trim to content bbox (now noise-free)
+  let minx=w,miny=h,maxx=-1,maxy=-1;
+  for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){ if(d[(yy*w+xx)*4+3]>0){ if(xx<minx)minx=xx; if(xx>maxx)maxx=xx; if(yy<miny)miny=yy; if(yy>maxy)maxy=yy; } }
+  if(maxx<0) return c;
+  const tc=document.createElement('canvas'); tc.width=maxx-minx+1; tc.height=maxy-miny+1;
+  tc.getContext('2d').drawImage(c,minx,miny,tc.width,tc.height,0,0,tc.width,tc.height);
+  return tc;
+}
+
+function render(){
+  document.getElementById('seamVal').textContent=seam;
+  const trim=document.getElementById('trim').checked;
+  rowsEl.innerHTML='';
+  SRC.forEach(s=>{ const im=imgs[s.key]; const row=document.createElement('div'); row.className='row';
+    if(!im){ row.innerHTML='<div class="cell"><h3>'+s.key+'</h3><div class="note">could not load '+s.file+'</div></div>'; rowsEl.appendChild(row); return; }
+    // source with seam line
+    const src=document.createElement('canvas'); src.width=im.naturalWidth*SCALE; src.height=im.naturalHeight*SCALE;
+    const sx=src.getContext('2d'); sx.imageSmoothingEnabled=false; sx.drawImage(im,0,0,src.width,src.height);
+    sx.strokeStyle='#e8c468'; sx.lineWidth=2; sx.beginPath(); sx.moveTo(seam*SCALE,0); sx.lineTo(seam*SCALE,src.height); sx.stroke();
+    const left=sideCanvas(im,'left',seam,trim), right=sideCanvas(im,'right',seam,trim);
+    const lc=document.createElement('canvas'); lc.width=left.width*SCALE; lc.height=left.height*SCALE; lc.getContext('2d').imageSmoothingEnabled=false; lc.getContext('2d').drawImage(left,0,0,lc.width,lc.height);
+    const rc=document.createElement('canvas'); rc.width=right.width*SCALE; rc.height=right.height*SCALE; rc.getContext('2d').imageSmoothingEnabled=false; rc.getContext('2d').drawImage(right,0,0,rc.width,rc.height);
+    function cell(title,canvas,dlName,sliced){ const d=document.createElement('div'); d.className='cell'; const h=document.createElement('h3'); h.textContent=title; d.appendChild(h); d.appendChild(canvas);
+      if(dlName){ const b=document.createElement('button'); b.textContent='⤓ '+dlName+'.png'; b.onclick=()=>downloadCanvas(sliced,dlName); d.appendChild(document.createElement('br')); d.appendChild(b);} return d; }
+    // cleaned full corner (no split) — same noise-clean, keep both walls; overwrite tp_wall_<key>.png
+    const full=sideCanvas(im,'left',99999,trim);
+    const fc=document.createElement('canvas'); fc.width=full.width*SCALE; fc.height=full.height*SCALE; fc.getContext('2d').imageSmoothingEnabled=false; fc.getContext('2d').drawImage(full,0,0,fc.width,fc.height);
+    row.appendChild(cell(s.key+' — source (seam)',src,null));
+    row.appendChild(cell('FULL (cleaned)',fc,'tp_wall_'+s.key,full));
+    row.appendChild(cell('LEFT wall',lc,'tp_wall_left_'+s.key,left));
+    row.appendChild(cell('RIGHT wall',rc,'tp_wall_right_'+s.key,right));
+    rowsEl.appendChild(row);
+  });
+}
+function downloadCanvas(canvas,name){ canvas.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name+'.png'; a.click(); }); }
+document.getElementById('seam').oninput=function(){ seam=+this.value; render(); };
+document.getElementById('trim').onchange=render;
+window._alphaTh=60; window._trimBottom=0;
+document.getElementById('alphaTh').oninput=function(){ window._alphaTh=+this.value; document.getElementById('thVal').textContent=this.value; render(); };
+document.getElementById('trimBottom').oninput=function(){ window._trimBottom=+this.value; document.getElementById('tbVal').textContent=this.value; render(); };
+document.getElementById('dlall').onclick=()=>{ const trim=document.getElementById('trim').checked;
+  SRC.forEach(s=>{ const im=imgs[s.key]; if(!im)return;
+    downloadCanvas(sideCanvas(im,'left',seam,trim),'tp_wall_left_'+s.key);
+    setTimeout(()=>downloadCanvas(sideCanvas(im,'right',seam,trim),'tp_wall_right_'+s.key),150); }); };
+loadAll(render);
+</script>
+</body>
+</html>

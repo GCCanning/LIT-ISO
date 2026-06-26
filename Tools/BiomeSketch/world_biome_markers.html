@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>LIT-ISO - World Biome Flyover</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#15171c;color:#ddd;display:flex;height:100vh;overflow:hidden}
+    #side{width:320px;min-width:320px;background:#1d2027;border-right:1px solid #2a2f3a;padding:12px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+    h1{font-size:15px;color:#e8c468;margin:0}
+    .sub{font-size:11px;color:#889;line-height:1.4}
+    .panel{border:1px solid #2a2f3a;background:#171a20;border-radius:6px;padding:8px}
+    .panel h2{font-size:12px;color:#bcd;margin:0 0 7px}
+    .row{display:flex;align-items:center;gap:6px;margin:5px 0;font-size:12px}
+    button{background:#2a2f3a;color:#ddd;border:1px solid #444;border-radius:4px;padding:4px 8px;cursor:pointer;font:12px Segoe UI,Arial}
+    button:hover{border-color:#9cc4ff}
+    label{display:flex;align-items:center;gap:6px;color:#b9c0ca}
+    input[type=checkbox]{margin:0}
+    #meta,#detail{font-size:12px;color:#9aa;line-height:1.55}
+    #detail b{color:#e8c468;font-weight:600}
+    #legend{display:grid;grid-template-columns:1fr;gap:3px;overflow:auto;min-height:0}
+    #legend div{display:flex;align-items:center;gap:8px;font-size:12px}
+    #legend span.sw{width:14px;height:14px;border-radius:3px;border:1px solid #0008;flex-shrink:0}
+    #main{flex:1;position:relative;overflow:hidden;background:#0c0d10}
+    #cv{width:100%;height:100%;display:block;image-rendering:pixelated;cursor:grab}
+    #cv.dragging{cursor:grabbing}
+    #hud{position:absolute;left:10px;top:10px;background:#000a;color:#aeb7c4;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-size:11px;pointer-events:none}
+    #warn{color:#f0ba74}
+    #err{margin:auto;color:#e88;font-size:13px;line-height:1.6;max-width:620px;padding:20px}
+    .grow{flex:1;min-height:0}
+  </style>
+</head>
+<body>
+  <div id="side">
+    <h1>World Biome Flyover</h1>
+    <div class="sub">Runtime sampler export. Wheel zooms, drag or Space+drag flies, WASD/arrow keys pan. Hover a tile for exact generated data.</div>
+
+    <div class="panel">
+      <h2>View</h2>
+      <div class="row">
+        <button id="zoomout">-</button>
+        <button id="zoomin">+</button>
+        <button id="resetview">Reset</button>
+        <span id="zoomval" style="margin-left:auto;color:#889">x1.00</span>
+      </div>
+      <div class="row"><label><input id="showTiles" type="checkbox" checked> surface art</label><label><input id="showHeight" type="checkbox" checked> height</label></div>
+      <div class="row"><label><input id="showNodes" type="checkbox" checked> nodes</label><label><input id="showGrid" type="checkbox" checked> grid</label></div>
+      <div class="row"><label><input id="showMarkers" type="checkbox" checked> biome labels</label></div>
+    </div>
+
+    <div class="panel">
+      <h2>Export</h2>
+      <div id="meta">loading...</div>
+    </div>
+
+    <div class="panel">
+      <h2>Hovered Tile</h2>
+      <div id="detail">Move over the map.</div>
+    </div>
+
+    <div class="panel grow">
+      <h2>Biomes</h2>
+      <div id="legend"></div>
+    </div>
+  </div>
+
+  <div id="main">
+    <canvas id="cv"></canvas>
+    <div id="hud">loading...</div>
+  </div>
+
+  <script src="assets.js"></script>
+  <script src="world_biome_map_data.js"></script>
+  <script>
+    const PALETTE={
+      meadow:'#6db24f',plains:'#7cc057',forest:'#2f6b34',pineforest:'#27562f',
+      beach:'#e6d29a',sand:'#e6d29a',desert:'#d9c873',mountain:'#8d8f96',alpine:'#b9bcc4',
+      snow:'#eaf2f6',tundra:'#cdd9dc',swamp:'#5d6b46',marsh:'#5d6b46',
+      water:'#2f6f9e',ocean:'#235a86',coast:'#4f8fb0',void:'#222'
+    };
+
+    const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+    const META={}, imgs={};
+    let data=null, zoom=1, panX=0, panY=0, hover=null, panning=false, panStart=null, spaceDown=false;
+    let drawQueued=false, mouse={x:0,y:0};
+
+    if(typeof ASSETS!=='undefined'){
+      ASSETS.forEach(a=>{
+        META[a.name]=a;
+        const im=new Image();
+        im.onload=()=>requestDraw();
+        im.src=a.path;
+        imgs[a.name]=im;
+      });
+    }
+
+    function colorFor(id){
+      if(PALETTE[id]) return PALETTE[id];
+      const hash=Math.abs([...String(id||'void')].reduce((a,c)=>a*33+c.charCodeAt(0),7))%0xffffff;
+      return '#'+hash.toString(16).padStart(6,'0');
+    }
+
+    function showError(message){
+      document.getElementById('main').innerHTML=
+        '<div id="err">No usable <b>world_biome_map_data.js</b> found in this folder.<br><br>'+
+        'In Unity Play mode run <b>Tools &gt; LIT-ISO &gt; Export Biome Flyover (500 tiles)</b>, then reload this page.<br><br>'+
+        'Error: '+message+'</div>';
+    }
+
+    function hasDetailedData(){
+      return data && Array.isArray(data.surfaceGrid) && Array.isArray(data.heightGrid);
+    }
+
+    function resize(){
+      const r=cv.getBoundingClientRect();
+      const dpr=Math.max(1,window.devicePixelRatio||1);
+      cv.width=Math.max(1,Math.floor(r.width*dpr));
+      cv.height=Math.max(1,Math.floor(r.height*dpr));
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      requestDraw();
+    }
+
+    function viewW(){ return cv.clientWidth || cv.width; }
+    function viewH(){ return cv.clientHeight || cv.height; }
+    function tileW(){ return Math.max(4,48*zoom); }
+    function tileH(){ return tileW()/2; }
+    function heightStep(){ return tileW()*0.28; }
+    function originX(){ return viewW()/2+panX; }
+    function originY(){ return viewH()/2+panY; }
+
+    function worldFor(ix,iy){
+      return {x:-data.radius+ix*data.step, y:-data.radius+iy*data.step};
+    }
+
+    function project(wx,wy,h){
+      const tw=tileW(), th=tw/2;
+      return {
+        x:originX()+(wx-wy)*tw/2,
+        y:originY()+(wx+wy)*th/2-(document.getElementById('showHeight').checked?h:0)*heightStep()
+      };
+    }
+
+    function screenToWorld(sx,sy){
+      const tw=tileW(), th=tw/2;
+      const u=(sx-originX())/(tw/2);
+      const v=(sy-originY())/(th/2);
+      return {x:(u+v)/2, y:(v-u)/2};
+    }
+
+    function clampIndex(v){ return Math.max(0,Math.min(data.n-1,v)); }
+    function biomeAt(ix,iy){ return data.legend[data.grid[iy][ix]] || 'void'; }
+    function surfaceAt(ix,iy){
+      if(!hasDetailedData()) return null;
+      const idx=data.surfaceGrid[iy][ix];
+      return data.surfaceLegend && idx>=0 ? data.surfaceLegend[idx] : null;
+    }
+    function nodeAt(ix,iy){
+      if(!hasDetailedData()) return null;
+      const idx=data.nodeGrid && data.nodeGrid[iy] ? data.nodeGrid[iy][ix] : -1;
+      return data.nodeLegend && idx>=0 ? data.nodeLegend[idx] : null;
+    }
+    function heightAt(ix,iy){
+      return hasDetailedData() ? data.heightGrid[iy][ix] : 0;
+    }
+
+    function visibleBounds(){
+      const pts=[
+        screenToWorld(-80,-80), screenToWorld(viewW()+80,-80),
+        screenToWorld(-80,viewH()+120), screenToWorld(viewW()+80,viewH()+120)
+      ];
+      let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+      pts.forEach(p=>{ minX=Math.min(minX,p.x); maxX=Math.max(maxX,p.x); minY=Math.min(minY,p.y); maxY=Math.max(maxY,p.y); });
+      const margin=Math.max(8,data.step*3);
+      return {
+        ix0:clampIndex(Math.floor((minX-data.step*margin+data.radius)/data.step)),
+        ix1:clampIndex(Math.ceil((maxX+data.step*margin+data.radius)/data.step)),
+        iy0:clampIndex(Math.floor((minY-data.step*margin+data.radius)/data.step)),
+        iy1:clampIndex(Math.ceil((maxY+data.step*margin+data.radius)/data.step))
+      };
+    }
+
+    function requestDraw(){
+      if(drawQueued) return;
+      drawQueued=true;
+      requestAnimationFrame(()=>{ drawQueued=false; draw(); });
+    }
+
+    function drawDiamond(p, sw, sh, fill, stroke){
+      ctx.beginPath();
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(p.x+sw/2,p.y+sh/2);
+      ctx.lineTo(p.x,p.y+sh);
+      ctx.lineTo(p.x-sw/2,p.y+sh/2);
+      ctx.closePath();
+      ctx.fillStyle=fill;
+      ctx.fill();
+      if(stroke){
+        ctx.strokeStyle=stroke;
+        ctx.lineWidth=1;
+        ctx.stroke();
+      }
+    }
+
+    function drawHeightFaces(p, base, sw, sh){
+      if(base.y<=p.y+sh+0.5) return;
+      ctx.fillStyle='rgba(36,29,21,0.92)';
+      ctx.beginPath();
+      ctx.moveTo(p.x-sw/2,p.y+sh/2);
+      ctx.lineTo(p.x,p.y+sh);
+      ctx.lineTo(base.x,base.y+sh);
+      ctx.lineTo(base.x-sw/2,base.y+sh/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle='rgba(46,37,26,0.92)';
+      ctx.beginPath();
+      ctx.moveTo(p.x+sw/2,p.y+sh/2);
+      ctx.lineTo(p.x,p.y+sh);
+      ctx.lineTo(base.x,base.y+sh);
+      ctx.lineTo(base.x+sw/2,base.y+sh/2);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawSurfaceArt(surfaceId, p, sw, sh){
+      if(!document.getElementById('showTiles').checked || sw<10 || !surfaceId) return;
+      const im=imgs[surfaceId];
+      if(!im || !im.complete || !im.naturalWidth) return;
+      const w=sw, h=w*im.height/im.width;
+      ctx.drawImage(im,p.x-w/2,p.y+sh-h,w,h);
+    }
+
+    function drawNode(nodeId, p, sw, sh){
+      if(!document.getElementById('showNodes').checked || !nodeId) return;
+      const im=imgs[nodeId], meta=META[nodeId];
+      if(im && im.complete && im.naturalWidth && meta && sw>=18){
+        const scale=sw/(meta.ppu||64);
+        const bx=meta.bx||0, by=meta.by||0, bw=meta.bw||im.width, bh=meta.bh||im.height;
+        const w=bw*scale, h=bh*scale;
+        ctx.drawImage(im,bx,by,bw,bh,p.x-w/2,p.y+sh/2+3-h,w,h);
+      }else if(sw>=8){
+        ctx.fillStyle='#f4d35e';
+        ctx.beginPath();
+        ctx.arc(p.x,p.y+sh/2,Math.max(2,Math.min(5,sw*0.12)),0,Math.PI*2);
+        ctx.fill();
+      }
+      if(sw>=42){
+        ctx.font='10px Segoe UI';
+        ctx.fillStyle='#fff';
+        ctx.fillText(nodeId,p.x+5,p.y+sh/2-4);
+      }
+    }
+
+    function drawMarkers(){
+      if(!document.getElementById('showMarkers').checked || !data.markers) return;
+      const sw=tileW()*data.step;
+      if(sw>38) return;
+      ctx.font='11px Segoe UI';
+      data.markers.forEach(m=>{
+        const p=project(m.cellX,m.cellY,0);
+        if(p.x<-80||p.y<-80||p.x>viewW()+80||p.y>viewH()+80) return;
+        ctx.fillStyle='#000b';
+        ctx.strokeStyle='#fff';
+        ctx.lineWidth=1.5;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,4,0,Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+        const label=m.biome+' '+Math.round(m.approxTiles/1000)+'k';
+        const tw=ctx.measureText(label).width;
+        ctx.fillStyle='#000b';
+        ctx.fillRect(p.x+6,p.y-10,tw+8,16);
+        ctx.fillStyle='#fff';
+        ctx.fillText(label,p.x+10,p.y+2);
+      });
+    }
+
+    function drawHover(){
+      if(!hover) return;
+      const sw=tileW()*data.step, sh=sw/2;
+      const w=worldFor(hover.ix,hover.iy), h=heightAt(hover.ix,hover.iy);
+      const p=project(w.x,w.y,h);
+      ctx.strokeStyle='rgba(232,196,104,0.98)';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(p.x,p.y);
+      ctx.lineTo(p.x+sw/2,p.y+sh/2);
+      ctx.lineTo(p.x,p.y+sh);
+      ctx.lineTo(p.x-sw/2,p.y+sh/2);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.lineWidth=1;
+    }
+
+    function draw(){
+      if(!data) return;
+      ctx.clearRect(0,0,viewW(),viewH());
+      ctx.fillStyle='#0c0d10';
+      ctx.fillRect(0,0,viewW(),viewH());
+
+      const b=visibleBounds();
+      const sw=tileW()*data.step, sh=sw/2;
+      const showHeight=document.getElementById('showHeight').checked;
+      const stroke=document.getElementById('showGrid').checked && sw>=12 ? 'rgba(255,255,255,0.10)' : null;
+      const approx=(b.ix1-b.ix0+1)*(b.iy1-b.iy0+1);
+      const drawArt=approx<35000;
+
+      for(let sum=b.ix0+b.iy0; sum<=b.ix1+b.iy1; sum++){
+        for(let ix=b.ix0; ix<=b.ix1; ix++){
+          const iy=sum-ix;
+          if(iy<b.iy0||iy>b.iy1) continue;
+          const w=worldFor(ix,iy);
+          const h=heightAt(ix,iy);
+          const biome=biomeAt(ix,iy);
+          const surface=surfaceAt(ix,iy);
+          const p=project(w.x,w.y,h);
+          if(p.x+sw<-90||p.y+sh<-120||p.x-sw>viewW()+90||p.y>viewH()+120) continue;
+          if(showHeight && h>0 && sw>=14) drawHeightFaces(p,project(w.x,w.y,0),sw,sh);
+          const base=colorFor(biome);
+          drawDiamond(p,sw,sh,base,stroke);
+          if(drawArt) drawSurfaceArt(surface,p,sw,sh);
+          if(showHeight && sw>=34){
+            ctx.fillStyle='rgba(0,0,0,0.55)';
+            ctx.font='10px monospace';
+            ctx.fillText(String(h),p.x-3,p.y+sh/2+3);
+          }
+          if(drawArt) drawNode(nodeAt(ix,iy),p,sw,sh);
+        }
+      }
+
+      drawMarkers();
+      drawHover();
+      document.getElementById('hud').textContent=
+        'zoom '+zoom.toFixed(2)+' | tile '+Math.round(tileW())+'px | visible '+approx.toLocaleString()+
+        (hasDetailedData()?'':' | legacy biome-only export');
+      document.getElementById('zoomval').textContent='x'+zoom.toFixed(2);
+    }
+
+    function updateDetail(){
+      if(!hover){
+        document.getElementById('detail').textContent='Move over the map.';
+        return;
+      }
+      const w=worldFor(hover.ix,hover.iy);
+      const biome=biomeAt(hover.ix,hover.iy);
+      const surface=surfaceAt(hover.ix,hover.iy) || '(re-export for surface tile)';
+      const node=nodeAt(hover.ix,hover.iy) || 'none';
+      const h=heightAt(hover.ix,hover.iy);
+      document.getElementById('detail').innerHTML=
+        'world <b>'+w.x+', '+w.y+'</b><br>'+
+        'sample <b>'+hover.ix+', '+hover.iy+'</b><br>'+
+        'biome <b>'+biome+'</b><br>'+
+        'surface <b>'+surface+'</b><br>'+
+        'height <b>'+h+'</b><br>'+
+        'node <b>'+node+'</b>';
+    }
+
+    function cellAt(sx,sy){
+      const flat=screenToWorld(sx,sy);
+      const cx=Math.round((flat.x+data.radius)/data.step);
+      const cy=Math.round((flat.y+data.radius)/data.step);
+      const sw=tileW()*data.step, sh=sw/2;
+      const r=4;
+      for(let iy=clampIndex(cy-r);iy<=clampIndex(cy+r);iy++){
+        for(let ix=clampIndex(cx-r);ix<=clampIndex(cx+r);ix++){
+          const w=worldFor(ix,iy), h=heightAt(ix,iy), p=project(w.x,w.y,h);
+          const dx=Math.abs(sx-p.x), dy=Math.abs(sy-(p.y+sh/2));
+          if(dx/(sw/2)+dy/(sh/2)<=1) return {ix,iy};
+        }
+      }
+      return null;
+    }
+
+    function setZoomAround(newZoom,sx,sy){
+      const before=screenToWorld(sx,sy);
+      zoom=Math.max(0.08,Math.min(5,newZoom));
+      const p=project(before.x,before.y,0);
+      panX+=sx-p.x;
+      panY+=sy-p.y;
+      requestDraw();
+    }
+
+    function resetView(){
+      zoom=hasDetailedData()?0.75:0.08;
+      panX=0;
+      panY=0;
+      hover=null;
+      updateDetail();
+      requestDraw();
+    }
+
+    cv.addEventListener('contextmenu',e=>e.preventDefault());
+    cv.addEventListener('wheel',e=>{
+      e.preventDefault();
+      const b=cv.getBoundingClientRect();
+      setZoomAround(zoom*(e.deltaY<0?1.15:1/1.15),e.clientX-b.left,e.clientY-b.top);
+    },{passive:false});
+    cv.addEventListener('mousedown',e=>{
+      if(e.button===0||e.button===1||e.button===2||spaceDown){
+        panning=true;
+        cv.classList.add('dragging');
+        panStart={x:e.clientX,y:e.clientY,px:panX,py:panY};
+        e.preventDefault();
+      }
+    });
+    cv.addEventListener('mousemove',e=>{
+      const b=cv.getBoundingClientRect();
+      mouse={x:e.clientX-b.left,y:e.clientY-b.top};
+      if(panning){
+        panX=panStart.px+(e.clientX-panStart.x);
+        panY=panStart.py+(e.clientY-panStart.y);
+        requestDraw();
+        return;
+      }
+      const hit=cellAt(mouse.x,mouse.y);
+      if((!hit&&!hover)||(hit&&(!hover||hit.ix!==hover.ix||hit.iy!==hover.iy))){
+        hover=hit;
+        updateDetail();
+        requestDraw();
+      }
+    });
+    window.addEventListener('mouseup',()=>{
+      panning=false;
+      cv.classList.remove('dragging');
+    });
+    window.addEventListener('keydown',e=>{
+      if(e.code==='Space') spaceDown=true;
+      const amt=e.shiftKey?220:90;
+      if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){ panX+=amt; requestDraw(); }
+      if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){ panX-=amt; requestDraw(); }
+      if(e.key==='ArrowUp'||e.key==='w'||e.key==='W'){ panY+=amt; requestDraw(); }
+      if(e.key==='ArrowDown'||e.key==='s'||e.key==='S'){ panY-=amt; requestDraw(); }
+    });
+    window.addEventListener('keyup',e=>{ if(e.code==='Space') spaceDown=false; });
+    window.addEventListener('resize',resize);
+
+    document.getElementById('zoomin').onclick=()=>setZoomAround(zoom*1.2,viewW()/2,viewH()/2);
+    document.getElementById('zoomout').onclick=()=>setZoomAround(zoom/1.2,viewW()/2,viewH()/2);
+    document.getElementById('resetview').onclick=resetView;
+    ['showTiles','showHeight','showNodes','showGrid','showMarkers'].forEach(id=>document.getElementById(id).onchange=()=>requestDraw());
+
+    function init(d){
+      data=d;
+      document.getElementById('meta').innerHTML=
+        'seed <b>'+d.seed+'</b><br>radius <b>'+d.radius+'</b> tiles<br>step <b>'+d.step+'</b> tile'+(d.step===1?'':'s')+
+        '<br>grid <b>'+d.n+'x'+d.n+'</b><br>regions marked <b>'+((d.markers&&d.markers.length)||0)+'</b>'+
+        (hasDetailedData()?'':'<br><span id="warn">Legacy biome-only data. Re-export to see real surface tiles, heights, and nodes.</span>');
+      const used=[...new Set(d.grid.flat())].map(i=>d.legend[i]).sort();
+      document.getElementById('legend').innerHTML=used.map(id=>`<div><span class="sw" style="background:${colorFor(id)}"></span>${id}</div>`).join('');
+      resetView();
+      resize();
+    }
+
+    try{
+      if(!window.LIT_ISO_WORLD_BIOME_MAP) throw new Error('world_biome_map_data.js did not define LIT_ISO_WORLD_BIOME_MAP');
+      init(window.LIT_ISO_WORLD_BIOME_MAP);
+    }catch(e){
+      showError(e.message);
+    }
+  </script>
+</body>
+</html>

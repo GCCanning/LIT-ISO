@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VFX Preview + Tuner — LIT-ISO</title>
+<style>
+  :root{ --bg:#15171c; --panel:#1d2027; --panel2:#262c38; --line:#333a47; --gold:#e8c468; --text:#cdd; --muted:#889; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--text); font:13px Segoe UI,Arial,sans-serif; }
+  header{ padding:10px 16px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:14px; }
+  header h1{ font-size:15px; margin:0; color:var(--gold); font-weight:700; }
+  header .sub{ color:var(--muted); font-size:12px; }
+  .wrap{ display:grid; grid-template-columns:240px 1fr 250px; gap:0; height:calc(100vh - 44px); }
+  .col{ overflow:auto; padding:12px; }
+  .col.left{ border-right:1px solid var(--line); }
+  .col.right{ border-left:1px solid var(--line); }
+  .col.mid{ display:flex; flex-direction:column; align-items:center; gap:12px; }
+
+  .filters{ display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+  .chip{ background:var(--panel2); border:1px solid var(--line); color:var(--text); border-radius:13px;
+         padding:4px 10px; cursor:pointer; font-size:12px; }
+  .chip.on{ background:#33301f; border-color:var(--gold); color:var(--gold); }
+  .list .item{ padding:6px 8px; border-radius:6px; cursor:pointer; display:flex; justify-content:space-between; gap:6px; }
+  .list .item:hover{ background:var(--panel2); }
+  .list .item.sel{ background:#33301f; color:var(--gold); }
+  .list .item small{ color:var(--muted); }
+  .tag{ font-size:10px; padding:1px 5px; border-radius:7px; background:#3a2f4a; color:#caa6e8; }
+  .tag.warm{ background:#4a3320; color:#f0b070; }
+  .tag.smoke{ background:#2f3a44; color:#9cc; }
+
+  .bgtabs{ display:flex; gap:5px; }
+  .bgtabs .chip{ border-radius:6px; }
+  canvas#stage{ image-rendering:pixelated; border:1px solid var(--line); border-radius:6px; background:#0c0d11; }
+  canvas#strip{ image-rendering:pixelated; border:1px solid var(--line); border-radius:4px; background:#0c0d11; max-width:100%; }
+  .btnrow{ display:flex; gap:8px; }
+  button{ background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:6px;
+          padding:7px 12px; cursor:pointer; font:13px Segoe UI,Arial; }
+  button:hover{ background:#2f3744; }
+  button.primary{ background:#5b4d20; border-color:var(--gold); color:var(--gold); font-weight:600; }
+
+  .field{ margin-bottom:12px; }
+  .field label{ display:flex; justify-content:space-between; color:var(--muted); margin-bottom:4px; }
+  .field input[type=range]{ width:100%; }
+  .field .val{ color:var(--gold); }
+  .seg{ display:flex; gap:5px; }
+  .seg .chip{ flex:1; text-align:center; }
+  textarea{ width:100%; height:120px; background:#0c0d11; color:#bdd; border:1px solid var(--line);
+            border-radius:6px; font:12px Consolas,monospace; padding:7px; }
+  .hint{ color:var(--muted); font-size:11px; line-height:1.5; }
+  h3{ font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.04em; margin:4px 0 8px; }
+
+  /* gallery */
+  #gallery{ display:none; flex-wrap:wrap; gap:8px; align-content:flex-start; width:100%; }
+  #gallery.show{ display:flex; }
+  #stagewrap.hide{ display:none; }
+  .gcell{ width:96px; text-align:center; cursor:pointer; }
+  .gcell canvas{ image-rendering:pixelated; border:1px solid var(--line); border-radius:4px; background:#0c0d11; }
+  .gcell div{ font-size:10px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <h1>VFX Preview + Tuner</h1>
+  <span class="sub">Animate &amp; tune sprite-sheet VFX (smoke poofs + sliced magic effects). Tune fps / scale / blend / tint, then export settings.</span>
+  <span style="flex:1"></span>
+  <button id="viewToggle">Gallery view</button>
+</header>
+
+<div class="wrap">
+  <!-- LEFT: list + filters -->
+  <div class="col left">
+    <div class="filters" id="filters">
+      <span class="chip on" data-f="all">All</span>
+      <span class="chip" data-f="smoke">Smoke</span>
+      <span class="chip" data-f="magic">Magic</span>
+      <span class="chip" data-f="spells">Spells</span>
+      <span class="chip" data-f="warm">Warm</span>
+      <span class="chip" data-f="cool">Cool</span>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+
+  <!-- MID: stage / gallery -->
+  <div class="col mid">
+    <div class="bgtabs" id="bgtabs">
+      <span class="chip on" data-bg="#0c0d11">Night</span>
+      <span class="chip" data-bg="#3f6b3a">Grass</span>
+      <span class="chip" data-bg="#c2a878">Sand</span>
+      <span class="chip" data-bg="#dfe9f0">Snow</span>
+      <span class="chip" data-bg="checker">Checker</span>
+    </div>
+    <div id="stagewrap" style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <canvas id="stage" width="384" height="384"></canvas>
+      <div class="btnrow">
+        <button id="playBtn">⏸ Pause</button>
+        <button id="replayBtn">↻ Replay once</button>
+      </div>
+      <div style="width:100%;text-align:center">
+        <div class="hint" style="margin-bottom:4px">Frames</div>
+        <canvas id="strip" width="320" height="40"></canvas>
+      </div>
+      <div id="nowName" class="hint"></div>
+    </div>
+    <div id="gallery"></div>
+  </div>
+
+  <!-- RIGHT: controls + export -->
+  <div class="col right">
+    <h3>Playback</h3>
+    <div class="field">
+      <label>Speed (fps) <span class="val" id="fpsVal">14</span></label>
+      <input type="range" id="fps" min="2" max="30" value="14">
+    </div>
+    <div class="field">
+      <label>Scale <span class="val" id="scaleVal">3.0×</span></label>
+      <input type="range" id="scale" min="0.5" max="8" step="0.1" value="3">
+    </div>
+    <div class="field">
+      <label>Blend</label>
+      <div class="seg" id="blendSeg">
+        <span class="chip" data-b="normal">Normal</span>
+        <span class="chip" data-b="add">Additive</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Loop</label>
+      <div class="seg" id="loopSeg">
+        <span class="chip on" data-l="1">Loop</span>
+        <span class="chip" data-l="0">Once</span>
+      </div>
+    </div>
+
+    <h3>Tint</h3>
+    <div class="field">
+      <label>Colour <input type="color" id="tint" value="#ffffff" style="width:42px;height:22px;border:none;background:none"></label>
+      <label>Strength <span class="val" id="tintVal">0%</span></label>
+      <input type="range" id="tintStr" min="0" max="100" value="0">
+    </div>
+
+    <h3>Export</h3>
+    <div class="hint">Settings to wire into the game's VFX player (id + timing/look). Copy into your Unity VFX table.</div>
+    <textarea id="export" readonly></textarea>
+    <div class="btnrow" style="margin-top:8px">
+      <button class="primary" id="copyBtn">Copy JSON</button>
+    </div>
+    <div class="hint" style="margin-top:14px">
+      Source: smoke sets + magic effects sliced from <b>Magic1.gif</b> (10×5 grid, warm frames 0–8 / cool 9–17).
+      Magic defaults to additive — it reads as glowing light over the world (and pairs with the game's faked bloom).
+    </div>
+  </div>
+</div>
+
+<script src="vfx/manifest.js"></script>
+<script>
+(function(){
+  var VFX = (window.VFX_MANIFEST && window.VFX_MANIFEST.vfx) || [];
+  var imgCache = {};
+  function load(entry, cb){
+    if(imgCache[entry.id]){ cb(imgCache[entry.id]); return; }
+    var im = new Image();
+    im.onload = function(){ imgCache[entry.id]=im; cb(im); };
+    im.onerror = function(){ imgCache[entry.id]=null; cb(null); };
+    im.src = 'vfx/' + entry.file;
+    return im;
+  }
+
+  // ---- state ----
+  var state = { filter:'all', sel:null, fps:14, scale:3, blend:null, loop:true,
+                tint:'#ffffff', tintStr:0, bg:'#0c0d11', playing:true };
+
+  var listEl = document.getElementById('list');
+  var stage = document.getElementById('stage'), sctx = stage.getContext('2d');
+  var strip = document.getElementById('strip'), tctx = strip.getContext('2d');
+  sctx.imageSmoothingEnabled=false; tctx.imageSmoothingEnabled=false;
+
+  // offscreen for tinting
+  var off = document.createElement('canvas'), octx = off.getContext('2d');
+  octx.imageSmoothingEnabled=false;
+
+  function matchFilter(e){
+    if(state.filter==='all') return true;
+    if(state.filter==='smoke') return e.group==='smoke';
+    if(state.filter==='magic') return e.group==='magic';
+    if(state.filter==='spells') return e.group==='spells';
+    if(state.filter==='warm') return e.palette==='warm';
+    if(state.filter==='cool') return e.palette==='cool';
+    return true;
+  }
+
+  function renderList(){
+    var items = VFX.filter(matchFilter);
+    listEl.innerHTML='';
+    items.forEach(function(e){
+      var d=document.createElement('div'); d.className='item'+(state.sel&&state.sel.id===e.id?' sel':'');
+      var tag = e.group==='smoke' ? '<span class="tag smoke">smoke</span>'
+              : '<span class="tag '+(e.palette==='warm'?'warm':'')+'">'+(e.palette||'fx')+'</span>';
+      d.innerHTML='<span>'+e.id+'<br><small>'+e.frames+' frames · '+e.frameW+'×'+e.frameH+'</small></span>'+tag;
+      d.onclick=function(){ select(e); };
+      listEl.appendChild(d);
+    });
+  }
+
+  function select(e){
+    state.sel=e; state.blend=e.blend||'normal'; state.fps=e.fps||14;
+    document.getElementById('fps').value=state.fps; document.getElementById('fpsVal').textContent=state.fps;
+    setSeg('blendSeg','b',state.blend);
+    anim.frame=0; anim.t=0; anim.done=false; state.playing=true;
+    document.getElementById('playBtn').textContent='⏸ Pause';
+    document.getElementById('nowName').textContent=e.id;
+    renderList(); load(e,function(){ drawStrip(); }); updateExport();
+  }
+
+  // ---- tint helper: returns a (possibly tinted) source canvas for one frame ----
+  function tintedFrame(im, e, k){
+    var fw=e.frameW, fh=e.frameH;
+    off.width=fw; off.height=fh;
+    octx.clearRect(0,0,fw,fh);
+    octx.globalCompositeOperation='source-over';
+    octx.drawImage(im, k*fw,0,fw,fh, 0,0,fw,fh);
+    if(state.tintStr>0){
+      octx.globalCompositeOperation='source-atop';
+      octx.globalAlpha=state.tintStr/100;
+      octx.fillStyle=state.tint;
+      octx.fillRect(0,0,fw,fh);
+      octx.globalAlpha=1;
+      octx.globalCompositeOperation='source-over';
+    }
+    return off;
+  }
+
+  function paintBg(ctx,w,h){
+    if(state.bg==='checker'){
+      var s=16;
+      for(var y=0;y<h;y+=s) for(var x=0;x<w;x+=s){
+        ctx.fillStyle=((x/s+y/s)&1)?'#202632':'#161a22'; ctx.fillRect(x,y,s,s);
+      }
+    } else { ctx.fillStyle=state.bg; ctx.fillRect(0,0,w,h); }
+  }
+
+  // ---- main animation loop ----
+  var anim={ frame:0, t:0, last:performance.now(), done:false };
+  function tick(now){
+    var dt=(now-anim.last)/1000; anim.last=now;
+    var e=state.sel;
+    sctx.clearRect(0,0,stage.width,stage.height);
+    paintBg(sctx,stage.width,stage.height);
+    if(e){
+      var im=imgCache[e.id];
+      if(im){
+        if(state.playing && !anim.done){
+          anim.t+=dt;
+          var spf=1/Math.max(1,state.fps);
+          while(anim.t>=spf){ anim.t-=spf; anim.frame++;
+            if(anim.frame>=e.frames){ if(state.loop){ anim.frame=0; } else { anim.frame=e.frames-1; anim.done=true; } }
+          }
+        }
+        var dw=e.frameW*state.scale, dh=e.frameH*state.scale;
+        var dx=(stage.width-dw)/2, dy=(stage.height-dh)/2;
+        sctx.globalCompositeOperation = state.blend==='add'?'lighter':'source-over';
+        var src=tintedFrame(im,e,anim.frame);
+        sctx.drawImage(src, 0,0,e.frameW,e.frameH, dx,dy,dw,dh);
+        sctx.globalCompositeOperation='source-over';
+      }
+    }
+    if(galleryOn) drawGallery(dt);
+    requestAnimationFrame(tick);
+  }
+
+  function drawStrip(){
+    var e=state.sel; if(!e) return; var im=imgCache[e.id]; if(!im) return;
+    var maxW=320, fw=e.frameW, fh=e.frameH;
+    var sc=Math.min(2.5, maxW/(fw*e.frames), 40/fh); sc=Math.max(0.5,sc);
+    strip.width=Math.ceil(fw*e.frames*sc); strip.height=Math.ceil(fh*sc);
+    tctx.imageSmoothingEnabled=false;
+    paintBg(tctx,strip.width,strip.height);
+    for(var k=0;k<e.frames;k++){
+      tctx.globalCompositeOperation = e.blend==='add'?'lighter':'source-over';
+      tctx.drawImage(im, k*fw,0,fw,fh, k*fw*sc,0,fw*sc,fh*sc);
+    }
+    tctx.globalCompositeOperation='source-over';
+  }
+
+  function updateExport(){
+    var e=state.sel; if(!e){ document.getElementById('export').value=''; return; }
+    var o={ id:e.id, file:'vfx/'+e.file, frames:e.frames, frameW:e.frameW, frameH:e.frameH,
+            fps:state.fps, scale:+state.scale.toFixed(2), blend:state.blend, loop:state.loop };
+    if(state.tintStr>0){ o.tint=state.tint; o.tintStrength=state.tintStr/100; }
+    document.getElementById('export').value=JSON.stringify(o,null,2);
+  }
+
+  // ---- gallery ----
+  var galleryOn=false, gcells=[];
+  function buildGallery(){
+    var g=document.getElementById('gallery'); g.innerHTML=''; gcells=[];
+    VFX.filter(matchFilter).forEach(function(e){
+      var cell=document.createElement('div'); cell.className='gcell';
+      var c=document.createElement('canvas'); c.width=80; c.height=80;
+      var lbl=document.createElement('div'); lbl.textContent=e.id.replace('magic_','').replace('smoke_','');
+      cell.appendChild(c); cell.appendChild(lbl);
+      cell.onclick=function(){ select(e); toggleView(false); };
+      g.appendChild(cell);
+      var gc={ e:e, ctx:c.getContext('2d'), frame:0, t:0 };
+      gc.ctx.imageSmoothingEnabled=false; gcells.push(gc);
+      load(e,function(){});
+    });
+  }
+  function drawGallery(dt){
+    gcells.forEach(function(gc){
+      var e=gc.e, im=imgCache[e.id]; var ctx=gc.ctx;
+      ctx.clearRect(0,0,80,80); ctx.fillStyle='#0c0d11'; ctx.fillRect(0,0,80,80);
+      if(!im) return;
+      gc.t+=dt; var spf=1/(e.fps||14);
+      while(gc.t>=spf){ gc.t-=spf; gc.frame=(gc.frame+1)%e.frames; }
+      var sc=Math.min(72/e.frameW,72/e.frameH); var dw=e.frameW*sc, dh=e.frameH*sc;
+      ctx.globalCompositeOperation=e.blend==='add'?'lighter':'source-over';
+      ctx.drawImage(im, gc.frame*e.frameW,0,e.frameW,e.frameH,(80-dw)/2,(80-dh)/2,dw,dh);
+      ctx.globalCompositeOperation='source-over';
+    });
+  }
+  function toggleView(on){
+    galleryOn = (on===undefined)? !galleryOn : on;
+    document.getElementById('gallery').classList.toggle('show',galleryOn);
+    document.getElementById('stagewrap').classList.toggle('hide',galleryOn);
+    document.getElementById('viewToggle').textContent = galleryOn?'Single view':'Gallery view';
+    if(galleryOn) buildGallery();
+  }
+
+  // ---- wire controls ----
+  function setSeg(id,attr,val){
+    document.querySelectorAll('#'+id+' .chip').forEach(function(c){
+      c.classList.toggle('on', c.getAttribute('data-'+attr)===val); });
+  }
+  document.getElementById('filters').onclick=function(ev){
+    var c=ev.target.closest('.chip'); if(!c) return;
+    state.filter=c.getAttribute('data-f');
+    document.querySelectorAll('#filters .chip').forEach(function(x){x.classList.toggle('on',x===c);});
+    renderList(); if(galleryOn) buildGallery();
+  };
+  document.getElementById('bgtabs').onclick=function(ev){
+    var c=ev.target.closest('.chip'); if(!c) return; state.bg=c.getAttribute('data-bg');
+    document.querySelectorAll('#bgtabs .chip').forEach(function(x){x.classList.toggle('on',x===c);});
+    drawStrip();
+  };
+  document.getElementById('blendSeg').onclick=function(ev){
+    var c=ev.target.closest('.chip'); if(!c) return; state.blend=c.getAttribute('data-b');
+    setSeg('blendSeg','b',state.blend); drawStrip(); updateExport();
+  };
+  document.getElementById('loopSeg').onclick=function(ev){
+    var c=ev.target.closest('.chip'); if(!c) return; state.loop=c.getAttribute('data-l')==='1';
+    setSeg('loopSeg','l',state.loop?'1':'0'); anim.done=false; updateExport();
+  };
+  document.getElementById('fps').oninput=function(){ state.fps=+this.value;
+    document.getElementById('fpsVal').textContent=this.value; updateExport(); };
+  document.getElementById('scale').oninput=function(){ state.scale=+this.value;
+    document.getElementById('scaleVal').textContent=(+this.value).toFixed(1)+'×'; updateExport(); };
+  document.getElementById('tint').oninput=function(){ state.tint=this.value; updateExport(); };
+  document.getElementById('tintStr').oninput=function(){ state.tintStr=+this.value;
+    document.getElementById('tintVal').textContent=this.value+'%'; updateExport(); };
+  document.getElementById('playBtn').onclick=function(){ state.playing=!state.playing;
+    this.textContent=state.playing?'⏸ Pause':'▶ Play'; };
+  document.getElementById('replayBtn').onclick=function(){ anim.frame=0; anim.t=0; anim.done=false;
+    state.playing=true; document.getElementById('playBtn').textContent='⏸ Pause'; };
+  document.getElementById('viewToggle').onclick=function(){ toggleView(); };
+  document.getElementById('copyBtn').onclick=function(){
+    var ta=document.getElementById('export'); ta.select();
+    try{ document.execCommand('copy'); this.textContent='Copied!'; var b=this;
+      setTimeout(function(){ b.textContent='Copy JSON'; },1200); }catch(e){}
+  };
+
+  // ---- init ----
+  if(!VFX.length){
+    listEl.innerHTML='<div class="hint">No manifest found. Expected <b>vfx/manifest.js</b> next to this page.</div>';
+  } else {
+    renderList();
+    select(VFX.find(function(e){return e.group==='smoke';}) || VFX[0]);
+    requestAnimationFrame(function(t){ anim.last=t; requestAnimationFrame(tick); });
+  }
+})();
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
