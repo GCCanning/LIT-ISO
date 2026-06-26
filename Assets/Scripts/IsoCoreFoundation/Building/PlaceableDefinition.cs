@@ -25,6 +25,8 @@ namespace IsoCore.Foundation
         [Header("Interaction")]
         public InteractionKind interaction = InteractionKind.Decoration;
         public StationType stationType = StationType.None;
+        [Tooltip("Phase 2 loot: if this is a Container, the LootSystem table id rolled to fill it on first open. Empty = no auto-loot.")]
+        public string lootTableId;
         public string entranceLabel = "Enter";
         public string destinationId;
         public string destinationDisplayName;

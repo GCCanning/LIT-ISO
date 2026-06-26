@@ -9,7 +9,7 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 9;
+        public const int CurrentVersion = 11;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -17,8 +17,10 @@ namespace IsoCore.Foundation
         public int seed;
         public int difficulty;
         public string callingId;
+        public FoundationCharacterAppearanceSaveData characterAppearance;
         public FoundationSavedPlayer player;
         public ItemStack[] inventorySlots;
+        public EquipmentSaveData equipment;
         public int hotbarSelected;
         public FoundationProgressionSaveData progression;
         public FoundationQoLSaveData qol;
@@ -52,6 +54,9 @@ namespace IsoCore.Foundation
                 seed = seed,
                 difficulty = difficulty,
                 callingId = string.IsNullOrWhiteSpace(callingId) ? progression?.currentCallingId ?? "greenhand" : callingId,
+                appearanceId = characterAppearance != null && !string.IsNullOrWhiteSpace(characterAppearance.appearanceId)
+                    ? characterAppearance.appearanceId
+                    : FoundationCharacterAppearanceCatalog.DefaultAppearanceId,
                 level = stats != null ? Math.Max(1, stats.level) : 1,
                 className = stats != null && !string.IsNullOrWhiteSpace(stats.className) ? stats.className : "Wanderer",
                 title = stats != null && !string.IsNullOrWhiteSpace(stats.title) ? stats.title : "Newcomer",
@@ -73,6 +78,7 @@ namespace IsoCore.Foundation
         public int seed;
         public int difficulty;
         public string callingId;
+        public string appearanceId;
         public int level;
         public string className;
         public string title;

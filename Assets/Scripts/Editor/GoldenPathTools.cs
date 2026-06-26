@@ -98,8 +98,6 @@ public static class GoldenPathTools
         DayNightMusicManager music = Object.FindFirstObjectByType<DayNightMusicManager>();
         Canvas hud = Object.FindFirstObjectByType<Canvas>();
         GameSettingsMenu settingsMenu = Object.FindFirstObjectByType<GameSettingsMenu>();
-        MovementDebugOverlay debugOverlay = Object.FindFirstObjectByType<MovementDebugOverlay>();
-
         AppendStatus(report, grid != null, "Grid present");
         AppendStatus(report, world != null, "IsoWorldChunkManager present");
         AppendStatus(report, player != null, "IsoPlayerController present");
@@ -108,7 +106,7 @@ public static class GoldenPathTools
         AppendStatus(report, music != null, "DayNightMusicManager present");
         AppendStatus(report, hud != null, "Gameplay HUD present");
         AppendStatus(report, settingsMenu != null, "GameSettingsMenu present");
-        AppendStatus(report, debugOverlay != null, "MovementDebugOverlay present");
+        // MovementDebugOverlay removed 2026-06 (retired dev tool).
 
         if (world != null)
         {

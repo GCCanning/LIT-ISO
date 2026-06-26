@@ -34,8 +34,15 @@ namespace IsoCore.Foundation
             var art = FoundationPlaceableSpriteResolver.Resolve(def.id);
             _renderer.sprite = art != null ? art : PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
             transform.localScale = Vector3.one;
-            if (art != null && ShouldScaleArtToDefinition(def, art))
-                transform.localScale = Vector3.one * ArtScaleFor(def, art);
+            if (art != null)
+            {
+                // Multi-cell footprints keep the existing width-fit; everything else normalizes
+                // to its intended world height so prop scale stays consistent with the player.
+                if (ShouldScaleArtToDefinition(def, art))
+                    transform.localScale = Vector3.one * ArtScaleFor(def, art);
+                else
+                    FoundationSpriteScale.NormalizeHeight(transform, art, def.heightUnits);
+            }
             _renderer.sortingOrder = IsoGrid.SortingOrder(wx, wy, h, IsoGrid.LayerProp);
 
             if (def.id == "campfire" || def.id == "fireplace")

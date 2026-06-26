@@ -49,7 +49,9 @@ namespace IsoCore.Foundation
         Sprite SubsurfaceSprite()
         {
             if (_subsurfaceResolved) return _subsurfaceSprite;
-            var dirt = _content.Blocks.Get("dirt");
+            var dirt = _content.Blocks.Get("pl_dirt_02") ??
+                _content.Blocks.Get("pl_dirt_01") ??
+                _content.Blocks.Get("dirt");
             _subsurfaceSprite = dirt != null ? TileSpriteResolver.Resolve(dirt) : null;
             _subsurfaceResolved = true;
             return _subsurfaceSprite;
@@ -201,6 +203,57 @@ namespace IsoCore.Foundation
                 EnsureStack(sr, world, wx, wy, cell.Height, SubsurfaceSprite() ?? surfaceSprite);
             else
                 HideStack(sr);
+
+            // Depth/mood tint (Impact Analysis B2b #2): lower-height cells read as
+            // slightly darker/cooler "depth fog", taller cells stay neutral. Multiplies
+            // on top of the global day/night ambient (a separate shader uniform), so the
+            // two combine without fighting. Subtle by design — never crushes the art.
+            // Then an ambient cliff shadow where a taller cell looms behind this one — the
+            // depth cue that makes elevation drops legible under the orthographic camera.
+            var depth = DepthTint(cell.Height);
+            float cliff = CliffShade(world, wx, wy, cell.Height);
+            sr.color = new Color(depth.r * cliff, depth.g * cliff, depth.b * cliff, 1f);
+        }
+
+        // Ambient cliff shadow: a cell at the foot of a taller cell behind/above it
+        // (toward screen-back, +x / +y) is darkened in proportion to the height drop, so
+        // a cliff visibly "casts" onto the ground at its base. With an orthographic camera
+        // there's no perspective to sell elevation, so this is the cue that makes drops
+        // readable (the problem the ISO-CORE devlog flagged as unsolved). Pure colour
+        // multiply — no sorting/geometry change. Returns 1.0 (no shade) on flat ground.
+        const float CliffShadePerLevel = 0.16f; // darkening added per level of drop
+        const float CliffShadeMax = 0.50f;       // clamp so a base never goes pitch black
+        // Vertical cliff/side faces (the stacked sub-surface body beneath a raised top) are
+        // drawn darker than the tops, so every hill/cliff reads as a 3D volume regardless of
+        // where the camera sits — the strongest, always-visible elevation cue.
+        const float SideFaceShade = 0.70f;
+
+        static float CliffShade(IsoWorld world, int wx, int wy, int height)
+        {
+            int back = Mathf.Max(world.GetCell(wx + 1, wy).Height, world.GetCell(wx, wy + 1).Height);
+            int delta = back - height;
+            if (delta <= 0) return 1f;
+            return 1f - Mathf.Min(delta * CliffShadePerLevel, CliffShadeMax);
+        }
+
+        // Reference height for "neutral" tint (no darkening/cooling). Cells at or above
+        // this height render at full brightness; each level below it nudges the tile
+        // darker and slightly cooler (blue-shifted), like atmospheric depth fog in a
+        // valley or low ground. Cheap per-tile Color multiply — no shader work.
+        const int DepthTintReferenceHeight = 3;
+        const float DepthTintPerLevel = 0.06f; // brightness lost per level below reference
+        const float DepthTintMaxStrength = 0.30f; // clamp so low ground never goes too dark
+        static readonly Color DepthTintCool = new Color(0.92f, 0.96f, 1.05f); // slight blue lean
+
+        static Color DepthTint(int height)
+        {
+            int below = DepthTintReferenceHeight - height;
+            if (below <= 0) return Color.white;
+
+            float t = Mathf.Clamp01(below * DepthTintPerLevel);
+            t = Mathf.Min(t, DepthTintMaxStrength);
+            float shade = 1f - t;
+            return new Color(shade * DepthTintCool.r, shade * DepthTintCool.g, shade * DepthTintCool.b, 1f);
         }
 
         // Returns a copy of the surface tile sprite with a very light border blended onto
@@ -339,6 +392,9 @@ namespace IsoCore.Foundation
                     child.transform.position = IsoGrid.CellToWorld(wx, wy, i);
                     child.sortingLayerName = GroundSortingLayer;
                     child.sortingOrder = GroundOrder(wx, wy, i, 0);
+                    // Side faces darker than tops so the cliff body reads as a shaded wall.
+                    var st = DepthTint(i);
+                    child.color = new Color(st.r * SideFaceShade, st.g * SideFaceShade, st.b * SideFaceShade, 1f);
                 }
                 else child.gameObject.SetActive(false);
             }

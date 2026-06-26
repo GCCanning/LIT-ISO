@@ -11,13 +11,17 @@ namespace IsoCore.Foundation
 
     public enum ToolType { None, Axe, Pickaxe, Shovel, Hoe, Sword }
 
-    public enum StationType { None, Hand, Workbench, Furnace, CookingPot }
+    public enum StationType { None, Hand, Workbench, Furnace, CookingPot, Tannery }
 
     public enum InteractionKind { None, CraftingStation, Container, Decoration, Entrance, Construction }
 
     public enum MobBehavior { Passive, Skittish, Hostile }
 
     public enum FoundationStatType { STR, DEX, INT, VIT, DEF, LUCK }
+
+    // Equipment slot an item occupies when equipped (Phase 1 equipment system).
+    // None = not equippable. Mirrors the LPC catalog equipSlot vocabulary.
+    public enum EquipSlot { None, Head, Chest, Legs, Feet, Hands, Shoulders, Back, Waist, Weapon, Offhand, Accessory }
 
     public enum FoundationCallingTier { Novice, Adept, Artisan, Luminary, Mythwarm }
 
@@ -36,6 +40,12 @@ namespace IsoCore.Foundation
     public enum FoundationAbilityElement { None, Neutral, Ember, Tide, Root, Stone, Gale, Glimmer, Hearth }
 
     public enum FoundationAffinityRank { Dormant, Basic, Common, Uncommon, Rare, Epic, Perfect }
+
+    // How an ability resolves in the world (Slice 1 implements Blink, Projectile, Heal).
+    public enum FoundationAbilityDelivery { Melee, Blink, Projectile, Cone, AreaNova, SelfBuff, AuraZone, Heal, Snare, Summon, Utility }
+
+    // Where an ability's cast VFX anchors.
+    public enum FoundationAbilityAnchor { Feet, Hand, Self, Target, Path }
 
     public enum SystemMessageChannel
     {

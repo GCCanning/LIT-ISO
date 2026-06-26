@@ -74,3 +74,31 @@ __pycache__/
 
 # PixelLab MCP local proxy secret (never commit)
 /Tools/PixelLab/pixellab_token.local.txt
+
+# local player builds
+Build/
+
+# --- Hygiene pass 2026-06-22 ---
+
+# Temp/scratch artifacts dropped in repo root
+*_temp.png
+*_temp.html
+litiso_frontend_temp.html
+handover_check_temp.png
+
+# Loose AI art-pack handoffs (not canonical art; PixelLab/BiomeSketch is the ship set)
+/ChatGPT_Art_Pack/
+/ChatGPT_Art_Pack*.zip
+
+# Third-party asset packs — NOT original art/audio. Licensing review required
+# before ANY of these ship (design rule: all shipped assets must be original).
+# Kept out of source control to prevent accidental commit of non-original content.
+/Assets/Free RPG Music Collection/
+/Assets/Free RPG Music Collection.meta
+/Assets/GabrielAguiarProductions/
+/Assets/GabrielAguiarProductions.meta
+/Assets/PixelWeatherAsset/
+/Assets/PixelWeatherAsset.meta
+
+# Proprietary game binaries pulled in by a local tool — copyright risk, never commit
+/Tools/StardewNpcSheetGenerator/_local/

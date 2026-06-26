@@ -31,6 +31,14 @@ namespace IsoCore.Foundation
         public string placeableId;      // places this placeable when used
         public string plantCropId;      // plants this crop (a seed) when used on soil
 
+        [Header("Equipment (optional)")]
+        public EquipSlot equipSlot = EquipSlot.None;
+        public FoundationStatBonus[] statBonuses;
+        public string lpcCatalogId;       // LPC visual id, e.g. "lpc/weapon_sword_longsword"
+        public string lpcVariant;         // optional palette variant for the visual
+
+        public bool IsEquippable => equipSlot != EquipSlot.None;
+
         public bool PlacesBlock => !string.IsNullOrEmpty(placeBlockId);
         public bool PlacesPlaceable => !string.IsNullOrEmpty(placeableId);
         public bool IsPlaceable => PlacesBlock || PlacesPlaceable;

@@ -882,11 +882,11 @@ public static class QuickPlayTestSetup
 
     private static void SetupGameplayLayer(StringBuilder log)
     {
-        // GameplayLayerSetup.SetupGameplayLayer() finds the player via
-        // FindFirstObjectByType<IsoPlayerController> — player is already
-        // present at this point so the call is safe.
-        GameplayLayerSetup.SetupGameplayLayer();
-        log.AppendLine("✓  Gameplay layer (inventory / hotbar / health bar) configured.");
+        // The gameplay HUD (inventory / hotbar / health) is no longer built here.
+        // As of 2026-06 it self-bootstraps at runtime via GameHudInitializer
+        // (RuntimeInitializeOnLoadMethod); the legacy GameplayLayerSetup.SetupGameplayLayer()
+        // and its HotbarUI / HealthBarUI components were removed from the project.
+        log.AppendLine("✓  Gameplay HUD auto-bootstraps at runtime (GameHudInitializer).");
 
         // Time + Zoom HUD overlay
         TimeAndZoomHUDSetup.SetupTimeAndZoomHUD();

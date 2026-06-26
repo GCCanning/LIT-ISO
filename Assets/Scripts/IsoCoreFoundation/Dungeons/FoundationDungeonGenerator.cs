@@ -6,22 +6,54 @@ namespace IsoCore.Foundation
 {
     public static class FoundationDungeonGenerator
     {
-        const string FloorBlock = "dungeon_floor_1";
-        const string WallBlock = "stone_block";
+        // 2026-06-13 dungeon overhaul: switched the active palette from the flat
+        // dungeon_floor_1..5 / stone_block placeholders to the promoted "dungeon2"
+        // PixelLab tileset (Assets/Resources/Tiles/dungeon2_00..15). The old IDs
+        // stay registered in FoundationContent for back-compat.
+        const string FloorBlock = "dungeon2_00";
         const int BoundaryPadding = 1;
         const int MinDungeonSize = 48;
         const int MaxDungeonSize = 96;
         const int RoomOuterMargin = 3;
         const int RoomSeparation = 2;
         const double LoopConnectionChance = 0.35;
+
+        // Plain stone floor variants (used everywhere).
         static readonly string[] FloorBlocks =
         {
-            "dungeon_floor_1",
-            "dungeon_floor_2",
-            "dungeon_floor_3",
-            "dungeon_floor_4",
-            "dungeon_floor_5",
+            "dungeon2_00",
+            "dungeon2_01",
+            "dungeon2_03",
+            "dungeon2_06",
+            "dungeon2_09",
+            "dungeon2_12",
         };
+
+        // Mossy "ruins" floor variants — mixed in at higher tiers for room flavor.
+        static readonly string[] RuinsFloorBlocks =
+        {
+            "dungeon2_08",
+            "dungeon2_15",
+        };
+
+        // Plain stone wall variants.
+        static readonly string[] WallBlocks =
+        {
+            "dungeon2_07",
+            "dungeon2_11",
+        };
+
+        // Rune-sigil landmark wall, reserved for the spawn/exit rooms.
+        const string LandmarkWallBlock = "dungeon2_02";
+
+        // Lava / fire-trap hazard tiles, stamped into a fraction of non-spawn/exit
+        // room floors as tier scales up.
+        static readonly string[] HazardBlocks = { "lava", "fire_trap" };
+
+        // Sentinel surface block for cells outside the room/corridor + wall-ring
+        // layout. Solid for collision but excluded from renderCells, so it never
+        // draws — true empty space around the dungeon footprint.
+        const string VoidBlock = "void";
 
         public static FoundationDungeonBuild Generate(FoundationContent content, string dungeonId,
             string displayName, int worldSeed, Vector2Int entranceCell, Vector2Int origin, int tier)
@@ -64,18 +96,21 @@ namespace IsoCore.Foundation
             for (int i = 1; i < rooms.Count; i++)
             {
                 Connect(floor, ToCell(rooms[i - 1].center), ToCell(rooms[i].center), rng,
-                    CorridorRadiusForTier(tier, rng));
+                    CorridorWidthForTier(tier, rng));
 
                 if (i > 2 && rng.NextDouble() < LoopConnectionChance)
                 {
                     int linkIndex = rng.Next(0, i - 1);
                     Connect(floor, ToCell(rooms[i].center), ToCell(rooms[linkIndex].center), rng,
-                        CorridorRadiusForTier(tier, rng));
+                        CorridorWidthForTier(tier, rng));
                 }
             }
 
             PickFarthestRoomPair(rooms, out var spawnLocal, out var exitLocal);
-            var cells = BuildCells(floor, renderMin, renderMax);
+            var spawnRoom = RoomAt(rooms, spawnLocal);
+            var exitRoom = RoomAt(rooms, exitLocal);
+            var hazardCells = BuildHazardCells(rng, floor, rooms, spawnLocal, exitLocal, tier);
+            var cells = BuildCells(floor, renderMin, renderMax, tier, spawnRoom, exitRoom, hazardCells);
             var renderCells = BuildRenderCells(floor, renderMin);
             var decorations = BuildDecorations(renderMin, exitLocal);
             var mobs = BuildMobs(rng, content, floor, rooms, renderMin, tier);
@@ -135,6 +170,46 @@ namespace IsoCore.Foundation
 
         static Vector2Int ToCell(Vector2 value) => new(Mathf.RoundToInt(value.x), Mathf.RoundToInt(value.y));
 
+        static RectInt RoomAt(List<RectInt> rooms, Vector2Int centerCell)
+        {
+            foreach (var room in rooms)
+                if (ToCell(room.center) == centerCell)
+                    return room;
+            return rooms[0];
+        }
+
+        static RectInt Expand(RectInt room, int by) =>
+            new(room.x - by, room.y - by, room.width + by * 2, room.height + by * 2);
+
+        /// <summary>
+        /// Picks a tier-scaled set of interior floor cells inside non-spawn/non-exit
+        /// rooms to become lava/fire-trap hazards (item 3 of the 2026-06-13 overhaul).
+        /// Interior-only (1-cell margin from room walls) so traps never block doorways.
+        /// </summary>
+        static HashSet<Vector2Int> BuildHazardCells(System.Random rng, bool[,] floor, List<RectInt> rooms,
+            Vector2Int spawnLocal, Vector2Int exitLocal, int tier)
+        {
+            var hazards = new HashSet<Vector2Int>();
+            float density = Mathf.Clamp(0.03f + (tier - 1) * 0.006f, 0.03f, 0.06f);
+
+            foreach (var room in rooms)
+            {
+                var center = ToCell(room.center);
+                if (center == spawnLocal || center == exitLocal)
+                    continue; // never trap the entrance or exit room
+
+                for (int y = room.yMin + 1; y < room.yMax - 1; y++)
+                for (int x = room.xMin + 1; x < room.xMax - 1; x++)
+                {
+                    if (!floor[x, y]) continue;
+                    if (rng.NextDouble() < density)
+                        hazards.Add(new Vector2Int(x, y));
+                }
+            }
+
+            return hazards;
+        }
+
         static void PickFarthestRoomPair(List<RectInt> rooms, out Vector2Int spawn, out Vector2Int exit)
         {
             spawn = ToCell(rooms[0].center);
@@ -156,57 +231,103 @@ namespace IsoCore.Foundation
             }
         }
 
-        static void Connect(bool[,] floor, Vector2Int a, Vector2Int b, System.Random rng, int corridorRadius)
+        // 2026-06-13: corridors used to be a direct 2-segment "L" between room
+        // centers, which often produced very short connectors for nearby rooms.
+        // Route through an offset midpoint instead, producing a longer 3-segment
+        // "Z" / dogleg corridor with a deliberate jog away from the straight line.
+        static void Connect(bool[,] floor, Vector2Int a, Vector2Int b, System.Random rng, int corridorWidth)
         {
+            int w = floor.GetLength(0);
+            int h = floor.GetLength(1);
+            const int MinJog = 4;
+            const int MaxJog = 12;
+            int jog = MinJog + rng.Next(0, MaxJog - MinJog + 1);
+            if (rng.NextDouble() < 0.5) jog = -jog;
+
             bool horizontalFirst = rng.NextDouble() < 0.5;
             if (horizontalFirst)
             {
-                DigLine(floor, a.x, b.x, a.y, true, corridorRadius);
-                DigLine(floor, a.y, b.y, b.x, false, corridorRadius);
+                int midX = a.x + (b.x - a.x) / 2;
+                int jogY = Mathf.Clamp(a.y + jog, 1, h - 2);
+                DigLine(floor, a.x, midX, a.y, true, corridorWidth);
+                DigLine(floor, a.y, jogY, midX, false, corridorWidth);
+                DigLine(floor, midX, b.x, jogY, true, corridorWidth);
+                DigLine(floor, jogY, b.y, b.x, false, corridorWidth);
             }
             else
             {
-                DigLine(floor, a.y, b.y, a.x, false, corridorRadius);
-                DigLine(floor, a.x, b.x, b.y, true, corridorRadius);
+                int midY = a.y + (b.y - a.y) / 2;
+                int jogX = Mathf.Clamp(a.x + jog, 1, w - 2);
+                DigLine(floor, a.y, midY, a.x, false, corridorWidth);
+                DigLine(floor, a.x, jogX, midY, true, corridorWidth);
+                DigLine(floor, midY, b.y, jogX, false, corridorWidth);
+                DigLine(floor, jogX, b.x, b.y, true, corridorWidth);
             }
         }
 
-        static void DigLine(bool[,] floor, int from, int to, int fixedCoord, bool horizontal, int corridorRadius)
+        static void DigLine(bool[,] floor, int from, int to, int fixedCoord, bool horizontal, int corridorWidth)
         {
             int min = Math.Min(from, to);
             int max = Math.Max(from, to);
             for (int v = min; v <= max; v++)
             {
-                if (horizontal) SetFloor(floor, v, fixedCoord, corridorRadius);
-                else SetFloor(floor, fixedCoord, v, corridorRadius);
+                if (horizontal) SetFloor(floor, v, fixedCoord, corridorWidth);
+                else SetFloor(floor, fixedCoord, v, corridorWidth);
             }
         }
 
-        static int CorridorRadiusForTier(int tier, System.Random rng)
+        /// <summary>
+        /// Corridor width in tiles, clamped to [2,4] per the 2026-06-13 spec
+        /// (was an odd radius-based width of 3-7 before).
+        /// </summary>
+        static int CorridorWidthForTier(int tier, System.Random rng)
         {
-            int radius = tier <= 1 ? 1 : 2;
-            if (tier == 1 && rng.NextDouble() < 0.4)
-                radius = 2;
-            if (tier >= 4 && rng.NextDouble() < 0.35)
-                radius++;
-            return Mathf.Clamp(radius, 1, 3);
+            int width = tier <= 2 ? 2 : 3;
+            if (tier >= 4 && rng.NextDouble() < 0.5)
+                width = 4;
+            return Mathf.Clamp(width, 2, 4);
         }
 
-        static void SetFloor(bool[,] floor, int x, int y, int radius)
+        // Stamps a (width x width) floor patch with its near corner at (x,y), so a
+        // corridor traced along a line is exactly `width` tiles wide.
+        static void SetFloor(bool[,] floor, int x, int y, int width)
         {
             int w = floor.GetLength(0);
             int h = floor.GetLength(1);
-            for (int yy = y - radius; yy <= y + radius; yy++)
-            for (int xx = x - radius; xx <= x + radius; xx++)
+            for (int dy = 0; dy < width; dy++)
+            for (int dx = 0; dx < width; dx++)
+            {
+                int xx = x + dx, yy = y + dy;
                 if (xx > 0 && xx < w - 1 && yy > 0 && yy < h - 1)
                     floor[xx, yy] = true;
+            }
         }
 
-        static FoundationSavedCell[] BuildCells(bool[,] floor, Vector2Int renderMin, Vector2Int renderMax)
+        /// <summary>True if any of the 8 neighbours (or the cell itself) of a local
+        /// floor-array coordinate is a floor cell. Used to find the 1-cell wall ring
+        /// around rooms/corridors — everything beyond that ring becomes void.</summary>
+        static bool HasFloorNeighbor(bool[,] floor, int lx, int ly)
+        {
+            int w = floor.GetLength(0);
+            int h = floor.GetLength(1);
+            for (int dy = -1; dy <= 1; dy++)
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                int nx = lx + dx, ny = ly + dy;
+                if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+                if (floor[nx, ny]) return true;
+            }
+            return false;
+        }
+
+        static FoundationSavedCell[] BuildCells(bool[,] floor, Vector2Int renderMin, Vector2Int renderMax,
+            int tier, RectInt spawnRoom, RectInt exitRoom, HashSet<Vector2Int> hazardCells)
         {
             var cells = new List<FoundationSavedCell>();
             int w = floor.GetLength(0);
             int h = floor.GetLength(1);
+            var landmarkSpawn = Expand(spawnRoom, 1);
+            var landmarkExit = Expand(exitRoom, 1);
 
             for (int y = renderMin.y - BoundaryPadding; y <= renderMax.y + BoundaryPadding; y++)
             for (int x = renderMin.x - BoundaryPadding; x <= renderMax.x + BoundaryPadding; x++)
@@ -215,21 +336,59 @@ namespace IsoCore.Foundation
                 int ly = y - renderMin.y;
                 bool inRender = lx >= 0 && lx < w && ly >= 0 && ly < h;
                 bool walkable = inRender && floor[lx, ly];
-                bool solidBoundary = !walkable;
+
+                string surfaceBlockId;
+                string underBlockId;
+                bool solidBlock;
+
+                if (walkable)
+                {
+                    var local = new Vector2Int(lx, ly);
+                    if (hazardCells.Contains(local))
+                    {
+                        surfaceBlockId = HazardBlock(x, y);
+                        underBlockId = DungeonFloorBlock(tier, x, y, lx, ly);
+                    }
+                    else
+                    {
+                        surfaceBlockId = DungeonFloorBlock(tier, x, y, lx, ly);
+                        underBlockId = null;
+                    }
+                    solidBlock = false;
+                }
+                else if (HasFloorNeighbor(floor, lx, ly))
+                {
+                    // Wall ring immediately around a room/corridor — visible.
+                    var local = new Vector2Int(lx, ly);
+                    surfaceBlockId = (landmarkSpawn.Contains(local) || landmarkExit.Contains(local))
+                        ? LandmarkWallBlock
+                        : WallBlockFor(x, y);
+                    underBlockId = FloorBlock;
+                    solidBlock = true;
+                }
+                else
+                {
+                    // True empty space beyond the wall ring — never rendered (see
+                    // BuildRenderCells), but still blocks movement for collision.
+                    surfaceBlockId = VoidBlock;
+                    underBlockId = null;
+                    solidBlock = true;
+                }
+
                 cells.Add(new FoundationSavedCell
                 {
                     x = x,
                     y = y,
                     height = 0,
                     biomeIndex = 0,
-                    surfaceBlockId = walkable ? DungeonFloorBlock(x, y, lx, ly) : WallBlock,
+                    surfaceBlockId = surfaceBlockId,
                     occupantId = null,
                     nodeId = null,
-                    solidBlock = solidBoundary,
+                    solidBlock = solidBlock,
                     water = false,
                     occupantBlocks = false,
                     nodeBlocks = false,
-                    underBlockId = walkable ? null : FloorBlock,
+                    underBlockId = underBlockId,
                     underHeight = 0,
                 });
             }
@@ -237,16 +396,42 @@ namespace IsoCore.Foundation
             return cells.ToArray();
         }
 
-        static string DungeonFloorBlock(int worldX, int worldY, int localX, int localY)
+        static string DungeonFloorBlock(int tier, int worldX, int worldY, int localX, int localY)
         {
             unchecked
             {
                 int h = worldX * 73856093 ^ worldY * 19349663 ^ localX * 83492791 ^ localY * 265443576;
-                int index = (h & 0x7fffffff) % FloorBlocks.Length;
-                return FloorBlocks[index];
+                int magnitude = h & 0x7fffffff;
+                // Higher tiers mix in mossy "ruins" floor variants for ~15% of cells.
+                if (tier >= 4 && magnitude % 100 < 15)
+                    return RuinsFloorBlocks[magnitude % RuinsFloorBlocks.Length];
+                return FloorBlocks[magnitude % FloorBlocks.Length];
             }
         }
 
+        static string HazardBlock(int worldX, int worldY)
+        {
+            unchecked
+            {
+                int h = worldX * 374761393 ^ worldY * 668265263;
+                int index = (h & 0x7fffffff) % HazardBlocks.Length;
+                return HazardBlocks[index];
+            }
+        }
+
+        static string WallBlockFor(int worldX, int worldY)
+        {
+            unchecked
+            {
+                int h = worldX * 73856093 ^ worldY * 19349663;
+                int index = (h & 0x7fffffff) % WallBlocks.Length;
+                return WallBlocks[index];
+            }
+        }
+
+        // renderCells = everything that should actually be drawn: room/corridor floor
+        // plus the 1-cell wall ring around it. Cells beyond that ring are "void" and
+        // are deliberately excluded here so the ground renderer never shows them.
         static Vector2Int[] BuildRenderCells(bool[,] floor, Vector2Int renderMin)
         {
             var cells = new List<Vector2Int>();
@@ -256,7 +441,7 @@ namespace IsoCore.Foundation
             for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)
             {
-                if (!floor[x, y])
+                if (!floor[x, y] && !HasFloorNeighbor(floor, x, y))
                     continue;
 
                 cells.Add(new Vector2Int(renderMin.x + x, renderMin.y + y));

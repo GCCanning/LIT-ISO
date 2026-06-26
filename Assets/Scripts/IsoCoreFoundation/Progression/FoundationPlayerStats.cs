@@ -20,12 +20,18 @@ namespace IsoCore.Foundation
         public float Stamina { get; private set; }
         public float MaxStamina { get; private set; }
 
-        public int STR { get; private set; }
-        public int DEX { get; private set; }
-        public int INT { get; private set; }
-        public int VIT { get; private set; }
-        public int DEF { get; private set; }
-        public int LUCK { get; private set; }
+        // Base core stats (from calling/level/debug). Equipment bonuses are layered on top
+        // via _equip* offsets; the public STR/DEX/... getters report base+equip so all
+        // existing consumers (vitals, multipliers, HUD) see the equipped totals.
+        int _baseStr, _baseDex, _baseInt, _baseVit, _baseDef, _baseLuck;
+        int _equipStr, _equipDex, _equipInt, _equipVit, _equipDef, _equipLuck;
+
+        public int STR => _baseStr + _equipStr;
+        public int DEX => _baseDex + _equipDex;
+        public int INT => _baseInt + _equipInt;
+        public int VIT => _baseVit + _equipVit;
+        public int DEF => Math.Max(0, _baseDef + _equipDef);
+        public int LUCK => Math.Max(0, _baseLuck + _equipLuck);
 
         public string Class { get; private set; } = "Wanderer";
         public string Title { get; private set; } = "Newcomer";
@@ -34,6 +40,39 @@ namespace IsoCore.Foundation
         // True once vitals have been seeded (new character or loaded save). After that,
         // RecalculateVitals only clamps downward — it never refills a zero (dead) vital.
         bool _vitalsInitialized;
+
+        // ---- 2026-06-13 owner request: DEX-driven movement/casting progression ----
+        // Baseline DEX is 8 (the starting value set by SetCoreStats/ApplyCalling), so
+        // both multipliers evaluate to exactly 1.0x for a fresh character — existing
+        // balance is unchanged until points are put into DEX (or removed from it by
+        // future content). Clamped so neither extreme can break traversal or combat
+        // pacing.
+
+        /// <summary>Movement-speed scalar. Each DEX point above/below the baseline of 8
+        /// shifts speed +/-2.5%, clamped to [0.7x, 1.6x].</summary>
+        public float MoveSpeedMultiplier => Clamp(1f + (DEX - 8) * 0.025f, 0.7f, 1.6f);
+
+        /// <summary>Ability cooldown/cast-time scalar. Each DEX point above/below the
+        /// baseline of 8 shifts cooldowns -/+2%, clamped to [0.5x, 1.3x]. Higher DEX
+        /// casts faster; lower DEX casts slower. 0.5x floor keeps cooldowns from
+        /// hitting zero and trivializing resource costs.</summary>
+        public float CooldownMultiplier => Clamp(1f - (DEX - 8) * 0.02f, 0.5f, 1.3f);
+
+        // ---- 2026-06-13 owner request (A7): STR-driven jump mechanics ----
+        // Baseline STR is 8 (same starting value as DEX from SetCoreStats/ApplyCalling),
+        // so both jump properties evaluate to their neutral defaults for a fresh
+        // character — existing traversal balance is unchanged until points are put
+        // into STR (or removed from it by future content).
+
+        /// <summary>Extra cfg.jumpClimbSteps allowance while airborne, from STR above the
+        /// baseline of 8. Every 4 STR points above baseline grants +1 climbable step,
+        /// clamped to [0, 3] so a jump can never trivially scale an entire cliff face.</summary>
+        public int JumpClimbBonus => (int)Clamp((STR - 8) / 4f, 0f, 3f);
+
+        /// <summary>Visual jump-hop height scalar. Each STR point above/below the baseline
+        /// of 8 shifts the hop arc +/-3%, clamped to [0.85x, 1.45x]. Purely cosmetic — does
+        /// not affect Walkable()'s climb logic, only Refresh()'s lift arc.</summary>
+        public float JumpHeightMultiplier => Clamp(1f + (STR - 8) * 0.03f, 0.85f, 1.45f);
 
         public float Health01 => Ratio(Health, MaxHealth);
         public float Mana01 => Ratio(Mana, MaxMana);
@@ -76,12 +115,12 @@ namespace IsoCore.Foundation
 
         public void SetCoreStats(int str, int dex, int intelligence, int vit, int def, int luck)
         {
-            STR = Math.Max(1, str);
-            DEX = Math.Max(1, dex);
-            INT = Math.Max(1, intelligence);
-            VIT = Math.Max(1, vit);
-            DEF = Math.Max(0, def);
-            LUCK = Math.Max(0, luck);
+            _baseStr = Math.Max(1, str);
+            _baseDex = Math.Max(1, dex);
+            _baseInt = Math.Max(1, intelligence);
+            _baseVit = Math.Max(1, vit);
+            _baseDef = Math.Max(0, def);
+            _baseLuck = Math.Max(0, luck);
             RecalculateVitals();
             Changed?.Invoke();
         }
@@ -152,6 +191,7 @@ namespace IsoCore.Foundation
         {
             if (amount <= 0) return;
 
+            int previousLevel = Level;
             Experience += amount;
             while (Experience >= ExperienceToNextLevel)
             {
@@ -164,6 +204,14 @@ namespace IsoCore.Foundation
 
             RecalculateVitals();
             Changed?.Invoke();
+
+            // Real level-up flourish: only when the character actually gained one or more
+            // levels from this XP award. Vitals/stats are already settled above, so the
+            // celebration screen reflects the post-level-up state. Show() is a static no-op
+            // until the LevelUpView singleton has installed itself, so this is safe at any
+            // time during play.
+            if (Level > previousLevel)
+                FoundationUiBridge.RequestLevelUp(previousLevel, Level);
         }
 
         public FoundationPlayerStatsSaveData CaptureState()
@@ -179,12 +227,12 @@ namespace IsoCore.Foundation
                 maxMana = MaxMana,
                 stamina = Stamina,
                 maxStamina = MaxStamina,
-                str = STR,
-                dex = DEX,
-                intelligence = INT,
-                vit = VIT,
-                def = DEF,
-                luck = LUCK,
+                str = _baseStr,
+                dex = _baseDex,
+                intelligence = _baseInt,
+                vit = _baseVit,
+                def = _baseDef,
+                luck = _baseLuck,
                 className = Class,
                 title = Title,
             };
@@ -200,12 +248,14 @@ namespace IsoCore.Foundation
             Class = string.IsNullOrWhiteSpace(state.className) ? "Wanderer" : state.className.Trim();
             Title = string.IsNullOrWhiteSpace(state.title) ? "Newcomer" : state.title.Trim();
 
-            STR = Math.Max(1, state.str);
-            DEX = Math.Max(1, state.dex);
-            INT = Math.Max(1, state.intelligence);
-            VIT = Math.Max(1, state.vit);
-            DEF = Math.Max(0, state.def);
-            LUCK = Math.Max(0, state.luck);
+            _baseStr = Math.Max(1, state.str);
+            _baseDex = Math.Max(1, state.dex);
+            _baseInt = Math.Max(1, state.intelligence);
+            _baseVit = Math.Max(1, state.vit);
+            _baseDef = Math.Max(0, state.def);
+            _baseLuck = Math.Max(0, state.luck);
+            // Equipment offsets are re-applied by EquipmentLoadout.RestoreState after this.
+            _equipStr = _equipDex = _equipInt = _equipVit = _equipDef = _equipLuck = 0;
 
             MaxHealth = Math.Max(1f, state.maxHealth);
             MaxMana = Math.Max(1f, state.maxMana);
@@ -221,18 +271,56 @@ namespace IsoCore.Foundation
             Changed?.Invoke();
         }
 
+        /// <summary>
+        /// Admin/debug tab support: adjust a single core stat by +/-amount and
+        /// recalculate dependent vitals, raising <see cref="Changed"/> so bound
+        /// UI (Character tab, HUD) updates immediately.
+        /// </summary>
+        public void DebugAdjustStat(FoundationStatType stat, int amount)
+        {
+            if (amount == 0) return;
+            AddStat(stat, amount);
+            RecalculateVitals();
+            Changed?.Invoke();
+        }
+
+        /// <summary>Admin/debug tab support: directly set the character level (min 1).
+        /// Does not grant the stat bonuses normal level-ups award via AddExperience.</summary>
+        public void DebugSetLevel(int level)
+        {
+            Level = Math.Max(1, level);
+            Changed?.Invoke();
+        }
+
         void AddStat(FoundationStatType stat, int amount)
         {
             if (amount == 0) return;
             switch (stat)
             {
-                case FoundationStatType.STR: STR = Math.Max(1, STR + amount); break;
-                case FoundationStatType.DEX: DEX = Math.Max(1, DEX + amount); break;
-                case FoundationStatType.INT: INT = Math.Max(1, INT + amount); break;
-                case FoundationStatType.VIT: VIT = Math.Max(1, VIT + amount); break;
-                case FoundationStatType.DEF: DEF = Math.Max(0, DEF + amount); break;
-                case FoundationStatType.LUCK: LUCK = Math.Max(0, LUCK + amount); break;
+                case FoundationStatType.STR: _baseStr = Math.Max(1, _baseStr + amount); break;
+                case FoundationStatType.DEX: _baseDex = Math.Max(1, _baseDex + amount); break;
+                case FoundationStatType.INT: _baseInt = Math.Max(1, _baseInt + amount); break;
+                case FoundationStatType.VIT: _baseVit = Math.Max(1, _baseVit + amount); break;
+                case FoundationStatType.DEF: _baseDef = Math.Max(0, _baseDef + amount); break;
+                case FoundationStatType.LUCK: _baseLuck = Math.Max(0, _baseLuck + amount); break;
             }
+        }
+
+        /// <summary>
+        /// Phase 1 equipment: replaces the current equipped stat offsets with the supplied
+        /// totals (sum of every equipped item's StatBonuses) and recalculates dependent
+        /// vitals. The EquipmentLoadout calls this whenever gear is equipped/unequipped.
+        /// </summary>
+        public void ApplyEquipmentModifiers(int str, int dex, int intelligence, int vit, int def, int luck)
+        {
+            _equipStr = str;
+            _equipDex = dex;
+            _equipInt = intelligence;
+            _equipVit = vit;
+            _equipDef = def;
+            _equipLuck = luck;
+            RecalculateVitals();
+            Changed?.Invoke();
         }
 
         void RecalculateVitals()

@@ -12,7 +12,7 @@ namespace IsoCore.Foundation
         public int seed = 1337;
         public int chunkSize = 12;
         public int viewRadiusChunks = 3;     // chunks streamed around the player (7x7) with a wide off-screen margin
-        public int maxHeight = 4;
+        public int maxHeight = 7;
         public int spawnClearingRadius = 6;  // flat, mob-free safe start (cells)
         public int spawnHeight = 1;
 
@@ -74,7 +74,7 @@ namespace IsoCore.Foundation
         public bool continentWorld = true;
         [Tooltip("Frequency of the base landmass elevation noise. Lower = larger " +
                  "continents and oceans; higher = broken, islandy terrain.")]
-        public float continentFrequency = 0.012f;
+        public float continentFrequency = 0.0045f;
         [Tooltip("Elevation below this is deep ocean (water).")]
         [Range(0f, 1f)] public float continentDeepLevel = 0.34f;
         [Tooltip("Elevation below this (but above deep) is shallow coastal water.")]
@@ -82,10 +82,14 @@ namespace IsoCore.Foundation
         [Tooltip("Land below this elevation renders as a beach (sand) ring at the coast.")]
         [Range(0f, 1f)] public float continentBeachLevel = 0.46f;
         [Tooltip("Land elevation thresholds at which the height column steps up one level " +
-                 "(stacked dirt body + surface cap). Three thresholds = up to 4 tiers.")]
-        [Range(0f, 1f)] public float continentTier2Level = 0.62f;
-        [Range(0f, 1f)] public float continentTier3Level = 0.74f;
-        [Range(0f, 1f)] public float continentTier4Level = 0.85f;
+                 "(stacked dirt body + surface cap). Six thresholds = up to h7. " +
+                 "Tiers 5-7 only activate when maxHeight >= their target height.")]
+        [Range(0f, 1f)] public float continentTier2Level = 0.58f;
+        [Range(0f, 1f)] public float continentTier3Level = 0.68f;
+        [Range(0f, 1f)] public float continentTier4Level = 0.76f;
+        [Range(0f, 1f)] public float continentTier5Level = 0.82f;
+        [Range(0f, 1f)] public float continentTier6Level = 0.88f;
+        [Range(0f, 1f)] public float continentTier7Level = 0.94f;
         [Tooltip("Elevation added near the world origin so the spawn region is always " +
                  "solid land, fading to 0 over continentSpawnLandRadius cells.")]
         [Range(0f, 1f)] public float continentSpawnLandBias = 0.34f;
@@ -119,6 +123,15 @@ namespace IsoCore.Foundation
         // ---- Movement: jump & sprint (owner-approved addition) ----
         // Walking keeps the maxWalkStepHeight=0 invariant; only an active jump may ascend.
         [Header("Movement: jump & sprint")]
+        [Tooltip("Max height steps the player may ascend by walking alone (invariant: 1 — " +
+                 "walk up one step; jump stacks for taller cliffs).")]
+        public int maxWalkStepHeight = 1;
+        [Tooltip("Horizontal tile range of a directional leap jump (hold direction + Space). " +
+                 "0 disables leaping.")]
+        public float jumpLeapTiles = 2f;
+        [Tooltip("How far (in world units) the player's collision point may overlap a blocked " +
+                 "cell before being pushed back. Lets the player hug walls smoothly.")]
+        public float wallCollisionInset = 0.22f;
         [Tooltip("Seconds a jump hop lasts (visual arc + the window in which one height step may be climbed).")]
         public float jumpDuration = 0.35f;
         [Tooltip("Peak visual lift of the hop in world units. Visual only — never changes cell/height queries.")]
@@ -140,6 +153,23 @@ namespace IsoCore.Foundation
         public float mobSpawnInterval = 3f;
         public float mobSpawnRadius = 9f;
         public float mobDespawnRadius = 16f;
+
+        [Header("Night danger multipliers")]
+        [Tooltip("Damage dealt by night-buffed mobs is multiplied by this.")]
+        public float nightMobDamageMultiplier = 1.5f;
+        [Tooltip("Move speed of night-buffed mobs is multiplied by this.")]
+        public float nightMobSpeedMultiplier = 1.25f;
+        [Tooltip("Aggro detection range of night-buffed mobs is multiplied by this.")]
+        public float nightAggroRangeMultiplier = 1.5f;
+
+        [Header("Campfire")]
+        [Tooltip("Fallback safe-radius (cells) used when the campfire prop does not define " +
+                 "its own campWardRadius.")]
+        public float campfireSafeRadius = 4f;
+        [Tooltip("0–1 strength of the campfire ward. 1 = full protection against same-tier " +
+                 "mobs; lower values let mobs breach more easily.")]
+        [Range(0f, 1f)]
+        public float campfireWardStrength = 1f;
 
         [Header("Starter inventory (itemId : count)")]
         public List<ItemStack> starterItems = new()

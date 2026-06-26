@@ -113,6 +113,7 @@ namespace IsoCore.Foundation
             ClearInstanceObjects();
             _world.RestoreModifiedCells(dungeon.cells);
             SpawnDungeonDecorations(dungeon);
+            SpawnDungeonRoomFog(dungeon);
             _player.SetCell(dungeon.spawnCell.x, dungeon.spawnCell.y);
             _overlay?.Flash($"Entered {_displayName} - Tier {dungeon.tier}");
             Entered?.Invoke(_instanceId, _displayName);
@@ -418,6 +419,12 @@ namespace IsoCore.Foundation
             }
         }
 
+        // TODO(content): the only authored layout today is TavernHearthSnug, which
+        // places no station/board props, so MarkInteractiveStation below is currently a
+        // no-op in practice. Author smithy / guild-hall / workshop layouts that add the
+        // station prop keys (crafting_table, furnace, anvil, grindstone, tanning_rack,
+        // loom, alchemy_table, cooking_station, guild_notice_board, guild_quest_board_v2)
+        // and they will become interactable automatically via detection below.
         void SpawnLayoutProps(FoundationInteriorLayout layout, Vector2Int origin)
         {
             foreach (var prop in layout.props)
@@ -431,9 +438,69 @@ namespace IsoCore.Foundation
                 else if (prop.anchor == FoundationInteriorAnchorKind.Wall)
                     sortOffset += 1;
 
-                SpawnInteriorProp(sprite, cell.x, cell.y, prop.yOffset, prop.displayName,
+                var deco = SpawnInteriorProp(sprite, cell.x, cell.y, prop.yOffset, prop.displayName,
                     prop.blocksMovement, false, prop.footprintW, prop.footprintH, sortOffset);
+
+                // Make station / board props interactable. Detection is by sprite key
+                // (the prop ids the art ships as), since FoundationInteriorPropPlacement
+                // carries no explicit "kind" field. PlayerInteraction reads these flags
+                // on click to open the Crafting screen or the Quest Board.
+                MarkInteractiveStation(deco, prop.spriteKey);
             }
+        }
+
+        /// <summary>
+        /// Detect a crafting-station / quest-board prop by its sprite key and tag the
+        /// spawned decoration so it routes to the right screen on interact. Plain
+        /// scenery (unmatched keys) is left as-is.
+        ///
+        /// Mapping (owner spec 2026-06):
+        ///   crafting_table          -> Workbench
+        ///   furnace                 -> Furnace
+        ///   anvil                   -> Workbench (smithing; no dedicated Anvil StationType yet)
+        ///   grindstone              -> Workbench (repair/smithing; shares the Anvil bucket)
+        ///   tanning_rack, loom      -> Tannery (leather/cloth)
+        ///   alchemy_table           -> Furnace (no Alchemy StationType yet)
+        ///   cooking_station         -> CookingPot
+        ///   guild_notice_board,
+        ///   guild_quest_board*      -> Quest Board
+        ///
+        /// TODO(stations): StationType only has {None,Hand,Workbench,Furnace,CookingPot,
+        /// Tannery}. There is no Anvil / Alchemy / Grindstone member, so anvil+grindstone
+        /// collapse onto Workbench and alchemy_table onto Furnace. Add dedicated
+        /// StationType members + matching recipe.station values to separate them.
+        /// TODO(tiers): tier is hard-coded to 1 here. Data-drive it once the placement
+        /// data (FoundationInteriorPropPlacement) carries a station tier.
+        /// </summary>
+        static void MarkInteractiveStation(FoundationInstanceDecoration deco, string spriteKey)
+        {
+            if (deco == null || string.IsNullOrWhiteSpace(spriteKey))
+                return;
+
+            string key = spriteKey.ToLowerInvariant();
+
+            if (key.Contains("quest_board") || key.Contains("questboard") ||
+                key.Contains("notice_board") || key.Contains("noticeboard"))
+            {
+                deco.MarkQuestBoard();
+                return;
+            }
+
+            // TODO(tiers): default tier 1; replace with placement-driven tier when available.
+            const int tier = 1;
+
+            if (key.Contains("crafting_table"))
+                deco.MarkStation(StationType.Workbench, tier);
+            else if (key.Contains("furnace"))
+                deco.MarkStation(StationType.Furnace, tier);
+            else if (key.Contains("anvil") || key.Contains("grindstone"))
+                deco.MarkStation(StationType.Workbench, tier); // TODO(stations): own Anvil type
+            else if (key.Contains("tanning_rack") || key.Contains("loom"))
+                deco.MarkStation(StationType.Tannery, tier);
+            else if (key.Contains("alchemy"))
+                deco.MarkStation(StationType.Furnace, tier);   // TODO(stations): own Alchemy type
+            else if (key.Contains("cooking"))
+                deco.MarkStation(StationType.CookingPot, tier);
         }
 
         static bool IsTavern(string instanceId) =>
@@ -444,7 +511,18 @@ namespace IsoCore.Foundation
             !string.IsNullOrWhiteSpace(instanceId) &&
             instanceId.IndexOf("library", StringComparison.OrdinalIgnoreCase) >= 0;
 
-        static bool HasStructuredRoomWalls(string instanceId) => IsTavern(instanceId) || IsLibrary(instanceId);
+        // Placeholder interiors (owner request 2026-06): guild halls and shops get their
+        // own distinct, walled pocket rooms until dedicated furnished layouts are authored.
+        static bool IsGuild(string instanceId) =>
+            !string.IsNullOrWhiteSpace(instanceId) &&
+            instanceId.IndexOf("guild", StringComparison.OrdinalIgnoreCase) >= 0;
+
+        static bool IsShop(string instanceId) =>
+            !string.IsNullOrWhiteSpace(instanceId) &&
+            instanceId.IndexOf("shop", StringComparison.OrdinalIgnoreCase) >= 0;
+
+        static bool HasStructuredRoomWalls(string instanceId) =>
+            IsTavern(instanceId) || IsLibrary(instanceId) || IsGuild(instanceId) || IsShop(instanceId);
 
         static int PocketSizeFor(string instanceId) =>
             IsTavern(instanceId) ? TavernPocketSize :
@@ -602,6 +680,18 @@ namespace IsoCore.Foundation
                 _decorations.Add(deco);
                 _instanceObjects.Add(go);
             }
+        }
+
+        // 2026-06-13: dark overlay on each non-spawn room until the player walks
+        // into it, per the user's "fog until you enter the room" request.
+        void SpawnDungeonRoomFog(FoundationDungeonBuild dungeon)
+        {
+            if (dungeon.roomMarkers == null || dungeon.roomMarkers.Length == 0) return;
+
+            var go = new GameObject("DungeonRoomFog");
+            var fog = go.AddComponent<DungeonRoomFog>();
+            fog.Init(_player, dungeon.roomMarkers);
+            _instanceObjects.Add(go);
         }
 
         static void AttachPortalVisual(GameObject go, SpriteRenderer renderer, int tier, float visualScale)

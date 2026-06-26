@@ -24,6 +24,7 @@ namespace IsoCore.Foundation
         FoundationInteractionOverlay _overlay;
         FoundationInstanceSystem _instances;
         FoundationDungeonPortalSystem _dungeonPortals;
+        MobSpawner _mobs;
         PlayerHeldTool _heldTool;
         FoundationCampingSystem _camping;
         FoundationPlayerStats _stats;
@@ -43,11 +44,12 @@ namespace IsoCore.Foundation
             Camera cam = null, FoundationInteractionOverlay overlay = null,
             FoundationInstanceSystem instances = null, FoundationDungeonPortalSystem dungeonPortals = null,
             PlayerHeldTool heldTool = null, FoundationCampingSystem camping = null,
-            FoundationPlayerStats stats = null)
+            FoundationPlayerStats stats = null, MobSpawner mobs = null)
         {
             _player = player; _controller = controller; _content = content; _cfg = cfg;
             _inv = inv; _hotbar = hotbar; _placement = placement; _farming = farming;
             _storage = storage; _cam = cam; _overlay = overlay; _instances = instances; _dungeonPortals = dungeonPortals;
+            _mobs = mobs;
             _heldTool = heldTool;
             _camping = camping;
             _stats = stats;
@@ -162,6 +164,23 @@ namespace IsoCore.Foundation
             portal = null;
             return _dungeonPortals != null &&
                 _dungeonPortals.TryGetPortalUnderCursor(ActiveCamera(), Input.mousePosition, out portal);
+        }
+
+        // Merchant NPC under the cursor. Mobs have no colliders/raycast path, so we resolve
+        // the world point under the cursor and pick the nearest mob via the spawner, then keep
+        // only merchant-flagged defs. Returns false when no spawner is wired or no merchant is near.
+        bool TryMerchantUnderCursor(out Mob merchant)
+        {
+            merchant = null;
+            if (_mobs == null) return false;
+            var cam = ActiveCamera();
+            if (cam == null) return false;
+            var wp = cam.ScreenToWorldPoint(Input.mousePosition);
+            wp.z = 0f;
+            var mob = _mobs.FindMobNear(new Vector2(wp.x, wp.y), 0.6f);
+            if (mob == null || mob.Def == null || !mob.Def.isMerchant) return false;
+            merchant = mob;
+            return true;
         }
 
         void HandleHotbar()
@@ -307,8 +326,55 @@ namespace IsoCore.Foundation
         {
             if (PointerOverUI()) return;
 
+            // Merchant NPC: the Vendor/Shop screen is reachable ONLY here (and the Stations Hub),
+            // never via a global hotkey. RMB a merchant townsperson to open the shop.
+            if (TryMerchantUnderCursor(out var merchant) && InRange(merchant.transform.position))
+            {
+                string who = merchant.Def != null ? merchant.Def.Display : "Merchant";
+                _overlay?.OpenContextMenu(who, Input.mousePosition,
+                    new[]
+                    {
+                        new FoundationContextAction("trade", $"Trade with {who}",
+                            () =>
+                            {
+                                ContextActionUsed?.Invoke("trade", merchant.Def != null ? merchant.Def.id : "merchant");
+                                FoundationUiBridge.RequestMerchant();
+                            })
+                    });
+                return;
+            }
+
             if (TryDecorationUnderCursor(out var decoration) && InRange(decoration.HighlightPosition))
             {
+                // World station / board props (tagged at spawn in
+                // FoundationInstanceSystem.MarkInteractiveStation): route to the Quest
+                // Board or the Crafting screen, mirroring the placeable wiring in
+                // OpenPlaceableContext / RequestCrafting.
+                if (decoration.IsQuestBoard)
+                {
+                    _overlay?.OpenContextMenu(decoration.DisplayName, Input.mousePosition,
+                        new[]
+                        {
+                            new FoundationContextAction("quests", $"Read {decoration.DisplayName}",
+                                () =>
+                                {
+                                    ContextActionUsed?.Invoke("open_quest_board", decoration.DisplayName);
+                                    FoundationUiBridge.RequestQuestBoard();
+                                })
+                        });
+                    return;
+                }
+                if (decoration.IsCraftingStation)
+                {
+                    _overlay?.OpenContextMenu(decoration.DisplayName, Input.mousePosition,
+                        new[]
+                        {
+                            new FoundationContextAction("use", $"Use {decoration.DisplayName}",
+                                () => RequestCrafting(decoration.StationType, decoration.DisplayName, decoration.StationTier))
+                        });
+                    return;
+                }
+
                 if (decoration.IsDungeonExit && _dungeonPortals != null && _dungeonPortals.IsActiveDungeon)
                 {
                     _overlay?.OpenContextMenu(decoration.DisplayName, Input.mousePosition,
@@ -533,7 +599,10 @@ namespace IsoCore.Foundation
             var actions = new List<FoundationContextAction>();
             var def = placeable.Def;
 
-            if (def.interaction == InteractionKind.CraftingStation)
+            if (IsQuestBoardPlaceable(def))
+                actions.Add(new FoundationContextAction("quests", $"Read {def.Display}",
+                    () => OpenQuestBoard(def)));
+            else if (def.interaction == InteractionKind.CraftingStation)
                 actions.Add(new FoundationContextAction("use", $"Use {def.Display}",
                     () => RequestCrafting(def.stationType, def.id)));
             else if (def.interaction == InteractionKind.Container)
@@ -679,11 +748,42 @@ namespace IsoCore.Foundation
             SfxManager.Play("place", 0.8f);
         }
 
-        void RequestCrafting(StationType station, string targetId)
+        void RequestCrafting(StationType station, string targetId, int tier = 0)
         {
             ContextActionUsed?.Invoke("craft", targetId);
             CraftingRequested?.Invoke(station);
+
+            // Tell the Crafting UI which world station opened it so its recipe list
+            // can filter to this station and (for tagged world-station props) gate
+            // recipes/outputs by the station's tier. Placeable stations still pass
+            // tier 0 until PlaceableDefinition carries a stationTier
+            // (see CraftingStationContext.ActiveStationTier TODO).
+            // Ask the UI to open Crafting for this station via the Foundation→UI
+            // bridge (Foundation must not reference the UI assembly directly). The
+            // UI listener sets CraftingStationContext + shows the Crafting panel.
+            FoundationUiBridge.RequestCraftingStation(station, targetId, tier);
+
             Flash($"{station} crafting");
+        }
+
+        /// <summary>Placeable ids that act as a quest board (open the Quest Board UI
+        /// instead of crafting). Matched case-insensitively / by substring so
+        /// "quest_board", "questboard", "notice_board" etc. all resolve.
+        /// TODO(content): no quest-board PlaceableDefinition exists yet in
+        /// FoundationContent. Add one (e.g. id "quest_board") so a real prop spawns
+        /// in the world and routes here.</summary>
+        static bool IsQuestBoardPlaceable(PlaceableDefinition def)
+        {
+            if (def == null || string.IsNullOrEmpty(def.id)) return false;
+            string id = def.id.ToLowerInvariant();
+            return id.Contains("quest_board") || id.Contains("questboard") ||
+                   id.Contains("notice_board") || id.Contains("noticeboard");
+        }
+
+        void OpenQuestBoard(PlaceableDefinition def)
+        {
+            ContextActionUsed?.Invoke("open_quest_board", def != null ? def.id : "quest_board");
+            FoundationUiBridge.RequestQuestBoard();
         }
 
         void OpenContainer(PlaceableInstance placeable)

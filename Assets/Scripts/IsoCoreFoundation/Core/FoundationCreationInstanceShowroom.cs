@@ -17,6 +17,25 @@ namespace IsoCore.Foundation
         const int MinY = -28;
         const int MaxY = 30;
 
+        // ---- "review everything" additions (owner request 2026-06): a chest bank
+        //      stocked with every registered item, plus FULL procedural settlements
+        //      (one of each tier) generated north of the showroom. ----
+        const int AllChestBaseX = 10;
+        const int AllChestY = 10;
+        const int AllChestStepX = 3;
+        const int AllChestPerChest = 60;   // headroom under the 64-slot cap
+        const int AllChestMax = 12;
+
+        // Settlement showcase row: hand-authored compact towns (one per tier), laid
+        // west->east and centred on this Y, north of the showroom (see BuildTown).
+        const int SettlementRowY = 85;
+
+        static int AllItemsChestCount(FoundationContent content)
+        {
+            int n = content?.Items?.All?.Count ?? 0;
+            return Mathf.Clamp(Mathf.CeilToInt(n / (float)AllChestPerChest), 0, AllChestMax);
+        }
+
         public static void ApplyConfig(FoundationBootstrap bootstrap)
         {
             if (bootstrap == null)
@@ -69,7 +88,97 @@ namespace IsoCore.Foundation
             AddResourceSamples(cells, content);
             AddLowWalls(cells, content);
 
+            // Stone-path "highway" running north from the showroom up to the
+            // settlement showcase row, so the player has a clear route to it.
+            AddRect(cells, -1, 28, 3, SettlementRowY - 27, "stone_path", content);
+
+            // Compact hand-authored towns (one per tier) north of the showroom.
+            StampSettlements(cells, content);
+
             world.RestoreModifiedCells(cells.ToArray());
+        }
+
+        // ----------------------------------------------------------------------
+        // Hand-authored compact towns (one per tier). The overworld sampler produces
+        // a sparse, farm-heavy sprawl that doesn't read as a town up close, so the
+        // showroom lays out dense, tidy settlements that showcase the real tiered
+        // building art around a paved plaza, scaling up Hamlet -> City.
+        // ----------------------------------------------------------------------
+
+        const int TownSpacing = 6;   // cells between building anchors (room for 4-wide + gap)
+        const int TownGap = 16;      // gap between adjacent towns
+
+        static readonly (string label, string[] buildings, int stalls)[] TownDefs =
+        {
+            ("HAMLET",  new[] { "tavern_r1", "shop_r1", "library_r1" }, 0),
+            ("VILLAGE", new[] { "tavern_r1", "shop_r1", "library_r1", "guild_hall_r1", "shop_r2" }, 1),
+            ("TOWN",    new[] { "tavern_r2", "shop_r2", "library_r2", "guild_hall_r2", "shop_r2", "tavern_r2" }, 2),
+            ("CITY",    new[] { "tavern_r3", "shop_r3", "library_r3", "guild_hall_r3", "shop_r3", "library_r2", "guild_hall_r2", "tavern_r2" }, 3),
+        };
+
+        struct TownLayout { public string label; public int originX; public int originY; public string[] buildings; public int stalls; public int gw; public int gh; }
+
+        static List<TownLayout> SettlementLayout()
+        {
+            var list = new List<TownLayout>();
+            int cursorX = -70;
+            foreach (var t in TownDefs)
+            {
+                int n = t.buildings.Length;
+                int cols = Mathf.CeilToInt(Mathf.Sqrt(n));
+                int rows = Mathf.CeilToInt(n / (float)cols);
+                int gw = (cols - 1) * TownSpacing + 4;
+                int gh = (rows - 1) * TownSpacing + 4;
+                list.Add(new TownLayout { label = t.label, originX = cursorX, originY = SettlementRowY, buildings = t.buildings, stalls = t.stalls, gw = gw, gh = gh });
+                cursorX += gw + 8 + TownGap;
+            }
+            return list;
+        }
+
+        static void StampSettlements(List<FoundationSavedCell> cells, FoundationContent content)
+        {
+            var towns = SettlementLayout();
+            // A main road linking every town's south edge (meets the north highway near x=0).
+            int west = towns[0].originX - 6;
+            var last = towns[towns.Count - 1];
+            int span = (last.originX + last.gw + 6) - west;
+            AddRect(cells, west, SettlementRowY - 7, span, 2, "stone_path", content);
+
+            foreach (var t in towns)
+                BuildTown(cells, content, t);
+        }
+
+        static void BuildTown(List<FoundationSavedCell> cells, FoundationContent content, TownLayout t)
+        {
+            // Lay the paved town block + ambient props only. Buildings, market stalls and
+            // the plaza campfire are placed as PLACEABLES in SpawnShowroomPlaceables (the
+            // buildings are enterable; their art/size come from the placeable registry).
+            AddRect(cells, t.originX - 4, t.originY - 6, t.gw + 8, t.gh + 12, "stone_path", content);
+
+            int plazaY = t.originY - 4;
+            int cx = t.originX + t.gw / 2;
+            cells.Add(GroundWithNode(t.originX - 1, plazaY, "stone_path", "campsite_lantern", content));
+            cells.Add(GroundWithNode(t.originX + t.gw + 1, plazaY, "stone_path", "campsite_lantern", content));
+
+            // A little greenery on the north edge for a lived-in feel.
+            cells.Add(GroundWithNode(t.originX - 2, t.originY + t.gh + 3, "grass_1", "tree", content));
+            cells.Add(GroundWithNode(t.originX + t.gw + 2, t.originY + t.gh + 3, "grass_1", "pine", content));
+            cells.Add(GroundWithNode(cx, t.originY + t.gh + 3, "grass_1", "flower", content));
+        }
+
+        /// <summary>A flat ground cell that optionally carries a (building) decoration node.</summary>
+        static FoundationSavedCell GroundWithNode(int x, int y, string surface, string nodeId, FoundationContent content)
+        {
+            var node = !string.IsNullOrEmpty(nodeId) ? content.Nodes.Get(nodeId) : null;
+            return new FoundationSavedCell
+            {
+                x = x, y = y, height = 0, biomeIndex = 0,
+                surfaceBlockId = surface, occupantId = null,
+                nodeId = node != null ? node.id : null,
+                solidBlock = false, water = false, occupantBlocks = false,
+                nodeBlocks = node != null && node.blocksMovement,
+                underBlockId = null, underHeight = 0,
+            };
         }
 
         public static void BuildShowroom(FoundationBootstrap bootstrap)
@@ -79,11 +188,12 @@ namespace IsoCore.Foundation
 
             SpawnShowroomPlaceables(bootstrap);
             StockResourceChest(bootstrap);
+            StockAllItemsChests(bootstrap);
             SpawnCropSamples(bootstrap);
             SpawnLabels(bootstrap);
 
             bootstrap.InteractionOverlay?.Flash(
-                "Creation Instance loaded: review portals, buildings, resources, and interiors here.",
+                "Creation Instance: settlement tiers north, ALL-ITEMS chests beside them, plus crafting, resources & interiors.",
                 4.5f);
         }
 
@@ -92,7 +202,7 @@ namespace IsoCore.Foundation
             if (bootstrap.Placement == null)
                 return;
 
-            var placeables = new[]
+            var placeables = new List<FoundationSavedPlaceable>
             {
                 SavedPlaceable("chest", -20, -2),
                 SavedPlaceable("workbench", -15, -2),
@@ -107,7 +217,61 @@ namespace IsoCore.Foundation
                 SavedPlaceable("rootcellar_portal", 4, 9),
             };
 
-            bootstrap.Placement.RestorePlaceables(placeables);
+            // All-items review chest bank (filled in StockAllItemsChests).
+            int chestCount = AllItemsChestCount(bootstrap.Content);
+            for (int i = 0; i < chestCount; i++)
+                placeables.Add(SavedPlaceable("chest", AllChestBaseX + i * AllChestStepX, AllChestY));
+
+            // Settlement buildings (enterable placeables) + market stalls + plaza campfire,
+            // placed on the paved town blocks laid by BuildTown.
+            foreach (var t in SettlementLayout())
+            {
+                int n = t.buildings.Length;
+                int cols = Mathf.CeilToInt(Mathf.Sqrt(n));
+                for (int i = 0; i < n; i++)
+                {
+                    int col = i % cols, row = i / cols;
+                    placeables.Add(SavedPlaceable(t.buildings[i],
+                        t.originX + col * TownSpacing, t.originY + row * TownSpacing));
+                }
+                int plazaY = t.originY - 4;
+                placeables.Add(SavedPlaceable("campfire", t.originX + t.gw / 2, plazaY));
+                for (int s = 0; s < t.stalls; s++)
+                    placeables.Add(SavedPlaceable(s % 2 == 0 ? "market_stall_red" : "market_stall_blue",
+                        t.originX + 2 + s * 3, plazaY));
+            }
+
+            bootstrap.Placement.RestorePlaceables(placeables.ToArray());
+        }
+
+        /// <summary>Fills the all-items chest bank with every registered item so the
+        /// full catalogue (materials, tools, weapons, armour, placeables, seeds) can be
+        /// pulled and reviewed. Equippables stock 1; stackables stock a small handful.</summary>
+        static void StockAllItemsChests(FoundationBootstrap bootstrap)
+        {
+            if (bootstrap.Storage == null || bootstrap.Content?.Items?.All == null)
+                return;
+
+            var items = bootstrap.Content.Items.All;
+            int chestCount = AllItemsChestCount(bootstrap.Content);
+            for (int i = 0; i < chestCount; i++)
+            {
+                int cx = AllChestBaseX + i * AllChestStepX;
+                var chest = bootstrap.Storage.EnsureContainer("chest", cx, AllChestY, 64);
+                if (chest == null)
+                    continue;
+
+                int start = i * AllChestPerChest;
+                int end = Mathf.Min(start + AllChestPerChest, items.Count);
+                for (int k = start; k < end; k++)
+                {
+                    var it = items[k];
+                    if (it == null || string.IsNullOrEmpty(it.id))
+                        continue;
+                    int count = it.IsEquippable ? 1 : Mathf.Clamp(it.maxStack, 1, 20);
+                    chest.Add(it.id, count);
+                }
+            }
         }
 
         static FoundationSavedPlaceable SavedPlaceable(string id, int x, int y) =>
@@ -205,6 +369,11 @@ namespace IsoCore.Foundation
             Label(root, bootstrap.World, -13, -27, "FARMING STRIP\nSoil and crop growth samples");
             Label(root, bootstrap.World, 42, -27, "TILE PALETTE\nGround/path/block samples");
             Label(root, bootstrap.World, 4, 6, "INSTANCE PORTAL\nRootcellar pocket entrance");
+
+            Label(root, bootstrap.World, AllChestBaseX, AllChestY + 2,
+                "ALL ITEMS\nEvery item / weapon / armour — pull & review");
+            foreach (var s in SettlementLayout())
+                Label(root, bootstrap.World, s.originX + s.gw / 2, s.originY - 8, s.label);
         }
 
         static void Label(Transform root, IsoWorld world, int x, int y, string text)

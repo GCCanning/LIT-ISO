@@ -98,6 +98,39 @@ namespace IsoCore.Foundation
             Block("wood_floor", "floor_blocks", new Color(0.66f, 0.50f, 0.30f), CollisionMode.Decorative);
             Block("soil", "soil_blocks", new Color(0.40f, 0.27f, 0.16f), CollisionMode.Walkable);
 
+            // ---- PixelLab beach-sand surface tiles ----
+            Block("sand_01",  "pl_sand_blocks", new Color(0.87f, 0.81f, 0.55f), CollisionMode.Walkable);
+            Block("sand_03",  "pl_sand_blocks", new Color(0.84f, 0.77f, 0.50f), CollisionMode.Walkable);
+            Block("sand_06",  "pl_sand_blocks", new Color(0.89f, 0.83f, 0.58f), CollisionMode.Walkable);
+            Block("sand_11",  "pl_sand_blocks", new Color(0.82f, 0.75f, 0.47f), CollisionMode.Walkable);
+            Block("sand_13",  "pl_sand_blocks", new Color(0.85f, 0.79f, 0.52f), CollisionMode.Walkable);
+
+            // ---- PixelLab surface prop tiles (pl_) ----
+            Block("pl_meado_01",          "pl_meadow_blocks", new Color(0.40f, 0.70f, 0.35f), CollisionMode.Walkable);
+            Block("pl_meadow_02",         "pl_meadow_blocks", new Color(0.38f, 0.68f, 0.32f), CollisionMode.Walkable);
+            Block("pl_grass_01",          "pl_grass_blocks",  new Color(0.35f, 0.62f, 0.28f), CollisionMode.Walkable);
+            Block("pl_grass_02",          "pl_grass_blocks",  new Color(0.32f, 0.58f, 0.25f), CollisionMode.Walkable);
+            Block("pl_forestgrass_02",    "pl_grass_blocks",  new Color(0.22f, 0.45f, 0.20f), CollisionMode.Walkable);
+            Block("pl_reddirt_02Cracked", "pl_dirt_blocks",   new Color(0.55f, 0.32f, 0.18f), CollisionMode.Walkable);
+            Block("pl_sandd_01",          "pl_sand_blocks",   new Color(0.78f, 0.64f, 0.38f), CollisionMode.Walkable);
+            Block("pl_sandbeach_05",      "pl_sand_blocks",   new Color(0.83f, 0.76f, 0.48f), CollisionMode.Walkable);
+            Block("pl_snoww_01",          "pl_snow_blocks",   new Color(0.92f, 0.95f, 0.98f), CollisionMode.Walkable);
+            Block("pl_snoww_02",          "pl_snow_blocks",   new Color(0.88f, 0.91f, 0.95f), CollisionMode.Walkable);
+            Block("pl_stone_01",          "pl_stone_blocks",  new Color(0.58f, 0.58f, 0.60f), CollisionMode.Walkable);
+            Block("pl_stone_03",          "pl_stone_blocks",  new Color(0.54f, 0.54f, 0.56f), CollisionMode.Walkable);
+            Block("pl_stonee_03",         "pl_stone_blocks",  new Color(0.52f, 0.52f, 0.54f), CollisionMode.Walkable);
+            Block("pl_stoneel_01",        "pl_stone_blocks",  new Color(0.56f, 0.56f, 0.58f), CollisionMode.Walkable);
+            Block("pl_stonecracked_04",   "pl_stone_blocks",  new Color(0.50f, 0.50f, 0.52f), CollisionMode.Walkable);
+
+            // ---- PixelLab snow2 atlas tiles (mountain peaks + snow biome) ----
+            Block("snow2_00", "pl_snow2_blocks", new Color(0.95f, 0.97f, 1.00f), CollisionMode.Walkable);
+            Block("snow2_02", "pl_snow2_blocks", new Color(0.90f, 0.93f, 0.97f), CollisionMode.Walkable);
+            Block("snow2_07", "pl_snow2_blocks", new Color(0.88f, 0.91f, 0.95f), CollisionMode.Walkable);
+            Block("snow2_08", "pl_snow2_blocks", new Color(0.86f, 0.89f, 0.93f), CollisionMode.Walkable);
+            Block("snow2_10", "pl_snow2_blocks", new Color(0.84f, 0.87f, 0.92f), CollisionMode.Walkable);
+            Block("snow2_12", "pl_snow2_blocks", new Color(0.82f, 0.86f, 0.91f), CollisionMode.Walkable);
+            Block("snow2_14", "pl_snow2_blocks", new Color(0.80f, 0.84f, 0.90f), CollisionMode.Walkable);
+
             // ---- Block groups ----
             BlockGroupDefinition Group(string id, params BlockDefinition[] variants)
             {
@@ -377,32 +410,91 @@ namespace IsoCore.Foundation
                 new BiomeNodeSpawn { node = n, chancePerCell = chance };
             BiomeMobSpawn MS(MobDefinition m, float w) => new BiomeMobSpawn { mob = m, weight = w };
 
+            // ── Weighted tile-pool helper ──────────────────────────────────────────
+            BiomeTilePoolEntry[] TPool(params (string id, float w)[] entries)
+            {
+                var a = new BiomeTilePoolEntry[entries.Length];
+                for (int i = 0; i < entries.Length; i++) a[i] = new BiomeTilePoolEntry(entries[i].id, entries[i].w);
+                return a;
+            }
+
             // Rulebook: meadow carries no ore - copper lives in forest cover and badlands.
-            Biome("meadow", 0.55f, 0.55f, grassGroup, 1, 2,
+            var meadowB = Biome("meadow", 0.55f, 0.55f, grassGroup, 1, 5,
                 new[] { NS(tree, 0.05f), NS(rock, 0.02f), NS(bush, 0.05f),
                         NS(flower, 0.03f), NS(tulip, 0.012f), NS(tuft, 0.03f),
                         NS(log, 0.005f), NS(stump, 0.005f) },
                 new[] { MS(deer, 1f), MS(slime, 1f) }, new Color(0.4f, 0.7f, 0.4f));
-            Biome("forest", 0.45f, 0.85f, forestGroup, 1, 3,
+            meadowB.surfaceBasePool = TPool(("pl_meado_01", 330f), ("pl_meadow_02", 168f), ("pl_grass_01", 102f));
+            meadowB.surfaceAccents  = TPool(("pl_grass_02", 6f), ("pl_reddirt_02Cracked", 4f), ("pl_forestgrass_02", 3f));
+            meadowB.accentRate      = 0.08f;
+
+            var forestB = Biome("forest", 0.45f, 0.85f, forestGroup, 1, 6,
                 new[] { NS(tree, 0.14f), NS(bush, 0.06f), NS(rock, 0.02f), NS(copperVein, 0.01f),
                         NS(flower, 0.012f), NS(tuft, 0.02f), NS(log, 0.01f), NS(stump, 0.01f) },
                 new[] { MS(deer, 1f), MS(fox, 1f), MS(slime, 0.5f) }, new Color(0.25f, 0.55f, 0.30f));
-            // Desert renders as pack badlands (dark cracked floor) - the pack has no
-            // sandy-desert family; sand stays reserved for beaches and river banks.
-            Biome("desert", 0.88f, 0.15f, badlandsGroup, 1, 1,
+            forestB.surfaceBasePool = TPool(("pl_grass_01", 175f), ("pl_grass_02", 140f), ("pl_forestgrass_02", 105f));
+            forestB.surfaceAccents  = TPool(("pl_meado_01", 6f), ("pl_reddirt_02Cracked", 5f), ("pl_meadow_02", 4f));
+            forestB.accentRate      = 0.10f;
+
+            // Desert: pl_sandd_01 dominant — warm cracked sand floor with sparse accents.
+            var desertB = Biome("desert", 0.88f, 0.15f, badlandsGroup, 1, 5,
                 new[] { NS(rock, 0.05f), NS(copperVein, 0.015f) },
                 new[] { MS(slime, 1f) }, new Color(0.85f, 0.78f, 0.45f));
-            // Rulebook: beaches carry only sparse rock - no vegetation on sand.
-            Biome("beach", 0.70f, 0.45f, sandGroup, 1, 1,
+            desertB.surfaceBasePool = TPool(("pl_sandd_01", 360f), ("pl_reddirt_02Cracked", 12f));
+            desertB.surfaceAccents  = TPool(("pl_reddirt_02Cracked", 5f));
+            desertB.accentRate      = 0.06f;
+
+            // Beach: narrow coastal strip using PixelLab sand atlas tiles.
+            var beachB = Biome("beach", 0.70f, 0.45f, sandGroup, 1, 1,
                 new[] { NS(rock, 0.02f) },
                 new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.90f, 0.84f, 0.55f));
-            // Cold biome is a TAIGA: pine-heavy forest on grass ground (Minecraft-style
-            // rule - trees grow on grass, never on bare stone/snow plates). The pack has
-            // no snow family, so snowGroup stays unused until real snow art exists.
-            Biome("snow", 0.12f, 0.45f, grassGroup, 1, 2,
+            beachB.surfaceBasePool = TPool(("sand_03", 20f), ("sand_01", 20f), ("sand_06", 20f), ("sand_11", 20f));
+            beachB.surfaceAccents  = TPool(("sand_13", 4f));
+            beachB.accentRate      = 0.05f;
+
+            // Snow/Taiga: pine-heavy forest on snowy ground.
+            var snowB = Biome("snow", 0.12f, 0.45f, snowGroup, 1, 3,
                 new[] { NS(tree, 0.04f), NS(pine, 0.05f), NS(rock, 0.03f), NS(copperVein, 0.008f),
                         NS(tuft, 0.02f), NS(log, 0.008f), NS(stump, 0.008f) },
                 new[] { MS(deer, 1f), MS(fox, 0.5f) }, new Color(0.9f, 0.93f, 0.97f));
+            // mergedBase from export (12)
+            snowB.surfaceBasePool = TPool(
+                ("pl_snoww_01", 420f), ("pl_snoww_02", 196f),
+                ("snow2_08", 20f), ("snow2_10", 20f), ("snow2_02", 20f), ("snow2_14", 1f));
+            snowB.surfaceAccents  = null;
+            snowB.accentRate      = 0f;
+            // Height bands from export (12): soft snow throughout, subtle variants per tier
+            snowB.surfaceBands = new BiomeTilePoolEntry[8][];
+            snowB.surfaceBands[0] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f));
+            snowB.surfaceBands[1] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f), ("snow2_08", 20f), ("snow2_10", 20f));
+            snowB.surfaceBands[2] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f), ("snow2_14", 1f));
+            snowB.surfaceBands[3] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f));
+            snowB.surfaceBands[4] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f));
+            snowB.surfaceBands[5] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f));
+            snowB.surfaceBands[6] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f), ("snow2_02", 20f));
+            snowB.surfaceBands[7] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f), ("snow2_02", 20f));
+
+            // Mountain: elevation-gated (height >= 3) — overrides climate biome.
+            var mountainB = Biome("mountain", 0.30f, 0.30f, badlandsGroup, 3, 6,
+                new[] { NS(rock, 0.14f) },
+                new[] { MS(deer, 0.2f) }, new Color(0.55f, 0.58f, 0.62f));
+            mountainB.elevationGateMinHeight = 3;
+            // mergedBase from export (11) — fallback when height band not matched
+            mountainB.surfaceBasePool = TPool(
+                ("pl_stoneel_01", 155f), ("pl_grass_01", 80f), ("snow2_07", 40f),
+                ("pl_stonee_03", 29f), ("pl_stonecracked_04", 20f), ("snow2_00", 20f));
+            mountainB.surfaceAccents  = TPool(("pl_stonecracked_04", 3f));
+            mountainB.accentRate      = 0.05f;
+            // Height bands from export (11): grass foothills → stone midslope → snowy peaks
+            mountainB.surfaceBands = new BiomeTilePoolEntry[8][];
+            mountainB.surfaceBands[0] = TPool(("pl_grass_01", 80f));
+            mountainB.surfaceBands[1] = TPool(("pl_grass_01", 80f));
+            mountainB.surfaceBands[2] = TPool(("pl_stoneel_01", 55f), ("pl_stonecracked_04", 20f));
+            mountainB.surfaceBands[3] = TPool(("pl_stoneel_01", 25f), ("pl_stonee_03", 20f));
+            mountainB.surfaceBands[4] = TPool(("pl_stoneel_01", 25f), ("pl_stonee_03", 4f));
+            mountainB.surfaceBands[5] = TPool(("pl_stoneel_01", 25f), ("pl_stonee_03", 5f), ("snow2_07", 20f));
+            mountainB.surfaceBands[6] = TPool(("pl_stoneel_01", 25f), ("snow2_00", 20f), ("snow2_07", 20f));
+            mountainB.surfaceBands[7] = TPool(("pl_stoneel_01", 25f), ("snow2_00", 20f), ("snow2_07", 20f));
 
             // ---- Recipes ----
             void Recipe(string id, StationType station, RecipeIngredient[] inputs, ItemStack[] outputs)

@@ -17,6 +17,11 @@ namespace IsoCore.Foundation
     {
         static readonly Dictionary<string, Sprite> _cache = new();
 
+        public static Sprite Resolve(ResourceNodeDefinition def)
+        {
+            return def == null ? null : Resolve(def.SpriteId);
+        }
+
         public static Sprite Resolve(string nodeId)
         {
             if (string.IsNullOrEmpty(nodeId)) return null;

@@ -133,10 +133,7 @@ public static class TimeAndZoomHUDSetup
         bg.color = new Color(0f, 0f, 0f, 0.35f);
         bg.raycastTarget = false;
 
-        // GameTimeUI handles the text children
-        GameTimeUI timeUI = clockObj.GetComponent<GameTimeUI>();
-        if (timeUI == null) timeUI = clockObj.AddComponent<GameTimeUI>();
-
+        // Clock display is now managed by DayClockView via GameHudInitializer.
         Debug.Log("[TimeAndZoomHUD] Clock display ready in top-right.");
     }
 

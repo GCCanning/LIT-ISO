@@ -82,6 +82,7 @@ namespace IsoCore.Foundation.EditorTools
             ValidateUiSourceWiring(add);
             ValidateLaunchSeedPropagation(add);
             ValidateWorldContracts(add);
+            WorldgenContractValidator.Validate((name, pass, detail) => add(name, pass, detail));
             ValidateDungeonGeneration(add);
 
             string foundationSummary = FoundationValidator.Validate(false, writeReports);
@@ -236,8 +237,7 @@ namespace IsoCore.Foundation.EditorTools
                 panel.Contains("FoundationQoLService") &&
                 panel.Contains("CaptureReadState"),
                 initializerPath);
-            add("Runtime does not create the retired IMGUI FoundationHUD backup",
-                bootstrap.Contains("Hud = null") &&
+            add("Runtime does not reference retired IMGUI FoundationHUD",
                 bootstrap.Contains("uGUI is the canonical runtime UI") &&
                 interaction.Contains("CraftingRequested?.Invoke(station)") &&
                 !initializer.Contains("DebugImguiHudVisible") &&
@@ -420,7 +420,9 @@ namespace IsoCore.Foundation.EditorTools
             add("String seed hash is deterministic", expected == expectedAgain, $"{TestSeed} -> {expected}");
 
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            FoundationBootstrap.ConfigureLaunch(TestWorldName, TestSeed, 2, "stonewright");
+            var launchAppearance = FoundationCharacterAppearanceCatalog.ResolveSaveData(
+                new FoundationCharacterAppearanceSaveData { appearanceId = "reference_knight" });
+            FoundationBootstrap.ConfigureLaunch(TestWorldName, TestSeed, 2, "stonewright", launchAppearance);
 
             var go = new GameObject("FoundationBootstrap_IntegratedValidation");
             var boot = go.AddComponent<FoundationBootstrap>();
@@ -453,14 +455,20 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Progression.CurrentCalling != null &&
                 boot.Progression.CurrentCalling.id == "stonewright",
                 boot.ActiveCallingId);
+            var playerAnimator = boot.Player != null ? boot.Player.GetComponent<PlayerAnimator>() : null;
+            add("ConfigureLaunch appearance applied before Ready",
+                boot.ActiveCharacterAppearance != null &&
+                boot.ActiveCharacterAppearance.appearanceId == "reference_knight" &&
+                playerAnimator != null &&
+                playerAnimator.CurrentAppearance.appearanceId == "reference_knight",
+                playerAnimator != null ? playerAnimator.CurrentAppearance.spriteResource : "missing animator");
 
             add("Foundation runtime graph creates Player", go.transform.Find("Player") != null);
             add("Foundation runtime graph creates WorldController", go.transform.Find("WorldController") != null);
             add("Foundation runtime graph creates PlacementSystem", go.transform.Find("PlacementSystem") != null);
             add("Foundation runtime graph creates FarmingSystem", go.transform.Find("FarmingSystem") != null);
             add("Foundation runtime graph creates MobSpawner", go.transform.Find("MobSpawner") != null);
-            add("Foundation runtime graph creates input router without retired IMGUI HUD",
-                go.GetComponent<FoundationHUD>() == null && boot.Hud == null &&
+            add("Foundation runtime graph creates input router (IMGUI HUD retired)",
                 go.GetComponent<PlayerInteraction>() != null);
             add("Foundation runtime graph creates UI coordinator",
                 go.GetComponent<FoundationUiCoordinator>() != null && boot.Ui != null,
@@ -477,7 +485,7 @@ namespace IsoCore.Foundation.EditorTools
                 boot.Player != null && boot.WorldController != null && boot.Placement != null &&
                 boot.Instances != null &&
                 boot.Farming != null && boot.MobSpawner != null && boot.DayNight != null &&
-                boot.Crafting != null && boot.Hud == null && boot.Ui != null && boot.Interaction != null);
+                boot.Crafting != null && boot.Ui != null && boot.Interaction != null);
             add("FoundationBootstrap exposes mouse interaction overlay and tutorial handles",
                 boot.InteractionOverlay != null && boot.TutorialNotifier != null &&
                 boot.TutorialNotifier.CurrentStep >= 0);
@@ -526,7 +534,6 @@ namespace IsoCore.Foundation.EditorTools
                 .GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.Invoke(headlessBoot, null);
             add("FoundationBootstrap keeps retired IMGUI HUD uncreated",
-                headlessBoot.Hud == null && headlessGo.GetComponent<FoundationHUD>() == null &&
                 headlessGo.GetComponent<PlayerInteraction>() != null);
             add("FoundationBootstrap exposes UI binding handles through canonical shell",
                 headlessBoot.Inventory != null && headlessBoot.Hotbar != null &&
@@ -657,6 +664,8 @@ namespace IsoCore.Foundation.EditorTools
                     savedDto.seed == expectedSeed &&
                     savedDto.difficulty == boot.ActiveDifficulty &&
                     savedDto.callingId == boot.ActiveCallingId &&
+                    savedDto.characterAppearance != null &&
+                    savedDto.characterAppearance.appearanceId == boot.ActiveCharacterAppearance.appearanceId &&
                     savedDto.hotbarSelected == 2 &&
                     savedDto.progression != null &&
                     savedDto.progression.currentCallingId == boot.ActiveCallingId &&
@@ -668,7 +677,7 @@ namespace IsoCore.Foundation.EditorTools
                     savedDto.exploredMapCells != null &&
                     savedDto.exploredMapCells.Length > 0 &&
                     dtoQuestProgressOk,
-                    savedDto != null ? $"v{savedDto.version}, pins {savedDto.qol?.pinnedGoals?.Length ?? 0}, map {savedDto.exploredMapCells?.Length ?? 0}" : "missing DTO");
+                    savedDto != null ? $"v{savedDto.version}, appearance {savedDto.characterAppearance?.appearanceId}, pins {savedDto.qol?.pinnedGoals?.Length ?? 0}, map {savedDto.exploredMapCells?.Length ?? 0}" : "missing DTO");
 
                 FoundationBootstrap.ClearLaunchOptions();
                 FoundationBootstrap.ConfigureLoad(path);
@@ -686,6 +695,8 @@ namespace IsoCore.Foundation.EditorTools
                         b.Instances != null &&
                         b.Instances.IsInsideInstance &&
                         b.ActiveWorldName == boot.ActiveWorldName &&
+                        b.ActiveCharacterAppearance != null &&
+                        b.ActiveCharacterAppearance.appearanceId == boot.ActiveCharacterAppearance.appearanceId &&
                         b.config != null &&
                         b.config.seed == expectedSeed;
                 }
@@ -752,17 +763,26 @@ namespace IsoCore.Foundation.EditorTools
                     metadata.worldName == boot.ActiveWorldName &&
                     metadata.seed == expectedSeed &&
                     metadata.callingId == boot.ActiveCallingId &&
+                    metadata.appearanceId == boot.ActiveCharacterAppearance.appearanceId &&
                     metadata.inventoryItemCount >= 3 &&
                     metadata.placedObjectCount == 1 &&
                     metadata.storageContainerCount == 1 &&
                     metadata.cropCount == 1,
-                    metadataOk ? $"{metadata.worldName} seed {metadata.seed} level {metadata.level}" : metadataError);
+                    metadataOk ? $"{metadata.worldName} seed {metadata.seed} appearance {metadata.appearanceId} level {metadata.level}" : metadataError);
                 add("FoundationBootstrap.Load applies save data",
                     loadedOk &&
                     loaded.Inventory.Count("copper_bar") == 3 &&
                     loaded.Hotbar.Selected == 2 &&
                     Mathf.Abs(loaded.DayNight.time - 0.66f) < 0.01f,
                     loadedOk ? $"hotbar {loaded.Hotbar.Selected}, copper {loaded.Inventory.Count("copper_bar")}, time {loaded.DayNight.time:0.00}" : "load failed");
+                var loadedAnimator = loaded.Player != null ? loaded.Player.GetComponent<PlayerAnimator>() : null;
+                add("Save/load preserves character appearance",
+                    loadedOk &&
+                    loaded.ActiveCharacterAppearance != null &&
+                    loaded.ActiveCharacterAppearance.appearanceId == boot.ActiveCharacterAppearance.appearanceId &&
+                    loadedAnimator != null &&
+                    loadedAnimator.CurrentAppearance.appearanceId == boot.ActiveCharacterAppearance.appearanceId,
+                    loadedAnimator != null ? loadedAnimator.CurrentAppearance.spriteResource : "missing animator");
                 add("Save/load preserves modified solid block collision",
                     blockPlaced &&
                     loaded.World.IsBlocked(blockCell.x, blockCell.y) &&

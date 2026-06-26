@@ -13,12 +13,23 @@ namespace IsoCore.Foundation
         public Color color = new Color(0.3f, 0.5f, 0.2f);
         public float widthUnits = 0.7f;
         public float heightUnits = 1.2f;
+        [Tooltip("Optional sprite id under Resources/Decorations. Leave empty to use this node id.")]
+        public string visualId;
+        public string SpriteId => string.IsNullOrEmpty(visualId) ? id : visualId;
+        public string gameplayPrototypeId;
+
+        [Header("World footprint")]
+        public int footprintWidth = 1;
+        public int footprintHeight = 1;
+        public int FootprintWidth => Mathf.Max(1, footprintWidth);
+        public int FootprintHeight => Mathf.Max(1, footprintHeight);
 
         [Header("Harvest")]
         public ToolType requiredTool = ToolType.None; // preferred tool (faster)
         public bool toolMandatory = false;            // if true, the required tool is required
         public int hitsToHarvest = 2;
         public ItemDrop[] drops;
+        public float dropMultiplier = 1f;
 
         [Header("Respawn")]
         public float respawnSeconds = 0f; // 0 == does not respawn

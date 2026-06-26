@@ -235,12 +235,12 @@ MonoBehaviour:
     seed: 1337
     chunkSize: 12
     viewRadiusChunks: 1
-    maxHeight: 4
+    maxHeight: 7
     spawnClearingRadius: 6
     spawnHeight: 1
-    climateFrequency: 0.02
-    heightFrequency: 0.06
-    moveSpeed: 4
+    climateFrequency: 0.0035
+    heightFrequency: 0.11
+    moveSpeed: 3.5
     interactRange: 1.8
     mobCap: 8
     mobSpawnInterval: 3

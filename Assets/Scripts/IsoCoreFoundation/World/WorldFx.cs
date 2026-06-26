@@ -86,5 +86,79 @@ namespace IsoCore.Foundation
 
             ps.Play();
         }
+
+        /// <summary>
+        /// A soft, rising smoke puff (dashes, teleports, magic). Larger, fainter and
+        /// longer-lived than Dust, and it fades + grows over its lifetime so it dissipates
+        /// like smoke rather than popping out.
+        /// </summary>
+        public static void Smoke(Vector3 pos, Color color, int count = 12, float size = 0.18f,
+                                 float radius = 0.16f, float rise = 0.6f, float life = 0.55f,
+                                 int sortingOrder = 9000)
+        {
+            var go = new GameObject("FxSmoke");
+            go.transform.position = pos;
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            var main = ps.main;
+            main.duration = 0.6f;
+            main.loop = false;
+            main.startLifetime = life;
+            main.startSpeed = rise;
+            main.startSize = size;
+            main.startColor = color;
+            main.gravityModifier = -0.35f; // gentle upward drift
+            main.maxParticles = count;
+            main.playOnAwake = false;
+            main.stopAction = ParticleSystemStopAction.Destroy;
+
+            var emission = ps.emission;
+            emission.enabled = true;
+            emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)count) });
+
+            var shape = ps.shape;
+            shape.enabled = true;
+            shape.shapeType = ParticleSystemShapeType.Circle;
+            shape.radius = radius;
+
+            // Fade alpha to zero over life so puffs dissolve instead of snapping out.
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            var grad = new Gradient();
+            grad.SetKeys(
+                new[] { new GradientColorKey(color, 0f), new GradientColorKey(color, 1f) },
+                new[] { new GradientAlphaKey(color.a, 0f), new GradientAlphaKey(0f, 1f) });
+            col.color = grad;
+
+            // Grow slightly as it rises for a billowing read.
+            var sol = ps.sizeOverLifetime;
+            sol.enabled = true;
+            sol.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.EaseInOut(0f, 0.7f, 1f, 1.4f));
+
+            var psr = go.GetComponent<ParticleSystemRenderer>();
+            psr.material = Mat;
+            psr.sortingOrder = sortingOrder;
+
+            ps.Play();
+        }
+
+        /// <summary>
+        /// A line of fading smoke puffs between two points — the dash / projectile trail.
+        /// Puffs grow fainter toward the start so the streak reads as pointing forward.
+        /// </summary>
+        public static void Trail(Vector3 from, Vector3 to, Color color, int puffs = 6, float size = 0.14f)
+        {
+            puffs = Mathf.Max(2, puffs);
+            for (int i = 0; i < puffs; i++)
+            {
+                float t = i / (float)(puffs - 1);
+                Vector3 p = Vector3.Lerp(from, to, t);
+                var c = color;
+                c.a *= Mathf.Lerp(0.35f, 0.9f, t);
+                Smoke(p, c, count: 6, size: size, radius: 0.08f, rise: 0.3f, life: 0.4f);
+            }
+        }
     }
 }

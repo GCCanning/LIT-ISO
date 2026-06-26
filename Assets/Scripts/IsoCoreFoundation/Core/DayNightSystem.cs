@@ -82,6 +82,13 @@ namespace IsoCore.Foundation
             return d.sqrMagnitude > 1e-6f ? d.normalized : Vector2.up;
         }
 
+        /// <summary>
+        /// True once NightFactor crosses the "danger" threshold used by night-mob and
+        /// campfire-ward systems (Impact Analysis A2). Matches the threshold previously
+        /// inlined in FoundationCampingSystem so all night-gated systems agree.
+        /// </summary>
+        public bool IsNight => NightFactor >= 0.45f;
+
         /// <summary>0 at full day, 1 at deep night.</summary>
         public float NightFactor
         {

@@ -49,12 +49,17 @@ namespace IsoCore.Foundation
             // Prefer real pixel-art from Resources/Decorations/<nodeId>.png (sized via its
             // PPU and pivoted at its base so it stands inside the cell). Fall back to the
             // procedural placeholder box when no art is present for this node id.
-            var art = DecorationSpriteResolver.Resolve(def.id);
+            var art = DecorationSpriteResolver.Resolve(def);
             if (art != null)
             {
                 _renderer.sprite = art;
                 _renderer.color = Color.white; // real art carries its own colour
                 transform.position = pos;
+                // Normalize to the definition's intended world height so a tree/rock/bush is
+                // sized by design intent relative to the player, not by its source pixel canvas.
+                FoundationSpriteScale.NormalizeHeight(transform, art, def.heightUnits);
+                if (IsVegetation(def.id))
+                    gameObject.AddComponent<WindSway>().Init(SwayAmplitude(def.id));
             }
             else
             {
@@ -130,10 +135,27 @@ namespace IsoCore.Foundation
             var sr = GetComponent<SpriteRenderer>();
             var barGo = new GameObject("BreakProgress");
             barGo.transform.SetParent(transform, false);
-            barGo.transform.localPosition = new Vector3(0f, Def.heightUnits + 0.16f, 0f);
+            // Counter the node's art-normalization scale so the bar keeps its world size/height.
+            float barScale = transform.localScale.x <= 0.001f ? 1f : transform.localScale.x;
+            barGo.transform.localPosition = new Vector3(0f, (Def.heightUnits + 0.16f) / barScale, 0f);
+            barGo.transform.localScale = Vector3.one / barScale;
             _progressBar = barGo.AddComponent<WorldProgressBar>();
             _progressBar.Build(sr != null ? sr.sortingOrder + 2 : 2);
             return _progressBar;
+        }
+
+        // Leafy props sway in the wind; rocks/ore/stumps/structures do not.
+        static bool IsVegetation(string id) =>
+            id != null && (id.Contains("tree") || id.Contains("pine") || id.Contains("bush") ||
+                           id.Contains("flower") || id.Contains("tuft") || id.Contains("cactus") ||
+                           id.Contains("willow") || id.Contains("sapling") || id.Contains("grass"));
+
+        // Big trees are stiffer (small angle); ground cover is floppier (bigger angle).
+        static float SwayAmplitude(string id)
+        {
+            if (id.Contains("tree") || id.Contains("pine") || id.Contains("willow")) return 1.4f;
+            if (id.Contains("cactus")) return 0.8f;
+            return 3.0f;
         }
 
         string HitSfxKey()

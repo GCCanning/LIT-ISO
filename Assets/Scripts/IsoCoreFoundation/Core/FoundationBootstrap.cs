@@ -16,6 +16,18 @@ namespace IsoCore.Foundation
 
         public static event Action<FoundationBootstrap> Ready;
 
+        /// <summary>
+        /// Raised when gameplay wants the DontDestroyOnLoad HUD shell torn down before
+        /// leaving gameplay (e.g. PauseMenu's Quit-to-Menu). IsoCore.Foundation cannot
+        /// reference the LitIso.UI.InGame HUD assembly directly (asmdef ordering), so
+        /// PauseMenu raises this event via <see cref="RequestHudShutdown"/> and
+        /// GameHudInitializer subscribes to it to call ShutdownHud().
+        /// </summary>
+        public static event Action HudShutdownRequested;
+
+        /// <summary>Requests that any listening HUD shell tear itself down. See <see cref="HudShutdownRequested"/>.</summary>
+        public static void RequestHudShutdown() => HudShutdownRequested?.Invoke();
+
         static bool s_HasLaunchOptions;
         static LaunchOptions s_LaunchOptions;
 
@@ -26,21 +38,25 @@ namespace IsoCore.Foundation
         // Retired serialized field kept so older scenes deserialize without churn.
         [HideInInspector] public bool createImguiHud = false;
         public float cameraSize = 6f;
-        public float cameraMinSize = 3.75f;
-        public float cameraMaxSize = 9f;
+        public float cameraMinSize = 6f;    // ISO-CORE zoom-in limit
+        public float cameraMaxSize = 30f;   // ISO-CORE zoom-out limit
         public float cameraZoomUnitsPerSecond = 5f;
         public float cameraZoomTapStep = 0.75f;
+        public float cameraScrollStep = 1f;   // ISO-CORE: 1.0 per scroll tick
         public const string CameraZoomSensitivityPrefKey = "camera.zoom.sensitivity";
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
         public int ActiveDifficulty { get; private set; } = 1;
         public string ActiveCallingId { get; private set; } = "greenhand";
+        public FoundationCharacterAppearanceSaveData ActiveCharacterAppearance { get; private set; }
         public FoundationLaunchMode ActiveLaunchMode { get; private set; } = FoundationLaunchMode.Standard;
         public FoundationContent Content { get; private set; }
         public IsoWorld World { get; private set; }
         public Inventory Inventory { get; private set; }
         public Hotbar Hotbar { get; private set; }
         public StorageSystem Storage { get; private set; }
+        public EquipmentLoadout Equipment { get; private set; }
+        public LootSystem Loot { get; private set; }
         public IsoFoundationPlayer Player { get; private set; }
         public IsoWorldController WorldController { get; private set; }
         public PlacementSystem Placement { get; private set; }
@@ -53,6 +69,7 @@ namespace IsoCore.Foundation
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
         public FoundationAbilitySystem Abilities { get; private set; }
+        public FoundationAbilityDispatcher AbilityDispatcher { get; private set; }
         public FoundationProgressionHooks ProgressionHooks { get; private set; }
         public FoundationQoLService QoL { get; private set; }
         public FoundationUiCoordinator Ui { get; private set; }
@@ -61,8 +78,7 @@ namespace IsoCore.Foundation
         public FoundationTutorialNotifier TutorialNotifier { get; private set; }
         public FoundationMapOverlay MapOverlay { get; private set; }
         public FoundationPlayerStats Stats => Progression?.Stats;
-        // Retired IMGUI backup handle. This remains null in normal runtime.
-        public FoundationHUD Hud { get; private set; }
+        // FoundationHUD (retired IMGUI fallback) removed 2026-06. uGUI is the canonical runtime UI.
         public PlayerInteraction Interaction { get; private set; }
         public string DefaultSavePath => DefaultSavePathForWorld(ActiveWorldName, config != null ? config.seed : 1337);
 
@@ -74,7 +90,8 @@ namespace IsoCore.Foundation
         /// Call before loading IsoCoreFoundation.unity to hand menu/world settings into
         /// the isolated Foundation scene without coupling it to the legacy WorldManager.
         /// </summary>
-        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null)
+        public static void ConfigureLaunch(string worldName, string seed, int difficulty = 1, string callingId = null,
+            FoundationCharacterAppearanceSaveData appearance = null)
         {
             s_LaunchOptions = new LaunchOptions(
                 NormalizeWorldName(worldName),
@@ -82,7 +99,8 @@ namespace IsoCore.Foundation
                 Mathf.Clamp(difficulty, 0, 2),
                 NormalizeCallingId(callingId),
                 null,
-                FoundationLaunchMode.Standard);
+                FoundationLaunchMode.Standard,
+                FoundationCharacterAppearanceCatalog.ResolveSaveData(appearance));
             s_HasLaunchOptions = true;
         }
 
@@ -98,7 +116,8 @@ namespace IsoCore.Foundation
                 0,
                 NormalizeCallingId(callingId),
                 null,
-                FoundationLaunchMode.CreationInstance);
+                FoundationLaunchMode.CreationInstance,
+                FoundationCharacterAppearanceCatalog.Default.ToSaveData());
             s_HasLaunchOptions = true;
         }
 
@@ -117,19 +136,22 @@ namespace IsoCore.Foundation
                     Mathf.Clamp(metadata.difficulty, 0, 2),
                     NormalizeCallingId(metadata.callingId),
                     savePath,
-                    FoundationLaunchMode.Standard);
+                    FoundationLaunchMode.Standard,
+                    null);
             }
             else
             {
                 Debug.LogWarning($"[FoundationBootstrap] ConfigureLoad could not read metadata ({error}). Booting default world, then attempting load.");
                 s_LaunchOptions = new LaunchOptions(DefaultWorldName, 1337, 1, null, savePath,
-                    FoundationLaunchMode.Standard);
+                    FoundationLaunchMode.Standard,
+                    null);
             }
             s_HasLaunchOptions = true;
         }
 
         /// <summary>Explicit load handoff when the menu already knows the slot metadata.</summary>
-        public static void ConfigureLoad(string worldName, string seed, int difficulty, string savePath, string callingId = null)
+        public static void ConfigureLoad(string worldName, string seed, int difficulty, string savePath, string callingId = null,
+            FoundationCharacterAppearanceSaveData appearance = null)
         {
             s_LaunchOptions = new LaunchOptions(
                 NormalizeWorldName(worldName),
@@ -137,7 +159,8 @@ namespace IsoCore.Foundation
                 Mathf.Clamp(difficulty, 0, 2),
                 NormalizeCallingId(callingId),
                 savePath,
-                FoundationLaunchMode.Standard);
+                FoundationLaunchMode.Standard,
+                FoundationCharacterAppearanceCatalog.ResolveSaveData(appearance));
             s_HasLaunchOptions = true;
         }
 
@@ -190,7 +213,12 @@ namespace IsoCore.Foundation
             Player.Init(World, config, Progression?.Stats);
             // Render the knight sheet over the placeholder box (added after Init so it owns
             // the SpriteRenderer): directional facing + walk animation.
-            playerGo.AddComponent<PlayerAnimator>();
+            var animator = playerGo.AddComponent<PlayerAnimator>();
+            animator.SetAppearance(ActiveCharacterAppearance);
+            // NOTE: the LPC layered wardrobe (LitIso.CharacterCreator, Assembly-CSharp)
+            // can't be referenced from this assembly (IsoCore.Foundation). It hooks
+            // itself onto the player via the Ready event instead — see
+            // LayeredCharacterPlayerHook.cs.
             FoundationDepthPolish.Attach(playerGo, fadeWhenOccluding: false, castLongShadow: false,
                 contactScale: 0.72f, contactAlpha: 0.32f);
             _playerT = playerGo.transform;
@@ -205,6 +233,9 @@ namespace IsoCore.Foundation
             Inventory = new Inventory(inventorySlots, Content);
             Hotbar = new Hotbar(Inventory, hotbarSlots);
             Storage = new StorageSystem(Content, storageSlots);
+            // Phase 1 equipment: per-slot loadout that feeds StatBonuses into player stats and
+            // raises EquipmentChanged for the (Assembly-CSharp) LPC visual hook to re-bake gear.
+            Equipment = new EquipmentLoadout(Content, Progression?.Stats);
             if (config.starterItems != null)
                 foreach (var s in config.starterItems) Inventory.Add(s.itemId, s.count);
             var heldTool = playerGo.AddComponent<PlayerHeldTool>();
@@ -236,6 +267,17 @@ namespace IsoCore.Foundation
             MobSpawner = spawnerGo.AddComponent<MobSpawner>();
             MobSpawner.Init(World, Content, config, Player, Progression?.Stats);
 
+            // Phase 2 loot: rolls mob drops into the inventory on defeat, and fills loot-table
+            // chests the first time they're opened. Subscribes to MobSpawner + Storage events.
+            Loot = new LootSystem(Content, Inventory, Storage);
+            Loot.Init(MobSpawner);
+
+            // Ability executor: turns a successful TryUseAbility into a real in-world
+            // effect + VFX (blink / projectile / heal). The ability wheel VM casts through
+            // Abilities.TryUseAbility, then calls AbilityDispatcher.Execute.
+            AbilityDispatcher = new FoundationAbilityDispatcher();
+            AbilityDispatcher.Init(Player, MobSpawner, Content, Progression?.Stats);
+
             // Day/night clock.
             DayNight = gameObject.AddComponent<DayNightSystem>();
 
@@ -250,29 +292,48 @@ namespace IsoCore.Foundation
             particles.dayNight = DayNight;
             particles.cam = _cam;
 
+            // Void ash motes: fade in only while the player is near "void" cells
+            // (dungeon space outside the room/corridor + wall-ring layout).
+            var voidParticlesGo = new GameObject("VoidAmbientParticles", typeof(ParticleSystem));
+            voidParticlesGo.transform.SetParent(transform, false);
+            var voidParticles = voidParticlesGo.AddComponent<VoidAmbientParticles>();
+            voidParticles.world = World;
+            voidParticles.cam = _cam;
+            voidParticles.follow = _playerT;
+
             // Audio: ensure a listener, prime the SFX pool, and start the day/night music bed.
             if (UnityEngine.Object.FindFirstObjectByType<AudioListener>() == null && _cam != null)
                 _cam.gameObject.AddComponent<AudioListener>();
             SfxManager.Ensure();
             var worldAudio = gameObject.AddComponent<WorldAudioController>();
             worldAudio.dayNight = DayNight;
+            worldAudio.SetBiomeSource(World, Player, config.seed);
 
             // Pause / settings overlay (Esc) with volume sliders + control hints.
             Ui = gameObject.AddComponent<FoundationUiCoordinator>();
-            gameObject.AddComponent<PauseMenu>();
+            // PauseMenu lives in Assembly-CSharp (needs LitIsoTheme); add via reflection.
+            var pauseMenuType = System.Type.GetType("IsoCore.Foundation.PauseMenu, Assembly-CSharp");
+            if (pauseMenuType != null) gameObject.AddComponent(pauseMenuType);
 
             // Lightweight Foundation overlay for right-click world options and tutorial
             // notifications. uGUI is the canonical HUD/panel shell.
             InteractionOverlay = gameObject.AddComponent<FoundationInteractionOverlay>();
 
             Camping = gameObject.AddComponent<FoundationCampingSystem>();
-            Camping.Init(Player, Placement, DayNight, Progression, InteractionOverlay);
+            Camping.Init(Player, Placement, DayNight, Progression, InteractionOverlay, config);
 
             Instances = new FoundationInstanceSystem();
             Instances.Init(World, Player, Content, InteractionOverlay);
             WorldController.SetInstanceSystem(Instances);
             MobSpawner.SetInstanceSystem(Instances);
             MobSpawner.SetCampingSystem(Camping);
+
+            // Settlement townsfolk: passive NPCs that populate town streets while the player is
+            // in a settlement and clear out when they leave. Reuses MobSpawner for spawning.
+            var townsfolkGo = new GameObject("SettlementTownsfolkSpawner");
+            townsfolkGo.transform.SetParent(transform, false);
+            townsfolkGo.AddComponent<SettlementTownsfolkSpawner>()
+                .Init(World, Player, MobSpawner, Content, Instances);
 
             var portalGo = new GameObject("DungeonPortalSystem");
             portalGo.transform.SetParent(transform, false);
@@ -287,13 +348,12 @@ namespace IsoCore.Foundation
 
             // The old IMGUI FoundationHUD backup is intentionally not created.
             // uGUI is the canonical runtime UI; GameHudInitializer spawns it when Ready fires.
-            Hud = null;
 
             // Input router.
             Interaction = gameObject.AddComponent<PlayerInteraction>();
             Interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
                 Storage, _cam, InteractionOverlay, Instances, DungeonPortals, heldTool, Camping,
-                Progression?.Stats);
+                Progression?.Stats, MobSpawner);
 
             // Death + soft respawn (audit rec #3): 0 HP fades out and wakes the player
             // at their campfire (or the spawn clearing) with half Health. No item loss.
@@ -343,6 +403,7 @@ namespace IsoCore.Foundation
             ActiveWorldName = DefaultWorldName;
             ActiveDifficulty = 1;
             ActiveCallingId = "greenhand";
+            ActiveCharacterAppearance = FoundationCharacterAppearanceCatalog.Default.ToSaveData();
             ActiveLaunchMode = FoundationLaunchMode.Standard;
 
             if (!s_HasLaunchOptions)
@@ -351,6 +412,7 @@ namespace IsoCore.Foundation
             ActiveWorldName = s_LaunchOptions.worldName;
             ActiveDifficulty = s_LaunchOptions.difficulty;
             ActiveLaunchMode = s_LaunchOptions.launchMode;
+            ActiveCharacterAppearance = FoundationCharacterAppearanceCatalog.ResolveSaveData(s_LaunchOptions.appearance);
             config.seed = s_LaunchOptions.seed;
             if (ActiveLaunchMode == FoundationLaunchMode.CreationInstance)
                 FoundationCreationInstanceShowroom.ApplyConfig(this);
@@ -449,6 +511,9 @@ namespace IsoCore.Foundation
                 seed = config != null ? config.seed : 1337,
                 difficulty = ActiveDifficulty,
                 callingId = ActiveCallingId,
+                characterAppearance = ActiveCharacterAppearance != null
+                    ? ActiveCharacterAppearance.Clone()
+                    : FoundationCharacterAppearanceCatalog.Default.ToSaveData(),
                 player = new FoundationSavedPlayer
                 {
                     cellX = cell.x,
@@ -457,6 +522,7 @@ namespace IsoCore.Foundation
                     groundY = ground.y,
                 },
                 inventorySlots = Inventory != null ? Inventory.SnapshotSlots() : Array.Empty<ItemStack>(),
+                equipment = Equipment != null ? Equipment.CaptureState() : null,
                 hotbarSelected = Hotbar != null ? Hotbar.Selected : 0,
                 progression = Progression != null ? Progression.CaptureState() : null,
                 qol = QoL != null ? QoL.CaptureState() : null,
@@ -480,12 +546,17 @@ namespace IsoCore.Foundation
 
             ActiveWorldName = NormalizeWorldName(data.worldName);
             ActiveDifficulty = Mathf.Clamp(data.difficulty, 0, 2);
+            ActiveCharacterAppearance = FoundationCharacterAppearanceCatalog.ResolveSaveData(data.characterAppearance);
 
             if (Progression != null && data.progression != null)
                 Progression.RestoreState(data.progression);
             ActiveCallingId = Progression?.CurrentCallingId ?? (string.IsNullOrWhiteSpace(data.callingId) ? "greenhand" : data.callingId);
 
             Inventory?.RestoreSlots(data.inventorySlots);
+            // Equipment restores AFTER progression/stats (RestoreState zeroes equip offsets, then
+            // the loadout re-applies the equipped bonuses and re-raises EquipmentChanged so the
+            // visual layer re-bakes the restored gear).
+            Equipment?.RestoreState(data.equipment);
             if (Hotbar != null) Hotbar.Select(data.hotbarSelected);
             QoL?.RestoreState(data.qol);
 
@@ -494,6 +565,11 @@ namespace IsoCore.Foundation
             Placement?.RestorePlaceables(data.placedObjects);
             Storage?.RestoreState(data.storageContainers, entry =>
                 Placement != null && Placement.HasContainerPlaceable(entry.x, entry.y, entry.placeableId));
+            // Phase 2: a saved container has already had its loot rolled — mark it filled so
+            // first-open after load doesn't re-roll into the player's stored contents.
+            if (Loot != null && data.storageContainers != null)
+                foreach (var sc in data.storageContainers)
+                    Loot.MarkContainerFilled(sc.x, sc.y);
             Farming?.RestoreCrops(data.crops);
             DungeonPortals?.RestoreHistory(data.dungeonHistory);
             bool restoringDungeon = data.dungeon.active && !string.IsNullOrWhiteSpace(data.dungeon.portalId);
@@ -507,6 +583,9 @@ namespace IsoCore.Foundation
 
             if (Player != null)
                 Player.SetGround(new Vector2(data.player.groundX, data.player.groundY));
+
+            var animator = Player != null ? Player.GetComponent<PlayerAnimator>() : null;
+            animator?.SetAppearance(ActiveCharacterAppearance);
         }
 
         public static string DefaultSavePathForWorld(string worldName)
@@ -674,20 +753,48 @@ namespace IsoCore.Foundation
         }
 
         Vector3 _camVel;
+        bool _camPanning;
+        Vector3 _panGrabWorld;
         [SerializeField] float cameraFollowSmoothTime = 0.15f;
+        // Dead-zone follow (ISO-CORE parity). Camera holds still until the player leaves
+        // this box (world-unit half-extents), then eases so they sit at the edge. Ratio
+        // ~2.4:1 mirrors ISO-CORE's 6.0 x 2.5 box, scaled to our ortho size (6).
+        [SerializeField] float cameraDeadZoneX = 2.75f;
+        [SerializeField] float cameraDeadZoneY = 1.15f;
 
         void LateUpdate()
         {
             HandleCameraZoom();
+            Crafting?.Tick(Time.deltaTime);
 
             if (_cam != null && _playerT != null)
             {
-                var p = _playerT.position;
-                var target = new Vector3(p.x, p.y, -10f);
-                // Damped follow — feels smoother than a hard snap. The Pixel Perfect Camera
-                // still snaps the rendered image to the pixel grid, so this stays crisp.
-                _cam.transform.position = Vector3.SmoothDamp(
-                    _cam.transform.position, target, ref _camVel, cameraFollowSmoothTime);
+                // Right-drag to pan; suspends dead-zone follow while held (ISO-CORE parity).
+                if (Input.GetMouseButtonDown(1)) { _panGrabWorld = _cam.ScreenToWorldPoint(Input.mousePosition); _camPanning = true; }
+                else if (!Input.GetMouseButton(1)) _camPanning = false;
+
+                if (_camPanning)
+                {
+                    Vector3 now = _cam.ScreenToWorldPoint(Input.mousePosition);
+                    Vector3 d = _panGrabWorld - now; d.z = 0f;
+                    Vector3 np = _cam.transform.position + d;
+                    _cam.transform.position = new Vector3(np.x, np.y, -10f);
+                }
+                else
+                {
+                    var p = _playerT.position;
+                    Vector3 pos = _cam.transform.position;
+                    // Dead-zone follow: hold still until the player leaves the box, then ease
+                    // so they sit at the box edge. Pixel Perfect Camera keeps the image crisp.
+                    float dx = p.x - pos.x, dy = p.y - pos.y;
+                    float tx = pos.x, ty = pos.y;
+                    if (dx > cameraDeadZoneX) tx = p.x - cameraDeadZoneX;
+                    else if (dx < -cameraDeadZoneX) tx = p.x + cameraDeadZoneX;
+                    if (dy > cameraDeadZoneY) ty = p.y - cameraDeadZoneY;
+                    else if (dy < -cameraDeadZoneY) ty = p.y + cameraDeadZoneY;
+                    var target = new Vector3(tx, ty, -10f);
+                    _cam.transform.position = Vector3.SmoothDamp(pos, target, ref _camVel, cameraFollowSmoothTime);
+                }
             }
         }
 
@@ -695,6 +802,15 @@ namespace IsoCore.Foundation
         {
             if (_cam == null || !_cam.orthographic)
                 return;
+
+            // Scroll-wheel zoom, clamped to the ISO-CORE range (no modifier needed).
+            float scroll = Input.mouseScrollDelta.y;
+            if (Mathf.Abs(scroll) > 0.01f)
+            {
+                if (_pixelPerfectCamera != null && _pixelPerfectCamera.enabled) _pixelPerfectCamera.enabled = false;
+                _cam.orthographicSize = Mathf.Clamp(_cam.orthographicSize - scroll * cameraScrollStep, cameraMinSize, cameraMaxSize);
+                cameraSize = _cam.orthographicSize;
+            }
 
             float zoomSensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(CameraZoomSensitivityPrefKey, 1f), 0.35f, 2.5f);
             float zoomSpeed = cameraZoomUnitsPerSecond * zoomSensitivity;
@@ -769,9 +885,10 @@ namespace IsoCore.Foundation
             public readonly string callingId;
             public readonly string savePath;
             public readonly FoundationLaunchMode launchMode;
+            public readonly FoundationCharacterAppearanceSaveData appearance;
 
             public LaunchOptions(string worldName, int seed, int difficulty, string callingId, string savePath,
-                FoundationLaunchMode launchMode)
+                FoundationLaunchMode launchMode, FoundationCharacterAppearanceSaveData appearance)
             {
                 this.worldName = worldName;
                 this.seed = seed;
@@ -779,6 +896,7 @@ namespace IsoCore.Foundation
                 this.callingId = callingId;
                 this.savePath = savePath;
                 this.launchMode = launchMode;
+                this.appearance = appearance;
             }
         }
 

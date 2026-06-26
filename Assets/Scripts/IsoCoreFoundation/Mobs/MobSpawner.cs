@@ -21,11 +21,29 @@ namespace IsoCore.Foundation
 
         readonly List<Mob> _mobs = new();
         float _timer;
+        Vector2 _spawnOrigin; // the hearth/spawn point; distance from here drives enemy tier
 
         public event Action<MobDefinition> MobDefeated;
         public event Action<MobDefinition> MobCalmed;
 
         public int Count => _mobs.Count;
+
+        /// <summary>Closest living mob within <paramref name="radius"/> world units of a point, or null.
+        /// Used by ability projectiles for hit detection.</summary>
+        public Mob FindMobNear(Vector2 worldPos, float radius)
+        {
+            float best = radius * radius;
+            Mob hit = null;
+            for (int i = _mobs.Count - 1; i >= 0; i--)
+            {
+                var m = _mobs[i];
+                if (!m) continue;
+                Vector2 p = m.transform.position;
+                float d = (p - worldPos).sqrMagnitude;
+                if (d <= best) { best = d; hit = m; }
+            }
+            return hit;
+        }
 
         public void Init(IsoWorld world, FoundationContent content, FoundationConfig cfg, IsoFoundationPlayer player,
             FoundationPlayerStats stats = null)
@@ -34,6 +52,7 @@ namespace IsoCore.Foundation
             _mobParent = new GameObject("Mobs").transform;
             _mobParent.SetParent(transform, false);
             _timer = 1f;
+            _spawnOrigin = player != null ? player.Ground : Vector2.zero; // player starts at the hearth
         }
 
         public void SetInstanceSystem(FoundationInstanceSystem instances)
@@ -90,16 +109,40 @@ namespace IsoCore.Foundation
             bool breachedWard = false;
             if (_camping != null && _camping.RollMobSpawnWard(def, ground, out breachedWard)) return;
 
-            SpawnMob(def, ground, breachedWard || def.behaviour == MobBehavior.Hostile);
+            // Night danger (Impact Analysis A2): mobs spawning at night, outside an active
+            // campfire ward (or breaching a weak ward), are more dangerous.
+            bool nightDanger = _camping != null && _camping.IsNight && (breachedWard || !_camping.AtCampsite);
+            bool aggressive = breachedWard || def.behaviour == MobBehavior.Hostile;
+            SpawnMob(def, ground, aggressive, nightDanger);
+            // Parties: spawn the rest of the group around the leader (bandit pairs, adventurer trios).
+            for (int gi = 1; gi < Mathf.Max(1, def.groupSize); gi++)
+            {
+                Vector2 off = ground + new Vector2(UnityEngine.Random.Range(-1.6f, 1.6f), UnityEngine.Random.Range(-1.6f, 1.6f));
+                var oc = IsoGrid.WorldToCell(new Vector3(off.x, off.y, 0f));
+                if (_world.IsWalkable(oc.x, oc.y)) SpawnMob(def, off, aggressive, nightDanger);
+            }
+            // Camp companion (e.g. a campfire) anchors a bandit camp at the group's centre.
+            if (_content != null && !string.IsNullOrEmpty(def.companionMobId))
+            {
+                var comp = _content.Mobs.Get(def.companionMobId);
+                if (comp != null) SpawnMob(comp, ground, false, false);
+            }
         }
 
-        Mob SpawnMob(MobDefinition def, Vector2 ground, bool aggressive = false)
+        Mob SpawnMob(MobDefinition def, Vector2 ground, bool aggressive = false, bool nightDanger = false)
         {
             var go = new GameObject($"Mob_{def.id}");
             go.transform.SetParent(_mobParent, false);
             var mob = go.AddComponent<Mob>();
+            mob.SetContent(_content); // Phase 3: lets the mob resolve its abilityIds for casts
             mob.Init(def, _world, ground);
             mob.SetCombatContext(_player, _stats, aggressive);
+            // Distance-from-spawn difficulty gradient: every ~24 world units out = +1 level,
+            // +35% HP and +20% damage. Enemies far from the hearth are tougher.
+            int tierLevel = 1 + Mathf.FloorToInt((ground - _spawnOrigin).magnitude / 24f);
+            if (tierLevel > 1) mob.ApplyTier(tierLevel, 1f + (tierLevel - 1) * 0.35f, 1f + (tierLevel - 1) * 0.20f);
+            if (nightDanger && _cfg != null)
+                mob.ApplyNightDanger(_cfg.nightMobDamageMultiplier, _cfg.nightMobSpeedMultiplier, _cfg.nightAggroRangeMultiplier);
             mob.Defeated += HandleMobDefeated;
             mob.Calmed += HandleMobCalmed;
             _mobs.Add(mob);

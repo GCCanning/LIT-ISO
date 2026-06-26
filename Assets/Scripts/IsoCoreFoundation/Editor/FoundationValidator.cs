@@ -157,6 +157,8 @@ namespace IsoCore.Foundation.EditorTools
                 constructionOk && constructionCount >= 1,
                 constructionOk ? $"{constructionCount} plots" : constructionDetail);
 
+            WorldgenContractValidator.Validate((name, pass, detail) => Add(name, pass, detail));
+
             bool abilitiesOk = true; string abilityDetail = "";
             bool hasStaminaSkill = false, hasNeutralSpell = false, hasElementSpell = false;
             foreach (var ability in c.Abilities.All)

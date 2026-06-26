@@ -16,6 +16,7 @@ namespace IsoCore.Foundation
         readonly uint _seedHash;
         readonly int _meadowIndex;
         readonly int _beachIndex;
+        readonly int _mountainIndex;
 
         public IsoTerrainSampler(FoundationConfig cfg, FoundationContent content)
         {
@@ -25,10 +26,12 @@ namespace IsoCore.Foundation
 
             _meadowIndex = 0;
             _beachIndex = -1;
+            _mountainIndex = -1;
             for (int i = 0; i < _biomes.Count; i++)
             {
                 if (_biomes[i].id == "meadow") _meadowIndex = i;
                 else if (_biomes[i].id == "beach") _beachIndex = i;
+                else if (_biomes[i].id == "mountain") _mountainIndex = i;
             }
         }
 
@@ -205,7 +208,7 @@ namespace IsoCore.Foundation
                 var meadowB = (_meadowIndex >= 0 && _meadowIndex < _biomes.Count) ? _biomes[_meadowIndex] : null;
                 cell.Height = (byte)Mathf.Clamp(_cfg.spawnHeight, 0, 7);
                 cell.BiomeIndex = (byte)_meadowIndex;
-                cell.SurfaceBlockId = SurfaceVariant(meadowB, wx, wy, "grass_1");
+                cell.SurfaceBlockId = SurfaceVariant(meadowB, wx, wy, "grass_1", _cfg.spawnHeight);
                 cell.Water = false;
                 return cell;
             }
@@ -293,7 +296,7 @@ namespace IsoCore.Foundation
                 var beachB = (_beachIndex >= 0 && _beachIndex < _biomes.Count) ? _biomes[_beachIndex] : null;
                 cell.Height = 0;
                 cell.BiomeIndex = (byte)Mathf.Max(0, _beachIndex);
-                cell.SurfaceBlockId = SurfaceVariant(beachB, wx, wy, "sand_1");
+                cell.SurfaceBlockId = SurfaceVariant(beachB, wx, wy, "sand_1", 1);
                 cell.Water = false;
                 // Sand carries only sparse rock outcrops — no trees/bushes on a beach.
                 var beachRock = PickRockOutcrop(wx, wy, beachB);
@@ -317,6 +320,9 @@ namespace IsoCore.Foundation
             if (e > _cfg.continentTier2Level) height = 2;
             if (e > _cfg.continentTier3Level) height = 3;
             if (e > _cfg.continentTier4Level) height = 4;
+            if (e > _cfg.continentTier5Level) height = 5;
+            if (e > _cfg.continentTier6Level) height = 6;
+            if (e > _cfg.continentTier7Level) height = 7;
             height = Mathf.Clamp(height, 0, Mathf.Min(_cfg.maxHeight, 7));
 
             // Spawn apron: the land bias lifts elevation near the origin, which can
@@ -329,10 +335,17 @@ namespace IsoCore.Foundation
                 int cap = Mathf.Clamp(_cfg.spawnHeight, 0, 7) + pastClearing / 2;
                 if (height > cap) height = cap;
             }
+            // Mountain elevation gate (after apron clamp): height >= 3 overrides the
+            // climate biome so peaks always look rocky regardless of temp/moisture.
+            if (height >= 3 && _mountainIndex >= 0)
+            {
+                biomeIndex = _mountainIndex;
+                biome = _biomes[_mountainIndex];
+            }
 
             cell.Height = (byte)height;
             cell.BiomeIndex = (byte)biomeIndex;
-            cell.SurfaceBlockId = SurfaceVariant(biome, wx, wy, "dirt");
+            cell.SurfaceBlockId = SurfaceVariant(biome, wx, wy, "dirt", height);
             cell.Water = false;
 
             // Forest interiors: dense hedge/canopy blocks tile into forest MASS (the
@@ -403,11 +416,24 @@ namespace IsoCore.Foundation
         float ContinentElevation(int wx, int wy)
         {
             int clearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
-            float eBase = Perlin(wx, wy, _cfg.continentFrequency, 11, 12);
-            float eDetail = Perlin(wx, wy, _cfg.continentFrequency * 3f, 13, 14);
-            float e = eBase * 0.80f + eDetail * 0.20f;
+            // 3-octave FBM for large-scale continent shape
+            float eBase   = Perlin(wx, wy, _cfg.continentFrequency,       11, 12);
+            float eDetail = Perlin(wx, wy, _cfg.continentFrequency * 3f,  13, 14);
+            float eFine   = Perlin(wx, wy, _cfg.continentFrequency * 7f,  15, 16);
+            float e = eBase * 0.70f + eDetail * 0.20f + eFine * 0.10f;
             e += Mathf.Clamp01(1f - clearing / Mathf.Max(1f, _cfg.continentSpawnLandRadius))
                  * _cfg.continentSpawnLandBias;
+            // Domain warp: twist the ridge sample coordinates so ridgelines meander
+            float wFreq = _cfg.continentFrequency * 1.4f;
+            float warpX = (Perlin(wx, wy, wFreq, 71, 72) - 0.5f) * 30f;
+            float warpY = (Perlin(wx, wy, wFreq, 73, 74) - 0.5f) * 30f;
+            // Ridged noise: narrow peaks, broad valleys — classic mountain silhouette
+            float rRaw  = Perlin(wx + (int)warpX, wy + (int)warpY, _cfg.continentFrequency * 0.65f, 75, 76);
+            float ridge = 1f - Mathf.Abs(rRaw * 2f - 1f);
+            ridge = ridge * ridge; // sharpen the peak
+            // Blend ridge in only where base elevation is already high (avoids flat-land spikes)
+            float mountainBlend = Mathf.Clamp01((e - 0.52f) / 0.23f);
+            e += ridge * mountainBlend * 0.30f;
             return e;
         }
 
@@ -425,14 +451,42 @@ namespace IsoCore.Foundation
             if (e > _cfg.continentTier2Level) h = 2;
             if (e > _cfg.continentTier3Level) h = 3;
             if (e > _cfg.continentTier4Level) h = 4;
+            if (e > _cfg.continentTier5Level) h = 5;
+            if (e > _cfg.continentTier6Level) h = 6;
+            if (e > _cfg.continentTier7Level) h = 7;
             return Mathf.Clamp(h, 0, Mathf.Min(_cfg.maxHeight, 7));
         }
 
-        /// <summary>Picks a surface-block id from a biome's surface group (seeded variant),
-        /// falling back to a default block id when the biome/group is missing.</summary>
-        string SurfaceVariant(BiomeDefinition biome, int wx, int wy, string fallback)
+        /// <summary>Picks a surface-block id. Priority order: accent clump →
+        /// surfaceBands[height] (height-specific pool) → surfaceBasePool → surfaceGroup → fallback.</summary>
+        string SurfaceVariant(BiomeDefinition biome, int wx, int wy, string fallback, int height = 0)
         {
-            if (biome != null && biome.surfaceGroup != null)
+            if (biome == null) return fallback;
+            // Accent clumping: spatially grouped via low-freq noise; boosted 4x inside pockets.
+            if (biome.accentRate > 0f &&
+                biome.surfaceAccents != null && biome.surfaceAccents.Length > 0)
+            {
+                float clumpN = Perlin(wx, wy, 0.07f, 31, 32);
+                float chance = biome.accentRate * (clumpN > 0.55f ? 4f : 0.15f);
+                if (Hash01(wx, wy, 33) < chance)
+                {
+                    string acc = BiomeDefinition.PickWeighted(
+                        biome.surfaceAccents, Hash01(wx, wy, 34), null);
+                    if (acc != null) return acc;
+                }
+            }
+            // Height band: per-tier pool overrides base pool when set
+            if (biome.surfaceBands != null && height >= 0 && height < biome.surfaceBands.Length)
+            {
+                var band = biome.surfaceBands[height];
+                if (band != null && band.Length > 0)
+                    return BiomeDefinition.PickWeighted(band, Hash01(wx, wy, 7), fallback);
+            }
+            // Base pool: weighted random from the biome's curated tile set
+            if (biome.surfaceBasePool != null && biome.surfaceBasePool.Length > 0)
+                return BiomeDefinition.PickWeighted(biome.surfaceBasePool, Hash01(wx, wy, 7), fallback);
+            // Legacy fallback: surfaceGroup variant
+            if (biome.surfaceGroup != null)
             {
                 var b = biome.surfaceGroup.GetVariant(Mathf.RoundToInt(Hash01(wx, wy, 7) * 1024));
                 if (b != null) return b.id;

@@ -31,6 +31,10 @@ namespace IsoCore.Foundation
         int _row;               // current facing row (0 = South)
         int _frame;
         float _timer;
+        FoundationCharacterAppearanceSaveData _appearance;
+
+        public FoundationCharacterAppearanceSaveData CurrentAppearance =>
+            _appearance != null ? _appearance.Clone() : FoundationCharacterAppearanceCatalog.Default.ToSaveData();
 
         void Awake()
         {
@@ -38,16 +42,57 @@ namespace IsoCore.Foundation
             _player = GetComponent<IsoFoundationPlayer>();
             // Tint with the world's ambient light like everything else.
             _sr.sharedMaterial = SpriteAmbient.Material;
-            LoadSheet();
+            SetAppearance(FoundationCharacterAppearanceCatalog.Default.ToSaveData());
         }
 
-        void LoadSheet()
+        public bool SetAppearance(FoundationCharacterAppearanceSaveData appearance)
+        {
+            var resolved = FoundationCharacterAppearanceCatalog.ResolveSaveData(appearance);
+            string previousResource = sheetResource;
+            int previousFramesPerRow = framesPerRow;
+            int previousRowCount = rowCount;
+            var previousRows = _rows;
+
+            sheetResource = string.IsNullOrWhiteSpace(resolved.spriteResource)
+                ? FoundationCharacterAppearanceCatalog.DefaultSpriteResource
+                : resolved.spriteResource.Trim();
+            framesPerRow = Mathf.Max(1, resolved.framesPerRow);
+            rowCount = Mathf.Max(1, resolved.directionCount);
+
+            if (LoadSheet())
+            {
+                _appearance = resolved;
+                return true;
+            }
+
+            sheetResource = FoundationCharacterAppearanceCatalog.DefaultSpriteResource;
+            framesPerRow = 4;
+            rowCount = 8;
+            if (LoadSheet())
+            {
+                _appearance = FoundationCharacterAppearanceCatalog.Default.ToSaveData();
+                return false;
+            }
+
+            sheetResource = previousResource;
+            framesPerRow = previousFramesPerRow;
+            rowCount = previousRowCount;
+            _rows = previousRows;
+            return false;
+        }
+
+        public bool SetAppearance(FoundationCharacterAppearanceDefinition appearance)
+        {
+            return SetAppearance(appearance != null ? appearance.ToSaveData() : null);
+        }
+
+        bool LoadSheet()
         {
             var all = Resources.LoadAll<Sprite>(sheetResource);
             if (all == null || all.Length == 0)
             {
                 Debug.LogWarning($"[PlayerAnimator] No sprites at Resources/{sheetResource}");
-                return;
+                return false;
             }
             System.Array.Sort(all, (a, b) => FrameIndex(a).CompareTo(FrameIndex(b)));
 
@@ -62,7 +107,10 @@ namespace IsoCore.Foundation
                 }
             }
             _row = 0; // start facing the camera
+            _frame = 0;
+            _timer = 0f;
             _sr.sprite = _rows[0][0];
+            return true;
         }
 
         static int FrameIndex(Sprite s)

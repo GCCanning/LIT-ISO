@@ -75,6 +75,8 @@ namespace IsoCore.Foundation
         public int GetHeight(int wx, int wy) => GetCell(wx, wy).Height;
         public bool IsBlocked(int wx, int wy) => GetCell(wx, wy).Blocked;
         public bool IsWalkable(int wx, int wy) => !GetCell(wx, wy).Blocked;
+        // Props (resource nodes / placeables) are hard blockers; terrain edges are not.
+        public bool IsPropBlocked(int wx, int wy) { var c = GetCell(wx, wy); return c.NodeBlocks || c.OccupantBlocks; }
         public int GetBiomeIndex(int wx, int wy) => GetCell(wx, wy).BiomeIndex;
         public BiomeDefinition GetBiome(int wx, int wy) => _sampler.BiomeAt(GetCell(wx, wy).BiomeIndex);
 

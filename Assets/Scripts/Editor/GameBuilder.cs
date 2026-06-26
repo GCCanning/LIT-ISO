@@ -34,10 +34,38 @@ public static class GameBuilder
     private const string ProductName = "LIT-ISO";
     private const string CompanyName = "LIT Games";
     private const string Version = "0.1.0";
-    private const string BuildRootFolder = "Builds";
-    private const string ScenePath = "Assets/Scenes/InfinitePlainsPrototype.unity";
+    // Must match Tools/BuildGame.bat, which looks under "Build\" for the most
+    // recently created timestamped build folder and points the desktop shortcut
+    // there.
+    // (NOTE: there is also a stale "Builds/" (plural) folder from an earlier
+    // drift between this script and the .bat — safe to delete once confirmed.)
+    private const string BuildRootFolder = "Build";
 
-    private static string BuildOutputFolder => Path.Combine(BuildRootFolder, ProductName);
+    // 2026-06-13: the game now boots into MenuScene (WelcomeScreenManager), which
+    // loads "IsoCoreFoundation" (the canonical Track B game scene) via
+    // LoadingScreen.Go(). The old InfinitePlainsPrototype/SampleScene flow is
+    // retired — build both scenes, MenuScene first so it's scene 0 (the one that
+    // launches on startup).
+    private static readonly string[] ScenePaths =
+    {
+        "Assets/Scenes/MenuScene.unity",
+        "Assets/Scenes/IsoCoreFoundation.unity",
+    };
+
+    // 2026-06-14 (owner request): every build gets its own timestamped folder
+    // (Build/<ProductName>_yyyy-MM-dd_HHmmss/) instead of overwriting
+    // Build/LIT-ISO/ in place. This makes it impossible to mistake a stale exe
+    // (e.g. from before a content/asset change) for the latest one — the .bat
+    // always launches/shortcuts the newest timestamped folder, and old builds
+    // are kept side-by-side until cleaned up.
+    private static string _buildStamp;
+
+    /// <summary>The timestamped folder name for the build currently in progress.
+    /// Set once at the start of <see cref="RunBuildPipeline"/>. Falls back to
+    /// "latest" if accessed outside of a build (shouldn't normally happen).</summary>
+    private static string BuildFolderName => string.IsNullOrEmpty(_buildStamp) ? "latest" : $"{ProductName}_{_buildStamp}";
+
+    private static string BuildOutputFolder => Path.Combine(BuildRootFolder, BuildFolderName, ProductName);
     private static string BuildExePath => Path.Combine(BuildOutputFolder, ProductName + ".exe");
 
     // -------------------------------------------------------------------------
@@ -56,15 +84,37 @@ public static class GameBuilder
         BuildGame(runAfterBuild: true);
     }
 
+    /// <summary>Returns the newest "Build/&lt;ProductName&gt;_&lt;timestamp&gt;" folder
+    /// (each build gets its own timestamped folder — see <see cref="_buildStamp"/>),
+    /// or null if no build has ever been made.</summary>
+    private static string FindLatestBuildFolder()
+    {
+        string root = Path.GetFullPath(BuildRootFolder);
+        if (!Directory.Exists(root)) return null;
+
+        string latest = null;
+        System.DateTime latestTime = System.DateTime.MinValue;
+        foreach (string dir in Directory.GetDirectories(root, $"{ProductName}_*"))
+        {
+            System.DateTime t = Directory.GetCreationTime(dir);
+            if (t > latestTime)
+            {
+                latestTime = t;
+                latest = dir;
+            }
+        }
+        return latest;
+    }
+
     [MenuItem("Tools/LIT-ISO/Build/Open Builds Folder", false, 402)]
     public static void OpenBuildsFolder()
     {
-        string folder = Path.GetFullPath(BuildOutputFolder);
+        string folder = FindLatestBuildFolder() ?? Path.GetFullPath(BuildRootFolder);
         if (!Directory.Exists(folder))
         {
             EditorUtility.DisplayDialog(
                 "Builds Folder",
-                $"No build exists yet at:\n{folder}\n\nUse 'Build Standalone' first.",
+                $"No build exists yet at:\n{Path.GetFullPath(BuildRootFolder)}\n\nUse 'Build Standalone' first.",
                 "OK");
             return;
         }
@@ -78,7 +128,7 @@ public static class GameBuilder
     [MenuItem("Tools/LIT-ISO/Build/Clean Builds Folder", false, 403)]
     public static void CleanBuildsFolder()
     {
-        string folder = Path.GetFullPath(BuildOutputFolder);
+        string folder = Path.GetFullPath(BuildRootFolder);
         if (!Directory.Exists(folder))
         {
             Debug.Log("[GameBuilder] Builds folder is already empty.");
@@ -87,8 +137,8 @@ public static class GameBuilder
 
         if (!EditorUtility.DisplayDialog(
             "Clean Builds Folder",
-            $"Delete entire build folder?\n\n{folder}",
-            "Delete",
+            $"Delete ALL builds (every timestamped folder) under?\n\n{folder}",
+            "Delete All",
             "Cancel"))
         {
             return;
@@ -111,35 +161,9 @@ public static class GameBuilder
 
     private static void BuildGame(bool runAfterBuild)
     {
-        Debug.Log("═══════════════════════════════════════════════════════════");
-        Debug.Log("[GameBuilder] Starting build pipeline...");
-        Debug.Log("═══════════════════════════════════════════════════════════");
+        bool ok = RunBuildPipeline(out BuildReport report);
 
-        // Step 1: Configure Player Settings
-        ConfigurePlayerSettings();
-
-        // Step 2: Configure Quality Settings
-        ConfigureQualitySettings();
-
-        // Step 3: Ensure scene exists and is in Build Settings
-        if (!EnsureSceneReady())
-        {
-            EditorUtility.DisplayDialog(
-                "Build Failed",
-                $"Scene not found at:\n{ScenePath}\n\n" +
-                "Run 'Tools > LIT-ISO > Playtest > Rebuild Full Playtest Scene' first.",
-                "OK");
-            return;
-        }
-
-        // Step 4: Save the current scene if it's the build scene
-        SaveOpenSceneIfBuildScene();
-
-        // Step 5: Run the Unity build
-        BuildReport report = ExecuteBuild();
-
-        // Step 6: Report result
-        if (report.summary.result == BuildResult.Succeeded)
+        if (ok)
         {
             ReportBuildSuccess(report);
             if (runAfterBuild)
@@ -149,7 +173,153 @@ public static class GameBuilder
         }
         else
         {
-            ReportBuildFailure(report);
+            if (report != null)
+            {
+                ReportBuildFailure(report);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Shared pipeline used by both the interactive menu items and the
+    /// batchmode entry point (<see cref="BuildScript.BuildWindows"/>).
+    ///
+    /// Returns true on success. <paramref name="report"/> is null only if the
+    /// build never reached <see cref="ExecuteBuild"/> (e.g. missing scenes) —
+    /// in that case <see cref="LastFailureReason"/> explains why.
+    /// </summary>
+    internal static bool RunBuildPipeline(out BuildReport report)
+    {
+        report = null;
+        LastFailureReason = null;
+        _buildStamp = System.DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
+
+        Debug.Log("═══════════════════════════════════════════════════════════");
+        Debug.Log("[GameBuilder] Starting build pipeline...");
+        Debug.Log($"[GameBuilder] Output folder: {Path.Combine(BuildRootFolder, BuildFolderName)}");
+        Debug.Log("═══════════════════════════════════════════════════════════");
+
+        // Step 1: Configure Player Settings
+        ConfigurePlayerSettings();
+
+        // Step 2: Configure Quality Settings
+        ConfigureQualitySettings();
+
+        // Step 3: Ensure scenes exist and are in Build Settings
+        if (!EnsureScenesReady())
+        {
+            LastFailureReason = $"One or more required scenes were not found:\n{string.Join("\n", ScenePaths)}";
+            Debug.LogError($"[GameBuilder] ❌ BUILD FAILED — {LastFailureReason}");
+
+            if (!Application.isBatchMode)
+            {
+                EditorUtility.DisplayDialog("Build Failed", LastFailureReason, "OK");
+            }
+            return false;
+        }
+
+        // Step 4: Save the current scene if it's one of the build scenes
+        SaveOpenSceneIfBuildScene();
+
+        // Step 5: Run the Unity build
+        report = ExecuteBuild();
+
+        // Step 6: Always write build_info.txt so the owner can see what happened,
+        // whether the build succeeded or failed.
+        WriteBuildInfo(report);
+
+        if (report.summary.result != BuildResult.Succeeded)
+        {
+            LastFailureReason = $"Build result: {report.summary.result} " +
+                $"({report.summary.totalErrors} error(s)). See Editor log / build_info.txt.";
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>Human-readable reason the last <see cref="RunBuildPipeline"/> call failed
+    /// before producing a <see cref="BuildReport"/> (null otherwise).</summary>
+    internal static string LastFailureReason { get; private set; }
+
+    // -------------------------------------------------------------------------
+    // build_info.txt
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Writes a small text file alongside the .exe summarizing the build, so the
+    /// owner can confirm (without opening Unity) what was built, when, from which
+    /// scenes/commit, and whether it succeeded.
+    /// </summary>
+    private static void WriteBuildInfo(BuildReport report)
+    {
+        try
+        {
+            string fullOutput = Path.GetFullPath(BuildOutputFolder);
+            if (!Directory.Exists(fullOutput))
+            {
+                Directory.CreateDirectory(fullOutput);
+            }
+
+            string infoPath = Path.Combine(fullOutput, "build_info.txt");
+
+            BuildSummary summary = report.summary;
+            double sizeMB = summary.totalSize / (1024.0 * 1024.0);
+            string gitCommit = TryGetGitCommit();
+
+            using (StreamWriter writer = new StreamWriter(infoPath, append: false))
+            {
+                writer.WriteLine($"LIT-ISO build info");
+                writer.WriteLine($"==================");
+                writer.WriteLine($"Product:     {ProductName} v{Version}");
+                writer.WriteLine($"Built:       {System.DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                writer.WriteLine($"Result:      {summary.result}");
+                writer.WriteLine($"Errors:      {summary.totalErrors}");
+                writer.WriteLine($"Warnings:    {summary.totalWarnings}");
+                writer.WriteLine($"Size:        {sizeMB:F1} MB");
+                writer.WriteLine($"Build time:  {summary.totalTime.TotalSeconds:F1}s");
+                writer.WriteLine($"Output:      {Path.GetFullPath(BuildExePath)}");
+                writer.WriteLine($"Unity:       {Application.unityVersion}");
+                writer.WriteLine($"Git commit:  {gitCommit}");
+                writer.WriteLine($"Scenes:");
+                foreach (string scenePath in ScenePaths)
+                {
+                    writer.WriteLine($"  - {scenePath}");
+                }
+            }
+
+            Debug.Log($"[GameBuilder] Wrote build info to {infoPath}");
+        }
+        catch (System.Exception ex)
+        {
+            // Never let build_info.txt writing fail the build itself.
+            Debug.LogWarning($"[GameBuilder] Could not write build_info.txt: {ex.Message}");
+        }
+    }
+
+    private static string TryGetGitCommit()
+    {
+        try
+        {
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = "rev-parse --short HEAD",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Directory.GetCurrentDirectory()
+            };
+            using (Process p = Process.Start(psi))
+            {
+                string output = p.StandardOutput.ReadToEnd().Trim();
+                p.WaitForExit(2000);
+                return string.IsNullOrEmpty(output) ? "unknown" : output;
+            }
+        }
+        catch
+        {
+            return "unknown";
         }
     }
 
@@ -219,51 +389,57 @@ public static class GameBuilder
     // Scene management
     // -------------------------------------------------------------------------
 
-    private static bool EnsureSceneReady()
+    private static bool EnsureScenesReady()
     {
-        Debug.Log("[GameBuilder] Ensuring scene is in Build Settings...");
+        Debug.Log("[GameBuilder] Ensuring scenes are in Build Settings...");
 
-        if (!File.Exists(ScenePath))
+        foreach (string scenePath in ScenePaths)
         {
-            Debug.LogError($"[GameBuilder] Scene not found at {ScenePath}");
-            return false;
-        }
-
-        // Add scene to Build Settings if not already present
-        List<EditorBuildSettingsScene> sceneList = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-        bool sceneFound = false;
-        foreach (EditorBuildSettingsScene s in sceneList)
-        {
-            if (s.path == ScenePath)
+            if (!File.Exists(scenePath))
             {
-                sceneFound = true;
-                s.enabled = true;
-                break;
+                Debug.LogError($"[GameBuilder] Scene not found at {scenePath}");
+                return false;
             }
         }
 
-        if (!sceneFound)
+        // Rebuild the scene list so ScenePaths are present, enabled, and in order
+        // (MenuScene first = scene 0 = the one that launches on startup), while
+        // preserving any other scenes already configured in Build Settings.
+        List<EditorBuildSettingsScene> existing = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+        List<EditorBuildSettingsScene> ordered = new List<EditorBuildSettingsScene>();
+
+        foreach (string scenePath in ScenePaths)
         {
-            sceneList.Insert(0, new EditorBuildSettingsScene(ScenePath, enabled: true));
-            EditorBuildSettings.scenes = sceneList.ToArray();
-            Debug.Log($"   ✅ Added scene to Build Settings: {ScenePath}");
-        }
-        else
-        {
-            EditorBuildSettings.scenes = sceneList.ToArray();
-            Debug.Log($"   ✅ Scene already in Build Settings: {ScenePath}");
+            ordered.Add(new EditorBuildSettingsScene(scenePath, enabled: true));
+            Debug.Log($"   ✅ Scene in Build Settings: {scenePath}");
         }
 
+        foreach (EditorBuildSettingsScene s in existing)
+        {
+            bool alreadyOrdered = false;
+            foreach (string scenePath in ScenePaths)
+            {
+                if (s.path == scenePath) { alreadyOrdered = true; break; }
+            }
+            if (!alreadyOrdered)
+                ordered.Add(s);
+        }
+
+        EditorBuildSettings.scenes = ordered.ToArray();
         return true;
     }
 
     private static void SaveOpenSceneIfBuildScene()
     {
         UnityEngine.SceneManagement.Scene activeScene = EditorSceneManager.GetActiveScene();
-        if (activeScene.path == ScenePath && activeScene.isDirty)
+        foreach (string scenePath in ScenePaths)
         {
-            EditorSceneManager.SaveScene(activeScene);
-            Debug.Log("[GameBuilder] Saved open scene.");
+            if (activeScene.path == scenePath && activeScene.isDirty)
+            {
+                EditorSceneManager.SaveScene(activeScene);
+                Debug.Log($"[GameBuilder] Saved open scene: {scenePath}");
+                return;
+            }
         }
     }
 
@@ -284,7 +460,7 @@ public static class GameBuilder
 
         BuildPlayerOptions options = new BuildPlayerOptions
         {
-            scenes = new[] { ScenePath },
+            scenes = ScenePaths,
             locationPathName = BuildExePath,
             target = BuildTarget.StandaloneWindows64,
             options = BuildOptions.None

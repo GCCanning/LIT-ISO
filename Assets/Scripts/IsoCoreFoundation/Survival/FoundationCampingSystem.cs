@@ -13,6 +13,7 @@ namespace IsoCore.Foundation
         DayNightSystem _dayNight;
         FoundationProgression _progression;
         FoundationInteractionOverlay _overlay;
+        FoundationConfig _cfg;
 
         PlaceableInstance _activeCamp;
         float _recheckTimer;
@@ -28,8 +29,24 @@ namespace IsoCore.Foundation
 
         public bool AtCampsite => _activeCamp != null;
         public int ActiveCampTier => AtCampsite ? Mathf.Max(0, _activeCamp.Def.campTier) : 0;
-        public float ActiveCampRadius => AtCampsite ? Mathf.Max(0f, _activeCamp.Def.campWardRadius) : 0f;
+        /// <summary>
+        /// Effective campfire safe radius: the placed prop's own campWardRadius, falling back to
+        /// FoundationConfig.campfireSafeRadius when the prop doesn't define one (0).
+        /// </summary>
+        public float ActiveCampRadius
+        {
+            get
+            {
+                if (!AtCampsite) return 0f;
+                float propRadius = Mathf.Max(0f, _activeCamp.Def.campWardRadius);
+                if (propRadius > 0f) return propRadius;
+                return _cfg != null ? Mathf.Max(0f, _cfg.campfireSafeRadius) : 0f;
+            }
+        }
         public bool NightFatigueActive => IsNight && !AtCampsite;
+
+        /// <summary>Public day/night danger signal for other systems (e.g. MobSpawner).</summary>
+        public bool IsNight => _dayNight != null && _dayNight.IsNight;
         public float RecoveryMultiplier
         {
             get
@@ -40,16 +57,15 @@ namespace IsoCore.Foundation
             }
         }
 
-        bool IsNight => _dayNight != null && _dayNight.NightFactor >= 0.45f;
-
         public void Init(IsoFoundationPlayer player, PlacementSystem placement, DayNightSystem dayNight,
-            FoundationProgression progression, FoundationInteractionOverlay overlay)
+            FoundationProgression progression, FoundationInteractionOverlay overlay, FoundationConfig cfg = null)
         {
             _player = player;
             _placement = placement;
             _dayNight = dayNight;
             _progression = progression;
             _overlay = overlay;
+            _cfg = cfg;
         }
 
         void Update()
@@ -173,7 +189,9 @@ namespace IsoCore.Foundation
                 return true;
 
             int tierGap = threatTier - campTier;
-            float breachChance = Mathf.Clamp01(mob.campWardIgnoreChance + Mathf.Max(0, tierGap - 1) * 0.12f);
+            float wardStrength = _cfg != null ? Mathf.Clamp01(_cfg.campfireWardStrength) : 1f;
+            float breachChance = Mathf.Clamp01(mob.campWardIgnoreChance + Mathf.Max(0, tierGap - 1) * 0.12f
+                + (1f - wardStrength));
             breached = Random.value < breachChance;
             if (breached)
                 QueueWarning($"{mob.Display} presses through the fire ward.");

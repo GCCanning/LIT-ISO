@@ -58,6 +58,7 @@ namespace IsoCore.Foundation
                 return;
 
             _respawning = true;
+            FoundationUiBridge.RequestDeathScreen();
             StartCoroutine(RespawnRoutine());
         }
 

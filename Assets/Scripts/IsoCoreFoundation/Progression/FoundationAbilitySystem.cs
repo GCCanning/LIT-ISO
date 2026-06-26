@@ -12,6 +12,11 @@ namespace IsoCore.Foundation
         FoundationPlayerStats _stats;
         Func<float> _timeProvider;
 
+        // Phase 4: raised after a successful player ability use with (abilityId, animationId).
+        // The (Assembly-CSharp) player listener plays the matching one-shot on the layered
+        // animator. Foundation never touches the animator directly — this is the seam.
+        public event Action<string, string> OnAbilityUsed;
+
         public void Init(FoundationContent content, FoundationProgression progression, FoundationPlayerStats stats,
             Func<float> timeProvider = null)
         {
@@ -58,11 +63,15 @@ namespace IsoCore.Foundation
                     ability.id,
                     ability.IsSpell ? 2 : 1);
 
+            // 2026-06-13 owner request: DEX scales effective cooldown/cast time via
+            // FoundationPlayerStats.CooldownMultiplier (1.0x at baseline DEX 8, so
+            // existing balance is unchanged for fresh characters).
             if (ability.cooldownSeconds > 0f)
-                _nextReadyTime[ability.id] = now + ability.cooldownSeconds;
+                _nextReadyTime[ability.id] = now + ability.cooldownSeconds * _stats.CooldownMultiplier;
 
             result = CreateResult(ability, true, "", cost, scaledPower, affinityScore, affinityRank,
                 affinityMultiplier, now);
+            OnAbilityUsed?.Invoke(ability.id, ability.ResolvedAnimationId);
             return true;
         }
 

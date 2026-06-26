@@ -54,6 +54,24 @@ namespace IsoCore.Foundation
 
         public bool BlocksWorldInput => HasBlockingModal || PointerOverUgui || InputConsumedThisFrame;
 
+        /// <summary>Is any modal OTHER than <paramref name="exceptId"/> open?</summary>
+        public bool HasBlockingModalExcept(string exceptId)
+        {
+            foreach (var kv in _modals)
+                if (kv.Value && kv.Key != exceptId)
+                    return true;
+            return false;
+        }
+
+        /// <summary>
+        /// World-input block test that ignores a single named modal. A self-toggling
+        /// modal (e.g. the hold-to-open ability wheel) must use this when deciding
+        /// whether to stay open, otherwise its own modal flag feeds back into
+        /// <see cref="BlocksWorldInput"/> and it flickers open/closed every frame.
+        /// </summary>
+        public bool BlocksWorldInputExcept(string exceptId) =>
+            HasBlockingModalExcept(exceptId) || PointerOverUgui || InputConsumedThisFrame;
+
         void Awake()
         {
             if (Active != null && Active != this)
