@@ -39,7 +39,7 @@
   },
   {
    "a": "grass",
-   "b": "forest_floor",
+   "b": "pl_grass_01",
    "tiles": {
     "n": "grass_to_forest_floor_n",
     "e": "grass_to_forest_floor_e",

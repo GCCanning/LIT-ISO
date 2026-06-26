@@ -25,8 +25,8 @@ namespace LitIso.CharacterCreator
     {
         public string bodyType = "male";
         public string skinVariant = "light";   // applied to body + head + matchBodyColor items
-        public string eyesId = "lpc/eyes_cyclops";
-        public string eyesVariant = "cyclops";   // authored color; the lone eyes item in v1 has no recolorable ramp
+        public string eyesId = "lpc/eyes_human";
+        public string eyesVariant = "brown";   // human eyes by default (cyclops was a placeholder)
         public string hairId = "lpc/hair_plain";
         public string hairVariant = "ash";
         public string shirtId = "lpc/torso_clothes_shortsleeve";
@@ -35,6 +35,10 @@ namespace LitIso.CharacterCreator
         public string pantsVariant = "brown";
         public string shoesId = "lpc/feet_shoes_basic";
         public string shoesVariant = "brown";
+        public string headAccId      = "";   // head accessory (ears/horns/fins) — empty = none
+        public string headAccVariant = "";
+        public string bodyExtraId    = "";   // body extra (tail/wings) — empty = none
+        public string bodyExtraVariant = "";
 
         // Equipped gear (player + NPC). Kept distinct from cosmetics so the
         // creator never rolls a cuirass as the "shirt".
@@ -92,11 +96,28 @@ namespace LitIso.CharacterCreator
             var body = cat.Find("lpc/body");
             if (body != null) a.skinVariant = body.SafeVariant(a.skinVariant);
 
+            // Migrate the old placeholder cyclops-eye default to human eyes so
+            // characters saved before the fix don't keep the single-eye look.
+            if (a.eyesId == "lpc/eyes_cyclops") { a.eyesId = "lpc/eyes_human"; a.eyesVariant = "brown"; }
+
             FixSlot(cat, "eyes", ref a.eyesId, ref a.eyesVariant, allowNone: true);
             FixSlot(cat, "hair", ref a.hairId, ref a.hairVariant, allowNone: true);
             FixSlot(cat, "shirt", ref a.shirtId, ref a.shirtVariant, allowNone: false);
             FixSlot(cat, "pants", ref a.pantsId, ref a.pantsVariant, allowNone: false);
             FixSlot(cat, "shoes", ref a.shoesId, ref a.shoesVariant, allowNone: false);
+
+            // Head accessory (optional overlay)
+            if (!string.IsNullOrEmpty(a.headAccId))
+                FixSlot(cat, "head", ref a.headAccId, ref a.headAccVariant, allowNone: true);
+
+            // Body extra (optional overlay, must not be the base body)
+            if (!string.IsNullOrEmpty(a.bodyExtraId))
+            {
+                var bx = cat.Find(a.bodyExtraId);
+                if (bx == null || !bx.IsCosmetic || bx.id == "lpc/body")
+                { a.bodyExtraId = ""; a.bodyExtraVariant = ""; }
+                else a.bodyExtraVariant = bx.SafeVariant(a.bodyExtraVariant);
+            }
 
             a.equipped.RemoveAll(x => string.IsNullOrEmpty(x.itemId) || cat.Find(x.itemId) == null);
             foreach (var x in a.equipped)
@@ -137,12 +158,18 @@ namespace LitIso.CharacterCreator
             if (body != null && body.variants.Length > 0)
                 a.skinVariant = body.variants[UnityEngine.Random.Range(0, Mathf.Min(7, body.variants.Length))];
 
-            var eyes = cat.Find("lpc/eyes_cyclops") ?? cat.FirstCosmetic("eyes");
-            if (eyes != null) { a.eyesId = eyes.id; a.eyesVariant = eyes.baseVariant ?? eyes.SafeVariant("cyclops"); }
+            var eyes = cat.Find("lpc/eyes_human") ?? cat.FirstCosmetic("eyes");
+            if (eyes != null) { a.eyesId = eyes.id; a.eyesVariant = PickVariant(eyes); }
             var hair = PickCosmetic("hair"); if (hair != null) { a.hairId = hair.id; a.hairVariant = PickVariant(hair); }
             var shirt = PickCosmetic("shirt"); if (shirt != null) { a.shirtId = shirt.id; a.shirtVariant = PickVariant(shirt); }
             var pants = PickCosmetic("pants"); if (pants != null) { a.pantsId = pants.id; a.pantsVariant = PickVariant(pants); }
             var shoes = PickCosmetic("shoes"); if (shoes != null) { a.shoesId = shoes.id; a.shoesVariant = PickVariant(shoes); }
+            var headExtList = cat.HeadExtras();
+            if (headExtList.Count > 0 && UnityEngine.Random.value > 0.5f)
+            { var hx = headExtList[UnityEngine.Random.Range(0, headExtList.Count)]; a.headAccId = hx.id; a.headAccVariant = PickVariant(hx); }
+            var bodyExtList = cat.BodyExtras();
+            if (bodyExtList.Count > 0 && UnityEngine.Random.value > 0.5f)
+            { var bx = bodyExtList[UnityEngine.Random.Range(0, bodyExtList.Count)]; a.bodyExtraId = bx.id; a.bodyExtraVariant = PickVariant(bx); }
             return Sanitize(a);
         }
 
@@ -159,6 +186,8 @@ namespace LitIso.CharacterCreator
             if (!string.IsNullOrEmpty(shirtId)) sel.Add((shirtId, shirtVariant));
             if (!string.IsNullOrEmpty(pantsId)) sel.Add((pantsId, pantsVariant));
             if (!string.IsNullOrEmpty(shoesId)) sel.Add((shoesId, shoesVariant));
+            if (!string.IsNullOrEmpty(headAccId))   sel.Add((headAccId,   headAccVariant));
+            if (!string.IsNullOrEmpty(bodyExtraId)) sel.Add((bodyExtraId, bodyExtraVariant));
             sel.AddRange(equipped.Where(x => !string.IsNullOrEmpty(x.itemId))
                                  .Select(x => (x.itemId, x.variant)));
             return sel;

@@ -32,7 +32,9 @@ These are project invariants and must not be "fixed" during roadmap work:
 - Height sorting layers remain `10+height`.
 - Movement stays world-query based.
 - The foot collider remains trigger-only.
-- `maxWalkStepHeight` remains `0`.
+- `maxWalkStepHeight = 1` (changed from `0` by owner direction, 2026-06-13 — the
+  player may walk up one height step; `jumpClimbSteps` stacks on top for taller
+  cliffs). See AGENTS.md / CLAUDE.md for the current baseline.
 - `IsoCore.Foundation` is canonical; legacy `Assembly-CSharp` world code is
   retirement-only unless explicitly called out for migration.
 

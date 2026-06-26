@@ -1,4 +1,5 @@
 {
+ "_design": "PixelLab pl_snow_01 (2026-06-24). Single snow tile; pl_stone_03 (pale stone) used as ice-patch accent.",
  "params": {
   "temperature": [
    0.0,
@@ -9,106 +10,85 @@
    1.0
   ]
  },
- "_": "snow2_* classified: smooth bases / textured / grass-through / ice (pixel analysis)",
- "surfaceBase": "snow2_03",
+ "climate": {
+  "temperatureRange": [
+   0.0,
+   0.25
+  ],
+  "moistureRange": [
+   0.0,
+   1.0
+  ],
+  "priority": 0
+ },
+ "lapseRate": {
+  "perHeightStep": 0.04
+ },
+ "elevation": {
+  "range": [
+   1,
+   4
+  ],
+  "relief": "rolling"
+ },
+ "surfaceBase": "pl_snow_01",
  "surfaceBasePool": [
   {
-   "tile": "snow2_03",
-   "w": 16
-  },
-  {
-   "tile": "snow2_04",
-   "w": 16
-  },
-  {
-   "tile": "snow2_07",
-   "w": 16
-  },
-  {
-   "tile": "snow2_12",
-   "w": 16
-  },
-  {
-   "tile": "snow2_13",
-   "w": 16
-  },
-  {
-   "tile": "snow2_00",
-   "w": 7
-  },
-  {
-   "tile": "snow2_01",
-   "w": 7
-  },
-  {
-   "tile": "snow2_02",
-   "w": 7
-  },
-  {
-   "tile": "snow2_05",
-   "w": 7
-  },
-  {
-   "tile": "snow2_06",
-   "w": 7
-  },
-  {
-   "tile": "snow2_14",
-   "w": 5
-  },
-  {
-   "tile": "snow2_15",
-   "w": 5
+   "tile": "pl_snow_01",
+   "w": 100
   }
  ],
  "surfaceAccents": [
   {
-   "tile": "snow2_08",
-   "w": 6
+   "tile": "pl_stone_03",
+   "w": 8
   },
   {
-   "tile": "snow2_09",
+   "tile": "pl_snow_01",
    "w": 4
-  },
-  {
-   "tile": "snow2_10",
-   "w": 2
-  },
-  {
-   "tile": "snow2_11",
-   "w": 2
   }
  ],
- "accentRate": 0.15,
- "iceTiles": [
-  "snow2_10",
-  "snow2_11"
- ],
- "elevation": {
-  "range": [
-   1,
-   5
-  ],
-  "relief": "rolling"
- },
- "waterApron": {
-  "lake": "snow2_10",
-  "_": "frozen shores: lake rims use ice tiles"
- },
- "transitionToMeadow": {
-  "band": [
-   "snow2_08",
-   "snow2_09"
-  ],
-  "cells": [
-   5,
-   8
-  ],
-  "_": "grass-through-snow tiles carry the thaw boundary"
- },
+ "accentRate": 0.09,
+ "accentClump": 0.7,
  "features": [
   "lone_pine",
-  "rock_outcrop"
+  "rock_outcrop",
+  "snow_debris"
  ],
- "decorDensityScale": 0.5
+ "transitionTo": {
+  "meadow": {
+   "cells": [
+    5,
+    8
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 0,
+    "groveCentersPer100AtFar": 0
+   }
+  },
+  "mountain": {
+   "cells": [
+    3,
+    5
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 0,
+    "groveCentersPer100AtFar": 0
+   }
+  }
+ }
 }

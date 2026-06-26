@@ -1,0 +1,19 @@
+{
+ "_design": "Updated. Negative space carve inside forest. Minecraft forest clearings are where sunlight reaches the ground = landmark for players to orient. Core Keeper: clearings are natural hubs in wilderness. Rarer than before (per100Cells 0.4 vs 0.5) but larger (radius up to 4). Adds flower + stump scatter inside the clearing after trees are suppressed.",
+
+ "configured": {
+  "type": "negative_space",
+  "_": "Suppresses tree placement. Then adds small secondary props inside the cleared area.",
+  "fill": [
+   { "id": "flower",          "w": 3, "density": 0.10 },
+   { "id": "flower_tulip",    "w": 2, "density": 0.06 },
+   { "id": "stump",           "w": 1, "density": 0.04 },
+   { "id": "forest_fern",     "w": 2, "density": 0.08 }
+  ]
+ },
+ "placement": {
+  "per100Cells": 0.40,
+  "radius": [3, 4],
+  "_": "Larger radius than before (3-4 vs 2-3). Fewer clearings (0.40) but each is a meaningful open space. Fill props appear after tree suppression, giving the clearing a Minecraft feel."
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "_design": "NEW FEATURE. Mountain-specific rock feature with mountain_stone tile IDs (vs plains rocks in rock_outcrop). Vein pattern: elongated cluster (radius 3 x 1.5 ellipse) simulating geological strata. Used by mountain.json stratification layers h3-6. Denser than meadow rock outcrop. Core Keeper: exposed stone at elevation is a resource signal.",
+
+ "configured": {
+  "type": "cluster",
+  "entries": [
+   { "id": "plains_rock_v2_0",     "w": 3 },
+   { "id": "plains_rock_v2_2",     "w": 3 },
+   { "id": "plains_rock_v2_1_big", "w": 2 },
+   { "id": "plains_rock_v2_3_big", "w": 2 },
+   { "id": "shared_gray_rock",     "w": 2 },
+   { "id": "plains_rock_v2_0_sm",  "w": 1 },
+   { "id": "plains_rock_v2_1_sm",  "w": 1 }
+  ],
+  "center": {
+   "chance": 0.40,
+   "dropMultiplier": 2.0,
+   "entries": [
+    { "id": "plains_rock_v2_0_big", "w": 2 },
+    { "id": "plains_rock_v2_3_big", "w": 2 }
+   ]
+  }
+ },
+ "placement": {
+  "groveCentersPer100": 1.5,
+  "radius": 3,
+  "fillDensity": 0.65,
+  "ellipseRatio": 0.5,
+  "band": "grass|rock",
+  "minSpacingBetweenCenters": 8,
+  "_": "ellipseRatio 0.5 = vein is twice as long as wide, aligned to slope gradient. Denser than meadow rock_outcrop (fillDensity 0.65 vs 0.70 but larger radius)."
+ }
+}

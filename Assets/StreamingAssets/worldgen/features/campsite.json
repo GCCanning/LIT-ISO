@@ -1,0 +1,43 @@
+{
+  "configured": {
+    "type": "cluster",
+    "entries": [
+      {
+        "id": "campfire_new",
+        "w": 4
+      },
+      {
+        "id": "lantern_post",
+        "w": 1
+      },
+      {
+        "id": "tavern_table",
+        "w": 1
+      },
+      {
+        "id": "dungeon_chest_wood",
+        "w": 1
+      },
+      {
+        "id": "log",
+        "w": 2
+      },
+      {
+        "id": "stump",
+        "w": 1
+      }
+    ]
+  },
+  "placement": {
+    "density": 0.004,
+    "minSpacing": 28,
+    "band": "meadow|forest",
+    "outsideSpawnRadiusCells": 16,
+    "heightRange": [
+      1,
+      2
+    ],
+    "clusterPattern": "campfire center, lantern east, table north-west, chest north-east, log/stump scatter",
+    "_": "Runtime sampler handles deterministic offsets; this file keeps the feature visible to audits and BiomeSketch rules."
+  }
+}

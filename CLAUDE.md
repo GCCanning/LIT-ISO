@@ -1,16 +1,21 @@
 # CLAUDE.md
 
-Read **`AGENTS.md`** first — it is the shared contract (goal, canonical decision,
-invariants, ownership lanes, git workflow, agent comms). This file just mirrors the
+Read **`AGENTS.md`** (engineering contract) and
+**`Docs/HANDOVER_2026-06-13.md`** (full handover) first. This file mirrors the
 non-negotiables so they're always in context.
 
-- Canonical game = `IsoCore.Foundation` (Track B). Legacy `Assembly-CSharp` is being retired.
+- **You are the sole AI on this project.** Ignore any "lanes" / "Codex" / second-agent
+  references in older docs — you own the entire codebase.
+- Canonical game = `IsoCore.Foundation`. Legacy `Assembly-CSharp` is being retired.
+- **Design source of truth:** `Docs/IsoCoreFoundation/00_Canonical_Game_Design.md`.
+  **Prioritized to-do:** `Docs/IsoCoreFoundation/Impact_Analysis_2026-06.md`.
+- **Art:** ship the **PixelLab-generated** tiles/props/assets; fill gaps to that style.
 - **Invariants (do not "fix"):** `IsometricZAsY`, `cellSize (1,0.5,1)`,
   sort axis `(0,1,-0.26)`, `TilemapRenderer Individual`, `Height_N = layer 10+N`,
-  world-query movement (trigger-only foot collider), `maxWalkStepHeight=0`.
-- **My lane:** menu / art / integration. **Codex's lane:** `IsoCoreFoundation/**` +
-  its scene. Never edit Codex's lane or its scene without a handoff.
-- **Git:** pull→branch (`claude/<task>`)→small PR. Never commit to `main`. Binaries are LFS.
-- Start-of-session reading: `Docs/INDEX.md`, `Docs/agent-comms/from-codex.md`, `Docs/agent-comms/task-ledger.md`.
+  world-query movement (trigger-only foot collider), `maxWalkStepHeight=1`
+  (walk up one step; jump stacks for taller cliffs).
+- **Git:** pull → branch off `main` (`feat/<task>`) → small PR. Never commit to
+  `main`. Binaries are Git LFS (only add where `git-lfs` is installed).
+- Start-of-session reading: `Docs/HANDOVER_2026-06-13.md`, then `Docs/INDEX.md`.
 
 All assets we ship are **original** — clone ISO-CORE's structure, never its content.

@@ -67,8 +67,11 @@ namespace LitIso.CharacterCreator
         public AnimationDef[] animations;
         public DrawDef[] draws;
 
+        public bool creatorExcluded;  // true = missing core animations; hide from creator UI
+
         public bool IsEquipment => kind == "equipment";
         public bool IsCosmetic => kind == "cosmetic";
+        public bool IsCreatorVisible => IsCosmetic && !creatorExcluded;
 
         public bool HasVariant(string v) => variants != null && Array.IndexOf(variants, v) >= 0;
 
@@ -177,13 +180,20 @@ namespace LitIso.CharacterCreator
 
         public List<ItemDef> Slot(string slot) => items.Where(i => i.slot == slot).ToList();
 
-        /// <summary>Items in a slot that the creator may offer (cosmetic only).</summary>
+        /// <summary>Items in a slot that the creator may offer (cosmetic, full animation coverage).</summary>
         public List<ItemDef> CosmeticSlot(string slot) =>
-            items.Where(i => i.slot == slot && i.IsCosmetic).ToList();
+            items.Where(i => i.slot == slot && i.IsCreatorVisible).ToList();
 
         public ItemDef First(string slot) => items.FirstOrDefault(i => i.slot == slot);
 
         public ItemDef FirstCosmetic(string slot) =>
-            items.FirstOrDefault(i => i.slot == slot && i.IsCosmetic);
+            items.FirstOrDefault(i => i.slot == slot && i.IsCreatorVisible);
+
+        /// <summary>Non-base body cosmetics (tails, wings) layerable over the body.</summary>
+        public List<ItemDef> BodyExtras() =>
+            items.Where(i => i.slot == "body" && i.IsCreatorVisible && i.id != "lpc/body").ToList();
+
+        /// <summary>Head accessory cosmetics (ears, horns, fins, etc.).</summary>
+        public List<ItemDef> HeadExtras() => CosmeticSlot("head");
     }
 }

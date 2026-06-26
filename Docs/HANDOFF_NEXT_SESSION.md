@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED.** This file predates the canonical design decision and still frames
+> the project as "the human must choose a track." That choice is made:
+> `IsoCore.Foundation` is canonical and the design is locked in
+> `Docs/IsoCoreFoundation/00_Canonical_Game_Design.md`. **For the current full
+> handover, read [`HANDOVER_2026-06-13.md`](HANDOVER_2026-06-13.md).** Kept below for
+> history.
+
 # LIT-ISO — Handoff for Next Session
 
 **Project:** LIT-ISO — Unity 6.3 isometric (IsometricZAsY) game, pivoting from a

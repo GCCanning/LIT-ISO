@@ -1,3 +1,4 @@
+// PHASE_COMPLETE Phase3
 using System;
 using System.Collections.Generic;
 using IsoCore.Foundation;
@@ -152,6 +153,8 @@ namespace LitIso.UI.InGame
 
         public void Show(CharacterPanelTab tab)
         {
+            if (_root != null && _root.activeSelf && _activeTab == tab)
+                return;
             _activeTab = tab;
             if (_root != null) _root.SetActive(true);
             Refresh();
@@ -178,37 +181,76 @@ namespace LitIso.UI.InGame
             scrimButton.transition = Selectable.Transition.None;
             scrimButton.onClick.AddListener(Hide);
 
-            var panel = UiBuilder.NewPanel(_root.transform, "Panel", "system_panel", UiBuilder.PanelBg);
+            // ===== Book panel: 1640x900 stone frame with a gold inner line and
+            //       four gold corner squares (litiso_frontend_deescaped.html isBook). =====
+            var panel = UiBuilder.NewPanel(_root.transform, "Panel", "system_panel", LitIsoTheme.Panel);
             var pr = panel.rectTransform;
             pr.anchorMin = pr.anchorMax = new Vector2(0.5f, 0.5f);
             pr.pivot = new Vector2(0.5f, 0.5f);
-            pr.sizeDelta = new Vector2(1080f, 720f);
-            PlayerResizableUi.Attach(pr, "panel.character", new Vector2(720f, 460f), new Vector2(1700f, 980f));
+            pr.sizeDelta = new Vector2(1640f, 900f);
+            PlayerResizableUi.Attach(pr, "panel.character", new Vector2(900f, 540f), new Vector2(1820f, 1010f));
 
-            _title = UiBuilder.NewText(panel.transform, "Title", "Character", 26, TextAnchor.MiddleLeft, LitIsoTheme.Gold);
+            // gold corner accents (14px squares poking past the 3px border)
+            BuildCornerAccent(panel.transform, new Vector2(0f, 1f), new Vector2(-3f, 3f));
+            BuildCornerAccent(panel.transform, new Vector2(1f, 1f), new Vector2(3f, 3f));
+            BuildCornerAccent(panel.transform, new Vector2(0f, 0f), new Vector2(-3f, -3f));
+            BuildCornerAccent(panel.transform, new Vector2(1f, 0f), new Vector2(3f, -3f));
+
+            // ===== Header rail (wordmark + tab strip + close), 3px bottom divider =====
+            var header = UiBuilder.NewRect("Header", panel.transform);
+            header.anchorMin = new Vector2(0f, 1f);
+            header.anchorMax = new Vector2(1f, 1f);
+            header.pivot = new Vector2(0.5f, 1f);
+            header.anchoredPosition = Vector2.zero;
+            header.sizeDelta = new Vector2(0f, 62f);
+            var headerDiv = UiBuilder.NewImage(header, "HeaderDiv", null, InvHardEdge);
+            headerDiv.raycastTarget = false;
+            var hdr = headerDiv.rectTransform;
+            hdr.anchorMin = new Vector2(0f, 0f); hdr.anchorMax = new Vector2(1f, 0f);
+            hdr.pivot = new Vector2(0f, 0f);
+            hdr.anchoredPosition = Vector2.zero;
+            hdr.sizeDelta = new Vector2(0f, 3f);
+
+            // wordmark: gold diamond + "WANDERER" (Press Start 2P) + dim subtitle
+            var diamond = UiBuilder.NewImage(header, "Diamond", null, LitIsoTheme.Gold);
+            diamond.raycastTarget = false;
+            var dmr = diamond.rectTransform;
+            dmr.anchorMin = dmr.anchorMax = new Vector2(0f, 0.5f);
+            dmr.pivot = new Vector2(0f, 0.5f);
+            dmr.anchoredPosition = new Vector2(20f, -2f);
+            dmr.sizeDelta = new Vector2(13f, 13f);
+            dmr.localRotation = Quaternion.Euler(0f, 0f, 45f);
+
+            _title = UiBuilder.NewText(header, "Title", "WANDERER", 16, TextAnchor.MiddleLeft, LitIsoTheme.Gold);
+            _title.font = LitIsoTheme.DisplayFont;
             var tr = _title.rectTransform;
-            tr.anchorMin = new Vector2(0f, 1f);
-            tr.anchorMax = new Vector2(1f, 1f);
-            tr.pivot = new Vector2(0f, 1f);
-            tr.anchoredPosition = new Vector2(28f, -18f);
-            tr.sizeDelta = new Vector2(-96f, 36f);
-            UiBuilder.FitText(_title);
+            tr.anchorMin = tr.anchorMax = new Vector2(0f, 0.5f);
+            tr.pivot = new Vector2(0f, 0.5f);
+            tr.anchoredPosition = new Vector2(44f, -2f);
+            tr.sizeDelta = new Vector2(150f, 24f);
 
-            var close = UiBuilder.NewButton(panel.transform, "Close", "btn_close", "X", 18);
+            var subtitle = UiBuilder.NewText(header, "Subtitle", "· Lv 6 · Knight", 17, TextAnchor.MiddleLeft, InvMuted);
+            var subr = subtitle.rectTransform;
+            subr.anchorMin = subr.anchorMax = new Vector2(0f, 0.5f);
+            subr.pivot = new Vector2(0f, 0.5f);
+            subr.anchoredPosition = new Vector2(196f, -2f);
+            subr.sizeDelta = new Vector2(160f, 22f);
+
+            var close = UiBuilder.NewButton(header, "Close", "btn_close", "✕", 16, LitIsoTheme.ButtonStyle.Stone);
             close.onClick.AddListener(Hide);
             var cr = close.GetComponent<RectTransform>();
-            cr.anchorMin = cr.anchorMax = new Vector2(1f, 1f);
-            cr.pivot = new Vector2(1f, 1f);
-            cr.anchoredPosition = new Vector2(-18f, -18f);
-            cr.sizeDelta = new Vector2(42f, 42f);
+            cr.anchorMin = cr.anchorMax = new Vector2(1f, 0.5f);
+            cr.pivot = new Vector2(1f, 0.5f);
+            cr.anchoredPosition = new Vector2(-16f, -2f);
+            cr.sizeDelta = new Vector2(48f, 44f);
 
-            BuildTabs(panel.transform);
+            BuildTabs(header);
 
             _body = UiBuilder.NewRect("Body", panel.transform);
             _body.anchorMin = Vector2.zero;
             _body.anchorMax = Vector2.one;
-            _body.offsetMin = new Vector2(28f, 34f);
-            _body.offsetMax = new Vector2(-28f, -116f);
+            _body.offsetMin = new Vector2(6f, 6f);
+            _body.offsetMax = new Vector2(-6f, -65f);
 
             // Overlay for the inventory context menu / drag ghost. Parented to
             // the canvas (not _body) and created last so it renders above the
@@ -217,23 +259,65 @@ namespace LitIso.UI.InGame
             UiBuilder.Stretch(_overlay);
         }
 
+        // gold 14px corner square poking past the panel's 3px border
+        static void BuildCornerAccent(Transform parent, Vector2 anchor, Vector2 offset)
+        {
+            var sq = UiBuilder.NewImage(parent, "Corner", null, LitIsoTheme.Gold);
+            sq.raycastTarget = false;
+            var rt = sq.rectTransform;
+            rt.anchorMin = rt.anchorMax = anchor;
+            rt.pivot = anchor;
+            rt.anchoredPosition = offset;
+            rt.sizeDelta = new Vector2(14f, 14f);
+        }
+
+        // Book header tab strip: Press Start 2P 12px, gold fill + gold bottom-border
+        // when active, transparent with #a39e90 text when not (isBook/bookTabs).
         void BuildTabs(Transform parent)
         {
             var tabs = (CharacterPanelTab[])Enum.GetValues(typeof(CharacterPanelTab));
             _tabButtons = new Button[tabs.Length];
-            float x = 28f;
+            // strip starts right of the wordmark and runs to just before the close button
+            var strip = UiBuilder.NewRect("TabStrip", parent);
+            strip.anchorMin = new Vector2(0f, 0f);
+            strip.anchorMax = new Vector2(1f, 1f);
+            strip.pivot = new Vector2(0f, 0.5f);
+            strip.offsetMin = new Vector2(376f, 0f);
+            strip.offsetMax = new Vector2(-74f, 0f);
+
+            float x = 0f;
             for (int i = 0; i < tabs.Length; i++)
             {
                 var tab = tabs[i];
-                var btn = UiBuilder.NewButton(parent, "Tab_" + tab, "craft_row", LabelFor(tab), 14);
-                var rt = btn.GetComponent<RectTransform>();
-                rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
-                rt.pivot = new Vector2(0f, 1f);
-                rt.anchoredPosition = new Vector2(x, -70f);
-                rt.sizeDelta = new Vector2(106f, 40f);
-                x += 112f;
-                // meta tabs (Settings/System) sit visually apart
-                if (tab == CharacterPanelTab.Map) x += 24f;
+                string label = LabelFor(tab).ToUpperInvariant();
+                float w = 22f + label.Length * 8.2f;
+
+                var img = UiBuilder.NewImage(strip, "Tab_" + tab, null, Color.clear);
+                var btn = img.gameObject.AddComponent<Button>();
+                btn.targetGraphic = img;
+                btn.transition = Selectable.Transition.None;
+                var rt = img.rectTransform;
+                rt.anchorMin = rt.anchorMax = new Vector2(0f, 0.5f);
+                rt.pivot = new Vector2(0f, 0.5f);
+                rt.anchoredPosition = new Vector2(x, -2f);
+                rt.sizeDelta = new Vector2(w, 40f);
+                // 2px hard border + a thick bottom underline (gold when active)
+                AddBorder(rt, InvHardEdge, 2f);
+                var underline = UiBuilder.NewImage(img.transform, "Underline", null, Color.clear);
+                underline.raycastTarget = false;
+                var ur = underline.rectTransform;
+                ur.anchorMin = new Vector2(0f, 0f); ur.anchorMax = new Vector2(1f, 0f);
+                ur.pivot = new Vector2(0f, 0f);
+                ur.anchoredPosition = Vector2.zero;
+                ur.sizeDelta = new Vector2(0f, 4f);
+
+                var t = UiBuilder.NewText(img.transform, "L", label, 12, TextAnchor.MiddleCenter, InvChipMuted);
+                t.font = LitIsoTheme.DisplayFont;
+                t.raycastTarget = false;
+                UiBuilder.Stretch(t.rectTransform, 2f);
+                UiBuilder.FitText(t);
+
+                x += w + 4f;
                 btn.onClick.AddListener(() => Show(tab));
                 _tabButtons[i] = btn;
             }
@@ -242,7 +326,7 @@ namespace LitIso.UI.InGame
         void Refresh()
         {
             if (_body == null || !IsOpen) return;
-            foreach (Transform child in _body) Destroy(child.gameObject);
+            ClearBodyChildren();
             // slot widgets are about to be destroyed; the context menu would
             // point at stale data, so dismiss it (a drag survives — DrawInventory
             // re-applies the source-slot dim from _dragFrom).
@@ -251,7 +335,8 @@ namespace LitIso.UI.InGame
             _invSlotIcons = null;
             _invSlotCount = 0;
             UpdateTabButtons();
-            if (_title != null) _title.text = LabelFor(_activeTab);
+            // Header wordmark is fixed ("WANDERER") per the book design; the active
+            // tab is shown by the gold tab in the strip, not by retitling the header.
 
             try
             {
@@ -284,6 +369,16 @@ namespace LitIso.UI.InGame
             }
         }
 
+        void ClearBodyChildren()
+        {
+            while (_body.childCount > 0)
+            {
+                var child = _body.GetChild(0);
+                child.SetParent(null, false);
+                Destroy(child.gameObject);
+            }
+        }
+
         void UpdateTabButtons()
         {
             if (_tabButtons == null) return;
@@ -291,15 +386,50 @@ namespace LitIso.UI.InGame
             for (int i = 0; i < _tabButtons.Length && i < tabs.Length; i++)
             {
                 var img = _tabButtons[i].targetGraphic as Image;
-                if (img != null)
-                {
-                    bool active = tabs[i] == _activeTab;
-                    // Active tab reads as a gold-lit raised stone; inactive sits flush.
-                    img.color = active ? LitIsoTheme.GoldDeep : UiBuilder.SlotBg;
-                    var lbl = _tabButtons[i].GetComponentInChildren<Text>();
-                    if (lbl != null) lbl.color = active ? LitIsoTheme.GoldLit : LitIsoTheme.Parchment;
-                }
+                if (img == null) continue;
+                bool active = tabs[i] == _activeTab;
+                // Active: gold fill, dark text, gold underline. Inactive: transparent
+                // fill, dim text, transparent underline (matches bookTabs styling).
+                img.color = active ? LitIsoTheme.Gold : Color.clear;
+                var lbl = _tabButtons[i].GetComponentInChildren<Text>();
+                if (lbl != null) lbl.color = active ? LitIsoTheme.Hex("#1a1408") : InvChipMuted;
+                var underline = img.transform.Find("Underline")?.GetComponent<Image>();
+                if (underline != null) underline.color = active ? LitIsoTheme.Gold : Color.clear;
             }
+        }
+
+        // ---- Inventory book design tokens (from litiso_frontend_deescaped.html, isInv block) ----
+        static readonly Color InvSlotFill   = LitIsoTheme.Hex("#0e1014"); // occupied-slot well
+        static readonly Color InvPadFill    = LitIsoTheme.Hex("#101216"); // empty pad fill
+        static readonly Color InvPadBorder  = LitIsoTheme.Hex("#1a1d23"); // empty pad border
+        static readonly Color InvHardEdge   = LitIsoTheme.Hex("#0a0b0e"); // 2px inset / hard border
+        static readonly Color InvDetailBg   = LitIsoTheme.Hex("#101216"); // right detail column
+        static readonly Color InvBevel      = LitIsoTheme.Hex("#2c313c"); // inset stone bevel
+        static readonly Color RarityCommon  = LitIsoTheme.Hex("#5a6068");
+        static readonly Color RarityUncommon= LitIsoTheme.Hex("#5aa05a");
+        static readonly Color RarityRare    = LitIsoTheme.Hex("#4f8ad9");
+        static readonly Color RarityEpic    = LitIsoTheme.Hex("#a060d9");
+        static readonly Color RarityLegend  = LitIsoTheme.Gold;           // #E8C468
+        static readonly Color DurGood       = LitIsoTheme.Hex("#5aa05a");
+        static readonly Color DurMid        = LitIsoTheme.Hex("#e8a03c");
+        static readonly Color DurLow        = LitIsoTheme.Hex("#d9425a");
+        static readonly Color InvMuted      = LitIsoTheme.Hex("#8a8578"); // footer / labels
+        static readonly Color InvChipMuted  = LitIsoTheme.Hex("#a39e90"); // inactive chip text
+        static readonly Color InvChipBg     = LitIsoTheme.Hex("#1a1d23"); // inactive chip fill
+
+        const int InvCols = 7;
+        const float InvSlot = 84f;
+        const float InvGap = 9f;
+        const float InvTotalSlots = 35f; // design pads the grid to 35 cells
+        int _invSelected = -1;           // selected slot for the detail column (visual)
+
+        // Heuristic rarity from the live slot's stack/durability (no rarity field
+        // on the Foundation item model yet — see FoundationInventoryAdapter notes).
+        static Color RarityForSlot(HudSlot s)
+        {
+            if (s.durability01 > 0f) return RarityRare;   // gear-like (durability) reads as rare
+            if (s.count <= 1) return RarityUncommon;      // singletons read as uncommon
+            return RarityCommon;
         }
 
         void DrawInventory()
@@ -311,58 +441,411 @@ namespace LitIso.UI.InGame
                 return;
             }
 
-            DrawPaperDoll();
+            // ===== Two-column layout: left grid area + 380px right detail =====
+            const float detailW = 380f;
+            const float padL = 26f, padTop = 22f;
 
-            const int cols = 6;
-            const float slot = 66f;
-            const float gap = 7f;
-            const float bagX = 400f;
-            TextLine($"Bag ({cap} slots)", 0, 15, UiBuilder.MutedCol, bagX);
-            DrawSortButton(bagX + cols * (slot + gap) - gap);
+            var left = UiBuilder.NewRect("InvLeft", _body);
+            left.anchorMin = Vector2.zero;
+            left.anchorMax = Vector2.one;
+            left.offsetMin = new Vector2(padL, 0f);
+            left.offsetMax = new Vector2(-detailW - 3f, -padTop);
 
+            // ---- filter chips + sort selector ----
+            string[] chips = { "ALL", "WEAPONS", "ARMOR", "MATERIALS" };
+            float chipX = 0f;
+            for (int c = 0; c < chips.Length; c++)
+                chipX += DrawFilterChip(left, chips[c], c == 0, chipX) + 8f;
+
+            var sortLabel = UiBuilder.NewText(left, "SortLabel", "Sort:", 17, TextAnchor.MiddleRight, InvMuted);
+            var slr = sortLabel.rectTransform;
+            slr.anchorMin = new Vector2(1f, 1f); slr.anchorMax = new Vector2(1f, 1f);
+            slr.pivot = new Vector2(1f, 1f);
+            slr.anchoredPosition = new Vector2(-88f, -4f);
+            slr.sizeDelta = new Vector2(70f, 26f);
+            var sortBtn = UiBuilder.NewButton(left, "SortBtn", "button", "Rarity ▾", 14, LitIsoTheme.ButtonStyle.Stone);
+            var sbr = sortBtn.GetComponent<RectTransform>();
+            sbr.anchorMin = new Vector2(1f, 1f); sbr.anchorMax = new Vector2(1f, 1f);
+            sbr.pivot = new Vector2(1f, 1f);
+            sbr.anchoredPosition = new Vector2(0f, -2f);
+            sbr.sizeDelta = new Vector2(86f, 30f);
+            var sbLbl = sortBtn.GetComponentInChildren<Text>();
+            if (sbLbl != null) sbLbl.color = LitIsoTheme.Gold;
+            sortBtn.onClick.AddListener(() => { CancelInventoryOps(); _inventory?.SortInventory(); });
+
+            // ---- item grid (7 cols x 84px, padded to 35 cells) ----
+            var grid = UiBuilder.NewRect("InvGrid", left);
+            grid.anchorMin = new Vector2(0f, 1f);
+            grid.anchorMax = new Vector2(1f, 1f);
+            grid.pivot = new Vector2(0f, 1f);
+            grid.anchoredPosition = new Vector2(0f, -44f);
+            // height covers 5 rows of the 35-cell pad
+            grid.sizeDelta = new Vector2(0f, 5f * InvSlot + 4f * InvGap);
+
+            int cells = Mathf.Max(cap, Mathf.RoundToInt(InvTotalSlots));
             _invSlotRects = new RectTransform[cap];
             _invSlotIcons = new Image[cap];
             _invSlotCount = cap;
-            for (int i = 0; i < cap; i++)
+            HudSlot selSlot = default; Color selRarity = RarityCommon; int selIndex = -1;
+
+            for (int i = 0; i < cells; i++)
             {
-                int row = i / cols;
-                int col = i % cols;
+                int row = i / InvCols;
+                int col = i % InvCols;
+                float x = col * (InvSlot + InvGap);
+                float y = -row * (InvSlot + InvGap);
+
+                if (i >= cap)
+                {
+                    // empty pad cell
+                    var pad = UiBuilder.NewImage(grid, "InvPad_" + i, null, InvPadFill);
+                    pad.raycastTarget = false;
+                    var padRt = pad.rectTransform;
+                    padRt.anchorMin = padRt.anchorMax = new Vector2(0f, 1f);
+                    padRt.pivot = new Vector2(0f, 1f);
+                    padRt.anchoredPosition = new Vector2(x, y);
+                    padRt.sizeDelta = new Vector2(InvSlot, InvSlot);
+                    AddBorder(padRt, InvPadBorder, 2f);
+                    AddInset(padRt, InvHardEdge, 2f);
+                    continue;
+                }
+
                 var s = _inventory.GetSlot(i);
-                var cell = UiBuilder.NewPanel(_body, "InvSlot_" + i, "inv_slot", UiBuilder.SlotBg);
+                bool occupied = !string.IsNullOrWhiteSpace(s.label) && s.count > 0;
+                bool selected = _invSelected == i;
+                Color rarity = occupied ? RarityForSlot(s) : InvPadBorder;
+
+                if (!occupied)
+                {
+                    // an in-capacity but empty slot draws like a pad too
+                    var emptyImg = UiBuilder.NewImage(grid, "InvSlot_" + i, null, InvPadFill);
+                    var er = emptyImg.rectTransform;
+                    er.anchorMin = er.anchorMax = new Vector2(0f, 1f);
+                    er.pivot = new Vector2(0f, 1f);
+                    er.anchoredPosition = new Vector2(x, y);
+                    er.sizeDelta = new Vector2(InvSlot, InvSlot);
+                    AddBorder(er, InvPadBorder, 2f);
+                    AddInset(er, InvHardEdge, 2f);
+                    _invSlotRects[i] = er;
+                    _invSlotIcons[i] = null;
+                    continue;
+                }
+
+                // occupied slot: dark well + rarity (or gold-if-selected) border + inset
+                var cell = UiBuilder.NewImage(grid, "InvSlot_" + i, null, InvSlotFill);
                 var rt = cell.rectTransform;
                 rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
                 rt.pivot = new Vector2(0f, 1f);
-                rt.anchoredPosition = new Vector2(bagX + col * (slot + gap), -26f - row * (slot + gap));
-                rt.sizeDelta = new Vector2(slot, slot);
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.sizeDelta = new Vector2(InvSlot, InvSlot);
+                AddBorder(rt, selected ? RarityLegend : rarity, 2f);
+                AddInset(rt, InvHardEdge, 2f);
                 _invSlotRects[i] = rt;
 
+                int slotIndex = i;
+                var btn = cell.gameObject.AddComponent<Button>();
+                btn.transition = Selectable.Transition.None;
+                btn.onClick.AddListener(() => { _invSelected = slotIndex; Refresh(); });
+
+                // icon: inset 15px (17px bottom) with a 3px rarity "edge" frame
                 var icon = UiBuilder.NewImage(cell.transform, "Icon", s.icon, Color.white);
                 icon.preserveAspect = true;
                 icon.enabled = s.icon != null;
-                UiBuilder.Stretch(icon.rectTransform, 10f);
+                icon.raycastTarget = false;
+                var ir = icon.rectTransform;
+                ir.anchorMin = Vector2.zero; ir.anchorMax = Vector2.one;
+                ir.offsetMin = new Vector2(15f, 17f);
+                ir.offsetMax = new Vector2(-15f, -15f);
+                if (s.icon == null)
+                {
+                    // no sprite: paint the icon area as a rarity-tinted block (matches the mockup's coloured icons)
+                    icon.enabled = true;
+                    icon.sprite = null;
+                    icon.color = new Color(rarity.r, rarity.g, rarity.b, 0.85f);
+                }
+                AddBorder(ir, new Color(rarity.r * 0.6f, rarity.g * 0.6f, rarity.b * 0.6f, 1f), 3f);
                 _invSlotIcons[i] = icon;
                 if (_dragging && i == _dragFrom)
-                    icon.color = new Color(1f, 1f, 1f, 0.35f);
+                    icon.color = new Color(icon.color.r, icon.color.g, icon.color.b, 0.35f);
 
                 if (s.count > 1)
                 {
-                    var count = UiBuilder.NewText(cell.transform, "Count", s.count.ToString(), 14, TextAnchor.LowerRight);
-                    UiBuilder.Stretch(count.rectTransform, 5f);
-                    UiBuilder.FitText(count);
+                    var count = UiBuilder.NewText(cell.transform, "Count", s.count.ToString(), 11, TextAnchor.LowerRight, Color.white);
+                    count.font = LitIsoTheme.DisplayFont;
+                    count.raycastTarget = false;
+                    var cr = count.rectTransform;
+                    cr.anchorMin = new Vector2(0f, 0f); cr.anchorMax = new Vector2(1f, 0f);
+                    cr.pivot = new Vector2(1f, 0f);
+                    cr.anchoredPosition = new Vector2(-5f, 7f);
+                    cr.sizeDelta = new Vector2(InvSlot - 8f, 16f);
                 }
 
-                if (!string.IsNullOrWhiteSpace(s.label))
+                if (s.durability01 > 0f)
                 {
-                    var label = UiBuilder.NewText(cell.transform, "Label", s.label, 11, TextAnchor.LowerCenter, UiBuilder.TextCol);
-                    var lr = label.rectTransform;
-                    lr.anchorMin = new Vector2(0f, 0f);
-                    lr.anchorMax = new Vector2(1f, 0f);
-                    lr.pivot = new Vector2(0.5f, 0f);
-                    lr.anchoredPosition = new Vector2(0f, 4f);
-                    lr.sizeDelta = new Vector2(-6f, 18f);
-                    UiBuilder.FitText(label);
+                    var durTrack = UiBuilder.NewImage(cell.transform, "DurTrack", null, LitIsoTheme.Hex("#0a0c10"));
+                    durTrack.raycastTarget = false;
+                    var dtr = durTrack.rectTransform;
+                    dtr.anchorMin = new Vector2(0f, 0f); dtr.anchorMax = new Vector2(1f, 0f);
+                    dtr.pivot = new Vector2(0f, 0f);
+                    dtr.anchoredPosition = new Vector2(0f, 5f);
+                    dtr.offsetMin = new Vector2(6f, 5f); dtr.offsetMax = new Vector2(-6f, 5f);
+                    dtr.sizeDelta = new Vector2(dtr.sizeDelta.x, 5f);
+                    var durFill = UiBuilder.NewImage(durTrack.transform, "DurFill", null,
+                        s.durability01 > 0.5f ? DurGood : s.durability01 > 0.25f ? DurMid : DurLow);
+                    durFill.raycastTarget = false;
+                    durFill.type = Image.Type.Filled;
+                    durFill.fillMethod = Image.FillMethod.Horizontal;
+                    durFill.fillAmount = Mathf.Clamp01(s.durability01);
+                    UiBuilder.Stretch(durFill.rectTransform);
+                }
+
+                if (selected)
+                {
+                    selSlot = s; selRarity = rarity; selIndex = i;
+                }
+                else if (selIndex < 0 && _invSelected < 0)
+                {
+                    // no explicit selection yet -> default the detail to the first item
+                    selSlot = s; selRarity = rarity; selIndex = i;
                 }
             }
+
+            // ---- footer: Slots + Weight ----
+            int used = 0;
+            for (int i = 0; i < cap; i++)
+            {
+                var s = _inventory.GetSlot(i);
+                if (!string.IsNullOrWhiteSpace(s.label) && s.count > 0) used++;
+            }
+            DrawInvFooter(left, used, cap);
+
+            // ---- right detail column ----
+            DrawInvDetail(detailW, selIndex >= 0, selSlot, selRarity);
+        }
+
+        float DrawFilterChip(RectTransform parent, string label, bool active, float x)
+        {
+            float w = 14f + label.Length * 8.5f; // approx Press Start 2P metrics
+            var chip = UiBuilder.NewImage(parent, "Chip_" + label, null, active ? LitIsoTheme.Gold : InvChipBg);
+            chip.raycastTarget = false;
+            var rt = chip.rectTransform;
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(x, -2f);
+            rt.sizeDelta = new Vector2(w, 30f);
+            if (!active) AddBorder(rt, InvBevel, 2f);
+            var t = UiBuilder.NewText(chip.transform, "L", label, 10, TextAnchor.MiddleCenter,
+                active ? LitIsoTheme.Hex("#1a1408") : InvChipMuted);
+            t.font = LitIsoTheme.DisplayFont;
+            t.raycastTarget = false;
+            UiBuilder.Stretch(t.rectTransform, 2f);
+            UiBuilder.FitText(t);
+            return w;
+        }
+
+        void DrawInvFooter(RectTransform parent, int used, int cap)
+        {
+            var footer = UiBuilder.NewRect("InvFooter", parent);
+            footer.anchorMin = new Vector2(0f, 0f);
+            footer.anchorMax = new Vector2(1f, 0f);
+            footer.pivot = new Vector2(0f, 0f);
+            footer.anchoredPosition = new Vector2(0f, 0f);
+            footer.sizeDelta = new Vector2(0f, 40f);
+            // 2px top divider
+            var div = UiBuilder.NewImage(footer, "Div", null, InvHardEdge);
+            div.raycastTarget = false;
+            var dr = div.rectTransform;
+            dr.anchorMin = new Vector2(0f, 1f); dr.anchorMax = new Vector2(1f, 1f);
+            dr.pivot = new Vector2(0f, 1f);
+            dr.anchoredPosition = Vector2.zero;
+            dr.sizeDelta = new Vector2(0f, 2f);
+
+            var slots = UiBuilder.NewText(footer, "Slots", $"Slots: {used} / {cap}", 17, TextAnchor.MiddleLeft, InvMuted);
+            var slr = slots.rectTransform;
+            slr.anchorMin = new Vector2(0f, 0f); slr.anchorMax = new Vector2(0.5f, 1f);
+            slr.offsetMin = new Vector2(0f, 0f); slr.offsetMax = new Vector2(0f, -8f);
+
+            // approx the design's 80kg cap (no live weight model yet — see report)
+            var weight = UiBuilder.NewText(footer, "Weight", $"Weight: {used * 3:0.0} / {cap * 3:0.0}", 17, TextAnchor.MiddleRight, InvMuted);
+            var wr = weight.rectTransform;
+            wr.anchorMin = new Vector2(0.5f, 0f); wr.anchorMax = new Vector2(1f, 1f);
+            wr.offsetMin = new Vector2(0f, 0f); wr.offsetMax = new Vector2(0f, -8f);
+        }
+
+        void DrawInvDetail(float width, bool hasSel, HudSlot s, Color rarity)
+        {
+            var panel = UiBuilder.NewImage(_body, "InvDetail", null, InvDetailBg);
+            var pr = panel.rectTransform;
+            pr.anchorMin = new Vector2(1f, 0f); pr.anchorMax = new Vector2(1f, 1f);
+            pr.pivot = new Vector2(1f, 0.5f);
+            pr.anchoredPosition = Vector2.zero;
+            pr.sizeDelta = new Vector2(width, 0f);
+            // left edge: 3px hard border + 2px stone inset
+            var edge = UiBuilder.NewImage(panel.transform, "Edge", null, InvHardEdge);
+            edge.raycastTarget = false;
+            var er = edge.rectTransform;
+            er.anchorMin = new Vector2(0f, 0f); er.anchorMax = new Vector2(0f, 1f);
+            er.pivot = new Vector2(0f, 0.5f);
+            er.anchoredPosition = Vector2.zero;
+            er.sizeDelta = new Vector2(3f, 0f);
+
+            if (!hasSel)
+            {
+                var empty = UiBuilder.NewText(panel.transform, "Empty", "Select an item to inspect it.", 16, TextAnchor.UpperLeft, InvMuted);
+                empty.horizontalOverflow = HorizontalWrapMode.Wrap;
+                var emr = empty.rectTransform;
+                emr.anchorMin = new Vector2(0f, 1f); emr.anchorMax = new Vector2(1f, 1f);
+                emr.pivot = new Vector2(0f, 1f);
+                emr.anchoredPosition = new Vector2(26f, -26f);
+                emr.sizeDelta = new Vector2(-52f, 60f);
+                UiBuilder.FitText(empty);
+                return;
+            }
+
+            const float ipad = 26f;
+            // header: 88px icon well + name/type
+            var iconWell = UiBuilder.NewImage(panel.transform, "DetailIcon", null, InvSlotFill);
+            iconWell.raycastTarget = false;
+            var iwr = iconWell.rectTransform;
+            iwr.anchorMin = new Vector2(0f, 1f); iwr.anchorMax = new Vector2(0f, 1f);
+            iwr.pivot = new Vector2(0f, 1f);
+            iwr.anchoredPosition = new Vector2(ipad, -ipad);
+            iwr.sizeDelta = new Vector2(88f, 88f);
+            AddBorder(iwr, rarity, 2f);
+            AddInset(iwr, InvHardEdge, 2f);
+            var dIcon = UiBuilder.NewImage(iconWell.transform, "Icon", s.icon, Color.white);
+            dIcon.preserveAspect = true;
+            dIcon.raycastTarget = false;
+            var dir = dIcon.rectTransform;
+            dir.anchorMin = Vector2.zero; dir.anchorMax = Vector2.one;
+            dir.offsetMin = new Vector2(15f, 15f); dir.offsetMax = new Vector2(-15f, -15f);
+            if (s.icon == null) dIcon.color = new Color(rarity.r, rarity.g, rarity.b, 0.85f);
+            AddBorder(dir, new Color(rarity.r * 0.6f, rarity.g * 0.6f, rarity.b * 0.6f, 1f), 3f);
+
+            var name = UiBuilder.NewText(panel.transform, "Name", string.IsNullOrWhiteSpace(s.label) ? "Item" : s.label, 24, TextAnchor.UpperLeft, rarity);
+            name.font = LitIsoTheme.BodyFont;
+            name.fontStyle = FontStyle.Bold;
+            name.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var nmr = name.rectTransform;
+            nmr.anchorMin = new Vector2(0f, 1f); nmr.anchorMax = new Vector2(1f, 1f);
+            nmr.pivot = new Vector2(0f, 1f);
+            nmr.anchoredPosition = new Vector2(ipad + 88f + 18f, -ipad - 6f);
+            nmr.sizeDelta = new Vector2(-(ipad + 88f + 18f + ipad), 32f);
+            UiBuilder.FitText(name);
+
+            string typeStr = RarityLabel(rarity) + (s.durability01 > 0f ? " · Equipment" : s.count > 1 ? " · Material" : " · Item");
+            var type = UiBuilder.NewText(panel.transform, "Type", typeStr, 17, TextAnchor.UpperLeft, InvMuted);
+            var tyr = type.rectTransform;
+            tyr.anchorMin = new Vector2(0f, 1f); tyr.anchorMax = new Vector2(1f, 1f);
+            tyr.pivot = new Vector2(0f, 1f);
+            tyr.anchoredPosition = new Vector2(ipad + 88f + 18f, -ipad - 44f);
+            tyr.sizeDelta = new Vector2(-(ipad + 88f + 18f + ipad), 22f);
+            UiBuilder.FitText(type);
+
+            // stat rows
+            float ry = ipad + 88f + 20f;
+            ry += DetailStatRow(panel.transform, "Durability", s.durability01 > 0f ? $"{Mathf.RoundToInt(s.durability01 * 100f)} / 100" : "—", LitIsoTheme.Parchment, ipad, ry);
+            ry += DetailStatRow(panel.transform, "Quantity", (s.count > 0 ? s.count : 1).ToString(), LitIsoTheme.Parchment, ipad, ry);
+            ry += DetailStatRow(panel.transform, "Sell value", $"{Mathf.Max(1, s.count) * 6} G", LitIsoTheme.Gold, ipad, ry);
+
+            // flavour text
+            var flavour = UiBuilder.NewText(panel.transform, "Flavour",
+                "“Kept close through the long roads — worn, but it still serves.”", 18, TextAnchor.UpperLeft, InvMuted);
+            flavour.fontStyle = FontStyle.Italic;
+            flavour.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var flr = flavour.rectTransform;
+            flr.anchorMin = new Vector2(0f, 1f); flr.anchorMax = new Vector2(1f, 1f);
+            flr.pivot = new Vector2(0f, 1f);
+            flr.anchoredPosition = new Vector2(ipad, -(ry + 18f));
+            flr.sizeDelta = new Vector2(-ipad * 2f, 72f);
+
+            // EQUIP / DROP action buttons
+            var equip = UiBuilder.NewButton(panel.transform, "EquipBtn", "button", "EQUIP", 13, LitIsoTheme.ButtonStyle.Gold);
+            var eqr = equip.GetComponent<RectTransform>();
+            eqr.anchorMin = new Vector2(0f, 0f); eqr.anchorMax = new Vector2(1f, 0f);
+            eqr.pivot = new Vector2(0f, 0f);
+            eqr.anchoredPosition = new Vector2(ipad, ipad);
+            eqr.offsetMin = new Vector2(ipad, ipad);
+            eqr.offsetMax = new Vector2(-ipad - 96f, ipad + 50f);
+
+            int dropIdx = _invSelected;
+            var drop = UiBuilder.NewButton(panel.transform, "DropBtn", "button", "DROP", 13, LitIsoTheme.ButtonStyle.Stone);
+            var dpr = drop.GetComponent<RectTransform>();
+            dpr.anchorMin = new Vector2(1f, 0f); dpr.anchorMax = new Vector2(1f, 0f);
+            dpr.pivot = new Vector2(1f, 0f);
+            dpr.anchoredPosition = new Vector2(-ipad, ipad);
+            dpr.sizeDelta = new Vector2(86f, 50f);
+            drop.onClick.AddListener(() =>
+            {
+                if (dropIdx < 0) return;
+                int count = _inventory.GetSlot(dropIdx).count;
+                if (count > 0 && !_inventory.DropItem(dropIdx, count))
+                    Debug.Log("[Inventory] Drop unavailable — pending Foundation world-drop op.");
+            });
+        }
+
+        float DetailStatRow(Transform parent, string key, string value, Color valueColor, float ipad, float y)
+        {
+            var row = UiBuilder.NewRect("Stat_" + key, (RectTransform)parent);
+            row.anchorMin = new Vector2(0f, 1f); row.anchorMax = new Vector2(1f, 1f);
+            row.pivot = new Vector2(0f, 1f);
+            row.anchoredPosition = new Vector2(ipad, -y);
+            row.sizeDelta = new Vector2(-ipad * 2f, 30f);
+            var k = UiBuilder.NewText(row, "K", key, 18, TextAnchor.MiddleLeft, InvChipMuted);
+            UiBuilder.Stretch(k.rectTransform);
+            var v = UiBuilder.NewText(row, "V", value, 18, TextAnchor.MiddleRight, valueColor);
+            UiBuilder.Stretch(v.rectTransform);
+            // bottom hairline divider
+            var div = UiBuilder.NewImage(row, "Div", null, LitIsoTheme.Hex("#23262E"));
+            div.raycastTarget = false;
+            var dr = div.rectTransform;
+            dr.anchorMin = new Vector2(0f, 0f); dr.anchorMax = new Vector2(1f, 0f);
+            dr.pivot = new Vector2(0f, 0f);
+            dr.anchoredPosition = Vector2.zero;
+            dr.sizeDelta = new Vector2(0f, 1f);
+            return 38f;
+        }
+
+        static string RarityLabel(Color rarity)
+        {
+            if (rarity == RarityLegend)   return "Legendary";
+            if (rarity == RarityEpic)     return "Epic";
+            if (rarity == RarityRare)     return "Rare";
+            if (rarity == RarityUncommon) return "Uncommon";
+            return "Common";
+        }
+
+        // 2px (default) hard border drawn as an Outline on the given rect's Image.
+        static void AddBorder(RectTransform rt, Color color, float dist)
+        {
+            var img = rt.GetComponent<Image>();
+            if (img == null) return;
+            var o = rt.gameObject.GetComponent<Outline>() ?? rt.gameObject.AddComponent<Outline>();
+            o.effectColor = color;
+            o.effectDistance = new Vector2(dist, -dist);
+            o.useGraphicAlpha = false;
+        }
+
+        // inset hard line (the mockup's "box-shadow:inset 0 0 0 Npx" frame) drawn
+        // as four thin edge strips hugging the inside of the parent's rect, so the
+        // parent's fill stays visible in the centre.
+        static void AddInset(RectTransform parent, Color color, float thickness)
+        {
+            void Strip(string n, Vector2 aMin, Vector2 aMax, Vector2 oMin, Vector2 oMax)
+            {
+                var go = new GameObject(n, typeof(RectTransform), typeof(Image));
+                go.transform.SetParent(parent, false);
+                var img = go.GetComponent<Image>();
+                img.color = color;
+                img.raycastTarget = false;
+                var rt = go.GetComponent<RectTransform>();
+                rt.anchorMin = aMin; rt.anchorMax = aMax;
+                rt.offsetMin = oMin; rt.offsetMax = oMax;
+            }
+            Strip("InsetT", new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -thickness), new Vector2(0f, 0f));
+            Strip("InsetB", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(0f, thickness));
+            Strip("InsetL", new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(thickness, 0f));
+            Strip("InsetR", new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-thickness, 0f), new Vector2(0f, 0f));
         }
 
         // ====================================================================
@@ -970,6 +1453,42 @@ namespace LitIso.UI.InGame
 
         void DrawCrafting()
         {
+            // Station filtering hint: PlayerInteraction.RequestCrafting sets
+            // CraftingStationContext when the player opens this tab from a world
+            // station (workbench / furnace / tannery / campfire-cookpot). It is
+            // already populated and safe to read here.
+            //
+            // TODO(station-filter): when CraftingStationContext.HasActiveStation is
+            // true, restrict the recipe list below to recipes whose station matches
+            // CraftingStationContext.ActiveStation (Hand/None recipes stay always
+            // visible), and change the list title from "all stations" to the active
+            // station name. The recipe rows expose `row.station` (a string) already,
+            // so the filter is row-local and does NOT require changing the view model.
+            //
+            // TODO(tiers): there is currently NO tier concept to gate on.
+            //   - PlaceableDefinition has no `stationTier`.
+            //   - RecipeDefinition has no `minStationTier` / output-tier field.
+            //   - StationType (None/Hand/Workbench/Furnace/CookingPot/Tannery) has no
+            //     Anvil or EnchantingTable members.
+            // Owner intent: higher-tier station -> exposes higher-tier recipes AND
+            // better outputs. To support it cleanly, add `stationTier` to
+            // PlaceableDefinition + `minStationTier` to RecipeDefinition, plumb the
+            // placed station's tier into CraftingStationContext.Set(...) from
+            // PlayerInteraction.RequestCrafting, then here hide recipes where
+            // row.minStationTier > CraftingStationContext.ActiveStationTier. Do NOT
+            // fake this with id string-matching.
+            //
+            // 2026-06 station/board wiring: world-station props now Set
+            // CraftingStationContext before opening this tab. Apply that station as the
+            // adapter filter so the recipe list narrows to the station (and the adapter's
+            // BuildVisible also honours minStationTier vs ActiveStationTier). When no
+            // station drove the open (hotkey / Stations Hub Clear()), show everything.
+            // RecipeDefinition.minStationTier now exists, so the tier gate lives in
+            // FoundationCraftingAdapter.BuildVisible (the proper, non-string-matching point).
+            _crafting?.SetStationFilter(
+                CraftingStationContext.HasActiveStation
+                    ? CraftingStationContext.ActiveStation
+                    : (StationType?)null);
             int count = Mathf.Max(0, _crafting?.RecipeCount ?? 0);
             if (count == 0)
             {
@@ -987,7 +1506,7 @@ namespace LitIso.UI.InGame
             listFrameRt.offsetMin = Vector2.zero;
             listFrameRt.offsetMax = new Vector2(380f, 0f);
 
-            var listTitle = UiBuilder.NewText(listFrame.transform, "ListTitle", $"Recipes ({count}) - all stations", 17, TextAnchor.MiddleLeft, UiBuilder.MutedCol);
+            var listTitle = UiBuilder.NewText(listFrame.transform, "ListTitle", $"Recipes ({count}) - all stations", 17, TextAnchor.MiddleLeft, LitIsoTheme.Gold);
             var listTitleRt = listTitle.rectTransform;
             listTitleRt.anchorMin = new Vector2(0f, 1f);
             listTitleRt.anchorMax = new Vector2(1f, 1f);
@@ -1004,9 +1523,9 @@ namespace LitIso.UI.InGame
             {
                 var row = _crafting.GetRecipe(i);
                 var recipeRow = UiBuilder.NewPanel(listContent, "Recipe_" + SafeName(row.id), "craft_row",
-                    row.id == _selectedRecipeId ? new Color(0.20f, 0.22f, 0.28f, 0.96f) : UiBuilder.SlotBg);
+                    row.id == _selectedRecipeId ? LitIsoTheme.GoldDeep : UiBuilder.SlotBg);
                 recipeRow.color = row.id == _selectedRecipeId
-                    ? new Color(0.20f, 0.22f, 0.28f, 0.96f)
+                    ? LitIsoTheme.GoldDeep
                     : row.canCraft ? UiBuilder.SlotBg : new Color(0.08f, 0.09f, 0.12f, 0.84f);
                 var rowRt = recipeRow.rectTransform;
                 rowRt.sizeDelta = new Vector2(0f, 68f);
@@ -1065,7 +1584,7 @@ namespace LitIso.UI.InGame
             detailsRt.offsetMin = new Vector2(404f, 0f);
             detailsRt.offsetMax = Vector2.zero;
 
-            var title = UiBuilder.NewText(detailsFrame.transform, "RecipeTitle", details.display ?? "Recipe", 22, TextAnchor.UpperLeft);
+            var title = UiBuilder.NewText(detailsFrame.transform, "RecipeTitle", details.display ?? "Recipe", 22, TextAnchor.UpperLeft, LitIsoTheme.Gold);
             title.horizontalOverflow = HorizontalWrapMode.Wrap;
             title.verticalOverflow = VerticalWrapMode.Truncate;
             UiBuilder.FitText(title);

@@ -1,0 +1,4066 @@
+{
+  "schema": "litiso.worldgen.runtime_contract.v1",
+  "generatedFrom": {
+    "worldgenRoot": "Assets/StreamingAssets/worldgen",
+    "audit": "Temp/WorldGen/worldgen_rule_audit.json",
+    "promotionPlan": "Temp/WorldGen/worldgen_asset_promotion_plan.json",
+    "biomeSketchAssets": "Tools/BiomeSketch/assets.js"
+  },
+  "rules": {
+    "materialTagsAreNotTileIds": [
+      "grass",
+      "sand",
+      "stone",
+      "water",
+      "dirt"
+    ],
+    "runtimeLiveMeans": "asset exists under Assets/Resources and Foundation content defines the id",
+    "generatedOnlyMeans": "asset exists under Assets/Generated and needs promotion before Resources lookup works",
+    "biomeSketchOnlyMeans": "asset exists only in the review/sketch tool and needs art-lane promotion"
+  },
+  "materialAliases": {
+    "dirt": [
+      "pl_dirt_01",
+      "pl_soil_01",
+      "grass_to_dirt_e",
+      "grass_to_dirt_n",
+      "grass_to_dirt_ne",
+      "grass_to_dirt_s",
+      "grass_to_dirt_sw",
+      "grass_to_dirt_w"
+    ],
+    "pl_grass_01": [
+      "pl_grass_01",
+      "pl_grass_01",
+      "pl_grass_01",
+      "pl_grass_01",
+      "grass_to_forest_floor_e",
+      "grass_to_forest_floor_n",
+      "grass_to_forest_floor_ne",
+      "grass_to_forest_floor_s",
+      "grass_to_forest_floor_sw",
+      "grass_to_forest_floor_w"
+    ],
+    "grass": [
+      "pl_grass_01",
+      "pl_grass_01",
+      "pl_grass_02",
+      "pl_grass_03",
+      "grass_to_dirt_e",
+      "grass_to_dirt_n",
+      "grass_to_dirt_ne",
+      "grass_to_dirt_s",
+      "grass_to_dirt_sw",
+      "grass_to_dirt_w",
+      "grass_to_forest_floor_e",
+      "grass_to_forest_floor_n",
+      "grass_to_forest_floor_ne",
+      "grass_to_forest_floor_s",
+      "grass_to_forest_floor_sw",
+      "grass_to_forest_floor_w",
+      "grass_to_sand_e",
+      "grass_to_sand_n",
+      "grass_to_sand_ne",
+      "grass_to_sand_s",
+      "grass_to_sand_sw",
+      "grass_to_sand_w",
+      "grass_to_stone_e",
+      "grass_to_stone_n",
+      "grass_to_stone_ne",
+      "grass_to_stone_s",
+      "grass_to_stone_sw",
+      "grass_to_stone_w"
+    ],
+    "sand": [
+      "grass_to_sand_e",
+      "grass_to_sand_n",
+      "grass_to_sand_ne",
+      "grass_to_sand_s",
+      "grass_to_sand_sw",
+      "grass_to_sand_w",
+      "pl_sand_01",
+      "pl_sand_02",
+      "sand_to_water_e",
+      "sand_to_water_n",
+      "sand_to_water_ne",
+      "sand_to_water_s",
+      "sand_to_water_sw",
+      "sand_to_water_w"
+    ],
+    "stone": [
+      "grass_to_stone_e",
+      "grass_to_stone_n",
+      "grass_to_stone_ne",
+      "grass_to_stone_s",
+      "grass_to_stone_sw",
+      "grass_to_stone_w",
+      "pl_stone_01",
+      "pl_stone_03"
+    ],
+    "water": [
+      "sand_to_water_e",
+      "sand_to_water_n",
+      "sand_to_water_ne",
+      "sand_to_water_s",
+      "sand_to_water_sw",
+      "sand_to_water_w",
+      "water",
+      "water_deep",
+      "water_deep_2",
+      "water_deep_3",
+      "water_swell_1",
+      "water_swell_2"
+    ]
+  },
+  "tiles": [
+    {
+      "tileId": "pl_dirt_02",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/badlands_1.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[9]"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_dirt_03",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/badlands_2.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[9].variants"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_dirt_01",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/dirt.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[4]"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[7]"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_00",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_00.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_00.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_01",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_01.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_01.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_02",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_02.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_02.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.accents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.3-4.accents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.5-6.accents"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_03",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_03.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_03.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.3-4.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_04",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_04.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_04.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.5-6.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_05",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_05.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_05.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.5-6.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_06",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_06.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_06.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.floors"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.3-4.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_07",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_07.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_07.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_08",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_08.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_08.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_09",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_09.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_09.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.3-4.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_10",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_10.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_10.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.5-6.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_11",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_11.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_11.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.3-4.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_12",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_12.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_12.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.3-4.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_13",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_13.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_13.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.5-6.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_14",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_14.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_14.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.5-6.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "dungeon2_15",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/dungeon2_15.png",
+        "destination": "Assets/Resources/Tiles/dungeon2_15.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/dungeon_themes.json",
+          "context": "tiers.1-2.floors"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_soil_01",
+      "status": "generated-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Tiles/Forest/forest_dark_underbrush.png",
+        "destination": "Assets/Resources/Tiles/forest_dark_underbrush.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/forest.json",
+          "context": "surfaceAccents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[3]"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_grass_01",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/forest_floor.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/forest.json",
+          "context": "surfaceAccents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceAccents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceBasePool"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_grass_02",
+      "status": "generated-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Tiles/Forest/forest_grass_base.png",
+        "destination": "Assets/Resources/Tiles/forest_grass_base.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/forest.json",
+          "context": "surfaceBase"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceAccents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceBase"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceBasePool"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_grass_03",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/grass_3.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/forest.json",
+          "context": "surfaceAccents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/mountain.json",
+          "context": "surfaceBase"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceAccents"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_grass_04",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/plains2_04.png",
+        "destination": "Assets/Resources/Tiles/plains2_04.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceAccents"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceBasePool"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_grass_05",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/plains2_07.png",
+        "destination": "Assets/Resources/Tiles/plains2_07.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceBasePool"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/meadow.json",
+          "context": "surfaceAccents"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_sand_01",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/sand_1.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[6].accents"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_sand_02",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/sand_2.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[5]"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[6]"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_snow_01",
+      "status": "biomesketch-only",
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/tile/snow2_00.png",
+        "destination": "Assets/Resources/Tiles/snow2_00.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/snow.json",
+          "context": "surfaceBasePool"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/snow.json",
+          "context": "surfaceBase"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/biomes/snow.json",
+          "context": "surfaceAccents"
+        }
+      ]
+    },
+    {
+      "tileId": "pl_stone_01",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/stone_block.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[8]"
+        }
+      ]
+    },
+    {
+      "tileId": "water",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/water.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[1]"
+        },
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[2]"
+        }
+      ]
+    },
+    {
+      "tileId": "water_deep",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/water_deep.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[0]"
+        }
+      ]
+    },
+    {
+      "tileId": "water_deep_2",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/water_deep_2.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[0].variants"
+        }
+      ]
+    },
+    {
+      "tileId": "water_deep_3",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/water_deep_3.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[0].variants"
+        }
+      ]
+    },
+    {
+      "tileId": "water_swell_1",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/water_swell_1.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[0].shoreContact"
+        }
+      ]
+    },
+    {
+      "tileId": "water_swell_2",
+      "status": "unity-live",
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Tiles/water_swell_2.png",
+        "aliasOf": null
+      },
+      "references": [
+        {
+          "source": "Assets/StreamingAssets/worldgen/surface_rules.json",
+          "context": "surface_rules[0].shoreContact"
+        }
+      ]
+    }
+  ],
+  "features": [
+    {
+      "featureId": "flower_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "flower",
+      "gameplayPrototype": "flower",
+      "archetype": "flower",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 2.2,
+        "radius": 2,
+        "fillDensity": 0.35,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/flower.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/flower_patch.json"
+    },
+    {
+      "featureId": "flower_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "flower_tulip",
+      "gameplayPrototype": "flower",
+      "archetype": "flower",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 2.2,
+        "radius": 2,
+        "fillDensity": 0.35,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/flower_tulip.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/flower_patch.json"
+    },
+    {
+      "featureId": "forest_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "forest_bush",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 2,
+        "radius": 2,
+        "fillDensity": 0.35,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Forest/forest_bush.png",
+        "destination": "Assets/Resources/Decorations/forest_bush.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/forest_bush_patch.json"
+    },
+    {
+      "featureId": "forest_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "forest_moss_bush",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 2,
+        "radius": 2,
+        "fillDensity": 0.35,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Forest/forest_moss_bush.png",
+        "destination": "Assets/Resources/Decorations/forest_moss_bush.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/forest_bush_patch.json"
+    },
+    {
+      "featureId": "forest_grove",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "forest_oak_tree",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 5,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.3,
+        "radius": 4,
+        "fillDensity": 0.55,
+        "falloff": 0.15,
+        "band": "grass",
+        "heightBias": "uphill"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Forest/forest_oak_tree.png",
+        "destination": "Assets/Resources/Decorations/forest_oak_tree.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/forest_grove.json"
+    },
+    {
+      "featureId": "forest_grove",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "forest_deep_oak_tree",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.3,
+        "radius": 4,
+        "fillDensity": 0.55,
+        "falloff": 0.15,
+        "band": "grass",
+        "heightBias": "uphill"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Forest/forest_deep_oak_tree.png",
+        "destination": "Assets/Resources/Decorations/forest_deep_oak_tree.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/forest_grove.json"
+    },
+    {
+      "featureId": "forest_grove",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "forest_pine",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 3,
+      "optional": true,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.3,
+        "radius": 4,
+        "fillDensity": 0.55,
+        "falloff": 0.15,
+        "band": "grass",
+        "heightBias": "uphill"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/prop/review_sync/ready_no_overwrite/forest/forest_pine.png",
+        "destination": "Assets/Resources/Decorations/forest_pine.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/forest_grove.json"
+    },
+    {
+      "featureId": "forest_grove",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "forest_moss_bush",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.3,
+        "radius": 4,
+        "fillDensity": 0.55,
+        "falloff": 0.15,
+        "band": "grass",
+        "heightBias": "uphill"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Forest/forest_moss_bush.png",
+        "destination": "Assets/Resources/Decorations/forest_moss_bush.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/forest_grove.json"
+    },
+    {
+      "featureId": "lone_pine",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "pine",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.02,
+        "band": "grass",
+        "elevationRange": [
+          3,
+          5
+        ]
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/pine.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_pine.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree_v2_0",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 4,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree_v2_0.png",
+        "destination": "Assets/Resources/Decorations/plains_tree_v2_0.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree_v2_1",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree_v2_1.png",
+        "destination": "Assets/Resources/Decorations/plains_tree_v2_1.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree_v2_3",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree_v2_3.png",
+        "destination": "Assets/Resources/Decorations/plains_tree_v2_3.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree_v2_0_young",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree_v2_0_young.png",
+        "destination": "Assets/Resources/Decorations/plains_tree_v2_0_young.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree_v2_1_young",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree_v2_1_young.png",
+        "destination": "Assets/Resources/Decorations/plains_tree_v2_1_young.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree_v2_3_young",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree_v2_3_young.png",
+        "destination": "Assets/Resources/Decorations/plains_tree_v2_3_young.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_willow",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 1,
+      "optional": false,
+      "footprint": "2x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_willow.png",
+        "destination": "Assets/Resources/Decorations/plains_willow.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_tree",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_tree.png",
+        "destination": "Assets/Resources/Decorations/plains_tree.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "lone_plains_tree",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "plains_small_tree",
+      "gameplayPrototype": "tree",
+      "archetype": "tree",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.015,
+        "minSpacing": 5,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_small_tree.png",
+        "destination": "Assets/Resources/Decorations/plains_small_tree.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/lone_plains_tree.json"
+    },
+    {
+      "featureId": "long_grass_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "tuft",
+      "gameplayPrototype": "tuft",
+      "archetype": "tuft",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 2.5,
+        "radius": 2,
+        "fillDensity": 0.4,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/tuft.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/long_grass_patch.json"
+    },
+    {
+      "featureId": "ore_copper",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "copper_vein",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "densityByElevation": {
+          "3": 0.01,
+          "4": 0.03,
+          "5": 0.05,
+          "6": 0.07
+        },
+        "band": "grass|rock",
+        "_": "ore frequency rises with height (owner rule)"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/copper_vein.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/ore_copper.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_bush_v2_0",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_0.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_0.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_bush_v2_1",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_1.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_1.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_bush_v2_2",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_2.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_2.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_bush_v2_3",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_3.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_3.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_bush",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush.png",
+        "destination": "Assets/Resources/Decorations/plains_bush.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_dry_bush",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_dry_bush.png",
+        "destination": "Assets/Resources/Decorations/plains_dry_bush.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_bush_v2_0_big",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_0_big.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_0_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_bush_v2_1_big",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_1_big.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_1_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_bush_v2_2_big",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_2_big.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_2_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "plains_bush_patch",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_bush_v2_3_big",
+      "gameplayPrototype": "bush",
+      "archetype": "bush",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 1.5,
+        "radius": 2,
+        "fillDensity": 0.3,
+        "band": "grass"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_bush_v2_3_big.png",
+        "destination": "Assets/Resources/Decorations/plains_bush_v2_3_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/plains_bush_patch.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_rock_v2_0",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_0.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_0.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_rock_v2_1",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_1.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_1.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_rock_v2_2",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 3,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_2.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_2.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_rock_v2_3",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_3.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_3.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "plains_rock",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock.png",
+        "destination": "Assets/Resources/Decorations/plains_rock.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "entry",
+      "visualId": "shared_gray_rock",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Shared/shared_gray_rock.png",
+        "destination": "Assets/Resources/Decorations/shared_gray_rock.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_rock_v2_0_big",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_0_big.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_0_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_rock_v2_1_big",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_1_big.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_1_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_rock_v2_2_big",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_2_big.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_2_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "rock_outcrop",
+      "configuredType": "cluster",
+      "role": "cluster-center",
+      "visualId": "plains_rock_v2_3_big",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1.75,
+      "placement": {
+        "groveCentersPer100": 0.8,
+        "radius": 1,
+        "fillDensity": 0.8,
+        "minCount": 2,
+        "_": "rocks never spawn alone (vignette rule)"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Assets/Generated/Props/Plains/plains_rock_v2_3_big.png",
+        "destination": "Assets/Resources/Decorations/plains_rock_v2_3_big.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/rock_outcrop.json"
+    },
+    {
+      "featureId": "shore_rocks",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "shore_stone",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 1,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.05,
+        "band": "shallow_water_near_land"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/shore_stone.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/shore_rocks.json"
+    },
+    {
+      "featureId": "stump_log_litter",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "forest_mushrooms",
+      "gameplayPrototype": "rock",
+      "archetype": "rock",
+      "weight": 2,
+      "optional": true,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.018,
+        "band": "grass",
+        "nearFeature": "forest_grove"
+      },
+      "promotion": {
+        "status": "copy-ready",
+        "source": "Tools/BiomeSketch/assets/prop/review_sync/ready_no_overwrite/forest/forest_mushrooms.png",
+        "destination": "Assets/Resources/Decorations/forest_mushrooms.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/stump_log_litter.json"
+    },
+    {
+      "featureId": "stump_log_litter",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "stump",
+      "gameplayPrototype": "stump",
+      "archetype": "stump",
+      "weight": 2,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.018,
+        "band": "grass",
+        "nearFeature": "forest_grove"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/stump.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/stump_log_litter.json"
+    },
+    {
+      "featureId": "stump_log_litter",
+      "configuredType": "single",
+      "role": "entry",
+      "visualId": "log",
+      "gameplayPrototype": "log",
+      "archetype": "log",
+      "weight": 5,
+      "optional": false,
+      "footprint": "1x1",
+      "dropMultiplier": 1,
+      "placement": {
+        "density": 0.018,
+        "band": "grass",
+        "nearFeature": "forest_grove"
+      },
+      "promotion": {
+        "status": "no-op",
+        "source": null,
+        "destination": "Assets/Resources/Decorations/log.png",
+        "aliasOf": null
+      },
+      "source": "Assets/StreamingAssets/worldgen/features/stump_log_litter.json"
+    }
+  ],
+  "biomeSuite": {
+    "schema": "litiso.worldgen.biome_suite.v1",
+    "_": "Authoring contract for biome-scale generation. Runtime authority remains footprint cell + integer height; this file only describes semantic rule intent.",
+    "biomeOrder": [
+      "meadow",
+      "forest",
+      "coast",
+      "mountain",
+      "snow"
+    ],
+    "spawnZone": {
+      "radiusChunks": 2,
+      "forcedBiome": "meadow",
+      "heightPolicy": "flatten-core-ramp-edge",
+      "requiredClearCells": 160,
+      "allowedFeatures": [
+        "lone_plains_tree",
+        "flower_patch",
+        "long_grass_patch",
+        "plains_bush_patch",
+        "rock_outcrop"
+      ],
+      "blockedFeatures": [
+        "forest_grove",
+        "ore_copper"
+      ]
+    },
+    "globalPlacement": {
+      "minimumWalkLaneWidthCells": 2,
+      "suppressDenseDecorNearPathCells": 2,
+      "suppressDenseDecorNearDoorCells": 3,
+      "suppressTallDecorNearCliffEdgeCells": 1,
+      "transitionBandPolicy": "use sparse accents and avoid blockers",
+      "heightEdgePolicy": "props may decorate edges only when their feature explicitly opts in",
+      "occupancyPolicy": "reserve every prop footprint before placing the next prop"
+    },
+    "biomes": {
+      "meadow": {
+        "role": "starter-safe open terrain",
+        "surfaceFile": "biomes/meadow.json",
+        "density": {
+          "trees": 0.12,
+          "rocks": 0.08,
+          "grassTufts": 0.22,
+          "flowers": 0.12
+        },
+        "featureScale": {
+          "lone_plains_tree": 1,
+          "flower_patch": 1,
+          "long_grass_patch": 1,
+          "plains_bush_patch": 0.8,
+          "rock_outcrop": 0.7
+        }
+      },
+      "forest": {
+        "role": "dense but traversable resource biome",
+        "surfaceFile": "biomes/forest.json",
+        "density": {
+          "trees": 0.62,
+          "underbrush": 0.28,
+          "rocks": 0.08,
+          "mushrooms": 0.06
+        },
+        "featureScale": {
+          "forest_grove": 1,
+          "forest_bush_patch": 1,
+          "clearing": 0.45,
+          "rock_outcrop": 0.45,
+          "stump_log_litter": 0.8
+        },
+        "negativeSpace": {
+          "clearingChancePerGrove": 0.18,
+          "minimumClearingRadiusCells": 3
+        }
+      },
+      "coast": {
+        "role": "shoreline band between ocean and land",
+        "surfaceFile": "biomes/coast.json",
+        "density": {
+          "shoreRocks": 0.18,
+          "driftwood": 0.08,
+          "trees": 0.03
+        },
+        "featureScale": {
+          "shore_rocks": 1,
+          "rock_outcrop": 0.25
+        },
+        "waterEdgePolicy": "sand apron first, sparse shore props second, no buildings on wet band"
+      },
+      "mountain": {
+        "role": "height-banded stone and ore biome",
+        "surfaceFile": "biomes/mountain.json",
+        "density": {
+          "rocks": 0.34,
+          "ores": 0.12,
+          "trees": 0.04
+        },
+        "featureScale": {
+          "rock_outcrop": 1.35,
+          "ore_copper": 1,
+          "lone_pine": 0.4
+        },
+        "heightBands": [
+          {
+            "range": [
+              3,
+              4
+            ],
+            "role": "mossy shoulder"
+          },
+          {
+            "range": [
+              4,
+              5
+            ],
+            "role": "scree and exposed stone"
+          },
+          {
+            "range": [
+              5,
+              7
+            ],
+            "role": "snowcap and ore"
+          }
+        ]
+      },
+      "snow": {
+        "role": "cold sparse biome with frozen aprons",
+        "surfaceFile": "biomes/snow.json",
+        "density": {
+          "trees": 0.18,
+          "rocks": 0.1,
+          "grassTufts": 0.02
+        },
+        "featureScale": {
+          "lone_pine": 0.8,
+          "rock_outcrop": 0.8
+        },
+        "transitionPolicy": "grass-through-snow tiles only in authored thaw bands"
+      }
+    },
+    "dungeons": {
+      "themeFile": "dungeon_themes.json",
+      "interiorTileFamilies": [
+        "dungeon_stone",
+        "interior",
+        "planks"
+      ],
+      "rule": "dungeon rooms use dungeon floor pools; building interiors use interior/planks; never use overworld grass/snow/coast surfaces inside void instances"
+    }
+  },
+  "settlements": {
+    "schema": "litiso.worldgen.settlements.v1",
+    "_": "Settlement placement contract. Farther from spawn means lower frequency, larger footprint, higher service tier, and richer stock.",
+    "distanceMetric": "chunk-ring-from-spawn",
+    "globalRules": {
+      "minimumSettlementSpacingChunks": 8,
+      "preferBiomeOrder": [
+        "meadow",
+        "forest-edge",
+        "coast",
+        "mountain-foot"
+      ],
+      "avoidBiomeTags": [
+        "deep_forest",
+        "snow_peak",
+        "wet_sand",
+        "dungeon"
+      ],
+      "requiredFlatness": "max height delta 0 inside plaza, max delta 1 at settlement edge",
+      "roadPolicy": "one main road spine, side paths to doors, at least two exits to wilderness",
+      "doorClearanceCells": 3,
+      "wellOrCampfireCenter": true
+    },
+    "bands": [
+      {
+        "id": "hearthclaim_spawn",
+        "chunkRing": [
+          0,
+          2
+        ],
+        "chancePerEligibleChunk": 0,
+        "sizeClass": "spawn-safe",
+        "maxBuildings": 0,
+        "stockTier": 0,
+        "rule": "spawn is a safe clearing, not a town"
+      },
+      {
+        "id": "hamlet",
+        "chunkRing": [
+          3,
+          10
+        ],
+        "chancePerEligibleChunk": 0.035,
+        "sizeClass": "small",
+        "footprintCells": [
+          18,
+          18
+        ],
+        "buildingRanks": [
+          "r1"
+        ],
+        "buildingCount": [
+          2,
+          4
+        ],
+        "stockTier": 1,
+        "services": [
+          "basic_crafting",
+          "camp_trade",
+          "rest"
+        ]
+      },
+      {
+        "id": "village",
+        "chunkRing": [
+          11,
+          28
+        ],
+        "chancePerEligibleChunk": 0.018,
+        "sizeClass": "medium",
+        "footprintCells": [
+          28,
+          24
+        ],
+        "buildingRanks": [
+          "r1",
+          "r2"
+        ],
+        "buildingCount": [
+          4,
+          8
+        ],
+        "stockTier": 2,
+        "services": [
+          "basic_crafting",
+          "forge",
+          "alchemy",
+          "guild_board",
+          "market_trade",
+          "rest"
+        ]
+      },
+      {
+        "id": "market_town",
+        "chunkRing": [
+          29,
+          60
+        ],
+        "chancePerEligibleChunk": 0.008,
+        "sizeClass": "large",
+        "footprintCells": [
+          42,
+          36
+        ],
+        "buildingRanks": [
+          "r2",
+          "r3"
+        ],
+        "buildingCount": [
+          8,
+          14
+        ],
+        "stockTier": 3,
+        "services": [
+          "advanced_crafting",
+          "forge",
+          "alchemy",
+          "guild_board",
+          "library",
+          "market_trade",
+          "tavern_jobs",
+          "rest"
+        ]
+      },
+      {
+        "id": "frontier_city",
+        "chunkRing": [
+          61,
+          9999
+        ],
+        "chancePerEligibleChunk": 0.003,
+        "sizeClass": "rare-city",
+        "footprintCells": [
+          58,
+          48
+        ],
+        "buildingRanks": [
+          "r2",
+          "r3"
+        ],
+        "buildingCount": [
+          14,
+          24
+        ],
+        "stockTier": 4,
+        "services": [
+          "advanced_crafting",
+          "forge",
+          "alchemy",
+          "guild_board",
+          "library",
+          "market_trade",
+          "tavern_jobs",
+          "specialty_vendor",
+          "rest"
+        ]
+      }
+    ],
+    "buildingPool": [
+      {
+        "id": "tavern_r1",
+        "rank": "r1",
+        "services": [
+          "rest",
+          "tavern_jobs"
+        ],
+        "footprint": "2x2"
+      },
+      {
+        "id": "tavern_r2",
+        "rank": "r2",
+        "services": [
+          "rest",
+          "tavern_jobs"
+        ],
+        "footprint": "3x3"
+      },
+      {
+        "id": "tavern_r3",
+        "rank": "r3",
+        "services": [
+          "rest",
+          "tavern_jobs"
+        ],
+        "footprint": "4x4"
+      },
+      {
+        "id": "guild_hall_r1",
+        "rank": "r1",
+        "services": [
+          "guild_board"
+        ],
+        "footprint": "2x2"
+      },
+      {
+        "id": "guild_hall_r2",
+        "rank": "r2",
+        "services": [
+          "guild_board"
+        ],
+        "footprint": "3x3"
+      },
+      {
+        "id": "guild_hall_r3",
+        "rank": "r3",
+        "services": [
+          "guild_board"
+        ],
+        "footprint": "4x4"
+      },
+      {
+        "id": "library_r1",
+        "rank": "r1",
+        "services": [
+          "library"
+        ],
+        "footprint": "2x2"
+      },
+      {
+        "id": "library_r2",
+        "rank": "r2",
+        "services": [
+          "library"
+        ],
+        "footprint": "3x3"
+      },
+      {
+        "id": "library_r3",
+        "rank": "r3",
+        "services": [
+          "library"
+        ],
+        "footprint": "4x4"
+      },
+      {
+        "id": "shop_r1",
+        "rank": "r1",
+        "services": [
+          "camp_trade",
+          "market_trade"
+        ],
+        "footprint": "2x2"
+      },
+      {
+        "id": "shop_r2",
+        "rank": "r2",
+        "services": [
+          "market_trade"
+        ],
+        "footprint": "3x3"
+      },
+      {
+        "id": "shop_r3",
+        "rank": "r3",
+        "services": [
+          "market_trade",
+          "specialty_vendor"
+        ],
+        "footprint": "4x4"
+      }
+    ],
+    "outdoorProps": [
+      "market_stall_red",
+      "market_stall_blue",
+      "guild_notice_board",
+      "guild_banner_stand",
+      "weapon_rack",
+      "bar_counter",
+      "keg_rack",
+      "campfire_new",
+      "lantern_post",
+      "torch_standing"
+    ],
+    "layoutPresets": [
+      {
+        "id": "crossroads_hamlet",
+        "allowedSizeClasses": [
+          "small",
+          "medium"
+        ],
+        "districts": [
+          "plaza",
+          "market",
+          "crafting",
+          "rest"
+        ],
+        "pathShape": "cross"
+      },
+      {
+        "id": "river_or_coast_village",
+        "allowedSizeClasses": [
+          "medium",
+          "large"
+        ],
+        "districts": [
+          "dock",
+          "market",
+          "guild",
+          "crafting",
+          "rest"
+        ],
+        "pathShape": "spine-with-branch"
+      },
+      {
+        "id": "walled_market_town",
+        "allowedSizeClasses": [
+          "large",
+          "rare-city"
+        ],
+        "districts": [
+          "gate",
+          "plaza",
+          "market",
+          "guild",
+          "library",
+          "crafting",
+          "tavern"
+        ],
+        "pathShape": "ring-plus-spokes"
+      }
+    ]
+  },
+  "propInteractions": {
+    "schema": "litiso.worldgen.prop_interactions.v1",
+    "_": "Stable mapping from generated prop ids to gameplay interaction categories. Art can be review-only; runtime must gate on promotion status before spawning.",
+    "interactionTypes": {
+      "crafting_station": "opens a profession-specific crafting UI",
+      "resource_node": "harvestable node with tool affinity and respawn rules",
+      "container": "opens inventory/loot table",
+      "vendor_or_job": "opens town service, shop, guild, or tavern job board",
+      "light_source": "adds light/glow/VFX presentation",
+      "ambient": "presentation-only unless promoted to a specific gameplay rule",
+      "blocking_decoration": "blocks movement by footprint",
+      "floor_overlay": "rendered over a floor tile, non-authoritative for movement"
+    },
+    "craftingStations": [
+      {
+        "id": "crafting_table",
+        "profession": "general",
+        "service": "basic_crafting",
+        "footprint": "2x1"
+      },
+      {
+        "id": "furnace",
+        "profession": "smelting",
+        "service": "forge",
+        "footprint": "1x1"
+      },
+      {
+        "id": "anvil",
+        "profession": "blacksmithing",
+        "service": "forge",
+        "footprint": "1x1"
+      },
+      {
+        "id": "tanning_rack",
+        "profession": "leatherworking",
+        "service": "advanced_crafting",
+        "footprint": "2x1"
+      },
+      {
+        "id": "rune_station",
+        "profession": "runecrafting",
+        "service": "advanced_crafting",
+        "footprint": "1x1"
+      },
+      {
+        "id": "alchemy_table",
+        "profession": "alchemy",
+        "service": "alchemy",
+        "footprint": "2x1"
+      },
+      {
+        "id": "cooking_station",
+        "profession": "cooking",
+        "service": "basic_crafting",
+        "footprint": "2x1"
+      },
+      {
+        "id": "loom",
+        "profession": "tailoring",
+        "service": "advanced_crafting",
+        "footprint": "2x1"
+      },
+      {
+        "id": "sawmill_bench",
+        "profession": "carpentry",
+        "service": "advanced_crafting",
+        "footprint": "2x1"
+      },
+      {
+        "id": "grindstone",
+        "profession": "maintenance",
+        "service": "forge",
+        "footprint": "1x1"
+      }
+    ],
+    "resourceNodes": [
+      {
+        "id": "ore_copper",
+        "tier": "common",
+        "tool": "pickaxe",
+        "biomes": [
+          "mountain"
+        ],
+        "heightMin": 3
+      },
+      {
+        "id": "ore_iron",
+        "tier": "common",
+        "tool": "pickaxe",
+        "biomes": [
+          "mountain"
+        ],
+        "heightMin": 4
+      },
+      {
+        "id": "ore_silver",
+        "tier": "uncommon",
+        "tool": "pickaxe",
+        "biomes": [
+          "mountain",
+          "snow"
+        ],
+        "heightMin": 4
+      },
+      {
+        "id": "ore_gold",
+        "tier": "rare",
+        "tool": "pickaxe",
+        "biomes": [
+          "mountain"
+        ],
+        "heightMin": 5
+      },
+      {
+        "id": "ore_manacrystal",
+        "tier": "epic",
+        "tool": "pickaxe",
+        "biomes": [
+          "mountain",
+          "dungeon"
+        ],
+        "heightMin": 5
+      },
+      {
+        "id": "ore_starmetal",
+        "tier": "mythical",
+        "tool": "pickaxe",
+        "biomes": [
+          "mountain"
+        ],
+        "heightMin": 6
+      }
+    ],
+    "containers": [
+      {
+        "id": "dungeon_chest_wood",
+        "lootTable": "dungeon_basic",
+        "footprint": "1x1"
+      },
+      {
+        "id": "book_stack",
+        "lootTable": "library_notes",
+        "footprint": "1x1"
+      }
+    ],
+    "townServices": [
+      {
+        "id": "guild_notice_board",
+        "service": "guild_board",
+        "footprint": "2x1"
+      },
+      {
+        "id": "guild_round_table",
+        "service": "guild_board",
+        "footprint": "2x2"
+      },
+      {
+        "id": "market_stall_red",
+        "service": "market_trade",
+        "footprint": "2x2"
+      },
+      {
+        "id": "market_stall_blue",
+        "service": "market_trade",
+        "footprint": "2x2"
+      },
+      {
+        "id": "bar_counter",
+        "service": "tavern_jobs",
+        "footprint": "2x1"
+      },
+      {
+        "id": "tavern_table",
+        "service": "rest",
+        "footprint": "1x1"
+      }
+    ],
+    "lights": [
+      {
+        "id": "campfire_new",
+        "lightProfile": "campfire",
+        "footprint": "1x1"
+      },
+      {
+        "id": "torch_standing",
+        "lightProfile": "torch",
+        "footprint": "1x1"
+      },
+      {
+        "id": "torch_wall",
+        "lightProfile": "wall_torch",
+        "footprint": "1x1"
+      },
+      {
+        "id": "brazier",
+        "lightProfile": "brazier",
+        "footprint": "1x1"
+      },
+      {
+        "id": "lantern_post",
+        "lightProfile": "lantern",
+        "footprint": "1x1"
+      },
+      {
+        "id": "candle_lantern",
+        "lightProfile": "candle",
+        "footprint": "1x1"
+      }
+    ],
+    "ambient": [
+      {
+        "id": "glowbug",
+        "rule": "spawn at night in forest/meadow clearings"
+      },
+      {
+        "id": "wisp",
+        "rule": "rare night spawn near ruins, dungeons, or magic biomes"
+      }
+    ],
+    "blockingDecorations": [
+      "forest_pine",
+      "forest_dead_tree",
+      "log",
+      "forest_stump",
+      "plains_tree_v2",
+      "plains_rock_v2",
+      "tavern_r1",
+      "tavern_r2",
+      "tavern_r3",
+      "guild_hall_r1",
+      "guild_hall_r2",
+      "guild_hall_r3",
+      "library_r1",
+      "library_r2",
+      "library_r3",
+      "shop_r1",
+      "shop_r2",
+      "shop_r3"
+    ],
+    "floorOverlays": []
+  },
+  "variantGroups": [
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_00_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_00_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_00_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_01_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_01_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_01_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_02",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_02_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_02_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_02_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_02",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_03_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_03_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_03_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_04_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_04_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_04_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_03",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_05_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_05_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_05_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_06_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_06_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_06_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_02",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_07_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_07_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_07_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_02",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_08_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_08_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_08_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_09_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_09_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_09_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_10_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_10_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_10_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_02",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_11_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_11_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_11_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_12_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_12_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_12_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_03",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_13_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_13_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_13_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_03",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_14_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_14_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_14_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_stone_01",
+      "sourceGroup": "mountain stone (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_15_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_15_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_stone_01",
+          "path": "assets/tile/new_variants/mountain_stone_15_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_02",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_00_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_00_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_00_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_01",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_01_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_01_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_01_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_02",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_02_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_02_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_02_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_03",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_03_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_03_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_03_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_04",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_04_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_04_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_04_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_04",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_05_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_05_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_05_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_03",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_06_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_06_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_06_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_05",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_07_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_07_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_07_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_01",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_08_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_08_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_08_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_02",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_09_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_09_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_09_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_03",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_10_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_10_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_10_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_01",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_11_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_11_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_11_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_05",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_12_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_12_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_12_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_02",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_13_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_13_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_13_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_04",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_14_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_14_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_14_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_grass_05",
+      "sourceGroup": "plains v2 (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_15_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_15_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_grass_02",
+          "path": "assets/tile/new_variants/plains2_15_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_00_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_00_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_00_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_01_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_01_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_01_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_02_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_02_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_02_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_03_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_03_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_03_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_04_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_04_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_04_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_05_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_05_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_05_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_06_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_06_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_06_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_07_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_07_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_07_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_08_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_08_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_08_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_09_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_09_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_09_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_10_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_10_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_10_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_11_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_11_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_11_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_12_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_12_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_12_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_13_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_13_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_13_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_14_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_14_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_14_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    },
+    {
+      "sourceTileId": "pl_snow_01",
+      "sourceGroup": "snow (new)",
+      "group": "new variants - tiles",
+      "variantKind": "procedural_remix",
+      "mode": "remix",
+      "status": "biomesketch-only",
+      "variants": [
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_15_new01.png",
+          "index": 1,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_15_new02.png",
+          "index": 2,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        },
+        {
+          "tileId": "pl_snow_01",
+          "path": "assets/tile/new_variants/snow2_15_new03.png",
+          "index": 3,
+          "seed": "litiso",
+          "status": "biomesketch-only"
+        }
+      ]
+    }
+  ],
+  "blendPairs": []
+}

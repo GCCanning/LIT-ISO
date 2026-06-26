@@ -1,0 +1,19 @@
+{
+ "_design": "NEW FEATURE. Gary's snow export explicitly added log/stump/tuft for desolate winter feel. This is the open-field version (no nearFeature gate = can appear anywhere across snow biome). Distinct from stump_log_litter.json which is forest-nearFeature gated. Mix: fallen logs, dead trees, occasional pine stump. Gives the impression of a forest that has been buried by winter or long-dead.",
+
+ "configured": {
+  "type": "single",
+  "entries": [
+   { "id": "log",              "w": 5 },
+   { "id": "stump",            "w": 3 },
+   { "id": "forest_stump",     "w": 2 },
+   { "id": "forest_dead_tree", "w": 2 }
+  ]
+ },
+ "placement": {
+  "density": 0.030,
+  "minSpacing": 6,
+  "band": "grass",
+  "_": "Open-field scatter — no nearFeature gate. Spread across snow biome interior. minSpacing 6 means debris reads as isolated fallen pieces, not cluttered."
+ }
+}

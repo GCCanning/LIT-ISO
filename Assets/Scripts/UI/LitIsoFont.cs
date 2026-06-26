@@ -4,83 +4,72 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Shared font access for LIT-ISO UI text.
-/// Antiquity Print looks cleanest at sizes divisible by 13.
+///
+/// Two faces ship in Resources/Fonts/:
+///   press-start-2p.ttf  — display / headings / numeric callouts  (all-caps, hard 1-bit)
+///   pixelify-sans.ttf   — body / button labels / longer text      (400-700 weight feel)
+///
+/// Fallback chain: press-start-2p → lumos → Legacy built-in
+///                 pixelify-sans  → body  → Legacy built-in → UI face
 /// </summary>
 public static class LitIsoFont
 {
-    // Display face: Lumos (owner-supplied, 2026-06-12). Antiquity Print kept as
-    // the fallback if the Lumos asset is ever missing.
-    private const string FontResourcePath = "Fonts/lumos";
-    private const string LegacyDisplayFontResourcePath = "Fonts/antiquity-print";
-    // Optional readable body font: drop any .ttf at Resources/Fonts/body to override.
-    private const string BodyFontResourcePath = "Fonts/body";
+    private const string DisplayPath  = "Fonts/press-start-2p";
+    private const string DisplayFallback = "Fonts/lumos";
+    private const string BodyPath     = "Fonts/pixelify-sans";
+    private const string BodyFallback = "Fonts/body";
+
     public const string TextScalePrefKey = "ui.textScale";
 
-    // Owner feedback 2026-06-10: the decorative Antiquity face is unreadable at
-    // body sizes. Split: Antiquity stays for big display text (titles, headers);
-    // everything below this requested size renders in a clean readable font.
-    private const int DisplayMinRequestedSize = 19;
+    // Sizes >= this threshold use the display face; smaller sizes use the body face.
+    // Press Start 2P is very wide — only use it for headings / numbers / tab labels.
+    private const int DisplayMinSize = 19;
 
-    private static Font cachedFont;
-    private static Font cachedBodyFont;
-    private static float lastBroadcastScale = float.NaN;
+    private static Font _display;
+    private static Font _body;
+    private static float _lastBroadcastScale = float.NaN;
 
+    /// <summary>Display face — "Press Start 2P". Titles, headings, numeric callouts, tab labels.</summary>
     public static Font UI
     {
         get
         {
-            if (cachedFont == null)
+            if (_display == null)
             {
-                cachedFont = Resources.Load<Font>(FontResourcePath);
-                if (cachedFont == null)
-                    cachedFont = Resources.Load<Font>(LegacyDisplayFontResourcePath);
-                if (cachedFont == null)
-                    cachedFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                if (cachedFont == null)
-                    cachedFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                _display = Resources.Load<Font>(DisplayPath)
+                        ?? Resources.Load<Font>(DisplayFallback)
+                        ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
+                        ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
             }
-
-            return cachedFont;
+            return _display;
         }
     }
 
-    /// <summary>Readable font for body copy, lists, and small labels.</summary>
+    /// <summary>Body face — "Pixelify Sans". Button labels, inventory text, body copy.</summary>
     public static Font Body
     {
         get
         {
-            if (cachedBodyFont == null)
+            if (_body == null)
             {
-                cachedBodyFont = Resources.Load<Font>(BodyFontResourcePath);
-                if (cachedBodyFont == null)
-                    cachedBodyFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                if (cachedBodyFont == null)
-                    cachedBodyFont = UI;
+                _body = Resources.Load<Font>(BodyPath)
+                     ?? Resources.Load<Font>(BodyFallback)
+                     ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
+                     ?? UI;
             }
-
-            return cachedBodyFont;
+            return _body;
         }
     }
 
-    public static int SnapSize(int requestedSize)
-    {
-        // 1.2x inflation existed to compensate for Antiquity rendering small.
-        // Body text now uses a normal font, so inflate ONLY display-size text;
-        // body sizes render true (fixes text overflowing panels/slots/bars).
-        float compensate = requestedSize >= DisplayMinRequestedSize ? 1.2f : 1.0f;
-        return Mathf.Max(11, Mathf.RoundToInt(requestedSize * compensate * TextScale));
-    }
-
-    public static float TextScale => Mathf.Clamp(PlayerPrefs.GetFloat(TextScalePrefKey, 1.08f), 0.8f, 1.45f);
+    public static float TextScale =>
+        Mathf.Clamp(PlayerPrefs.GetFloat(TextScalePrefKey, 1.0f), 0.8f, 1.45f);
 
     public static event Action<float> TextScaleChanged;
 
     public static void SetTextScale(float scale)
     {
         scale = Mathf.Clamp(scale, 0.8f, 1.45f);
-        if (Mathf.Abs(TextScale - scale) < 0.001f)
-            return;
-
+        if (Mathf.Abs(TextScale - scale) < 0.001f) return;
         PlayerPrefs.SetFloat(TextScalePrefKey, scale);
         PlayerPrefs.Save();
         NotifyTextScaleChanged(scale);
@@ -89,20 +78,26 @@ public static class LitIsoFont
     internal static void NotifyTextScaleChanged(float scale)
     {
         scale = Mathf.Clamp(scale, 0.8f, 1.45f);
-        if (!float.IsNaN(lastBroadcastScale) && Mathf.Abs(lastBroadcastScale - scale) < 0.001f)
+        if (!float.IsNaN(_lastBroadcastScale) && Mathf.Abs(_lastBroadcastScale - scale) < 0.001f)
             return;
-
-        lastBroadcastScale = scale;
+        _lastBroadcastScale = scale;
         TextScaleChanged?.Invoke(scale);
     }
 
+    /// <summary>Snap a requested point size through the text-scale pref.</summary>
+    public static int SnapSize(int requestedSize)
+    {
+        // Press Start 2P renders large — display sizes need no inflation.
+        // Body sizes render true.
+        return Mathf.Max(9, Mathf.RoundToInt(requestedSize * TextScale));
+    }
+
+    /// <summary>Apply the correct face and snapped size to a legacy Text component.</summary>
     public static void Apply(Text text, int requestedSize, FontStyle style = FontStyle.Normal)
     {
         if (text == null) return;
-
-        // Display face only at heading sizes; readable body face below.
-        text.font = requestedSize >= DisplayMinRequestedSize ? UI : Body;
-        text.fontSize = SnapSize(requestedSize);
+        text.font      = requestedSize >= DisplayMinSize ? UI : Body;
+        text.fontSize  = SnapSize(requestedSize);
         text.fontStyle = style;
         text.resizeTextForBestFit = false;
     }
@@ -110,13 +105,17 @@ public static class LitIsoFont
     public static void Apply(TextMesh text, int requestedSize, FontStyle style = FontStyle.Normal)
     {
         if (text == null) return;
-
-        text.font = UI;
-        text.fontSize = SnapSize(requestedSize);
+        text.font      = UI;
+        text.fontSize  = SnapSize(requestedSize);
         text.fontStyle = style;
+        var r = text.GetComponent<Renderer>();
+        if (r != null && text.font != null) r.sharedMaterial = text.font.material;
+    }
 
-        Renderer renderer = text.GetComponent<Renderer>();
-        if (renderer != null && text.font != null)
-            renderer.sharedMaterial = text.font.material;
+    /// <summary>Force the cached fonts to reload (call after dropping new TTFs into Resources/Fonts).</summary>
+    public static void InvalidateCache()
+    {
+        _display = null;
+        _body    = null;
     }
 }

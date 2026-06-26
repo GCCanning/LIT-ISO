@@ -38,7 +38,16 @@ public sealed class MenuAmbientParticles : MonoBehaviour
 
     void Awake()
     {
-        _rect = (RectTransform)transform;
+        // Ambient particles need a UI RectTransform. On a plain GameObject the
+        // cast used to throw and leave the arrays null, which spammed a
+        // NullReferenceException every frame in Update — disable gracefully.
+        var rect = transform as RectTransform;
+        if (rect == null)
+        {
+            enabled = false;
+            return;
+        }
+        _rect = rect;
         _embers = new Particle[EmberCount];
         _flies = new Particle[FireflyCount];
         _stars = new Particle[StarCount];
@@ -109,6 +118,7 @@ public sealed class MenuAmbientParticles : MonoBehaviour
 
     void Update()
     {
+        if (_embers == null || _rect == null) return; // not initialised (non-UI host)
         float t = Time.unscaledTime;
         float dt = Time.unscaledDeltaTime;
         Vector2 sz = _rect.rect.size;

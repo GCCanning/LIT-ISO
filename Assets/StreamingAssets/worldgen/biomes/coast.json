@@ -4,8 +4,8 @@
  },
  "bandOrder": [
   "water_deep(ocean)",
-  "sand_2 wet band 2-3",
-  "dirt band 1-2",
+  "pl_sand_01 wet band 2-3",
+  "pl_sand_02 dry apron 1-2",
   "grass"
  ],
  "cliffs": {
@@ -14,10 +14,11 @@
    1,
    2,
    3,
-   4
+   4,
+   5
   ],
-  "coves": "cliffiness<0.45 carves stepped sand cove (see beach_coast_v1 + cliff_coast proposal)",
-  "_": "cliff top height VARIES along the coastline so it reads as a real coast (owner rule)"
+  "coves": "cliffiness<0.45 carves stepped sand cove",
+  "_": "cliff top height VARIES along the coastline (1..5)"
  },
  "decor": {
   "waterEdgeRocks": {
@@ -28,7 +29,38 @@
   "drySandRocks": {
    "id": "rock",
    "density": 0.03,
-   "band": "apron"
+   "band": "dry sand apron"
   }
+ },
+ "tilePools": {
+  "wetBand": [
+   {
+    "tile": "pl_sand_01",
+    "w": 55
+   },
+   {
+    "tile": "pl_sand_02",
+    "w": 18
+   },
+   {
+    "tile": "pl_sand_03",
+    "w": 12
+   }
+  ],
+  "dryApron": [
+   {
+    "tile": "pl_sand_02",
+    "w": 50
+   },
+   {
+    "tile": "pl_sand_03",
+    "w": 22
+   },
+   {
+    "tile": "pl_sand_01",
+    "w": 16
+   }
+  ],
+  "_": "dry coastal apron is LIGHT SAND (pl_sand family), not dirt"
  }
 }

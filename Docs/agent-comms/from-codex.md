@@ -5,6 +5,75 @@
 
 ---
 
+### 2026-06-12 - Stardew NPC Sheet Generator wrapper
+
+Owner pivoted from the Mana Seed/Godot builder to Stardew:
+- ID reference: `https://mateusaquino.github.io/stardewids/`
+- Nexus tool: `https://www.nexusmods.com/stardewvalley/mods/37108`
+
+Added `Tools/StardewNpcSheetGenerator/`:
+- `.gitignore` keeps `_local/`, `input/`, `output/`, zips, exe, dlls, and build
+  files out of git.
+- `setup_sdv_npc_generator.ps1` optionally extracts the Nexus zip into
+  `_local/FarmSplitter`, stages required extracted Stardew farmer PNGs into
+  `input/`, copies `SDL2.dll` from the Stardew install when available, and writes
+  a setup manifest.
+- `run_sdv_npc_generator.ps1` wraps `FarmSplitter.exe` with documented CLI args:
+  random count, gender, seed, content path, actions, hats/accessories,
+  probabilities, explicit shirt/pants/hair/hat/accessory IDs, colors, shoe
+  options, and verbose flags.
+- `index.html` is a static command builder that links the Stardew IDs page and
+  Nexus files tab, then emits the PowerShell command form that works on this
+  machine (`powershell -NoProfile -ExecutionPolicy Bypass -File ...`).
+- `README.md` documents setup, required input PNG names, and example runs.
+
+Important current machine state:
+- Nexus file download is login-gated; no Nexus zip/exe was found in Downloads.
+- Default Steam Stardew install path was not present.
+- Setup currently reports the expected missing executable, missing input PNGs,
+  and missing Stardew root. Once the owner provides the zip and extracted
+  Stardew `Content`, rerun setup with `-ToolZip`, `-ExtractedContentRoot`, and
+  `-StardewRoot`.
+
+Validation:
+- PowerShell parse check passed for both scripts.
+- Runner dry-run produced the expected command when a dummy local exe existed.
+- Setup no-input run reports actionable missing prerequisites and writes an
+  ignored manifest.
+- `git diff --check` passed for the wrapper and agent notes.
+
+---
+
+### 2026-06-12 - Farmer character web builder
+
+Added a static browser tool at `Tools/FarmerCharacterBuilder/` based on the
+local Godot builder contract from the owner's downloaded
+`mana_seed_farmer_style_character_godot_builder-main` project and the MSCA
+quickstart pattern.
+
+Scope:
+- `index.html`, `style.css`, `app.js`, and `README.md`.
+- No licensed Mana Seed/Farmer Sprite System art was copied into the repo.
+- The tool asks the browser user to select a local sprite-system folder and
+  loads layer folders named `00undr` through `14head` with filenames like
+  `fbas_01body_human_00.png`.
+- It composites the same layer order as the Godot script, treats sheets as a
+  16x16 frame grid, previews the builder's idle/walk/run/death/strike frame
+  tables, supports random layer/style review, and exports frame PNGs, strips,
+  preset JSON, and an approximate LIT-ISO 8D walk sheet.
+
+Validation:
+- `node --check Tools\FarmerCharacterBuilder\app.js`
+- `git diff --check -- Tools\FarmerCharacterBuilder Docs\agent-comms\task-ledger.md`
+
+Note:
+- Browser plugin launch failed in this session at the Windows sandbox boundary
+  (`CreateProcessAsUserW failed: 5`), so live in-app browser verification is
+  still pending. The tool is plain static HTML and can be opened directly from
+  `Tools/FarmerCharacterBuilder/index.html`.
+
+---
+
 ### 2026-06-10 - SpriteForge P1 action pose library ready for review
 
 Branch:
@@ -3255,6 +3324,137 @@ No Unity import.
 
 ---
 
+## 2026-06-11 - Codex: worldgen datapack audit + runtime contract
+
+Branch/worktree note: this session is currently on `claude/full-content-prep`
+with many Claude-owned uncommitted UI/art changes already present. I did not
+switch branches or touch UI/menu/runtime art import files. I kept changes to
+Codex/worldgen tooling plus the shared comms row required by `AGENTS.md`.
+
+What landed:
+
+- Added `Tools/WorldGenPreview/audit_worldgen_rules.py`.
+  - Reads `Assets/StreamingAssets/worldgen` JSON plus current
+    `Assets/Resources`, `Assets/Generated`, and BiomeSketch registry state.
+  - Writes:
+    - `Temp/WorldGen/worldgen_rule_audit.json`
+    - `Temp/WorldGen/worldgen_rule_audit.md`
+- Added `Tools/WorldGenPreview/plan_worldgen_asset_promotion.py`.
+  - Dry-run only by default; no pixels are copied.
+  - Writes:
+    - `Temp/WorldGen/worldgen_asset_promotion_plan.json`
+    - `Temp/WorldGen/worldgen_asset_promotion_plan.md`
+- Added `Tools/WorldGenPreview/build_worldgen_runtime_contract.py`.
+  - Builds the Unity-facing bridge contract from the audit + promotion plan.
+  - Writes:
+    - `Assets/StreamingAssets/worldgen/runtime_contract.json`
+    - `Assets/StreamingAssets/worldgen/runtime_contract.json.meta`
+
+Current audit results:
+
+- Worldgen JSON references 54 tile ids and 44 prop ids.
+- Tiles:
+  - 14 are `unity-live` under `Assets/Resources/Tiles`.
+  - 8 are `generated-only` under `Assets/Generated/Tiles`.
+  - 32 are `biomesketch-only`.
+- Props:
+  - 8 are `unity-live` under `Assets/Resources/Decorations`.
+  - 33 are `generated-only` under `Assets/Generated/Props`.
+  - 3 are missing before alias resolution.
+- Promotion plan:
+  - 73 ids are `copy-ready`.
+  - 2 ids are `alias-ready` (`forest_log -> log`, `forest_pine -> pine`).
+  - 1 id remains blocked: `forest_mushrooms`.
+- Runtime contract:
+  - 54 tile entries.
+  - 45 feature entries.
+  - Feature archetypes: flower 2, rock 17, tree 13, tuft 1, bush 10, stump 1, log 1.
+  - Footprints: 44 `1x1`, 1 `2x1` (`plains_willow`).
+  - 8 cluster-center entries preserve `dropMultiplier`.
+
+Important decisions:
+
+- I did **not** promote art into `Assets/Resources/**`; that is Claude/art-lane
+  territory and should be reviewed from the copy-ready plan first.
+- I did **not** wire the sampler to emit visual ids yet. Current runtime still
+  uses code-defined `FoundationContent` and `IsoTerrainSampler`.
+- The next safe Foundation step is a contract loader + validator:
+  1. parse `runtime_contract.json`;
+  2. validate every `copy-ready` asset is actually promoted;
+  3. validate no material tag (`grass`, `sand`, `stone`, `water`, `dirt`) is
+     treated as a concrete tile id;
+  4. add worldgen acceptance checks for no grass-water adjacency, height delta,
+     lake/river/coast apron rules, decor legality, clustering, and accent rate.
+- After that, sampler integration should use a split prop contract:
+  gameplay prototype (`tree`, `rock`, `bush`, etc.) plus visual id
+  (`plains_tree_v2_0`, `plains_rock_v2_3_big`, etc.). Do not make gameplay
+  semantics depend on generated art filenames.
+
+Validation run:
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe -m py_compile `
+  Tools\WorldGenPreview\audit_worldgen_rules.py `
+  Tools\WorldGenPreview\plan_worldgen_asset_promotion.py `
+  Tools\WorldGenPreview\build_worldgen_runtime_contract.py
+
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\WorldGenPreview\audit_worldgen_rules.py
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\WorldGenPreview\plan_worldgen_asset_promotion.py
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\WorldGenPreview\build_worldgen_runtime_contract.py
+```
+
+No Unity import, no Unity batch validation, and no sampler behavior change yet.
+
+Follow-up same session:
+
+- Added runtime-side contract loader DTO/API:
+  - `Assets/Scripts/IsoCoreFoundation/World/WorldgenRuntimeContract.cs`
+  - `Assets/Scripts/IsoCoreFoundation/World/WorldgenRuntimeContract.cs.meta`
+  - API: `WorldgenRuntimeContract.TryLoadProjectContract(...)`
+  - API: `WorldgenRuntimeContract.TryLoadStreamingAssetsContract(...)`
+  - The sampler does not consume it yet, but Foundation now has a typed load
+    seam for the worldgen datapack contract.
+- Added Unity-side editor validation for the generated runtime contract:
+  - `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenContractValidator.cs`
+  - `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenContractValidator.cs.meta`
+- Wired it into:
+  - `FoundationValidator`
+  - `FoundationIntegratedSliceValidator`
+- Added the new editor file to `IsoCore.Foundation.Editor.csproj` so the
+  existing `dotnet build` validation path stays accurate before Unity regenerates
+  project files.
+- Added the new runtime file to `IsoCore.Foundation.csproj` for the same reason.
+
+The validator currently checks:
+
+- `Assets/StreamingAssets/worldgen/runtime_contract.json` exists.
+- Schema is `litiso.worldgen.runtime_contract.v1`.
+- Tile and feature entries are present.
+- Material tags (`grass`, `sand`, `stone`, `water`, `dirt`) are declared and are
+  not emitted as concrete tile ids.
+- Tile ids have recognized promotion statuses.
+- Feature entries have required ids/prototypes/archetypes, recognized promotion
+  statuses, and only supported footprints (`1x1`, `2x1`).
+
+Validation:
+
+```powershell
+dotnet build IsoCore.Foundation.csproj --no-incremental
+dotnet build IsoCore.Foundation.Editor.csproj --no-incremental
+# Both builds succeeded: 0 warnings, 0 errors.
+```
+
+Still not done:
+
+- No art has been promoted into `Assets/Resources/**`.
+- Runtime can load `runtime_contract.json`, but the sampler/renderer do not use
+  the loaded contract yet.
+- `IsoTerrainSampler` still uses code-defined biome/node rules.
+- Worldgen acceptance tests for no grass-water adjacency, water aprons, height
+  deltas, clustering, and vignettes are still pending.
+
+---
+
 ## 2026-06-10 - Codex: SpriteForge P3 Lane B install gate
 
 P3 status: CONDITIONAL GATE READY for review.
@@ -3293,3 +3493,967 @@ Carry-forward into P4:
 - `d038_c062_bob` is now the Lane A default in `spriteforge.config.example.json`.
 - Temporal stability QA is configured as a fixed head/band crop delta against frame 0; implementation still needs to be wired into the P4 QA scripts.
 - Do not start full P4 generation until this P3 gate is reviewed.
+
+---
+
+## 2026-06-11 - Codex: BiomeSketch tile variant/blend tooling
+
+Added a local no-credit tile expansion pass for BiomeSketch.
+
+Files:
+
+- `Tools/BiomeSketch/variant_lab.html`
+- `Tools/BiomeSketch/index.html`
+- `Tools/PixelLab/generate_texture_variants.py`
+- `Tools/PixelLab/generate_tile_blends.py`
+
+Behavior:
+
+- `variant_lab.html` is linked from the BiomeSketch sidebar as "Open Tile
+  Variant Lab".
+- The lab has two lanes:
+  - New variants: shape/alpha/size-preserving tile remixes.
+  - Blend tiles: organic directional blends between two selected tile materials.
+- Browser output is preview/download only because a `file://` page cannot safely
+  write back into the repo.
+- The page displays persistence commands for the Python scripts when we want to
+  register results in `assets.js`.
+
+Script updates:
+
+- `generate_texture_variants.py` now supports `--mode remix` for stronger
+  internal variation:
+  - output folder `Tools/BiomeSketch/assets/tile/new_variants`
+  - palette/edge-preserving procedural remix
+  - group `new variants - tiles`
+- `generate_tile_blends.py` now defaults to `--pattern organic` instead of
+  ordered dither, avoiding visible screen-door blends.
+
+Validation:
+
+```powershell
+C:\Projects\ComfyUI\.venv\Scripts\python.exe -m py_compile Tools\PixelLab\generate_texture_variants.py Tools\PixelLab\generate_tile_blends.py
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\PixelLab\generate_texture_variants.py --groups "plains v2 (new)" --mode remix --count 3 --strength 1.2 --max 1 --contact-sheet --overwrite
+C:\Projects\ComfyUI\.venv\Scripts\python.exe Tools\PixelLab\generate_tile_blends.py --pairs plains2_02:forest_floor --directions e,w --softness 0.68 --pattern organic --contact-sheet --overwrite
+```
+
+Review artifacts:
+
+- `Tools/BiomeSketch/variant_review/remix_variants_tiles_contact_sheet.png`
+- `Tools/BiomeSketch/variant_review/gradient_blends_tiles_contact_sheet.png`
+
+Notes:
+
+- No Unity import was performed.
+- Smoke outputs were generated in BiomeSketch review/tool folders only.
+
+---
+
+## 2026-06-11 - Codex: worldgen feature alias bridge
+
+Continued the organic world generator integration without touching Claude-owned
+art/resource lanes.
+
+External rule references folded into this pass:
+
+- Unity Tilemap/2D rule-tile practice supports data-driven tile selection and
+  renderer-side presentation rules; we keep authoritative terrain data separate
+  from sprite filenames.
+- Red Blob terrain generation notes reinforce the same split we use here:
+  elevation/moisture/biome fields decide terrain, then rendering maps those
+  fields to tiles/features.
+
+Files changed:
+
+- `Assets/Scripts/IsoCoreFoundation/Core/FoundationContent.cs`
+- `Assets/Scripts/IsoCoreFoundation/Harvesting/ResourceNode.cs`
+- `Assets/Scripts/IsoCoreFoundation/World/IsoTerrainSampler.cs`
+- `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenContractValidator.cs`
+
+What changed:
+
+- `FoundationContent.BuildDefault()` now reads
+  `Assets/StreamingAssets/worldgen/runtime_contract.json` via
+  `WorldgenRuntimeContract.TryLoadDefaultContract(...)`.
+- Non-blocked feature entries become runtime `ResourceNodeDefinition` aliases:
+  - id = `feature.visualId`
+  - gameplay stats/drops/tools copied from `feature.gameplayPrototype`
+  - `visualId` points to `promotion.aliasOf` for aliases, otherwise the feature
+    visual id
+  - `gameplayPrototypeId`, `dropMultiplier`, and `1x1` / `2x1` footprint data
+    are stored on the node definition
+- Existing prototypes win; the bridge never replaces `tree`, `rock`, `bush`,
+  etc.
+- `ResourceNode.Init(...)` now resolves sprites through
+  `DecorationSpriteResolver.Resolve(ResourceNodeDefinition)` so aliases can use
+  `visualId`.
+- `IsoTerrainSampler.FindArtNode(...)` uses the same resolver overload for the
+  art-present guard.
+- `WorldgenContractValidator` now checks:
+  - duplicate feature ids
+  - feature gameplay prototypes exist in `FoundationContent`
+  - every non-blocked feature materializes as a runtime node alias
+
+Validation:
+
+```powershell
+dotnet build IsoCore.Foundation.csproj --no-incremental
+dotnet build IsoCore.Foundation.Editor.csproj --no-incremental
+# Both builds succeeded: 0 warnings, 0 errors.
+```
+
+Still intentionally not done:
+
+- No art copied/promoted into `Assets/Resources/**`.
+- No sampler switch to copy-ready/generated visual ids yet.
+- 2x1 feature footprints are recorded on definitions but runtime occupancy is
+  still cell-based unless/until the world placement layer consumes footprints.
+- Full Unity editor validator/play pass still pending.
+
+---
+
+## 2026-06-11 - Codex: worldgen tile metadata bridge
+
+Continued the contract integration on the tile side, still without touching
+Claude-owned art/resource promotion.
+
+Files changed:
+
+- `Assets/Scripts/IsoCoreFoundation/Core/FoundationContent.cs`
+- `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenContractValidator.cs`
+
+What changed:
+
+- `FoundationContent.BuildDefault()` now registers non-blocked tile ids from
+  `Assets/StreamingAssets/worldgen/runtime_contract.json` as `BlockDefinition`
+  records when they are not already present.
+- Generated/copy-ready tile ids are placed into isolated metadata-only groups:
+  - `worldgen_contract_grass_blocks`
+  - `worldgen_contract_forest_blocks`
+  - `worldgen_contract_snow_blocks`
+  - `worldgen_contract_sand_blocks`
+  - `worldgen_contract_dirt_blocks`
+  - `worldgen_contract_stone_blocks`
+  - `worldgen_contract_water_blocks`
+  - `worldgen_contract_misc_blocks`
+- The isolated groups are intentionally not assigned to active biome surface
+  groups yet. This prevents unpromoted copy-ready tiles from being selected by
+  the sampler and rendering as placeholder cubes.
+- `WorldgenContractValidator` now verifies every non-blocked contract tile id
+  materializes as a runtime `BlockDefinition`.
+
+Validation:
+
+```powershell
+dotnet build IsoCore.Foundation.csproj --no-incremental
+dotnet build IsoCore.Foundation.Editor.csproj --no-incremental
+# Both builds succeeded: 0 warnings, 0 errors.
+```
+
+Current integration state:
+
+- Contract tile ids are known to Foundation content.
+- Contract feature visual ids are known as resource-node aliases.
+- Runtime sampler still emits the existing live block/node ids only.
+- The next safe step is an explicit sampler rule layer that can choose from
+  contract groups only after art-lane promotion and validator confirmation that
+  the corresponding `Resources/Tiles` sprites exist.
+
+---
+
+## 2026-06-11 - Codex: BiomeSketch tile variant and blend modes
+
+Added/verified the no-credit tile expansion path for Gary's requested two-mode
+workflow:
+
+1. **New tile variants**: shape-locked procedural remix from a single approved
+   tile. This preserves canvas size, alpha silhouette, pivot, and tile
+   footprint, while changing internal grass/stone/detail pixels.
+2. **Gradient blend tiles**: organic directional transitions between two
+   approved tiles, for grass-to-dirt, grass-to-stone, snow-to-grass, biome
+   seams, and similar worldgen blending.
+
+Files touched:
+
+- `Tools/BiomeSketch/variant_lab.html`
+- `Tools/PixelLab/generate_texture_variants.py`
+- `Tools/PixelLab/generate_tile_blends.py`
+
+New/clarified behavior:
+
+- `generate_texture_variants.py` now supports exact tile selection via
+  `--assets <tile_id>` so the lab can generate variants from the selected tile
+  instead of accidentally expanding an entire group.
+- The browser lab labels now distinguish:
+  - "New Tile Variants"
+  - "Gradient Blend Tiles"
+- Batch commands shown by the lab now target the selected tile/pair.
+- Python contact sheets now use wider cells so generated ids remain readable.
+
+Smoke commands run from project root:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\PixelLab\generate_texture_variants.py Tools\PixelLab\generate_tile_blends.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\PixelLab\generate_texture_variants.py --assets plains2_02 --mode remix --count 2 --strength 1.2 --register --contact-sheet --overwrite
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\PixelLab\generate_tile_blends.py --pairs plains2_02:forest_floor --directions n,s,e,w,ne,nw,se,sw --softness 0.68 --pattern organic --register --contact-sheet --overwrite
+```
+
+Review artifacts:
+
+- `Tools/BiomeSketch/assets/tile/new_variants/plains2_02_new01.png`
+- `Tools/BiomeSketch/assets/tile/new_variants/plains2_02_new02.png`
+- `Tools/BiomeSketch/assets/tile/gradient_blends/blend_plains2_02_to_forest_floor_*.png`
+- `Tools/BiomeSketch/variant_review/remix_variants_tiles_contact_sheet.png`
+- `Tools/BiomeSketch/variant_review/gradient_blends_tiles_contact_sheet.png`
+- `Tools/BiomeSketch/variant_review/texture_variant_manifest.json`
+- `Tools/BiomeSketch/variant_review/gradient_blend_manifest.json`
+
+Notes:
+
+- These are BiomeSketch/review assets only. Nothing was imported to Unity
+  runtime art paths.
+- Browser automation could not attach in this session, so validation was done
+  through script execution plus visual inspection of generated contact sheets.
+
+---
+
+## 2026-06-11 - Codex: generated art review/cull/scale gate
+
+Added a non-destructive review gate for Claude/owner art selection before any
+runtime import.
+
+Files added/updated:
+
+- `Tools/WorldGenPreview/build_art_review_pack.py`
+- `Docs/IsoCoreFoundation/18_Biome_Generation_And_Asset_Placement_Rules.md`
+- `Docs/INDEX.md`
+
+Inputs scanned:
+
+- `Assets/Generated/Props`
+- `Assets/Generated/Tiles`
+- `Tools/BiomeSketch/assets.js`
+- `C:\Users\garyc\OneDrive\Desktop\PixelArt\Props`
+- `C:\Users\garyc\OneDrive\Desktop\PixelArt\Tilesets`
+- `Assets/StreamingAssets/worldgen/runtime_contract.json`
+
+Command:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\build_art_review_pack.py
+```
+
+Output:
+
+- `Temp/WorldGen/art_review_pack/art_review_manifest.json`
+- `Temp/WorldGen/art_review_pack/art_review_summary.md`
+- `Temp/WorldGen/art_review_pack/contact_sheets/*.png`
+
+Latest scan summary:
+
+- 734 image candidates scanned.
+- Sources:
+  - BiomeSketch: 259
+  - PixelLab props harvest: 288 after excluding `.orig` backups
+  - PixelLab tilesets: 128
+  - Unity generated props: 34
+  - Unity generated tiles: 25
+- Kinds:
+  - Tiles: 342
+  - Props: 392
+- Review status:
+  - Candidate: 729
+  - Manual review: 5
+  - Reject: 0
+- Manual-review items are the five large `dungeon_floor_*` canvases.
+
+Representative sheets:
+
+- `Temp/WorldGen/art_review_pack/contact_sheets/pixellab_props__buildings.png`
+- `Temp/WorldGen/art_review_pack/contact_sheets/pixellab_props__stations.png`
+- `Temp/WorldGen/art_review_pack/contact_sheets/pixellab_tilesets__mountain_stone.png`
+- `Temp/WorldGen/art_review_pack/contact_sheets/biomesketch__gradient_blends_-_tiles.png`
+
+Important integration rule:
+
+- PixelLab prop folders contain four alternatives per stable id
+  (`frame_0..3`). Do not promote all four unless they are intentionally
+  different variants. Human/Claude should select one final per stable id before
+  copying to runtime art paths.
+
+Still intentionally not done:
+
+- No art was copied to `Assets/Resources/**`.
+- No runtime sampler was switched to BiomeSketch/PixelLab ids.
+- Multi-cell footprints are planned and recorded but still need runtime
+  placement occupancy before buildings/tents/large tree clusters are enabled.
+
+---
+
+## 2026-06-11 - Codex: dry-run art promotion selection + building rank audit
+
+Continued the worldgen art integration gate by turning the broad review pack
+into a deterministic dry-run selection plan.
+
+Files added:
+
+- `Tools/WorldGenPreview/plan_art_promotion_selection.py`
+- `Tools/WorldGenPreview/audit_building_rank_alignment.py`
+
+Commands:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\plan_art_promotion_selection.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\audit_building_rank_alignment.py
+```
+
+Selection output:
+
+- `Temp/WorldGen/art_promotion_selection/art_promotion_selection_manifest.json`
+- `Temp/WorldGen/art_promotion_selection/art_promotion_selection_summary.md`
+- `Temp/WorldGen/art_promotion_selection/contact_sheets/selected_props.png`
+- `Temp/WorldGen/art_promotion_selection/contact_sheets/selected_tiles.png`
+- `Temp/WorldGen/art_promotion_selection/contact_sheets/selected_tier_runtime_core.png`
+- `Temp/WorldGen/art_promotion_selection/contact_sheets/selected_tier_building_registry.png`
+- `Temp/WorldGen/art_promotion_selection/contact_sheets/selected_tier_extended_catalog.png`
+- `Temp/WorldGen/art_promotion_selection/contact_sheets/selected_tier_review_only.png`
+
+Latest selection summary:
+
+- Selected total: 431
+- Tiles: 301
+- Props: 130
+- Manual review required: 5 large dungeon floor canvases
+- Skipped: 24 review-only aliases/size-compare items
+- Selection tiers:
+  - `runtime_core`: 281
+  - `building_registry`: 12
+  - `extended_catalog`: 37
+  - `review_only`: 101
+
+Interpretation:
+
+- `runtime_core` is the first reasonable import target for terrain/biome props.
+- `building_registry` is complete but requires entrance/door approval before it
+  should affect gameplay placement.
+- `extended_catalog` covers stations, camp/town/guild/library/tavern/chest
+  assets for crafting/building/interiors.
+- `review_only` keeps old/decor/long-name assets out of the first runtime import
+  unless explicitly approved.
+
+Building audit output:
+
+- `Temp/WorldGen/building_rank_alignment/building_rank_alignment_manifest.json`
+- `Temp/WorldGen/building_rank_alignment/building_rank_alignment_summary.md`
+- `Temp/WorldGen/building_rank_alignment/building_rank_alignment_contact_sheet.png`
+
+Building audit summary:
+
+- All 12 building stable ids exist.
+- Each has 4/4 frame candidates.
+- 11/12 ids have crop/scale/edge risks requiring manual review.
+- Door detection is not automated; each building family needs an annotated or
+  approved entrance cell before rank evolution/runtime placement.
+
+Still intentionally not done:
+
+- No runtime art paths were modified.
+- No generated art was promoted to `Assets/Resources/**`.
+- No buildings were enabled in runtime placement.
+- No sampler rule switched to selected ids yet.
+
+---
+
+## 2026-06-11 - Codex: BiomeSketch two-mode tile expansion tool
+
+Owner request: split the local tile expansion path into two explicit jobs:
+
+1. generate completely new tile variants from one approved tile;
+2. generate gradient/transition blends between two approved tiles for cleaner
+   biome seams.
+
+Implemented/confirmed:
+
+- `Tools/BiomeSketch/variant_lab.html`
+  - Renamed to "Tile Variant + Blend Lab".
+  - Mode A: selected-tile shape-locked remix variants.
+  - Mode B: selected-pair organic gradient blends.
+  - Added blend `Variants per direction` and `Seed` controls.
+  - Persisted command text now includes `--seed` for variants and
+    `--count/--seed` for blends so browser previews and CLI batches agree.
+- `Tools/BiomeSketch/index.html`
+  - Link now reads `Open Tile Variants + Blends`.
+- `Tools/PixelLab/generate_texture_variants.py`
+  - Added `--seed` and records `variant_seed`.
+  - Existing `--mode remix` path is the default for "new" variants.
+- `Tools/PixelLab/generate_tile_blends.py`
+  - Added `--count` and `--seed`.
+  - Multiple variants per pair/direction are named with `_v01`, `_v02`, etc.
+  - Blend metadata records source pair, direction, pattern, softness, seed, and
+    variant index.
+- `Tools/PixelLab/variants_2_texture_tiles.bat`
+  - Now runs remix/new-variant mode by default.
+- `Tools/PixelLab/variants_3_gradient_blends.bat`
+  - Now emits two organic blend alternatives per default pair/direction.
+
+Validation:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\PixelLab\generate_texture_variants.py Tools\PixelLab\generate_tile_blends.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\PixelLab\generate_texture_variants.py --assets plains2_02 --mode remix --count 1 --strength 1.2 --seed codex_smoke --register --contact-sheet --overwrite
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\PixelLab\generate_tile_blends.py --pairs plains2_02:forest_floor --directions n --count 2 --seed codex_smoke --register --contact-sheet --overwrite
+git diff --check -- Tools\PixelLab\generate_texture_variants.py Tools\PixelLab\generate_tile_blends.py Tools\PixelLab\variants_2_texture_tiles.bat Tools\PixelLab\variants_3_gradient_blends.bat Tools\BiomeSketch\index.html
+```
+
+Smoke outputs:
+
+- `Tools/BiomeSketch/variant_review/remix_variants_tiles_contact_sheet.png`
+- `Tools/BiomeSketch/variant_review/gradient_blends_tiles_contact_sheet.png`
+- `Tools/BiomeSketch/variant_review/texture_variant_manifest.json`
+- `Tools/BiomeSketch/variant_review/gradient_blend_manifest.json`
+
+Still intentionally not done:
+
+- No generated variants were promoted to Unity runtime resources.
+- No sampler/worldgen rule was switched to use variants/blends automatically.
+- This is deterministic local expansion only; no PixelLab/Sprixen/Comfy credits
+  are consumed.
+
+---
+
+## 2026-06-11 - Codex: Unity-side art promotion dry-run validator
+
+Continued the worldgen art integration bridge without copying art into
+Claude-owned runtime art folders.
+
+Files added/updated:
+
+- `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenArtPromotionDryRunValidator.cs`
+- `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenArtPromotionDryRunValidator.cs.meta`
+- `Tools/WorldGenPreview/plan_art_promotion_selection.py`
+
+Editor entry point:
+
+- `Tools/LIT-ISO/ISO-Core Foundation/Validate Art Promotion Dry Run`
+
+What the validator does:
+
+- Reads
+  `C:\tmp\LitIsoWorldGen\art_promotion_selection\art_promotion_selection_manifest.json`
+  by default. Override with `LITISO_WORLDGEN_REVIEW_ROOT` if needed.
+- Writes
+  `C:\tmp\LitIsoWorldGen\art_promotion_selection\unity_art_promotion_dry_run_report.json`.
+- Checks the manifest schema, `apply_policy`, summary count agreement, contact
+  sheet existence, selected row ids, duplicate stable ids, duplicate runtime
+  destinations, staged file paths, source file paths, path safety, destination
+  roots, PNG extension, PPU/footprint metadata, anchors, alpha/coverage metrics,
+  manual review flags, and tier actions.
+- Treats `review_only`, `building_registry`, manual-review, and flagged rows as
+  held/skipped candidates rather than ready imports.
+- Flags existing runtime destinations as warnings, not overwrites. This is still
+  a dry-run only gate.
+
+The selection manifest generator now emits:
+
+```json
+"apply_policy": "review_only",
+"apply_policy_note": "Do not copy into Assets/Resources without owner/art-lane approval."
+```
+
+Validation run:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\build_art_review_pack.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\plan_art_promotion_selection.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\audit_building_rank_alignment.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\WorldGenPreview\plan_art_promotion_selection.py
+dotnet build IsoCore.Foundation.Editor.csproj --no-incremental
+& "C:\Program Files\Unity\Hub\Editor\6000.3.11f1\Editor\Unity.exe" -batchmode -quit -projectPath "C:\Projects\Unity-Projects\LIT-ISO" -executeMethod IsoCore.Foundation.EditorTools.WorldgenArtPromotionDryRunValidator.ValidateBatch -logFile "C:\tmp\LitIsoArtPromotionDryRun.log"
+git diff --check -- Assets\Scripts\IsoCoreFoundation\Editor\WorldgenArtPromotionDryRunValidator.cs Tools\WorldGenPreview\plan_art_promotion_selection.py Docs\agent-comms\from-codex.md Docs\agent-comms\task-ledger.md
+```
+
+Result:
+
+- Python compile: pass.
+- `IsoCore.Foundation.Editor` build: pass, 0 warnings, 0 errors.
+- Unity batchmode validator: pass.
+- Dry-run report:
+  `C:\tmp\LitIsoWorldGen\art_promotion_selection\unity_art_promotion_dry_run_report.json`.
+- Dry-run counts:
+  - selected: 433
+  - ready for art-lane import: 320
+  - errors: 0
+  - warnings/holds: 188
+  - warning breakdown:
+    - `runtime_destination_exists`: 37
+    - `review_only_not_runtime_importable`: 101
+    - `multi_cell_runtime_occupancy_required`: 17
+    - `building_registry_requires_entrance_review`: 12
+    - `review_status_not_candidate`: 5
+    - `candidate_has_flags`: 5
+    - `manual_review_required`: 5
+    - `corner_white_background_risk`: 6
+- `git diff --check`: pass.
+
+Important implementation note:
+
+- Unity batchmode clears top-level project `Temp`, so the persistent worldgen
+  review/promotion artifacts were moved out of `Temp/WorldGen` and into
+  `C:\tmp\LitIsoWorldGen`. This is review space only and is not a Unity runtime
+  import folder.
+
+Still intentionally not done:
+
+- No art was copied into `Assets/Resources/Tiles` or
+  `Assets/Resources/Decorations`.
+- No sampler/worldgen rules were switched to selected art ids.
+- Building rank rows are still held pending footprint, door, entrance-cell, and
+  owner/art-lane approval.
+
+## 2026-06-11 - BiomeSketch tile variant/blend expansion pass
+
+Owner request: keep two no-credit tile expansion modes available in the
+BiomeSketch tooling:
+
+- Mode A: generate completely new tile variants from one approved tile while
+  preserving canvas, alpha silhouette, PPU, pivot metadata, and footprint.
+- Mode B: generate directional gradient/organic blend tiles between two
+  approved tiles so biome seams can blend instead of hard-switching.
+
+Files/tooling:
+
+- `Tools/BiomeSketch/variant_lab.html`
+- `Tools/BiomeSketch/index.html`
+- `Tools/PixelLab/generate_texture_variants.py`
+- `Tools/PixelLab/generate_tile_blends.py`
+- `Tools/PixelLab/variants_2_texture_tiles.bat`
+- `Tools/PixelLab/variants_3_gradient_blends.bat`
+
+Commands run:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\PixelLab\generate_texture_variants.py Tools\PixelLab\generate_tile_blends.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\PixelLab\generate_texture_variants.py --default-set --mode remix --count 3 --strength 1.15 --seed litiso --register --contact-sheet --overwrite
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\PixelLab\generate_tile_blends.py --default-pairs --directions n,s,e,w,ne,nw,se,sw --softness 0.68 --pattern organic --count 2 --seed litiso --register --contact-sheet --overwrite
+```
+
+Result:
+
+- Python compile: pass.
+- New/remix variants generated in
+  `Tools/BiomeSketch/assets/tile/new_variants`: 144 PNGs.
+- Gradient blend assets currently registered in
+  `Tools/BiomeSketch/assets/tile/gradient_blends`: 90 PNGs. The latest default
+  batch generated 80; 10 earlier selected-pair blends remain in the catalog.
+- Review sheets:
+  - `Tools/BiomeSketch/variant_review/remix_variants_tiles_contact_sheet.png`
+  - `Tools/BiomeSketch/variant_review/gradient_blends_tiles_contact_sheet.png`
+- Manifests:
+  - `Tools/BiomeSketch/variant_review/texture_variant_manifest.json`
+  - `Tools/BiomeSketch/variant_review/gradient_blend_manifest.json`
+
+Implementation note:
+
+- Fixed the default gradient-pair list so it no longer references missing
+  `transition_grass_to_dirt_w`; the grass-to-dirt default now targets existing
+  `plains_bare_dirt`.
+
+Still intentionally not done:
+
+- No generated variant/blend tile has been promoted into Unity runtime
+  `Assets/Resources`.
+- These are catalog/review assets only until art-lane approval.
+
+## 2026-06-11 - Worldgen runtime contract now carries variant/blend pools
+
+Continued the biome/worldgen integration bridge by making the current
+BiomeSketch no-credit expansion outputs visible to Unity-side validation. This
+is still a contract/validator pass, not a runtime art promotion.
+
+Files updated:
+
+- `Assets/Scripts/IsoCoreFoundation/World/WorldgenRuntimeContract.cs`
+- `Assets/Scripts/IsoCoreFoundation/Editor/WorldgenContractValidator.cs`
+- `Tools/WorldGenPreview/build_worldgen_runtime_contract.py`
+- `Assets/StreamingAssets/worldgen/runtime_contract.json`
+- `Docs/IsoCoreFoundation/18_Biome_Generation_And_Asset_Placement_Rules.md`
+
+New contract fields:
+
+- `variantGroups`: shape-locked BiomeSketch tile variants generated from one
+  approved source tile.
+- `blendPairs`: organic directional transition tiles generated between two
+  approved source tiles.
+
+Current generated contract counts:
+
+- tiles: 54
+- features: 45
+- variantGroups: 48
+- blendPairs: 6
+
+Worldgen audit/promotion state:
+
+- Tile ids referenced: 54
+  - unity-live: 14
+  - generated-only: 8
+  - biomesketch-only: 32
+- Prop ids referenced: 44
+  - unity-live: 8
+  - generated-only: 33
+  - missing: 3
+- Promotion plan:
+  - no-op: 22
+  - copy-ready: 73
+  - alias-ready: 2
+  - blocked: 1
+
+Blocked/alias notes:
+
+- `forest_mushrooms` is still blocked. It is referenced by feature rules but
+  has no Unity, generated, or BiomeSketch source. Do not silently alias it.
+- `forest_log` is alias-ready to existing `log`.
+- `forest_pine` is alias-ready to existing `pine`.
+
+Commands run:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\WorldGenPreview\audit_worldgen_rules.py Tools\WorldGenPreview\plan_worldgen_asset_promotion.py Tools\WorldGenPreview\build_worldgen_runtime_contract.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\audit_worldgen_rules.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\plan_worldgen_asset_promotion.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\build_worldgen_runtime_contract.py
+dotnet build IsoCore.Foundation.Editor.csproj --no-incremental
+```
+
+Validation:
+
+- Python compile: pass.
+- `dotnet build IsoCore.Foundation.Editor.csproj --no-incremental`: pass,
+  0 warnings, 0 errors.
+- Unity batchmode integrated validator was attempted but blocked because another
+  Unity instance already has this project open:
+
+```text
+Multiple Unity instances cannot open the same project.
+Project: C:/Projects/Unity-Projects/LIT-ISO
+```
+
+Still intentionally not done:
+
+- No generated variants/blends or copy-ready assets were copied into
+  `Assets/Resources`.
+- The terrain sampler still uses existing Foundation biome/block groups; it has
+  not been switched to consume `variantGroups` or `blendPairs`.
+- That sampler switch should wait for the Unity validator to run after the open
+  editor is closed and for art-lane approval of promoted runtime sprites.
+
+## 2026-06-11 - BiomeSketch full review tile/prop sync
+
+Added a repeatable review-space sync from the worldgen art import-ready subset
+into BiomeSketch. This is for sketching and layout QA only; no art was copied
+into Unity runtime `Assets/Resources`.
+
+Files updated:
+
+- `Tools/BiomeSketch/sync_review_assets.py`
+- `Tools/BiomeSketch/assets.js`
+- `Tools/BiomeSketch/index.html`
+- `Tools/BiomeSketch/review_sync/biomesketch_review_sync_manifest.json`
+- `Tools/BiomeSketch/review_sync/contact_sheets/*.png`
+- `Docs/IsoCoreFoundation/18_Biome_Generation_And_Asset_Placement_Rules.md`
+
+Command run:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\BiomeSketch\sync_review_assets.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\BiomeSketch\sync_review_assets.py
+```
+
+Result:
+
+- 433 selected review rows are now visible in BiomeSketch review groups.
+- 736 full review candidates are also visible in BiomeSketch candidate groups.
+- Total synced tiles: 647.
+- Total synced props: 522.
+- Ready/no-overwrite: 212 tiles and 94 props.
+- Runtime-conflict review rows: 14 tiles.
+- Held/review-only rows: 77 tiles and 36 props.
+- Raw candidate rows: 344 tiles and 392 props.
+- Missing source files: 0.
+- Rerun is idempotent; latest run reported 1169 already registered, 0 added.
+
+New palette groups:
+
+- `synced ready tiles`
+- `synced ready props`
+- `synced conflict tiles`
+- `synced held tiles`
+- `synced held props`
+- `candidate tiles - ...`
+- `candidate props - ...`
+
+Specific building/rank coverage:
+
+- `tavern_r1`, `tavern_r2`, and `tavern_r3` are present in
+  `synced held props`.
+- All raw `tavern_r1/frame_0..3`, `tavern_r2/frame_0..3`, and
+  `tavern_r3/frame_0..3` candidates are present in
+  `candidate props - buildings`.
+
+Important boundary:
+
+- BiomeSketch now contains the full selected review pool for layout testing.
+- Runtime worldgen still must consume only promoted/validated runtime assets.
+- `build_worldgen_runtime_contract.py` currently consumes BiomeSketch
+  variant/blend metadata only, so these review-sync rows do not automatically
+  become terrain sampler rules.
+
+## 2026-06-11 - BiomeSketch biome/rule presets
+
+Added a separate `Tools/BiomeSketch/rule_presets.js` layer and loaded it from
+`Tools/BiomeSketch/index.html`. This appends seven visual presets to the
+existing dropdown without rewriting the large generated `vignettes.js` file.
+
+New presets:
+
+- `RULE_meadow_to_forest_transition`
+- `RULE_forest_grove_clearing`
+- `RULE_mountain_height_bands`
+- `RULE_snow_to_mountain_transition`
+- `RULE_coast_sand_water_edge`
+- `RULE_tavern_rank_footprint_review`
+- `RULE_prop_density_with_clear_lanes`
+
+Validation:
+
+- `node --check Tools\BiomeSketch\rule_presets.js`: pass.
+- `node --check Tools\BiomeSketch\assets.js`: pass.
+- VM smoke loaded `assets.js`, `vignettes.js`, and `rule_presets.js`; preset
+  count increased from 5 to 12.
+- Referenced tile/prop ids in the new presets: 0 missing.
+
+Purpose:
+
+- These are visual rule examples only. They make biome transitions, prop
+  density, height bands, blend tiles, large-building footprints, and clear
+  traversal lanes easy to inspect in BiomeSketch.
+- They are not runtime worldgen rules and do not promote art into Resources.
+
+## 2026-06-11 - Codex: BiomeSketch cleanup + biome suite contracts
+
+Owner request: all real tiles/props should be in BiomeSketch, grouped by the
+generation script/category, but weird transition/blend/gradient tiles should
+not pollute the palette.
+
+Files updated:
+
+- `Tools/BiomeSketch/sync_review_assets.py`
+- `Tools/BiomeSketch/assets.js`
+- `Tools/BiomeSketch/index.html`
+- `Tools/BiomeSketch/rule_presets.js`
+- `Assets/StreamingAssets/worldgen/biome_suite.json`
+- `Assets/StreamingAssets/worldgen/settlements.json`
+- `Assets/StreamingAssets/worldgen/prop_interactions.json`
+- `Assets/StreamingAssets/worldgen/features/stump_log_litter.json`
+- `Tools/WorldGenPreview/audit_worldgen_rules.py`
+- `Tools/WorldGenPreview/build_worldgen_runtime_contract.py`
+- `Assets/StreamingAssets/worldgen/runtime_contract.json`
+- `Docs/IsoCoreFoundation/18_Biome_Generation_And_Asset_Placement_Rules.md`
+
+BiomeSketch result:
+
+- `sync_review_assets.py --include-all-candidates` now purges previously
+  registered blend/gradient/transition tile rows from the active palette.
+- 116 manifest rows were excluded and 254 previously registered excluded tile
+  rows were purged from `assets.js`.
+- Active synced review/candidate entries now total 1053:
+  - 531 tile entries
+  - 522 prop entries
+- All prop candidates remain present; no prop category was filtered out.
+- `tavern_r1`, `tavern_r2`, and `tavern_r3` still have selected held rows plus
+  raw `frame_0..3` alternatives for review.
+
+Worldgen data contracts added:
+
+- `biome_suite.json`: biome density/feature policy, spawn flattening policy,
+  dungeon/interior tile-family contract, and global placement constraints.
+- `settlements.json`: Minecraft-like distance-band placement where settlements
+  get rarer but larger and better stocked farther from spawn.
+- `prop_interactions.json`: crafting stations, resource nodes, containers,
+  town services, light sources, ambient props, blocking decor, and floor overlay
+  categories.
+
+Validation:
+
+```powershell
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" -m py_compile Tools\WorldGenPreview\audit_worldgen_rules.py Tools\WorldGenPreview\build_worldgen_runtime_contract.py Tools\BiomeSketch\sync_review_assets.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\BiomeSketch\sync_review_assets.py --include-all-candidates
+node --check Tools\BiomeSketch\assets.js
+node --check Tools\BiomeSketch\rule_presets.js
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\audit_worldgen_rules.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\plan_worldgen_asset_promotion.py
+& "C:\Projects\ComfyUI\.venv\Scripts\python.exe" Tools\WorldGenPreview\build_worldgen_runtime_contract.py
+```
+
+Current audit/contract:
+
+- Missing tile/prop ids: 0.
+- Tile ids referenced: 70.
+- Prop ids referenced: 94.
+- Feature entries in runtime contract: 44.
+- Variant groups: 48.
+- Blend pairs: 0 by design.
+- `biomeSuite`, `settlements`, and `propInteractions` are now embedded in
+  `runtime_contract.json`.
+
+Still intentionally not done:
+
+- No art was imported to `Assets/Resources/**`.
+- No runtime sampler was switched to BiomeSketch review assets.
+- Settlements/cities/workstations are data-authored only. Runtime spawning
+  should wait for art-lane promotion plus multi-cell occupancy validation.
+
+## 2026-06-11 - Codex: worldgen art promoted + nearby-biome showcase seed
+
+Owner explicitly asked to bring the BiomeSketch/worldgen art into Unity, while
+excluding weird transition/blend/gradient tiles.
+
+Runtime art promotion:
+
+- Ran `Tools/WorldGenPreview/plan_worldgen_asset_promotion.py --apply`.
+- Promoted 142 active worldgen assets into runtime `Resources` folders:
+  - `Assets/Resources/Tiles`
+  - `Assets/Resources/Decorations`
+- Verified active worldgen audit now reports:
+  - 70/70 tile ids: `unity-live`
+  - 94/94 prop ids: `unity-live`
+- Verified no copied runtime art filenames match `transition|blend|gradient|weird`.
+- Existing `.meta` files are present for the promoted PNGs.
+
+Runtime hook:
+
+- Added a real `mountain` biome in `FoundationContent`, backed by the promoted
+  `worldgen_contract_stone_blocks` group.
+- Added `IsoTerrainSampler.BiomeShowcaseSeed = 240611`.
+- Seed `240611` keeps the normal flat spawn clearing, then arranges close-by
+  review regions:
+  - west: coast/ocean + sand apron
+  - north: snow/taiga
+  - east: forest
+  - south: mountain stone/ore height bands
+  - center/diagonal gaps: meadow
+- Normal non-showcase seeds continue through the existing continent sampler.
+
+Validation:
+
+```powershell
+dotnet build IsoCore.Foundation.csproj
+dotnet build IsoCore.Foundation.Editor.csproj
+& "C:\Users\garyc\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" Tools\WorldGenPreview\audit_worldgen_rules.py
+git diff --check -- Assets\Scripts\IsoCoreFoundation\Core\FoundationContent.cs Assets\Scripts\IsoCoreFoundation\World\IsoTerrainSampler.cs Assets\Resources\Tiles Assets\Resources\Decorations
+```
+
+Results:
+
+- Foundation build: pass, 0 warnings, 0 errors.
+- Foundation editor build: pass, 0 warnings, 0 errors.
+- Worldgen audit: pass, all referenced tiles/props live.
+- Narrowed diff check: pass.
+
+Note:
+
+- A full `git diff --check` still hit an unrelated Git LFS temp access error on
+  `Tools/BiomeSketch/variant_review/gradient_blends_tiles_contact_sheet.png`.
+  The narrowed check over this work passed.
+
+## 2026-06-12 - Worldgen imported art runtime selection + beach/campsite rules
+
+Follow-up to the owner-approved worldgen art promotion.
+
+Runtime changes:
+
+- `FoundationContent` now builds runtime surface groups from the promoted
+  imported tile families:
+  - meadow: `plains2_00..15`, `plains_flower_grass`, `plains_grass_tufts`
+  - forest: `forest_floor`, `forest_grass_base`, `forest_grass_tufts`,
+    `forest_leaf_litter`, `forest_moss_grass`, `forest_dark_underbrush`
+  - beach: `sand_1`, `sand_2`
+  - snow: `snow2_00..15`
+  - mountain: `worldgen_contract_stone_blocks`
+- Imported prop/resource ids are now attached to biome node pools so the sampler
+  can choose the new art instead of only legacy ids:
+  - plains trees/bushes/rocks
+  - forest oak/deep-oak/pine/bush/moss/mushrooms
+  - shared gray rock
+- `IsoTerrainSampler` now picks deterministic variants by semantic role
+  (tree/bush/rock) and keeps cliff-lip replacement working for the new tree ids.
+- Added deterministic campsite clusters in meadow/forest:
+  - `campfire_new`, `lantern_post`, `tavern_table`, `dungeon_chest_wood`,
+    plus log/stump scatter.
+- Active authoring contract now names the shoreline biome `beach`; old
+  `coast.json` is retained as compatibility data, while `biome_suite.json`
+  points at `biomes/beach.json`.
+
+Validation:
+
+```powershell
+dotnet build IsoCore.Foundation.Editor.csproj
+dotnet build IsoCore.Foundation.csproj
+& "C:\Users\garyc\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" Tools\WorldGenPreview\audit_worldgen_rules.py
+& "C:\Users\garyc\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" Tools\WorldGenPreview\preview_worldgen.py --seed 240611 --size 160 --out Temp\WorldGen\preview_seed240611.png
+```
+
+Results:
+
+- Foundation editor build: pass, 0 warnings, 0 errors.
+- Foundation runtime build: pass, 0 warnings, 0 errors.
+- Worldgen audit: 70/70 tile ids `unity-live`; 94/94 prop ids `unity-live`.
+- Preview seed `240611`: pass; 0 grass-touching-water issues, 0 illegal height jumps.
+
+No Unity scene import/scene edit was performed in this pass.
+
+## 2026-06-12 - Owner-requested main menu background swap + procedural menu lighting
+
+Owner asked Codex to replace the home menu image with
+`C:\Users\garyc\Downloads\hf_20260612_080118_d8bfc21d-7e81-40e0-a748-709c5ad87b98.png`
+and add subtle background animation.
+
+Files touched in Claude/menu lane by explicit owner request:
+
+- `Assets/Resources/UI/Menu/background.png`
+- `Assets/Resources/UI/Menu/background.png.meta`
+- `Assets/Scripts/UI/WelcomeScreenManager.cs`
+- `Assets/Scripts/UI/MenuAmbientParticles.cs`
+- `Assets/Scripts/UI/MenuSceneLighting.cs`
+- `Assets/Scripts/UI/MenuSceneLighting.cs.meta`
+
+Implementation:
+
+- Replaced `Resources/UI/Menu/background.png` with the supplied 16:9 landscape
+  image; importer remains Sprite, max 2048, no mipmaps.
+- Changed background import filter to bilinear because this menu art is
+  painterly/atmospheric rather than pixel UI.
+- Kept old `background_frames` assets in place but disabled auto-attaching
+  `MenuBackgroundFlipbook` because those frames belong to the previous image.
+- Added `MenuSceneLighting`, a procedural uGUI overlay with:
+  - slow sunrise wash from the left horizon,
+  - pulsing campfire glow near the foreground fire,
+  - runtime sprite/texture cleanup in `OnDestroy`.
+- Updated `MenuAmbientParticles` fire anchor to the new foreground campfire.
+- Set the background `Image.raycastTarget = false`.
+
+Validation:
+
+```powershell
+dotnet build Assembly-CSharp.csproj
+dotnet build Assembly-CSharp-Editor.csproj
+git diff --check -- Assets\Resources\UI\Menu\background.png.meta Assets\Scripts\UI\MenuAmbientParticles.cs Assets\Scripts\UI\MenuSceneLighting.cs Assets\Scripts\UI\MenuSceneLighting.cs.meta Assets\Scripts\UI\WelcomeScreenManager.cs
+```
+
+Results:
+
+- Runtime build: pass, 0 errors.
+- Editor build: pass, 0 errors.
+- Focused text diff check: pass.
+- Binary PNG `git diff --check` still hits the existing Git LFS temp access
+  issue, so source/text files were checked separately.

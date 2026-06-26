@@ -1,0 +1,165 @@
+{
+  "schema": "litiso.worldgen.biome_suite.v1",
+  "_": "Authoring contract for biome-scale generation. Runtime authority remains footprint cell + integer height; this file only describes semantic rule intent.",
+  "biomeOrder": [
+    "meadow",
+    "forest",
+    "beach",
+    "mountain",
+    "snow"
+  ],
+  "spawnZone": {
+    "radiusChunks": 2,
+    "forcedBiome": "meadow",
+    "heightPolicy": "flatten-core-ramp-edge",
+    "requiredClearCells": 160,
+    "allowedFeatures": [
+      "lone_plains_tree",
+      "flower_patch",
+      "long_grass_patch",
+      "plains_bush_patch",
+      "rock_outcrop",
+      "campsite"
+    ],
+    "blockedFeatures": [
+      "forest_grove",
+      "ore_copper"
+    ]
+  },
+  "globalPlacement": {
+    "minimumWalkLaneWidthCells": 2,
+    "suppressDenseDecorNearPathCells": 2,
+    "suppressDenseDecorNearDoorCells": 3,
+    "suppressTallDecorNearCliffEdgeCells": 1,
+    "transitionBandPolicy": "use sparse accents and avoid blockers",
+    "heightEdgePolicy": "props may decorate edges only when their feature explicitly opts in",
+    "occupancyPolicy": "reserve every prop footprint before placing the next prop"
+  },
+  "biomes": {
+    "meadow": {
+      "role": "starter-safe open terrain",
+      "surfaceFile": "biomes/meadow.json",
+      "density": {
+        "trees": 0.2,
+        "rocks": 0.1,
+        "grassTufts": 0.32,
+        "flowers": 0.18
+      },
+      "featureScale": {
+        "lone_plains_tree": 1.3,
+        "flower_patch": 1.3,
+        "long_grass_patch": 1.3,
+        "plains_bush_patch": 1.1,
+        "rock_outcrop": 0.7,
+        "campsite": 0.35
+      }
+    },
+    "forest": {
+      "role": "dense but traversable resource biome",
+      "surfaceFile": "biomes/forest.json",
+      "density": {
+        "trees": 0.55,
+        "underbrush": 0.4,
+        "rocks": 0.1,
+        "mushrooms": 0.1
+      },
+      "featureScale": {
+        "forest_grove": 1.4,
+        "forest_bush_patch": 1.3,
+        "clearing": 0.45,
+        "rock_outcrop": 0.45,
+        "stump_log_litter": 1.0,
+        "campsite": 0.25
+      },
+      "negativeSpace": {
+        "clearingChancePerGrove": 0.18,
+        "minimumClearingRadiusCells": 3
+      }
+    },
+    "beach": {
+      "role": "shoreline and beach band between ocean and land",
+      "surfaceFile": "biomes/beach.json",
+      "density": {
+        "shoreRocks": 0.18,
+        "driftwood": 0.08,
+        "trees": 0.03
+      },
+      "featureScale": {
+        "shore_rocks": 1.0,
+        "rock_outcrop": 0.25
+      },
+      "waterEdgePolicy": "sand apron first, sparse shore props second, no buildings on wet band"
+    },
+    "mountain": {
+      "role": "height-banded stone and ore biome",
+      "surfaceFile": "biomes/mountain.json",
+      "density": {
+        "rocks": 0.34,
+        "ores": 0.12,
+        "trees": 0.04
+      },
+      "featureScale": {
+        "rock_outcrop": 1.35,
+        "ore_copper": 1.0,
+        "lone_pine": 0.4
+      },
+      "heightBands": [
+        {
+          "range": [
+            3,
+            4
+          ],
+          "role": "mossy shoulder"
+        },
+        {
+          "range": [
+            4,
+            5
+          ],
+          "role": "scree and exposed stone"
+        },
+        {
+          "range": [
+            5,
+            7
+          ],
+          "role": "snowcap and ore"
+        }
+      ]
+    },
+    "snow": {
+      "role": "cold sparse biome with frozen aprons",
+      "surfaceFile": "biomes/snow.json",
+      "density": {
+        "trees": 0.18,
+        "rocks": 0.1,
+        "grassTufts": 0.02
+      },
+      "featureScale": {
+        "lone_pine": 0.8,
+        "rock_outcrop": 0.8
+      },
+      "transitionPolicy": "grass-through-snow tiles only in authored thaw bands"
+    }
+  },
+  "dungeons": {
+    "themeFile": "dungeon_themes.json",
+    "interiorTileFamilies": [
+      "dungeon_stone",
+      "interior",
+      "planks"
+    ],
+    "rule": "dungeon rooms use dungeon floor pools; building interiors use interior/planks; never use overworld grass/snow/beach surfaces inside void instances"
+  },
+  "elevation": {
+    "_": "Authoring intent for relief. Runtime authority is still integer height; these describe target frequency/visibility of elevation.",
+    "heightFrequency": 0.11,
+    "tierThresholds": {
+      "lowland": 0.52,
+      "upland": 0.66,
+      "highland": 0.78
+    },
+    "maxHeight": 5,
+    "note": "More frequent + more visible height; lowered tier thresholds so land steps up sooner; taller cliffs on the coast (coast cliffs now reach h5)."
+  }
+}

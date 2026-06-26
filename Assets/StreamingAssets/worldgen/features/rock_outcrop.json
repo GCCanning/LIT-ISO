@@ -1,61 +1,36 @@
 {
+ "_design": "Vignette rule: rocks never spawn alone. Tighter cluster (minCount stays 2). Added size variants (_sm) at cluster edge for natural falloff. Big boulder at center is the focal point. Used across meadow (rare), forest (rarer), snow (moderate), mountain (heavy via stratification layer). groveCentersPer100 kept low (0.8) — occasional landmark feature, not terrain clutter.",
+
  "configured": {
   "type": "cluster",
   "entries": [
-   {
-    "id": "plains_rock_v2_0",
-    "w": 3
-   },
-   {
-    "id": "plains_rock_v2_1",
-    "w": 2
-   },
-   {
-    "id": "plains_rock_v2_2",
-    "w": 3
-   },
-   {
-    "id": "plains_rock_v2_3",
-    "w": 2
-   },
-   {
-    "id": "plains_rock",
-    "w": 1
-   },
-   {
-    "id": "shared_gray_rock",
-    "w": 1
-   }
+   { "id": "plains_rock_v2_0",     "w": 3 },
+   { "id": "plains_rock_v2_1",     "w": 2 },
+   { "id": "plains_rock_v2_2",     "w": 3 },
+   { "id": "plains_rock_v2_3",     "w": 2 },
+   { "id": "plains_rock_v2_0_sm",  "w": 2 },
+   { "id": "plains_rock_v2_1_sm",  "w": 2 },
+   { "id": "plains_rock",          "w": 1 },
+   { "id": "shared_gray_rock",     "w": 1 }
   ],
   "center": {
-   "_": "rare large boulder at the outcrop heart; bumped resource yield",
+   "_": "Large boulder at heart; bumped resource yield",
    "chance": 0.25,
    "dropMultiplier": 1.75,
    "entries": [
-    {
-     "id": "plains_rock_v2_0_big",
-     "w": 2
-    },
-    {
-     "id": "plains_rock_v2_1_big",
-     "w": 2
-    },
-    {
-     "id": "plains_rock_v2_2_big",
-     "w": 1
-    },
-    {
-     "id": "plains_rock_v2_3_big",
-     "w": 1
-    }
+    { "id": "plains_rock_v2_0_big", "w": 2 },
+    { "id": "plains_rock_v2_1_big", "w": 2 },
+    { "id": "plains_rock_v2_2_big", "w": 1 },
+    { "id": "plains_rock_v2_3_big", "w": 1 }
    ]
   }
  },
  "placement": {
   "groveCentersPer100": 0.8,
-  "radius": 1,
-  "fillDensity": 0.8,
+  "radius": 2,
+  "fillDensity": 0.70,
   "minCount": 2,
-  "_": "rocks never spawn alone (vignette rule)"
+  "minSpacingBetweenCenters": 10,
+  "_": "Never alone (minCount). Min spacing 10 = rock outcrops are landmarks, not repeated texture."
  }
 }

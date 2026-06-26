@@ -1,32 +1,35 @@
 {
+ "_design": "Core Keeper wilderness principle: dense inside, carved clearings between. Minecraft forest: tree walls you can't see through. Gary's forest uses plains2 floor + heavy canopy. Grove is the primary identity-giver. Increased groveCentersPer100 (1.8 vs 1.3), tightened falloff (0.12 vs 0.15), high fillDensity (0.60). Ferns added as understory. Dead tree rare variant for narrative depth.",
+
  "configured": {
   "type": "cluster",
   "entries": [
-   {
-    "id": "forest_oak_tree",
-    "w": 5
-   },
-   {
-    "id": "forest_deep_oak_tree",
-    "w": 3
-   },
-   {
-    "id": "forest_pine",
-    "w": 3,
-    "optional": true
-   },
-   {
-    "id": "forest_moss_bush",
-    "w": 2
-   }
-  ]
+   { "id": "forest_oak_tree",      "w": 5 },
+   { "id": "forest_deep_oak_tree", "w": 3 },
+   { "id": "forest_pine",          "w": 2 },
+   { "id": "forest_pine_young",    "w": 2 },
+   { "id": "forest_moss_bush",     "w": 2 },
+   { "id": "forest_fern",          "w": 1 },
+   { "id": "forest_dead_tree",     "w": 1, "optional": true }
+  ],
+  "subfeatures": {
+   "_": "Understory props placed inside cluster radius after tree occupancy resolved",
+   "understory": [
+    { "id": "forest_fern",         "w": 4 },
+    { "id": "forest_moss_bush",    "w": 3 },
+    { "id": "forest_mushrooms",    "w": 2 }
+   ],
+   "understoryRate": 0.18
+  }
  },
  "placement": {
-  "groveCentersPer100": 1.3,
-  "radius": 4,
-  "fillDensity": 0.55,
-  "falloff": 0.15,
+  "groveCentersPer100": 1.8,
+  "radius": 5,
+  "fillDensity": 0.60,
+  "falloff": 0.12,
   "band": "grass",
-  "heightBias": "uphill"
+  "heightBias": "uphill",
+  "minSpacingBetweenCenters": 7,
+  "_": "Spacing of 7 at radius 5 means 2-4 cell clearings between grove walls."
  }
 }

@@ -113,8 +113,13 @@ public Color fallbackAccentColor = new Color(0.92f, 0.78f, 0.38f, 1f);
     private Sprite[] idleSouthWestSprites;
     private AudioSource idleAudioSource;
 
+    [Header("Physics")]
+    public float gravity = 28f;
+    private float fallVelocity = 0f;
+    private float currentHeight = 0f;
+
     // Direction mapping for 8 directions
-    private enum Direction8
+private enum Direction8
     {
         N, NE, E, SE, S, SW, W, NW
     }
@@ -223,9 +228,10 @@ public Color fallbackAccentColor = new Color(0.92f, 0.78f, 0.38f, 1f);
 
             // At start, find the highest ground at the spawn point
             currentGroundHeight = GetMaxHeightFootprint(transform.position, world != null ? world.MaxSupportedHeight : IsoWorldChunkManager.HeightLayerCount - 1);
+            currentHeight = currentGroundHeight;
             UpdateLayerBasedOnHeight(currentGroundHeight);
-            SetSpriteVisualOffset(currentGroundHeight, 0f);
-        }
+            SetSpriteVisualOffset(currentHeight, 0f);
+}
     }
 
     private void Update()
@@ -534,6 +540,8 @@ UpdateAnimation();
 
             // Immediately update layer based on the new landing height
             currentGroundHeight = jumpTargetHeight;
+            currentHeight = currentGroundHeight;
+            fallVelocity = 0f;
             UpdateLayerBasedOnHeight(currentGroundHeight);
 
             // Spawn landing particles if available
@@ -669,22 +677,38 @@ motorVelocity = jumpHorizontalVelocity;
         position.z = 0f;
         
         // Search from current height down
-        int footprintHeight = GetMaxHeightFootprint(position, currentGroundHeight);
+        int footprintHeight = GetMaxHeightFootprint(position, Mathf.CeilToInt(currentHeight));
         
-        // Prevent auto-stepping up: only change height if it's a fall or if we are at the same level.
-        // Stepping up requires a jump.
-        if (footprintHeight < currentGroundHeight)
+        // Apply gravity if we are above the ground
+        if (currentHeight > footprintHeight)
         {
-            currentGroundHeight = footprintHeight;
+            fallVelocity -= gravity * Time.deltaTime;
         }
-else if (footprintHeight == currentGroundHeight)
+        else
         {
-            // Stay at current height
+            // Grounded or potentially below ground (if target increased)
+            if (currentHeight < footprintHeight)
+            {
+                // Only allow snapping UP if the difference is tiny or if we are forced.
+                // Normally stepping up is blocked by movement resolution.
+                currentHeight = footprintHeight;
+            }
+            fallVelocity = 0;
         }
-        // If footprintHeight > currentGroundHeight, we ignore it (blocked by physics walls)
+
+        currentHeight += fallVelocity * Time.deltaTime;
+
+        // Snap to ground if we fell through it
+        if (currentHeight < footprintHeight)
+        {
+            currentHeight = footprintHeight;
+            fallVelocity = 0;
+        }
+
+        currentGroundHeight = Mathf.RoundToInt(currentHeight);
 
         transform.position = new Vector3(position.x, position.y, 0f);
-        SetSpriteVisualOffset(currentGroundHeight, 0f);
+        SetSpriteVisualOffset(currentHeight, 0f);
         UpdateLayerBasedOnHeight(currentGroundHeight);
         UpdateSpriteSorting();
     }

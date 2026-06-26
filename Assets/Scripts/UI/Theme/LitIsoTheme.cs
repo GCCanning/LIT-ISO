@@ -48,8 +48,32 @@ public static class LitIsoTheme
     public static readonly Color WarmTan      = Hex("#8a8578"); // dim label / subtitle text
     public static readonly Color TextDimmer   = Hex("#5a564c"); // disabled / footer text
 
-    public static readonly Color Red   = Hex("#d96a55"); // warning / error / hard difficulty
-    public static readonly Color Green = Hex("#6fae6f"); // success / easy difficulty
+    // Semantic / feedback colours
+    public static readonly Color Red      = Hex("#d96a55"); // warning / error / hard difficulty
+    public static readonly Color RedHard  = Hex("#d9425a"); // danger / death / critical
+    public static readonly Color Green    = Hex("#6fae6f"); // success / buff / easy difficulty
+    public static readonly Color Amber    = Hex("#e8a03c"); // warning / durability mid / hunger
+
+    // Rarity palette — matches the mockup STYLE GUIDE exactly
+    public static readonly Color RarityCommon    = Hex("#5a6068"); // grey
+    public static readonly Color RarityUncommon  = Hex("#5aa05a"); // green
+    public static readonly Color RarityRare      = Hex("#4f8ad9"); // blue
+    public static readonly Color RarityEpic      = Hex("#a060d9"); // purple
+    public static readonly Color RarityLegendary = Gold;           // #E8C468 gold
+
+    // Overlay / modal scrim
+    public static readonly Color ModalScrim = new Color(0.016f, 0.020f, 0.027f, 0.60f); // rgba(4,5,7,.6)
+
+    // Window border grammar constants (used by BuildPixelPanel in UiBuilder)
+    public const float BorderInk   = 3f;   // outer hard ink border
+    public const float BorderSteel = 1f;   // inset steel line
+    public const float BorderGold  = 1f;   // innermost gold hairline
+    public const float StudSize    = 10f;  // corner stud diamond half-size
+
+    // Durability colours (inventory slots)
+    public static readonly Color DurabilityGood = Hex("#6fae6f"); // green  >60 %
+    public static readonly Color DurabilityMid  = Hex("#e8a03c"); // amber  20-60 %
+    public static readonly Color DurabilityLow  = Hex("#d96a55"); // red    <20 %
 
     // Wood + parchment frame fills (sub-panel variants).
     public static readonly Color WoodFill   = Hex("#241a10");
@@ -259,6 +283,30 @@ public static class LitIsoTheme
             t.resizeTextMinSize = 8;
         }
         return btn;
+    }
+
+    // ----------------------------- rarity / durability helpers -----------------------------
+
+    /// <summary>Border/accent colour for an item slot by rarity string (case-insensitive).</summary>
+    public static Color RarityColor(string rarity)
+    {
+        if (string.IsNullOrEmpty(rarity)) return RarityCommon;
+        switch (rarity.ToLowerInvariant())
+        {
+            case "uncommon":  return RarityUncommon;
+            case "rare":      return RarityRare;
+            case "epic":      return RarityEpic;
+            case "legendary": return RarityLegendary;
+            default:          return RarityCommon;
+        }
+    }
+
+    /// <summary>Fill colour for a durability bar at a 0–1 fraction.</summary>
+    public static Color DurabilityColor(float t01)
+    {
+        if (t01 >= 0.6f) return DurabilityGood;
+        if (t01 >= 0.2f) return DurabilityMid;
+        return DurabilityLow;
     }
 
     // ----------------------------- helpers -----------------------------

@@ -55,6 +55,12 @@ namespace LitIso.UI.InGame
 
         void BuildUI()
         {
+            // Retired: the day/time band now renders inside GameUIController's top-center
+            // cluster (canonical HUD). Skip building this standalone strip so the two
+            // don't overlap. Init()/Refresh() stay compiling but draw nothing.
+            return;
+
+#pragma warning disable CS0162 // unreachable code (intentional neutralization)
             if (_canvas != null)
                 Destroy(_canvas.gameObject);
 
@@ -81,6 +87,7 @@ namespace LitIso.UI.InGame
             _text.raycastTarget = false;
             UiBuilder.Stretch(_text.rectTransform, 8f);
             ApplyHudViewMode(_hudMode);
+#pragma warning restore CS0162
         }
 
         // Time advances continuously, so poll — but at 4 Hz, not every frame,

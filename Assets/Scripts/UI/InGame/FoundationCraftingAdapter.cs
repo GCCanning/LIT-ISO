@@ -69,6 +69,16 @@ namespace LitIso.UI.InGame
                     var st = r.station;
                     bool anywhere = st == StationType.None || st == StationType.Hand;
                     if (!anywhere && st != _filterStation.Value) continue;
+
+                    // Tier gate: when a tagged world station (with a tier) is driving the
+                    // list, hide recipes that need a higher station tier than this one.
+                    // anywhere recipes are never tier-gated. ActiveStationTier is 0 for
+                    // placeable stations, so this is a no-op until higher-tier world
+                    // stations + minStationTier>0 recipes are authored.
+                    // TODO(tiers): also surface higher/better OUTPUTS for higher tiers
+                    // (e.g. tier-scaled output amounts) once that content exists.
+                    if (!anywhere && r.minStationTier > CraftingStationContext.ActiveStationTier)
+                        continue;
                 }
                 _visible.Add(r);
             }

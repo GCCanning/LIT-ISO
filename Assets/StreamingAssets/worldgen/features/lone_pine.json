@@ -1,19 +1,19 @@
 {
+ "_design": "Snow biome signature tree. Forest mountain transition scout. Gary set pine density at 0.06. Keeping that. forest_pine_young added as young variant for visual variety. Only at h1-2 in mountain (treeline cap via elevationRange). Snow biome uses this as primary flora at full density.",
+
  "configured": {
   "type": "single",
   "entries": [
-   {
-    "id": "pine",
-    "w": 1
-   }
+   { "id": "forest_pine",       "w": 4 },
+   { "id": "pine",              "w": 3 },
+   { "id": "forest_pine_young", "w": 2 }
   ]
  },
  "placement": {
-  "density": 0.02,
+  "density": 0.060,
+  "minSpacing": 5,
   "band": "grass",
-  "elevationRange": [
-   3,
-   5
-  ]
+  "elevationRange": [0, 3],
+  "_": "elevationRange caps treeline at h3. Mountain references this in stratification band [1,2] only. Snow uses full range."
  }
 }

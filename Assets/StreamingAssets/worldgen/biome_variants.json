@@ -1,0 +1,290 @@
+{
+  "_schema": "litiso.biome_variants.v1",
+  "_doc": "21 BiomeSketch sub-environment variants. One is selected per Voronoi province via a stable hash so adjacent provinces of the same biome look distinct. Tile pools use the same IDs as surfaceBasePool in the per-biome JSONs — TileSpriteResolver falls back silently when art is missing. HeightBands override baseTiles for mountain and beach variants; omit heightBands for flat-pool biomes.",
+  "variants": [
+
+    {
+      "id": "meadow_sunlit", "biomeId": "meadow", "name": "Sunlit Meadow",
+      "accentRate": 0.16,
+      "baseTiles": [
+        {"tile":"pl_grass_02","w":60},{"tile":"pl_grass_04","w":30},{"tile":"pl_grass_05","w":25},
+        {"tile":"pl_grass_04","w":18},{"tile":"pl_grass_05","w":12}
+      ],
+      "accentTiles": [
+        {"tile":"pl_grass_04","w":6},{"tile":"pl_grass_02","w":5},
+        {"tile":"pl_grass_03","w":4},{"tile":"pl_grass_03","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "meadow_glade", "biomeId": "meadow", "name": "Overgrown Glade",
+      "accentRate": 0.18,
+      "baseTiles": [
+        {"tile":"pl_grass_01","w":50},{"tile":"pl_grass_02","w":30},{"tile":"pl_grass_02","w":20},
+        {"tile":"pl_grass_05","w":15},{"tile":"pl_grass_03","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_soil_01","w":5},{"tile":"pl_soil_01","w":4},
+        {"tile":"pl_grass_05","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "meadow_dry", "biomeId": "meadow", "name": "Dry Grassland",
+      "accentRate": 0.12,
+      "baseTiles": [
+        {"tile":"pl_grass_04","w":50},{"tile":"pl_grass_02","w":30},{"tile":"pl_grass_03","w":20},
+        {"tile":"pl_grass_01","w":15},{"tile":"pl_grass_05","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_grass_03","w":5},{"tile":"pl_grass_01","w":4},
+        {"tile":"pl_dirt_01","w":3},{"tile":"pl_grass_04","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "forest_oak", "biomeId": "forest", "name": "Oak Canopy",
+      "accentRate": 0.22,
+      "baseTiles": [
+        {"tile":"pl_grass_01","w":50},{"tile":"pl_grass_02","w":30},{"tile":"pl_grass_05","w":20},
+        {"tile":"pl_grass_01","w":15},{"tile":"pl_grass_03","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_soil_01","w":7},{"tile":"pl_grass_01","w":5},
+        {"tile":"pl_grass_03","w":4},{"tile":"pl_soil_01","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "forest_mushroom", "biomeId": "forest", "name": "Mushroom Dell",
+      "accentRate": 0.25,
+      "baseTiles": [
+        {"tile":"pl_grass_01","w":50},{"tile":"pl_grass_03","w":30},
+        {"tile":"pl_grass_03","w":20},{"tile":"pl_grass_05","w":15},{"tile":"pl_soil_01","w":12}
+      ],
+      "accentTiles": [
+        {"tile":"pl_soil_01","w":6},{"tile":"pl_soil_01","w":5},
+        {"tile":"pl_grass_03","w":4},{"tile":"pl_grass_01","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "forest_pine", "biomeId": "forest", "name": "Ancient Pines",
+      "accentRate": 0.18,
+      "baseTiles": [
+        {"tile":"pl_grass_02","w":50},{"tile":"pl_grass_03","w":30},{"tile":"pl_grass_01","w":20},
+        {"tile":"pl_grass_01","w":15},{"tile":"pl_grass_03","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_grass_01","w":5},{"tile":"pl_grass_04","w":4},
+        {"tile":"pl_grass_03","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "forest_deadfall", "biomeId": "forest", "name": "Deadfall Clearing",
+      "accentRate": 0.20,
+      "baseTiles": [
+        {"tile":"pl_grass_01","w":50},{"tile":"pl_grass_02","w":30},{"tile":"pl_grass_03","w":20},
+        {"tile":"pl_grass_01","w":15},{"tile":"pl_grass_05","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_soil_01","w":6},{"tile":"pl_grass_01","w":5},
+        {"tile":"pl_soil_01","w":5},{"tile":"pl_grass_02","w":4}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "mountain_foothills", "biomeId": "mountain", "name": "Grassy Foothills",
+      "accentRate": 0,
+      "baseTiles": [{"tile":"pl_stone_01","w":40},{"tile":"pl_grass_03","w":30},{"tile":"pl_stone_03","w":18}],
+      "accentTiles": [],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"pl_stone_01","w":55},{"tile":"pl_stone_02","w":30},{"tile":"pl_stone_01","w":20}]},
+        {"h":1,"tiles":[{"tile":"pl_grass_03","w":50},{"tile":"pl_stone_03","w":25},{"tile":"pl_stone_01","w":22},{"tile":"pl_grass_04","w":12}]},
+        {"h":2,"tiles":[{"tile":"pl_grass_03","w":30},{"tile":"pl_stone_02","w":28},{"tile":"pl_grass_04","w":20},{"tile":"pl_stone_03","w":15}]},
+        {"h":3,"tiles":[{"tile":"pl_stone_02","w":45},{"tile":"pl_stone_01","w":30},{"tile":"pl_grass_04","w":15}]}
+      ]
+    },
+
+    {
+      "id": "mountain_alpine", "biomeId": "mountain", "name": "Alpine Meadow",
+      "accentRate": 0,
+      "baseTiles": [{"tile":"pl_grass_02","w":30},{"tile":"pl_grass_04","w":25},{"tile":"pl_stone_02","w":18}],
+      "accentTiles": [],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"pl_stone_01","w":50},{"tile":"pl_stone_02","w":28},{"tile":"pl_stone_01","w":18}]},
+        {"h":1,"tiles":[{"tile":"pl_grass_03","w":42},{"tile":"pl_stone_03","w":22},{"tile":"pl_stone_01","w":20},{"tile":"pl_grass_04","w":12}]},
+        {"h":2,"tiles":[{"tile":"pl_grass_02","w":32},{"tile":"pl_grass_02","w":28},{"tile":"pl_grass_04","w":22},{"tile":"pl_grass_02","w":18},{"tile":"pl_stone_02","w":10}]},
+        {"h":3,"tiles":[{"tile":"pl_grass_04","w":28},{"tile":"pl_grass_02","w":22},{"tile":"pl_stone_02","w":22},{"tile":"pl_stone_02","w":18}]},
+        {"h":4,"tiles":[{"tile":"pl_stone_02","w":40},{"tile":"pl_stone_03","w":30},{"tile":"pl_grass_02","w":18},{"tile":"pl_stone_03","w":12}]}
+      ]
+    },
+
+    {
+      "id": "mountain_crag", "biomeId": "mountain", "name": "Craggy Summit",
+      "accentRate": 0,
+      "baseTiles": [{"tile":"pl_stone_01","w":40},{"tile":"pl_grass_02","w":20},{"tile":"pl_stone_02","w":20}],
+      "accentTiles": [],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"pl_stone_01","w":55},{"tile":"pl_stone_02","w":28},{"tile":"pl_stone_01","w":18}]},
+        {"h":1,"tiles":[{"tile":"pl_grass_03","w":35},{"tile":"pl_stone_01","w":28},{"tile":"pl_stone_03","w":20},{"tile":"pl_grass_04","w":12}]},
+        {"h":2,"tiles":[{"tile":"pl_grass_02","w":30},{"tile":"pl_stone_01","w":25},{"tile":"pl_grass_02","w":22},{"tile":"pl_grass_04","w":14}]},
+        {"h":3,"tiles":[{"tile":"pl_grass_02","w":28},{"tile":"pl_stone_01","w":28},{"tile":"pl_stone_02","w":22},{"tile":"pl_stone_03","w":12}]},
+        {"h":4,"tiles":[{"tile":"pl_stone_02","w":38},{"tile":"pl_stone_03","w":30},{"tile":"pl_stone_03","w":20},{"tile":"pl_grass_02","w":12}]},
+        {"h":5,"tiles":[{"tile":"pl_stone_03","w":45},{"tile":"pl_stone_03","w":32},{"tile":"pl_stone_01","w":18}]}
+      ]
+    },
+
+    {
+      "id": "mountain_snowcap", "biomeId": "mountain", "name": "Snowcap Peak",
+      "accentRate": 0,
+      "baseTiles": [{"tile":"pl_stone_03","w":40},{"tile":"pl_stone_03","w":28},{"tile":"pl_stone_03","w":18}],
+      "accentTiles": [],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"pl_stone_01","w":55},{"tile":"pl_stone_02","w":28},{"tile":"pl_stone_01","w":18}]},
+        {"h":1,"tiles":[{"tile":"pl_grass_03","w":35},{"tile":"pl_stone_01","w":28},{"tile":"pl_stone_03","w":20}]},
+        {"h":2,"tiles":[{"tile":"pl_grass_02","w":28},{"tile":"pl_stone_01","w":28},{"tile":"pl_grass_02","w":20}]},
+        {"h":3,"tiles":[{"tile":"pl_stone_02","w":35},{"tile":"pl_stone_03","w":30},{"tile":"pl_grass_02","w":20},{"tile":"pl_stone_03","w":12}]},
+        {"h":4,"tiles":[{"tile":"pl_stone_03","w":42},{"tile":"pl_stone_01","w":28},{"tile":"pl_stone_03","w":20},{"tile":"pl_stone_03","w":10}]},
+        {"h":5,"tiles":[{"tile":"pl_stone_03","w":50},{"tile":"pl_stone_03","w":28},{"tile":"pl_stone_03","w":18},{"tile":"pl_stone_01","w":10}]},
+        {"h":6,"tiles":[{"tile":"pl_stone_03","w":60},{"tile":"pl_stone_03","w":28},{"tile":"pl_stone_03","w":12}]}
+      ]
+    },
+
+    {
+      "id": "snow_plains", "biomeId": "snow", "name": "Frost Plains",
+      "accentRate": 0.09,
+      "baseTiles": [
+        {"tile":"pl_snow_01","w":55},{"tile":"pl_snow_01","w":30},{"tile":"pl_snow_01","w":25},
+        {"tile":"pl_snow_01","w":12},{"tile":"pl_snow_01","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_snow_01","w":5},{"tile":"pl_snow_01","w":4},{"tile":"pl_snow_01","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "snow_deadwood", "biomeId": "snow", "name": "Frozen Deadwood",
+      "accentRate": 0.09,
+      "baseTiles": [
+        {"tile":"pl_snow_01","w":50},{"tile":"pl_snow_01","w":20},{"tile":"pl_snow_01","w":15},
+        {"tile":"pl_snow_01","w":10},{"tile":"pl_snow_01","w":8}
+      ],
+      "accentTiles": [
+        {"tile":"pl_snow_01","w":5},{"tile":"pl_snow_01","w":4},{"tile":"pl_snow_01","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "snow_ice", "biomeId": "snow", "name": "Ice Field",
+      "accentRate": 0.12,
+      "baseTiles": [
+        {"tile":"pl_snow_01","w":50},{"tile":"pl_snow_01","w":35},{"tile":"pl_snow_01","w":25},
+        {"tile":"pl_snow_01","w":15},{"tile":"pl_snow_01","w":10}
+      ],
+      "accentTiles": [
+        {"tile":"pl_snow_01","w":6},{"tile":"pl_snow_01","w":4},{"tile":"pl_snow_01","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "beach_shore", "biomeId": "beach", "name": "Sandy Shore",
+      "accentRate": 0.05,
+      "baseTiles": [{"tile":"pl_sand_02","w":55},{"tile":"pl_sand_02","w":14},{"tile":"pl_sand_02","w":10}],
+      "accentTiles": [{"tile":"pl_sand_02","w":5},{"tile":"pl_sand_03","w":4},{"tile":"pl_sand_03","w":3}],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"water_deep","w":60},{"tile":"water","w":25}]},
+        {"h":1,"tiles":[{"tile":"pl_sand_02","w":55},{"tile":"pl_sand_01","w":20},{"tile":"pl_sand_02","w":12},{"tile":"pl_sand_02","w":8},{"tile":"pl_sand_03","w":5}]},
+        {"h":2,"tiles":[{"tile":"pl_sand_02","w":50},{"tile":"pl_sand_02","w":20},{"tile":"pl_sand_02","w":15},{"tile":"pl_sand_03","w":8},{"tile":"pl_sand_01","w":7}]}
+      ]
+    },
+
+    {
+      "id": "beach_tidepool", "biomeId": "beach", "name": "Rocky Tidepool",
+      "accentRate": 0.06,
+      "baseTiles": [{"tile":"pl_sand_02","w":40},{"tile":"pl_sand_02","w":18},{"tile":"pl_sand_02","w":12}],
+      "accentTiles": [{"tile":"pl_sand_03","w":5},{"tile":"pl_sand_02","w":4},{"tile":"pl_sand_03","w":3}],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"water_deep","w":55},{"tile":"water","w":30}]},
+        {"h":1,"tiles":[{"tile":"pl_sand_02","w":40},{"tile":"pl_sand_01","w":22},{"tile":"pl_sand_02","w":14},{"tile":"pl_sand_03","w":8},{"tile":"pl_sand_02","w":6}]},
+        {"h":2,"tiles":[{"tile":"pl_sand_02","w":45},{"tile":"pl_sand_02","w":22},{"tile":"pl_sand_02","w":14},{"tile":"pl_sand_03","w":10},{"tile":"pl_sand_03","w":8}]}
+      ]
+    },
+
+    {
+      "id": "beach_driftwood", "biomeId": "beach", "name": "Driftwood Shore",
+      "accentRate": 0.05,
+      "baseTiles": [{"tile":"pl_sand_02","w":50},{"tile":"pl_sand_03","w":25},{"tile":"pl_sand_01","w":20},{"tile":"pl_sand_02","w":15}],
+      "accentTiles": [{"tile":"pl_sand_01","w":5},{"tile":"pl_sand_03","w":4},{"tile":"pl_sand_03","w":3}],
+      "heightBands": [
+        {"h":0,"tiles":[{"tile":"water_deep","w":50},{"tile":"water","w":22}]},
+        {"h":1,"tiles":[{"tile":"pl_sand_02","w":50},{"tile":"pl_sand_01","w":18},{"tile":"pl_sand_02","w":14},{"tile":"pl_sand_02","w":10},{"tile":"pl_sand_03","w":8}]},
+        {"h":2,"tiles":[{"tile":"pl_sand_02","w":45},{"tile":"pl_sand_03","w":22},{"tile":"pl_sand_01","w":18},{"tile":"pl_sand_02","w":12},{"tile":"pl_sand_02","w":10}]}
+      ]
+    },
+
+    {
+      "id": "dungeon_vault", "biomeId": "dungeon", "name": "Stone Vault",
+      "accentRate": 0.14,
+      "baseTiles": [
+        {"tile":"dungeon2_00","w":25},{"tile":"dungeon2_01","w":20},{"tile":"dungeon2_02","w":18},
+        {"tile":"dungeon2_03","w":15},{"tile":"dungeon2_12","w":12}
+      ],
+      "accentTiles": [
+        {"tile":"dungeon2_08","w":5},{"tile":"dungeon2_09","w":4},{"tile":"dungeon2_10","w":3}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "dungeon_lava", "biomeId": "dungeon", "name": "Lava Vein Depths",
+      "accentRate": 0.14,
+      "baseTiles": [
+        {"tile":"dungeon2_05","w":30},{"tile":"dungeon2_04","w":25},{"tile":"dungeon2_00","w":20},
+        {"tile":"dungeon2_01","w":15},{"tile":"dungeon2_06","w":12}
+      ],
+      "accentTiles": [
+        {"tile":"dungeon2_05","w":6},{"tile":"dungeon2_07","w":5},{"tile":"dungeon2_04","w":4}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "dungeon_corrupted", "biomeId": "dungeon", "name": "Corrupted Halls",
+      "accentRate": 0.16,
+      "baseTiles": [
+        {"tile":"dungeon2_08","w":30},{"tile":"dungeon2_15","w":25},{"tile":"dungeon2_03","w":20},
+        {"tile":"dungeon2_09","w":15},{"tile":"dungeon2_10","w":12}
+      ],
+      "accentTiles": [
+        {"tile":"dungeon2_15","w":6},{"tile":"dungeon2_08","w":5},{"tile":"dungeon2_10","w":4}
+      ],
+      "heightBands": []
+    },
+
+    {
+      "id": "dungeon_sanctum", "biomeId": "dungeon", "name": "Crystal Sanctum",
+      "accentRate": 0.12,
+      "baseTiles": [
+        {"tile":"dungeon2_11","w":30},{"tile":"dungeon2_12","w":25},{"tile":"dungeon2_13","w":20},
+        {"tile":"dungeon2_14","w":15},{"tile":"dungeon2_00","w":12}
+      ],
+      "accentTiles": [
+        {"tile":"dungeon2_12","w":5},{"tile":"dungeon2_13","w":4},{"tile":"dungeon2_11","w":3}
+      ],
+      "heightBands": []
+    }
+
+  ]
+}

@@ -1,4 +1,5 @@
 {
+ "_design": "PixelLab pl_grass tiles (2026-06-24). pl_grass_02 dominant. 5-tile family covers dark/medium/light/bright/pale green variants.",
  "params": {
   "temperature": [
    0.35,
@@ -9,98 +10,132 @@
    0.45
   ]
  },
- "_": "plains2_* = approved PixelLab set; classified base/accent by flower-pixel ratio",
- "surfaceBase": "plains2_02",
+ "climate": {
+  "temperatureRange": [
+   0.35,
+   0.75
+  ],
+  "moistureRange": [
+   0.0,
+   0.45
+  ],
+  "priority": 0
+ },
+ "lapseRate": {
+  "perHeightStep": 0.05
+ },
+ "elevation": {
+  "range": [
+   0,
+   3
+  ],
+  "relief": "rolling"
+ },
+ "surfaceBase": "pl_grass_02",
  "surfaceBasePool": [
   {
-   "tile": "plains2_02",
+   "tile": "pl_grass_02",
+   "w": 60
+  },
+  {
+   "tile": "pl_grass_04",
    "w": 20
   },
   {
-   "tile": "plains2_05",
-   "w": 20
+   "tile": "pl_grass_03",
+   "w": 16
   },
   {
-   "tile": "plains2_07",
-   "w": 20
+   "tile": "pl_grass_05",
+   "w": 14
   },
   {
-   "tile": "plains2_11",
-   "w": 20
-  },
-  {
-   "tile": "plains2_15",
-   "w": 20
-  },
-  {
-   "tile": "plains2_08",
-   "w": 12
-  },
-  {
-   "tile": "plains2_14",
-   "w": 12
+   "tile": "pl_grass_01",
+   "w": 10
   }
  ],
  "surfaceAccents": [
   {
-   "tile": "plains2_04",
+   "tile": "pl_grass_01",
    "w": 6
   },
   {
-   "tile": "plains2_00",
-   "w": 6
-  },
-  {
-   "tile": "plains2_10",
-   "w": 6
-  },
-  {
-   "tile": "plains2_03",
+   "tile": "pl_grass_05",
    "w": 5
   },
   {
-   "tile": "plains2_01",
+   "tile": "pl_grass_04",
    "w": 5
   },
   {
-   "tile": "plains2_13",
-   "w": 3
+   "tile": "pl_grass_03",
+   "w": 4
   },
   {
-   "tile": "plains2_12",
-   "w": 3
-  },
-  {
-   "tile": "plains2_06",
-   "w": 3
-  },
-  {
-   "tile": "plains2_09",
-   "w": 3
-  },
-  {
-   "tile": "plains_flower_grass",
-   "w": 2
-  },
-  {
-   "tile": "plains_grass_tufts",
-   "w": 2
+   "tile": "pl_grass_02",
+   "w": 4
   }
  ],
- "accentRate": 0.15,
- "elevation": {
-  "range": [
-   0,
-   2
-  ],
-  "relief": "gentle"
- },
+ "accentRate": 0.1,
+ "accentClump": 0.65,
  "features": [
-  "lone_plains_tree",
   "flower_patch",
   "long_grass_patch",
   "plains_bush_patch",
   "rock_outcrop"
  ],
- "fallback": "if a tile id is missing from Resources, use surfaceBase; never hard-fail"
+ "transitionTo": {
+  "forest": {
+   "cells": [
+    4,
+    7
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.2,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 0.8
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 0,
+    "groveCentersPer100AtFar": 1.0
+   }
+  },
+  "beach": {
+   "cells": [
+    2,
+    3
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.2,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 0.0
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 0,
+    "groveCentersPer100AtFar": 0
+   }
+  },
+  "snow": {
+   "cells": [
+    5,
+    8
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 1.0,
+    "groveCentersPer100AtFar": 0
+   }
+  }
+ },
+ "fallback": "if tile id missing from Resources use surfaceBase; never hard-fail"
 }

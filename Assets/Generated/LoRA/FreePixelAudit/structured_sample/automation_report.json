@@ -2,7 +2,16 @@
   "assetName": "structured_sample",
   "assetMode": "character",
   "success": false,
-  "generatedAt": "2026-06-02T06:08:01.3323164Z",
+  "promotionReady": true,
+  "productionPreset": "",
+  "loraName": "",
+  "loraCheckpoint": "",
+  "loraStrength": 0,
+  "acceptedFrameCount": 0,
+  "rejectedFrameCount": 0,
+  "qaWarnCount": 0,
+  "qaFailCount": 0,
+  "generatedAt": "2026-06-13T08:09:57.5011702Z",
   "generated": ["Assets/Generated/LoRA/FreePixelAudit/structured_sample/Automation"],
   "errors": []
 }

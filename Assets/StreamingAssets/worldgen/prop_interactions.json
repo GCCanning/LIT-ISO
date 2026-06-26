@@ -1,0 +1,79 @@
+{
+  "schema": "litiso.worldgen.prop_interactions.v1",
+  "_": "Stable mapping from generated prop ids to gameplay interaction categories. Art can be review-only; runtime must gate on promotion status before spawning.",
+  "interactionTypes": {
+    "crafting_station": "opens a profession-specific crafting UI",
+    "resource_node": "harvestable node with tool affinity and respawn rules",
+    "container": "opens inventory/loot table",
+    "vendor_or_job": "opens town service, shop, guild, or tavern job board",
+    "light_source": "adds light/glow/VFX presentation",
+    "ambient": "presentation-only unless promoted to a specific gameplay rule",
+    "blocking_decoration": "blocks movement by footprint",
+    "floor_overlay": "rendered over a floor tile, non-authoritative for movement"
+  },
+  "craftingStations": [
+    {"id": "crafting_table", "profession": "general", "service": "basic_crafting", "footprint": "2x1"},
+    {"id": "furnace", "profession": "smelting", "service": "forge", "footprint": "1x1"},
+    {"id": "anvil", "profession": "blacksmithing", "service": "forge", "footprint": "1x1"},
+    {"id": "tanning_rack", "profession": "leatherworking", "service": "advanced_crafting", "footprint": "2x1"},
+    {"id": "rune_station", "profession": "runecrafting", "service": "advanced_crafting", "footprint": "1x1"},
+    {"id": "alchemy_table", "profession": "alchemy", "service": "alchemy", "footprint": "2x1"},
+    {"id": "cooking_station", "profession": "cooking", "service": "basic_crafting", "footprint": "2x1"},
+    {"id": "loom", "profession": "tailoring", "service": "advanced_crafting", "footprint": "2x1"},
+    {"id": "sawmill_bench", "profession": "carpentry", "service": "advanced_crafting", "footprint": "2x1"},
+    {"id": "grindstone", "profession": "maintenance", "service": "forge", "footprint": "1x1"}
+  ],
+  "resourceNodes": [
+    {"id": "ore_copper", "tier": "common", "tool": "pickaxe", "biomes": ["mountain"], "heightMin": 3},
+    {"id": "ore_iron", "tier": "common", "tool": "pickaxe", "biomes": ["mountain"], "heightMin": 4},
+    {"id": "ore_silver", "tier": "uncommon", "tool": "pickaxe", "biomes": ["mountain", "snow"], "heightMin": 4},
+    {"id": "ore_gold", "tier": "rare", "tool": "pickaxe", "biomes": ["mountain"], "heightMin": 5},
+    {"id": "ore_manacrystal", "tier": "epic", "tool": "pickaxe", "biomes": ["mountain", "dungeon"], "heightMin": 5},
+    {"id": "ore_starmetal", "tier": "mythical", "tool": "pickaxe", "biomes": ["mountain"], "heightMin": 6}
+  ],
+  "containers": [
+    {"id": "dungeon_chest_wood", "lootTable": "dungeon_basic", "footprint": "1x1"},
+    {"id": "book_stack", "lootTable": "library_notes", "footprint": "1x1"}
+  ],
+  "townServices": [
+    {"id": "guild_notice_board", "service": "guild_board", "footprint": "2x1"},
+    {"id": "guild_round_table", "service": "guild_board", "footprint": "2x2"},
+    {"id": "market_stall_red", "service": "market_trade", "footprint": "2x2"},
+    {"id": "market_stall_blue", "service": "market_trade", "footprint": "2x2"},
+    {"id": "bar_counter", "service": "tavern_jobs", "footprint": "2x1"},
+    {"id": "tavern_table", "service": "rest", "footprint": "1x1"}
+  ],
+  "lights": [
+    {"id": "campfire_new", "lightProfile": "campfire", "footprint": "1x1"},
+    {"id": "torch_standing", "lightProfile": "torch", "footprint": "1x1"},
+    {"id": "torch_wall", "lightProfile": "wall_torch", "footprint": "1x1"},
+    {"id": "brazier", "lightProfile": "brazier", "footprint": "1x1"},
+    {"id": "lantern_post", "lightProfile": "lantern", "footprint": "1x1"},
+    {"id": "candle_lantern", "lightProfile": "candle", "footprint": "1x1"}
+  ],
+  "ambient": [
+    {"id": "glowbug", "rule": "spawn at night in forest/meadow clearings"},
+    {"id": "wisp", "rule": "rare night spawn near ruins, dungeons, or magic biomes"}
+  ],
+  "blockingDecorations": [
+    "forest_pine",
+    "forest_dead_tree",
+    "log",
+    "forest_stump",
+    "plains_tree_v2",
+    "plains_rock_v2",
+    "tavern_r1",
+    "tavern_r2",
+    "tavern_r3",
+    "guild_hall_r1",
+    "guild_hall_r2",
+    "guild_hall_r3",
+    "library_r1",
+    "library_r2",
+    "library_r3",
+    "shop_r1",
+    "shop_r2",
+    "shop_r3"
+  ],
+  "floorOverlays": []
+}

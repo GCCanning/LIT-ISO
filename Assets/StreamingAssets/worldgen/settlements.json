@@ -1,0 +1,155 @@
+{
+  "schema": "litiso.worldgen.settlements.v1",
+  "_": "Settlement placement contract. Farther from spawn means lower frequency, larger footprint, higher service tier, and richer stock.",
+  "distanceMetric": "chunk-ring-from-spawn",
+  "globalRules": {
+    "minimumSettlementSpacingChunks": 8,
+    "preferBiomeOrder": [
+      "meadow",
+      "forest-edge",
+      "coast",
+      "mountain-foot"
+    ],
+    "avoidBiomeTags": [
+      "deep_forest",
+      "snow_peak",
+      "wet_sand",
+      "dungeon"
+    ],
+    "requiredFlatness": "max height delta 0 inside plaza, max delta 1 at settlement edge",
+    "roadPolicy": "one main road spine, side paths to doors, at least two exits to wilderness",
+    "doorClearanceCells": 3,
+    "wellOrCampfireCenter": true
+  },
+  "bands": [
+    {
+      "id": "hearthclaim_spawn",
+      "chunkRing": [0, 2],
+      "chancePerEligibleChunk": 0.0,
+      "sizeClass": "spawn-safe",
+      "maxBuildings": 0,
+      "stockTier": 0,
+      "rule": "spawn is a safe clearing, not a town"
+    },
+    {
+      "id": "hamlet",
+      "chunkRing": [3, 10],
+      "chancePerEligibleChunk": 0.035,
+      "sizeClass": "small",
+      "footprintCells": [18, 18],
+      "buildingRanks": ["r1"],
+      "buildingCount": [2, 4],
+      "stockTier": 1,
+      "services": [
+        "basic_crafting",
+        "camp_trade",
+        "rest"
+      ]
+    },
+    {
+      "id": "village",
+      "chunkRing": [11, 28],
+      "chancePerEligibleChunk": 0.018,
+      "sizeClass": "medium",
+      "footprintCells": [28, 24],
+      "buildingRanks": ["r1", "r2"],
+      "buildingCount": [4, 8],
+      "stockTier": 2,
+      "services": [
+        "basic_crafting",
+        "forge",
+        "alchemy",
+        "guild_board",
+        "market_trade",
+        "rest"
+      ]
+    },
+    {
+      "id": "market_town",
+      "chunkRing": [29, 60],
+      "chancePerEligibleChunk": 0.008,
+      "sizeClass": "large",
+      "footprintCells": [42, 36],
+      "buildingRanks": ["r2", "r3"],
+      "buildingCount": [8, 14],
+      "stockTier": 3,
+      "services": [
+        "advanced_crafting",
+        "forge",
+        "alchemy",
+        "guild_board",
+        "library",
+        "market_trade",
+        "tavern_jobs",
+        "rest"
+      ]
+    },
+    {
+      "id": "frontier_city",
+      "chunkRing": [61, 9999],
+      "chancePerEligibleChunk": 0.003,
+      "sizeClass": "rare-city",
+      "footprintCells": [58, 48],
+      "buildingRanks": ["r2", "r3"],
+      "buildingCount": [14, 24],
+      "stockTier": 4,
+      "services": [
+        "advanced_crafting",
+        "forge",
+        "alchemy",
+        "guild_board",
+        "library",
+        "market_trade",
+        "tavern_jobs",
+        "specialty_vendor",
+        "rest"
+      ]
+    }
+  ],
+  "buildingPool": [
+    {"id": "tavern_r1", "rank": "r1", "services": ["rest", "tavern_jobs"], "footprint": "2x2"},
+    {"id": "tavern_r2", "rank": "r2", "services": ["rest", "tavern_jobs"], "footprint": "3x3"},
+    {"id": "tavern_r3", "rank": "r3", "services": ["rest", "tavern_jobs"], "footprint": "4x4"},
+    {"id": "guild_hall_r1", "rank": "r1", "services": ["guild_board"], "footprint": "2x2"},
+    {"id": "guild_hall_r2", "rank": "r2", "services": ["guild_board"], "footprint": "3x3"},
+    {"id": "guild_hall_r3", "rank": "r3", "services": ["guild_board"], "footprint": "4x4"},
+    {"id": "library_r1", "rank": "r1", "services": ["library"], "footprint": "2x2"},
+    {"id": "library_r2", "rank": "r2", "services": ["library"], "footprint": "3x3"},
+    {"id": "library_r3", "rank": "r3", "services": ["library"], "footprint": "4x4"},
+    {"id": "shop_r1", "rank": "r1", "services": ["camp_trade", "market_trade"], "footprint": "2x2"},
+    {"id": "shop_r2", "rank": "r2", "services": ["market_trade"], "footprint": "3x3"},
+    {"id": "shop_r3", "rank": "r3", "services": ["market_trade", "specialty_vendor"], "footprint": "4x4"}
+  ],
+  "outdoorProps": [
+    "market_stall_red",
+    "market_stall_blue",
+    "guild_notice_board",
+    "guild_banner_stand",
+    "weapon_rack",
+    "bar_counter",
+    "keg_rack",
+    "campfire_new",
+    "lantern_post",
+    "torch_standing"
+  ],
+  "layoutPresets": [
+    {
+      "id": "crossroads_hamlet",
+      "allowedSizeClasses": ["small", "medium"],
+      "districts": ["plaza", "market", "crafting", "rest"],
+      "pathShape": "cross"
+    },
+    {
+      "id": "river_or_coast_village",
+      "allowedSizeClasses": ["medium", "large"],
+      "districts": ["dock", "market", "guild", "crafting", "rest"],
+      "pathShape": "spine-with-branch"
+    },
+    {
+      "id": "walled_market_town",
+      "allowedSizeClasses": ["large", "rare-city"],
+      "districts": ["gate", "plaza", "market", "guild", "library", "crafting", "tavern"],
+      "pathShape": "ring-plus-spokes"
+    }
+  ]
+}

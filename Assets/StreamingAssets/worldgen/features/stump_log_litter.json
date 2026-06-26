@@ -1,30 +1,21 @@
 {
+ "_design": "Gary explicitly added log + stump to snow biome for desolate feel. This feature now serves both forest and snow contexts. Forest: post-harvest narrative, harvested grove legacy. Snow: fallen deadwood half-buried in snow. nearFeature gate kept for forest (only near groves). Snow references this without nearFeature gate (open field deadfall).",
+
  "configured": {
   "type": "single",
   "entries": [
-   {
-    "id": "forest_log",
-    "w": 3,
-    "optional": true
-   },
-   {
-    "id": "forest_mushrooms",
-    "w": 2,
-    "optional": true
-   },
-   {
-    "id": "stump",
-    "w": 2
-   },
-   {
-    "id": "log",
-    "w": 2
-   }
+   { "id": "log",              "w": 5 },
+   { "id": "stump",            "w": 3 },
+   { "id": "forest_stump",     "w": 2 },
+   { "id": "forest_dead_tree", "w": 2, "optional": true },
+   { "id": "forest_mushrooms", "w": 2, "optional": true }
   ]
  },
  "placement": {
-  "density": 0.018,
+  "density": 0.022,
+  "minSpacing": 4,
   "band": "grass",
-  "nearFeature": "forest_grove"
+  "nearFeature": "forest_grove",
+  "_": "nearFeature gate means these appear within ~6 cells of a grove center. Overridden to null in snow_debris.json which is the open-field version."
  }
 }

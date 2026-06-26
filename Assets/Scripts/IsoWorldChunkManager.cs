@@ -103,6 +103,11 @@ public IsoBiomeDefinition[] biomes;
     public EnemyDefinition commonSlime;
     public EnemyDefinition rareSlime;
     public EnemyDefinition bossSlime;
+
+    [Tooltip("Biome-specific common slime variants (re-tinted reuse of the slime sprite). " +
+             "If a biome has no entry here, no slime spawns there (e.g. Ocean/River). " +
+             "Plains keeps using commonSlime/rareSlime/bossSlime above.")]
+    public BiomeSlimeVariant[] biomeSlimeVariants;
     [Range(0f, 0.1f)] public float commonSlimeChance = 0.012f;
     [Range(0f, 0.05f)] public float rareSlimeChance = 0.003f;
     [Range(0f, 0.01f)] public float bossSlimeChance = 0.00035f;
@@ -230,6 +235,13 @@ public IsoBiomeDefinition[] biomes;
         public HashSet<Vector3Int> pendingFadedDecorationCells = new HashSet<Vector3Int>();
         public bool isVisibleToCamera;
         public Bounds worldBounds;
+    }
+
+    [System.Serializable]
+    public class BiomeSlimeVariant
+    {
+        public BiomeKind biome;
+        public EnemyDefinition slime;
     }
 
     [System.Serializable]
@@ -1529,39 +1541,74 @@ public IsoBiomeDefinition[] biomes;
             return false;
         }
 
-        if (!IsPlainSlimeEligibleCell(sample))
+        if (!IsSlimeEligibleCell(sample))
         {
             return false;
         }
 
-        if (bossSlime != null &&
-            spawnedBossSlimes < maxBossSlimesPerChunk &&
-            IsBossSlimeSpawnWinner(worldX, worldY))
+        bool isPlains = sample.biome != null && sample.biome.EffectiveBiomeKind == BiomeKind.Plains;
+
+        if (isPlains)
         {
-            slimeDefinition = bossSlime;
-            return true;
+            if (bossSlime != null &&
+                spawnedBossSlimes < maxBossSlimesPerChunk &&
+                IsBossSlimeSpawnWinner(worldX, worldY))
+            {
+                slimeDefinition = bossSlime;
+                return true;
+            }
+
+            if (rareSlime != null &&
+                spawnedRareSlimes < maxRareSlimesPerChunk &&
+                Hash01(worldX, worldY, seed, 232) < rareSlimeChance)
+            {
+                slimeDefinition = rareSlime;
+                return true;
+            }
+
+            if (commonSlime != null && Hash01(worldX, worldY, seed, 231) < commonSlimeChance)
+            {
+                slimeDefinition = commonSlime;
+                return true;
+            }
+
+            return false;
         }
 
-        if (rareSlime != null &&
-            spawnedRareSlimes < maxRareSlimesPerChunk &&
-            Hash01(worldX, worldY, seed, 232) < rareSlimeChance)
+        // Non-plains biomes: spawn the biome-specific slime variant (if one is configured)
+        // at the same base rate as the common slime. Biomes with no entry (e.g. Ocean/River)
+        // simply have no slime.
+        EnemyDefinition biomeSlime = GetSlimeForBiome(sample.biome != null ? sample.biome.EffectiveBiomeKind : BiomeKind.Unknown);
+        if (biomeSlime != null && Hash01(worldX, worldY, seed, 231) < commonSlimeChance)
         {
-            slimeDefinition = rareSlime;
-            return true;
-        }
-
-        if (commonSlime != null && Hash01(worldX, worldY, seed, 231) < commonSlimeChance)
-        {
-            slimeDefinition = commonSlime;
+            slimeDefinition = biomeSlime;
             return true;
         }
 
         return false;
     }
 
-    private bool IsPlainSlimeEligibleCell(BiomeSample sample)
+    private EnemyDefinition GetSlimeForBiome(BiomeKind kind)
     {
-        if (sample.biome == null || sample.biome.EffectiveBiomeKind != BiomeKind.Plains)
+        if (biomeSlimeVariants == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < biomeSlimeVariants.Length; i++)
+        {
+            if (biomeSlimeVariants[i] != null && biomeSlimeVariants[i].biome == kind)
+            {
+                return biomeSlimeVariants[i].slime;
+            }
+        }
+
+        return null;
+    }
+
+    private bool IsSlimeEligibleCell(BiomeSample sample)
+    {
+        if (sample.biome == null)
         {
             return false;
         }
@@ -1571,7 +1618,13 @@ public IsoBiomeDefinition[] biomes;
             return false;
         }
 
-        return true;
+        BiomeKind kind = sample.biome.EffectiveBiomeKind;
+        if (kind == BiomeKind.Plains)
+        {
+            return true;
+        }
+
+        return GetSlimeForBiome(kind) != null;
     }
 
     private bool IsBossSlimeSpawnWinner(int worldX, int worldY)
@@ -1618,7 +1671,11 @@ public IsoBiomeDefinition[] biomes;
         }
 
         BiomeSample sample = SampleCell(worldX, worldY);
-        return IsPlainSlimeEligibleCell(sample) && Hash01(worldX, worldY, seed, 233) < bossSlimeChance;
+        bool isPlainsEligible = sample.biome != null
+            && sample.biome.EffectiveBiomeKind == BiomeKind.Plains
+            && !sample.isTransitionCell
+            && sample.height == 0;
+        return isPlainsEligible && Hash01(worldX, worldY, seed, 233) < bossSlimeChance;
     }
 
     private void SpawnEnemyInChunk(ChunkHandle handle, EnemyDefinition definition, Vector3Int cell)

@@ -183,6 +183,14 @@ namespace LitIso.UI.InGame
             if (_dayAdapter != null)
                 _dayView.Init(_dayAdapter);
 
+            // ---- Live HUD clusters in the canonical GameUIController ----------
+            // The day/time band, round minimap heading, coords box, and quest tracker
+            // now render inside GameUIController (the retired DayClockView /
+            // QuestTrackerView stay non-rendering). Feed them the SAME view-models the
+            // old views consumed, plus the Foundation player + progression handles for
+            // coords / minimap heading / trial-day. All args are null-safe.
+            _hud.BindLiveData(_dayAdapter, _questAdapter, bootstrap.Player, progression);
+
             // FoundationBootstrap no longer creates the old IMGUI FoundationHUD. The
             // uGUI controller, panels, quest tracker, notifications, day clock, map,
             // pause menu, and interaction overlay now form the single runtime shell.

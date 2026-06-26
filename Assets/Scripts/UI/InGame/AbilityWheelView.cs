@@ -104,40 +104,12 @@ namespace LitIso.UI.InGame
         {
             _canvas = UiBuilder.NewCanvas(transform, "AbilityCanvas", 210);
 
-            // --- Q/E/R/F row.
-            // 2026-06-13 layout pass: moved from bottom-center (left of the
-            // hotbar) to the bottom-left corner of the screen.
-            var row = UiBuilder.NewRect("SlotRow", _canvas.transform);
-            row.anchorMin = row.anchorMax = new Vector2(0f, 0f);
-            row.pivot = new Vector2(0f, 0f);
-            row.anchoredPosition = new Vector2(24f, 24f);
-            row.sizeDelta = new Vector2(4 * 54f, 64f);
-            PlayerResizableUi.Attach(row, "hud.abilities", new Vector2(140f, 50f), new Vector2(420f, 130f));
-
-            _slotLabels = new Text[4];
-            _slotBgs = new Image[4];
-            for (int i = 0; i < 4; i++)
-            {
-                var cell = UiBuilder.NewPanel(row, "Slot" + SlotNames[i], "slot", UiBuilder.SlotBg);
-                var rt = cell.rectTransform;
-                rt.anchorMin = rt.anchorMax = new Vector2(0f, 0.5f);
-                rt.pivot = new Vector2(0f, 0.5f);
-                rt.anchoredPosition = new Vector2(i * 54f, 0f);
-                rt.sizeDelta = new Vector2(48f, 48f);
-                _slotBgs[i] = cell;
-
-                var key = UiBuilder.NewText(cell.transform, "Key", SlotNames[i], 14,
-                    TextAnchor.UpperLeft, new Color(0.98f, 0.85f, 0.45f, 1f));
-                UiBuilder.Stretch(key.rectTransform, 4f);
-                key.raycastTarget = false;
-
-                _slotLabels[i] = UiBuilder.NewText(cell.transform, "Ability", "", 10,
-                    TextAnchor.LowerCenter, UiBuilder.TextCol);
-                UiBuilder.Stretch(_slotLabels[i].rectTransform, 3f);
-                _slotLabels[i].raycastTarget = false;
-                // Ability names vary in length; shrink to fit the small slot cell.
-                UiBuilder.FitText(_slotLabels[i]);
-            }
+            // Retired visible Q/E/R/F slot ROW: the always-on ability bar now renders
+            // via GameUIController.BuildAbilityBar (canonical HUD). We intentionally
+            // skip building the duplicate bottom-left slot cells here. We KEEP this
+            // view's functional layer: the hold-X radial wheel + tap-to-cast input
+            // (Update/Cast/Assign), which the canonical HUD doesn't replicate.
+            // _slotLabels/_slotBgs stay null — RefreshSlots()/FlashSlot() guard for it.
 
             BuildWheel();
         }

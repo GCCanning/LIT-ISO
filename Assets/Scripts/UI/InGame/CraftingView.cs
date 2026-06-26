@@ -1,3 +1,4 @@
+// PHASE_COMPLETE Phase4
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -116,6 +117,12 @@ namespace LitIso.UI.InGame
         // Row backgrounds by recipe id, so selection can re-highlight without a rebuild.
         readonly Dictionary<string, Image> _rowImages = new Dictionary<string, Image>();
         static readonly Color SelectedBg = new Color(0.16f, 0.20f, 0.27f, 0.96f);
+
+        // Queue panel — shows the active timed-craft job beneath the recipe list.
+        RectTransform _queueRoot;
+        Text _queueItemLabel;
+        Image _queueProgressFill;
+        Text _queueProgressLabel;
 
         // ---- Category filter dropdown (2026-06-13 owner request) ----
         // "All" plus every real StationType (None is folded into "Hand" — see
@@ -300,6 +307,9 @@ namespace LitIso.UI.InGame
             cbr.anchoredPosition = new Vector2(-24f, 24f);
             cbr.sizeDelta = new Vector2(200f, 56f);
 
+            // Queue panel — below the recipe list, shows the active timed-craft job.
+            BuildQueuePanel(panel.transform);
+
             // Craft All: batch-crafts as many as ingredients/space allow (left of Craft).
             _craftAllBtn = UiBuilder.NewButton(panel.transform, "CraftAllBtn", "craft_button", "Craft All", 18);
             _craftAllBtn.onClick.AddListener(() =>
@@ -315,6 +325,141 @@ namespace LitIso.UI.InGame
             car.pivot = new Vector2(1f, 0f);
             car.anchoredPosition = new Vector2(-236f, 24f);
             car.sizeDelta = new Vector2(170f, 56f);
+        }
+
+        // Queue panel — 3px ink border, 1px steel inset, 1px gold hairline, hard bottom
+        // shadow. Shows beneath the recipe list (left column, bottom area of the panel).
+        void BuildQueuePanel(Transform panel)
+        {
+            // Position: below the recipe list, same left offset; 90px tall.
+            var root = UiBuilder.NewRect("QueuePanel", panel);
+            _queueRoot = root;
+            root.anchorMin = new Vector2(0f, 0f); root.anchorMax = new Vector2(0f, 0f);
+            root.pivot = new Vector2(0f, 0f);
+            root.anchoredPosition = new Vector2(24f, 24f);
+            root.sizeDelta = new Vector2(300f, 90f);
+
+            // Hard ink border (3px)
+            var bg = root.gameObject.AddComponent<Image>();
+            bg.color = LitIsoTheme.Panel;
+            var inkOutline = root.gameObject.AddComponent<Outline>();
+            inkOutline.effectColor = LitIsoTheme.Base;
+            inkOutline.effectDistance = new Vector2(3f, -3f);
+            inkOutline.useGraphicAlpha = false;
+
+            // Steel inset (1px)
+            var steel = UiBuilder.NewImage(root, "Steel", null, new Color(LitIsoTheme.Stone.r, LitIsoTheme.Stone.g, LitIsoTheme.Stone.b, 0.6f));
+            steel.raycastTarget = false;
+            var sr = steel.rectTransform;
+            sr.anchorMin = Vector2.zero; sr.anchorMax = Vector2.one;
+            sr.offsetMin = new Vector2(3f, 3f); sr.offsetMax = new Vector2(-3f, -3f);
+            var steelFill = UiBuilder.NewImage(sr, "SteelFill", null, LitIsoTheme.Panel);
+            steelFill.raycastTarget = false;
+            var sfr = steelFill.rectTransform;
+            sfr.anchorMin = Vector2.zero; sfr.anchorMax = Vector2.one;
+            sfr.offsetMin = new Vector2(1f, 1f); sfr.offsetMax = new Vector2(-1f, -1f);
+            steel.transform.SetAsFirstSibling();
+
+            // Gold hairline (1px)
+            var gold = UiBuilder.NewImage(root, "Gold", null, new Color(LitIsoTheme.GoldDeep.r, LitIsoTheme.GoldDeep.g, LitIsoTheme.GoldDeep.b, 0.5f));
+            gold.raycastTarget = false;
+            var gr = gold.rectTransform;
+            gr.anchorMin = Vector2.zero; gr.anchorMax = Vector2.one;
+            gr.offsetMin = new Vector2(4f, 4f); gr.offsetMax = new Vector2(-4f, -4f);
+            var goldFill = UiBuilder.NewImage(gr, "GoldFill", null, LitIsoTheme.Panel);
+            goldFill.raycastTarget = false;
+            var gfr = goldFill.rectTransform;
+            gfr.anchorMin = Vector2.zero; gfr.anchorMax = Vector2.one;
+            gfr.offsetMin = new Vector2(1f, 1f); gfr.offsetMax = new Vector2(-1f, -1f);
+            gold.transform.SetAsFirstSibling();
+
+            // 6px hard bottom shadow
+            var shadow = new GameObject("Shadow", typeof(RectTransform));
+            shadow.transform.SetParent(panel, false);
+            var shadowImg = shadow.AddComponent<Image>();
+            shadowImg.color = LitIsoTheme.Base;
+            shadowImg.raycastTarget = false;
+            var shr = shadowImg.rectTransform;
+            shr.anchorMin = new Vector2(0f, 0f); shr.anchorMax = new Vector2(0f, 0f);
+            shr.pivot = new Vector2(0f, 0f);
+            shr.anchoredPosition = new Vector2(24f, 18f); // 6px below root
+            shr.sizeDelta = new Vector2(300f, 90f);
+            shadow.transform.SetAsFirstSibling();
+
+            // QUEUE header label
+            var hdr = UiBuilder.NewText(root, "QueueHdr", "QUEUE", 11, TextAnchor.UpperLeft, LitIsoTheme.Gold);
+            hdr.font = LitIsoTheme.DisplayFont;
+            hdr.raycastTarget = false;
+            var hdr_r = hdr.rectTransform;
+            hdr_r.anchorMin = new Vector2(0f, 1f); hdr_r.anchorMax = new Vector2(1f, 1f);
+            hdr_r.pivot = new Vector2(0f, 1f);
+            hdr_r.anchoredPosition = new Vector2(10f, -8f);
+            hdr_r.sizeDelta = new Vector2(-20f, 16f);
+
+            // Item name label
+            _queueItemLabel = UiBuilder.NewText(root, "QueueItem", "— idle —", 14, TextAnchor.UpperLeft, LitIsoTheme.WarmTan);
+            LitIsoTheme.ApplyBody(_queueItemLabel, 14, LitIsoTheme.WarmTan);
+            _queueItemLabel.raycastTarget = false;
+            var il_r = _queueItemLabel.rectTransform;
+            il_r.anchorMin = new Vector2(0f, 1f); il_r.anchorMax = new Vector2(1f, 1f);
+            il_r.pivot = new Vector2(0f, 1f);
+            il_r.anchoredPosition = new Vector2(10f, -26f);
+            il_r.sizeDelta = new Vector2(-80f, 18f);
+
+            // Progress bar track (dark)
+            var track = UiBuilder.NewImage(root, "ProgTrack", null, LitIsoTheme.Base);
+            var tk_outline = track.gameObject.AddComponent<Outline>();
+            tk_outline.effectColor = LitIsoTheme.Base; tk_outline.effectDistance = new Vector2(2f, -2f); tk_outline.useGraphicAlpha = false;
+            track.raycastTarget = false;
+            var tk_r = track.rectTransform;
+            tk_r.anchorMin = new Vector2(0f, 0f); tk_r.anchorMax = new Vector2(1f, 0f);
+            tk_r.pivot = new Vector2(0f, 0f);
+            tk_r.anchoredPosition = new Vector2(10f, 12f);
+            tk_r.sizeDelta = new Vector2(-20f, 14f);
+
+            // Progress fill (gold)
+            _queueProgressFill = UiBuilder.NewImage(tk_r, "ProgFill", null, LitIsoTheme.Gold);
+            _queueProgressFill.type = Image.Type.Filled;
+            _queueProgressFill.fillMethod = Image.FillMethod.Horizontal;
+            _queueProgressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            _queueProgressFill.fillAmount = 0f;
+            _queueProgressFill.raycastTarget = false;
+            var pf_r = _queueProgressFill.rectTransform;
+            pf_r.anchorMin = Vector2.zero; pf_r.anchorMax = Vector2.one;
+            pf_r.offsetMin = new Vector2(2f, 2f); pf_r.offsetMax = new Vector2(-2f, -2f);
+
+            // Progress percent label (right of header)
+            _queueProgressLabel = UiBuilder.NewText(root, "QueuePct", "", 11, TextAnchor.UpperRight, LitIsoTheme.GoldLit);
+            LitIsoTheme.ApplyBody(_queueProgressLabel, 11, LitIsoTheme.GoldLit);
+            _queueProgressLabel.raycastTarget = false;
+            var pl_r = _queueProgressLabel.rectTransform;
+            pl_r.anchorMin = new Vector2(0f, 1f); pl_r.anchorMax = new Vector2(1f, 1f);
+            pl_r.pivot = new Vector2(1f, 1f);
+            pl_r.anchoredPosition = new Vector2(-10f, -26f);
+            pl_r.sizeDelta = new Vector2(60f, 18f);
+
+            // Cancel button — stone style, top-right of queue panel
+            var cancelBtn = UiBuilder.NewButton(root, "CancelBtn", null, "✕", 14);
+            var cb_bg = cancelBtn.GetComponent<Image>();
+            if (cb_bg != null) LitIsoTheme.StyleButton(cancelBtn, cb_bg, LitIsoTheme.ButtonStyle.Stone);
+            cancelBtn.onClick.AddListener(() => Debug.Log("[CraftingView] Cancel job requested (wire to adapter)."));
+            var cb_r = cancelBtn.GetComponent<RectTransform>();
+            cb_r.anchorMin = cb_r.anchorMax = new Vector2(1f, 1f); cb_r.pivot = new Vector2(1f, 1f);
+            cb_r.anchoredPosition = new Vector2(-8f, -6f);
+            cb_r.sizeDelta = new Vector2(28f, 22f);
+        }
+
+        // Sync the queue panel visuals from the currently-selected recipe's job state.
+        void RefreshQueuePanel(CraftingRecipeDetails d)
+        {
+            if (_queueRoot == null) return;
+            bool active = d.jobActive;
+            if (_queueItemLabel != null)
+                _queueItemLabel.text = active ? d.display : "— idle —";
+            if (_queueProgressFill != null)
+                _queueProgressFill.fillAmount = active ? Mathf.Clamp01(d.jobProgress01) : 0f;
+            if (_queueProgressLabel != null)
+                _queueProgressLabel.text = active ? $"{Mathf.RoundToInt(d.jobProgress01 * 100f)}%" : "";
         }
 
         void Refresh()
@@ -382,150 +527,151 @@ namespace LitIso.UI.InGame
 
         IEnumerator RestoreScroll(float normalizedPos)
         {
-            yield return null; // old rows are Destroy()ed end-of-frame; wait them out
+            yield return null;
             if (_listScroll != null)
                 _listScroll.verticalNormalizedPosition = Mathf.Clamp01(normalizedPos);
         }
 
+        /// <summary>Rebuild the right-hand details pane for the current _selectedId.</summary>
         void RefreshDetails()
         {
             if (_detailsContainer == null) return;
             foreach (Transform c in _detailsContainer) Destroy(c.gameObject);
-            if (string.IsNullOrEmpty(_selectedId) || _model == null) { _detailsJobActive = false; return; }
-            var d = _model.GetDetails(_selectedId);
 
-            var head = UiBuilder.NewText(_detailsContainer, "Head", d.display, 22, TextAnchor.UpperLeft);
-            var hr = head.rectTransform;
+            if (string.IsNullOrEmpty(_selectedId) || _model == null) { _detailsJobActive = false; return; }
+
+            var d = _model.GetDetails(_selectedId);
+            _detailsJobActive = d.jobActive;
+            _selectedMax = d.maxCraftable;
+
+            // Recipe name heading
+            var heading = UiBuilder.NewText(_detailsContainer, "RecipeName", d.display, 20, TextAnchor.UpperLeft, LitIsoTheme.Gold);
+            LitIsoTheme.ApplyDisplay(heading, 20, LitIsoTheme.Gold);
+            var hr = heading.rectTransform;
             hr.anchorMin = new Vector2(0f, 1f); hr.anchorMax = new Vector2(1f, 1f);
             hr.pivot = new Vector2(0f, 1f);
-            hr.anchoredPosition = new Vector2(0f, 0f); hr.sizeDelta = new Vector2(0f, 32f);
-            UiBuilder.FitText(head);
+            hr.anchoredPosition = new Vector2(0f, -4f);
+            hr.sizeDelta = new Vector2(0f, 28f);
 
-            var sub = UiBuilder.NewText(_detailsContainer, "Sub", "Ingredients", 16, TextAnchor.UpperLeft, UiBuilder.MutedCol);
-            var sr = sub.rectTransform;
-            sr.anchorMin = new Vector2(0f, 1f); sr.anchorMax = new Vector2(1f, 1f);
-            sr.pivot = new Vector2(0f, 1f);
-            sr.anchoredPosition = new Vector2(0f, -40f); sr.sizeDelta = new Vector2(0f, 24f);
+            // Gold divider
+            var div = UiBuilder.NewImage(_detailsContainer, "Divider", null,
+                new Color(LitIsoTheme.Gold.r, LitIsoTheme.Gold.g, LitIsoTheme.Gold.b, 0.28f));
+            div.raycastTarget = false;
+            var dr = div.rectTransform;
+            dr.anchorMin = new Vector2(0f, 1f); dr.anchorMax = new Vector2(1f, 1f);
+            dr.pivot = new Vector2(0f, 1f);
+            dr.anchoredPosition = new Vector2(0f, -36f);
+            dr.sizeDelta = new Vector2(0f, 1f);
 
-            float y = -72f;
-            if (d.inputs != null)
-                for (int i = 0; i < d.inputs.Length; i++)
-                {
-                    var ing = d.inputs[i];
-                    bool enough = ing.have >= ing.needed;
-                    string line = enough
-                        ? $"{ing.display}   {ing.have}/{ing.needed}"
-                        : $"{ing.display}   {ing.have}/{ing.needed}   (short {ing.needed - ing.have})";
-                    var t = UiBuilder.NewText(_detailsContainer, "Ing_" + i, line, 16, TextAnchor.UpperLeft,
-                        enough ? UiBuilder.TextCol : new Color(0.85f, 0.45f, 0.45f, 1f));
-                    var tr = t.rectTransform;
-                    tr.anchorMin = new Vector2(0f, 1f); tr.anchorMax = new Vector2(1f, 1f);
-                    tr.pivot = new Vector2(0f, 1f);
-                    tr.anchoredPosition = new Vector2(8f, y); tr.sizeDelta = new Vector2(0f, 22f);
-                    UiBuilder.FitText(t);
-                    y -= 26f;
-                }
-
-            if (d.outputs != null && d.outputs.Length > 0)
+            // Ingredients section
+            float y = -44f;
+            if (d.inputs != null && d.inputs.Length > 0)
             {
-                y -= 10f;
-                var oh = UiBuilder.NewText(_detailsContainer, "OutHead", "Makes", 16, TextAnchor.UpperLeft, UiBuilder.MutedCol);
-                var ohr = oh.rectTransform;
-                ohr.anchorMin = new Vector2(0f, 1f); ohr.anchorMax = new Vector2(1f, 1f);
-                ohr.pivot = new Vector2(0f, 1f);
-                ohr.anchoredPosition = new Vector2(0f, y); ohr.sizeDelta = new Vector2(0f, 24f);
-                y -= 28f;
-                for (int i = 0; i < d.outputs.Length; i++)
+                var ingHdr = UiBuilder.NewText(_detailsContainer, "IngHdr", "INGREDIENTS", 11, TextAnchor.UpperLeft, LitIsoTheme.WarmTan);
+                LitIsoTheme.ApplyBody(ingHdr, 11, LitIsoTheme.WarmTan);
+                ingHdr.raycastTarget = false;
+                var wr = ingHdr.rectTransform;
+                wr.anchorMin = new Vector2(0f, 1f); wr.anchorMax = new Vector2(1f, 1f);
+                wr.pivot = new Vector2(0f, 1f);
+                wr.anchoredPosition = new Vector2(0f, y); wr.sizeDelta = new Vector2(0f, 18f);
+                y -= 22f;
+
+                foreach (var ing in d.inputs)
                 {
-                    var o = d.outputs[i];
-                    var t = UiBuilder.NewText(_detailsContainer, "Out_" + i,
-                        $"{o.display} x{o.needed}", 16, TextAnchor.UpperLeft);
-                    var tr = t.rectTransform;
-                    tr.anchorMin = new Vector2(0f, 1f); tr.anchorMax = new Vector2(1f, 1f);
-                    tr.pivot = new Vector2(0f, 1f);
-                    tr.anchoredPosition = new Vector2(8f, y); tr.sizeDelta = new Vector2(0f, 22f);
-                    UiBuilder.FitText(t);
-                    y -= 26f;
+                    bool ok = ing.have >= ing.needed;
+                    var row = UiBuilder.NewImage(_detailsContainer, "Ing_" + ing.itemId, null,
+                        new Color(0.09f, 0.12f, 0.16f, 0.55f));
+                    row.raycastTarget = false;
+                    var ingRt = row.rectTransform;
+                    ingRt.anchorMin = new Vector2(0f, 1f); ingRt.anchorMax = new Vector2(1f, 1f);
+                    ingRt.pivot = new Vector2(0f, 1f);
+                    ingRt.anchoredPosition = new Vector2(0f, y); ingRt.sizeDelta = new Vector2(0f, 32f);
+
+                    // Tick / X indicator
+                    var tick = UiBuilder.NewText(row.transform, "Tick", ok ? "✔" : "✘", 14, TextAnchor.MiddleLeft,
+                        ok ? new Color(0.4f, 0.9f, 0.4f) : new Color(0.9f, 0.3f, 0.3f));
+                    LitIsoTheme.ApplyBody(tick, 14, ok ? new Color(0.4f, 0.9f, 0.4f) : new Color(0.9f, 0.3f, 0.3f));
+                    tick.raycastTarget = false;
+                    var tkr = tick.rectTransform;
+                    tkr.anchorMin = new Vector2(0f, 0f); tkr.anchorMax = new Vector2(0f, 1f);
+                    tkr.pivot = new Vector2(0f, 0.5f);
+                    tkr.anchoredPosition = new Vector2(6f, 0f); tkr.sizeDelta = new Vector2(18f, 0f);
+
+                    // Ingredient name
+                    var name = UiBuilder.NewText(row.transform, "Name", ing.display, 14, TextAnchor.MiddleLeft,
+                        ok ? LitIsoTheme.Parchment : LitIsoTheme.WarmTan);
+                    LitIsoTheme.ApplyBody(name, 14, ok ? LitIsoTheme.Parchment : LitIsoTheme.WarmTan);
+                    name.raycastTarget = false;
+                    var nr = name.rectTransform;
+                    nr.anchorMin = new Vector2(0f, 0f); nr.anchorMax = new Vector2(1f, 1f);
+                    nr.pivot = new Vector2(0f, 0.5f);
+                    nr.offsetMin = new Vector2(28f, 0f); nr.offsetMax = new Vector2(-64f, 0f);
+
+                    // Quantity fraction (right)
+                    string qty = ing.have + "/" + ing.needed;
+                    var count = UiBuilder.NewText(row.transform, "Qty", qty, 13, TextAnchor.MiddleRight,
+                        ok ? LitIsoTheme.GoldLit : new Color(0.85f, 0.5f, 0.3f));
+                    LitIsoTheme.ApplyBody(count, 13, ok ? LitIsoTheme.GoldLit : new Color(0.85f, 0.5f, 0.3f));
+                    count.raycastTarget = false;
+                    var cr = count.rectTransform;
+                    cr.anchorMin = new Vector2(1f, 0f); cr.anchorMax = new Vector2(1f, 1f);
+                    cr.pivot = new Vector2(1f, 0.5f);
+                    cr.anchoredPosition = new Vector2(-6f, 0f); cr.sizeDelta = new Vector2(56f, 0f);
+
+                    y -= 36f;
                 }
             }
 
-            // Fuel requirement (e.g. furnace smelting needs wood).
+            // Fuel info (optional)
             if (!string.IsNullOrEmpty(d.fuelInfo))
             {
-                y -= 6f;
-                var fuel = UiBuilder.NewText(_detailsContainer, "Fuel", d.fuelInfo, 16,
-                    TextAnchor.UpperLeft, UiBuilder.MutedCol);
+                var fuel = UiBuilder.NewText(_detailsContainer, "Fuel", d.fuelInfo, 13, TextAnchor.UpperLeft, LitIsoTheme.WarmTan);
+                LitIsoTheme.ApplyBody(fuel, 13, LitIsoTheme.WarmTan);
+                fuel.raycastTarget = false;
                 var fr = fuel.rectTransform;
                 fr.anchorMin = new Vector2(0f, 1f); fr.anchorMax = new Vector2(1f, 1f);
                 fr.pivot = new Vector2(0f, 1f);
-                fr.anchoredPosition = new Vector2(0f, y); fr.sizeDelta = new Vector2(0f, 22f);
-                UiBuilder.FitText(fuel);
-                y -= 26f;
+                fr.anchoredPosition = new Vector2(0f, y); fr.sizeDelta = new Vector2(0f, 18f);
+                y -= 22f;
             }
 
-            // Craft-time / in-progress indicator (Minecraft-style smelting bar).
-            _detailsJobActive = d.jobActive;
-            if (d.jobActive)
-            {
-                y -= 6f;
-                int pct = Mathf.RoundToInt(d.jobProgress01 * 100f);
-                var prog = UiBuilder.NewText(_detailsContainer, "Progress", $"Working... {pct}%", 16,
-                    TextAnchor.UpperLeft, new Color(0.55f, 0.85f, 0.55f, 1f));
-                var pr = prog.rectTransform;
-                pr.anchorMin = new Vector2(0f, 1f); pr.anchorMax = new Vector2(1f, 1f);
-                pr.pivot = new Vector2(0f, 1f);
-                pr.anchoredPosition = new Vector2(0f, y); pr.sizeDelta = new Vector2(0f, 22f);
-                UiBuilder.FitText(prog);
-                y -= 26f;
-
-                // Simple bar: background track + filled portion sized by progress.
-                var track = UiBuilder.NewImage(_detailsContainer, "ProgTrack", null, UiBuilder.SlotBg);
-                var trr = track.rectTransform;
-                trr.anchorMin = new Vector2(0f, 1f); trr.anchorMax = new Vector2(1f, 1f);
-                trr.pivot = new Vector2(0f, 1f);
-                trr.anchoredPosition = new Vector2(0f, y); trr.sizeDelta = new Vector2(0f, 16f);
-
-                var fill = UiBuilder.NewImage(track.transform, "ProgFill", null, new Color(0.40f, 0.78f, 0.45f, 1f));
-                var flr = fill.rectTransform;
-                flr.anchorMin = new Vector2(0f, 0f); flr.anchorMax = new Vector2(Mathf.Clamp01(d.jobProgress01), 1f);
-                flr.pivot = new Vector2(0f, 0.5f);
-                flr.offsetMin = Vector2.zero; flr.offsetMax = Vector2.zero;
-                y -= 24f;
-            }
-            else if (d.craftTimeSeconds > 0f)
-            {
-                y -= 6f;
-                var time = UiBuilder.NewText(_detailsContainer, "CraftTime", $"Time: {d.craftTimeSeconds:0.#}s", 16,
-                    TextAnchor.UpperLeft, UiBuilder.MutedCol);
-                var trr2 = time.rectTransform;
-                trr2.anchorMin = new Vector2(0f, 1f); trr2.anchorMax = new Vector2(1f, 1f);
-                trr2.pivot = new Vector2(0f, 1f);
-                trr2.anchoredPosition = new Vector2(0f, y); trr2.sizeDelta = new Vector2(0f, 22f);
-                UiBuilder.FitText(time);
-                y -= 26f;
-            }
-
-            // Tell the player exactly why the craft button is greyed out.
+            // Disabled reason
             if (!d.canCraft && !string.IsNullOrEmpty(d.disabledReason))
             {
-                y -= 10f;
-                var why = UiBuilder.NewText(_detailsContainer, "Reason", d.disabledReason, 16,
-                    TextAnchor.UpperLeft, new Color(0.85f, 0.45f, 0.45f, 1f));
-                var wr = why.rectTransform;
-                wr.anchorMin = new Vector2(0f, 1f); wr.anchorMax = new Vector2(1f, 1f);
-                wr.pivot = new Vector2(0f, 1f);
-                wr.anchoredPosition = new Vector2(0f, y); wr.sizeDelta = new Vector2(0f, 22f);
-                UiBuilder.FitText(why);
+                var reason = UiBuilder.NewText(_detailsContainer, "Reason", d.disabledReason, 12, TextAnchor.UpperLeft,
+                    new Color(0.85f, 0.5f, 0.3f));
+                LitIsoTheme.ApplyBody(reason, 12, new Color(0.85f, 0.5f, 0.3f));
+                reason.horizontalOverflow = HorizontalWrapMode.Wrap;
+                reason.raycastTarget = false;
+                var rr = reason.rectTransform;
+                rr.anchorMin = new Vector2(0f, 1f); rr.anchorMax = new Vector2(1f, 1f);
+                rr.pivot = new Vector2(0f, 1f);
+                rr.anchoredPosition = new Vector2(0f, y); rr.sizeDelta = new Vector2(0f, 36f);
             }
 
-            _selectedMax = d.maxCraftable;
-            if (_craftBtn != null) _craftBtn.interactable = d.canCraft;
+            // Craft button state
+            if (_craftBtn != null)
+            {
+                _craftBtn.interactable = d.canCraft;
+                var img = _craftBtn.GetComponent<Image>();
+                if (img != null) LitIsoTheme.StyleButton(_craftBtn, img,
+                    d.canCraft ? LitIsoTheme.ButtonStyle.Gold : LitIsoTheme.ButtonStyle.Stone);
+            }
+
+            // Craft All button state + label
             if (_craftAllBtn != null)
             {
-                _craftAllBtn.interactable = d.canCraft && d.maxCraftable > 1;
+                bool canAll = d.canCraft && d.maxCraftable > 0;
+                _craftAllBtn.interactable = canAll;
                 if (_craftAllLabel != null)
-                    _craftAllLabel.text = d.maxCraftable > 1 ? $"Craft All ({d.maxCraftable})" : "Craft All";
+                    _craftAllLabel.text = canAll ? "Craft All (" + d.maxCraftable + ")" : "Craft All";
+                var img2 = _craftAllBtn.GetComponent<Image>();
+                if (img2 != null) LitIsoTheme.StyleButton(_craftAllBtn, img2,
+                    canAll ? LitIsoTheme.ButtonStyle.Gold : LitIsoTheme.ButtonStyle.Stone);
             }
+
+            // Sync queue panel (added Phase 4)
+            RefreshQueuePanel(d);
         }
     }
 }

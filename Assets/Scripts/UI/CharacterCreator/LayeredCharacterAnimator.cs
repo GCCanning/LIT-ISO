@@ -26,6 +26,7 @@ namespace LitIso.CharacterCreator
         public bool useWorldAmbientTint = false;
 
         const string WalkAnim = "walk";
+        const string RunAnim  = "run";
         const string IdleAnim = "idle";
 
         SpriteRenderer _sr;
@@ -53,7 +54,7 @@ namespace LitIso.CharacterCreator
         static int s_idxN = -2, s_idxW, s_idxS, s_idxE;
 
         public LayeredAppearance Appearance => _appearance;
-        public bool IsPlayingOneShot => _activeAnim != WalkAnim;
+        public bool IsPlayingOneShot => _activeAnim != WalkAnim && _activeAnim != RunAnim;
         public string CurrentAnimation => _activeAnim;
 
         void Awake()
@@ -150,13 +151,23 @@ namespace LitIso.CharacterCreator
 
         void Update()
         {
-            bool moving = _player != null ? _player.IsMoving : _externalMoving;
-            Vector2 dir = _player != null ? _player.MoveDir : _externalDir;
+            bool moving   = _player != null ? _player.IsMoving    : _externalMoving;
+            bool sprinting = _player != null ? _player.IsSprinting : false;
+            Vector2 dir   = _player != null ? _player.MoveDir     : _externalDir;
             if (moving) SetFacing(dir);
 
-            if (_activeAnim != WalkAnim) { UpdateOneShot(); return; }
+            if (_activeAnim != WalkAnim && _activeAnim != RunAnim) { UpdateOneShot(); return; }
 
-            var baked = GetBake(WalkAnim);
+            // Switch between walk and run sheets when sprint state changes.
+            string loopAnim = (moving && sprinting) ? RunAnim : WalkAnim;
+            if (_activeAnim != loopAnim)
+            {
+                _activeAnim = loopAnim;
+                _walkFrame = 0;
+                _timer = 0f;
+            }
+
+            var baked = GetBake(loopAnim);
             if (baked == null || baked.sprites.Length == 0) return;
 
             if (moving)
@@ -174,6 +185,7 @@ namespace LitIso.CharacterCreator
             {
                 _timer = 0f;
                 _walkFrame = 0;
+                _activeAnim = WalkAnim;
                 ShowIdle();
             }
         }

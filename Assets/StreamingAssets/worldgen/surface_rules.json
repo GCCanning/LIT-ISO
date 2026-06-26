@@ -41,20 +41,20 @@
   "if": {
    "waterAdjacent": "river"
   },
-  "tile": "forest_mud_path",
-  "outerBank": "shared_mud_dark"
+  "tile": "pl_soil_01",
+  "outerBank": "pl_soil_01"
  },
  {
   "if": {
    "waterAdjacent": "lake"
   },
-  "tile": "dirt"
+  "tile": "pl_dirt_01"
  },
  {
   "if": {
    "waterAdjacent": "ocean"
   },
-  "tile": "sand_2"
+  "tile": "pl_sand_03"
  },
  {
   "if": {
@@ -63,10 +63,10 @@
     3
    ]
   },
-  "tile": "sand_2",
+  "tile": "pl_sand_03",
   "accents": [
    {
-    "tile": "sand_1",
+    "tile": "pl_sand_02",
     "w": 10
    }
   ]
@@ -78,24 +78,24 @@
     5
    ]
   },
-  "tile": "dirt",
+  "tile": "pl_dirt_01",
   "_": "owner beach band: ocean -> sand (wet) -> dirt -> grass"
  },
  {
   "if": {
    "elevationAbove": 5
   },
-  "tile": "stone_block",
+  "tile": "pl_stone_01",
   "_": "mountain caps are stone"
  },
  {
   "if": {
    "elevationAbove": 4
   },
-  "tile": "badlands_1",
+  "tile": "pl_dirt_02",
   "variants": [
    {
-    "tile": "badlands_2",
+    "tile": "pl_dirt_03",
     "w": 30
    }
   ],

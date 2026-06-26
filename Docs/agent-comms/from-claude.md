@@ -4,6 +4,831 @@
 
 ---
 
+### 2026-06-19 — Worldgen province rework (coherent biomes + climate + downhill rivers)
+
+Replaced the continent generator's per-cell biome roll with a **macro-province**
+layer so biomes read as large, coherent, hand-crafted-feeling regions instead of
+the per-cell patchwork. Ports the validated prototype
+(`Tools/WorldGenPreview/prototype_worldgen_v2.py`). Still a pure, local, O(1)
+per-cell function of `(seed, wx, wy)` — no global map — so the sampler streams
+chunk-by-chunk exactly as before. Invariants untouched.
+
+**What changed**
+
+- **`IsoTerrainSampler.cs`**
+  - New **jittered-grid Voronoi provinces**: `ProvinceSite(gi,gj)` (deterministic
+    jittered site), `ResolveProvince(wx,wy,…)` (nearest of the 3×3 surrounding
+    sites + lateral edge distance for the border band).
+  - New **coherent climate fields**: `ClimateTemperature(fx,fy)` = north→south
+    latitude triangle-gradient blended with low-frequency noise; lapse subtracted
+    at the province SITE. `ClimateMoisture(fx,fy,e)` = low-freq noise + coastal
+    proximity bonus (uses elevation as the cheap coast proxy).
+  - New **`ProvinceBiome(gi,gj,sx,sy)`**: runs `SelectBiome` (the existing
+    Whittaker rectangles) on the site-centroid lapse-adjusted climate; beach/
+    mountain fall back to meadow so a province's BASE biome is always a climate
+    biome. Backed by a tiny 8-slot ring cache keyed on `(gi,gj)` (perf only;
+    correctness never depends on it).
+  - **`SampleContinent` biome step rewired**: cell biome = its province biome,
+    then the existing **local mountain elevation gate** and **beach-against-water**
+    remap apply unchanged. Ocean/shore/beach/river/height logic untouched.
+  - **Border band**: the B1 blend now only engages when `edgeDistCells <=
+    provinceBorderBand`, and `NeighbourBiome` was repointed at the neighbouring
+    PROVINCE biome — so seams blend accents toward the neighbour while the base
+    stays coherent. B2/B3/B4 (crossfade/accent/feature ramps) are unchanged.
+  - **Rivers**: new `RiverDistance` evaluates `riverChannelCount` separately-salted
+    warped bands and keeps the nearest, so the world gets a FEW purposeful
+    waterways instead of a dense web; `IsRiverValley` adds a cheap 4-neighbour
+    downhill/valley gate (no global trace). Spawn-apron exclusion kept.
+  - `BiomeAtClimate` and `SettlementProbeCell` now resolve biome via the province
+    path (removed the stale per-cell `Perlin` climate samples).
+
+- **`FoundationConfig.cs`** — new fields (defaults):
+  - `provinceSize = 28`, `provinceJitter = 0.42`, `provinceBorderBand = 4`
+  - `latitudeWeight = 0.55`, `latitudePeriod = 2600`, `temperatureNoiseWeight = 0.45`,
+    `climateLapsePerHeightStep = 0.06`, `coastalMoistureBonus = 0.25`
+  - `riverChannelCount = 3`
+  - **Retuned existing:** `climateFrequency 0.011 → 0.006` (gentler within-province
+    variation), `riverFrequency 0.025 → 0.012` (fewer/broader rivers).
+
+- **`FoundationContent.cs`** — `desert` biome was left at the default full-range
+  climate rectangle (0..1 × 0..1, priority 0), so it tied meadow everywhere and only
+  lost on centroid distance. Pinned it to the genuinely **hot+dry** corner
+  (`temp 0.72–1.0`, `moist 0.0–0.32`, priority 1, lapse 0.05) so only arid province
+  sites resolve to desert. All other biome tile/prop pools were already derived from
+  the PixelLab catalog (`asset_catalog.json`) and match — meadow→plains2_*, forest→
+  forest_*, snow→snow2_*, mountain→stone_*, beach→sand_* — so no pool rewiring needed.
+
+**Adjacency legality**: snow (cold) and desert (hot) sites are physically far apart
+under the smooth latitude+noise climate (period 2600 ≫ province spacing 28), so they
+can't be adjacent provinces; and the accent blend only fires for *declared*
+transitions (snow declares only meadow/forest, desert declares none), so a snow↔desert
+seam can never blend. No extra guard was needed.
+
+**How to validate**
+- `dotnet build IsoCore.Foundation.csproj` (sandbox had no dotnet; written
+  compile-safe — owner please confirm clean).
+- Unity menu **Tools/LIT-ISO/ISO-Core Foundation/Validate Foundation**.
+- In-editor: load a continent seed (default config seed 1337, `continentWorld=true`,
+  `flatWorld=false`) and confirm large coherent biome regions, gentle internal
+  variation, a few meandering rivers, and natural seams. Tune `provinceSize`,
+  `latitudeWeight`, `climateFrequency`, `riverChannelCount` to taste.
+- NOTE: `Tools/WorldGenPreview/preview_worldgen.py` is a *separate* Python reference
+  that reads `Assets/StreamingAssets/worldgen/*.json`; it does **not** reflect these
+  C# sampler changes. The algorithm itself is validated by
+  `prototype_worldgen_v2.py` / `worldgen_v2_compare.png`; the live check is in-Unity.
+
+**Risks / not verified**
+- No dotnet/Unity in the sandbox, so this is a static-review compile pass only.
+- River downhill is a local valley gate, not a full steepest-descent trace (the
+  streaming sampler can't do a global trace); rivers read as fewer/purposeful but
+  won't perfectly follow a single source→sea path.
+- `latitudePeriod`/`latitudeWeight` defaults are a starting point; if biome bands
+  feel too striped or too noisy, that's the first knob to turn.
+
+---
+
+### 2026-06-13 — Action animations wired to gameplay + ability-wheel flicker fix
+
+**1. All 6 LPC animations are now reachable in play (were baked but never
+triggered).** New `LayeredCharacterActions` (Assembly-CSharp, attached to the
+player automatically by `LayeredCharacterPlayerHook` next to
+`LayeredCharacterAnimator`) calls `PlayOneShot`:
+- **Basic attack = `E`** (owner-chosen), weapon-aware: bow/ranged→`shoot`,
+  spear/polearm→`thrust`, magic/staff/wand→`cast`, sword/axe/blunt or
+  unarmed→`slash`. Weapon read from the equipped `slot=="weapon"` accessory.
+- **Spell cast** ← `SpellCaster.OnSpellCast` (keys 1–4): Projectile delivery →
+  `shoot`, otherwise `cast`.
+- **Hurt** ← `PlayerHealth.OnHealthChanged`: any health decrease → `hurt`.
+- Movement is NOT locked during a one-shot (owner choice); facing keeps updating.
+- Purely visual — deals no damage. If/when a basic-attack damage move lands,
+  hook the same `E` press.
+
+**⚠ Key overlap to confirm (owner said "maybe E"):** `E` is already the interact
+key (`IsoInteractionController`/`DungeonEntrance`) AND the ability-wheel "E"
+slot. Attack is suppressed while any UI modal is open (incl. the hold-X wheel),
+but it will still co-fire with a contextual interact, and once the real ability
+runtime lands, tapping `E` would both cast the E quick-skill and swing. The key
+is a single field (`LayeredCharacterActions.attackKey`) — easy to rebind, or I
+can gate attack to only fire when slot E is unassigned. Say the word.
+
+**2. Ability-wheel (hold-X) screen flicker fixed.** Root cause: `AbilityWheelView`
+opened the wheel and set the `"abilityWheel"` modal, which made
+`FoundationUiCoordinator.BlocksWorldInput` true, which the next frame forced the
+wheel closed (`wheelOpen = X && !blocked`), clearing the modal, reopening it… a
+1-frame open/close loop. Fix: added `FoundationUiCoordinator.HasBlockingModalExcept`
+/ `BlocksWorldInputExcept`, and the wheel now (a) stays open purely on X-held,
+ignoring its own modal + pointer-over-its-own-UI, and (b) only gates the INITIAL
+open on *other* panels being open. No contract change; just stable now.
+
+**Files:** `LayeredCharacterActions.cs` (new), `LayeredCharacterPlayerHook.cs`
+(attach it), `AbilityWheelView.cs` (flicker), `FoundationUiCoordinator.cs` (+2
+helpers). Couldn't run a Unity compile in this env — please play-check: E swings
+(and matches equipped weapon), keys 1–4 play cast/shoot, taking damage plays
+hurt, and hold-X opens a steady (non-flickering) wheel.
+
+---
+
+### 2026-06-13 — Creator UI reskin + slider/swatch colour pickers + weapons/armour gear import
+
+Owner-approved follow-ups to the v3 catalog work. All Claude-lane (creator UI +
+import pipeline); no Foundation contract changes.
+
+**1. Character creator UI reskinned with the shared Menu art.**
+`CharacterCreatorUI` now loads `Resources/UI/Menu` sprites (panel / button +
+button_hover/button_pressed / slider_track / slider_handle / input_frame),
+9-sliced, so the creator matches the welcome/main-menu look. If any sprite is
+missing it falls back to flat panels + outlines, so it always renders.
+
+**2. Colour selection is now a slider + live swatch (was `< >` arrows).**
+Skin tone, eye colour, and each clothing slot's colour use a horizontal slider
+that scrubs the variant list, with a colour swatch beside it. The swatch colour
+comes from new `CharacterCompositor.SwatchColor(def, variant, body)` — the
+average of the variant's non-outline opaque pixels on the walk sheet (cached).
+Item selection (which hair/shirt/pants/shoes) stays as `< >` arrows. Body type
+stays arrows. Creator remains **basic customization only** — no gear.
+
+**3. Weapons & armour imported as equippable gear (catalog still v3, now 47
+items, was 31).** `import_lpc.py` curated set extended with LPC `weapon/` +
+`armour/` sets, plus a new rule: **layers with a `custom_animation` key are
+skipped** (LPC's oversize slash/thrust sheets are 128/192px cells outside our
+64px 6-anim grid; only the *universal* weapon layers — weapon-in-hand across all
+6 classic animations — are imported). New slots: `weapon` (longsword, dagger,
+rapier, mace, waraxe, spear, bow, gnarled staff, simple staff), `shield`,
+`armor_torso` (plate/leather/chainmail), `armor_legs`, `armor_feet`,
+`armor_shoulders`. These are **NOT in the creator** — they render via
+`CharacterEquipmentVisuals.Equip(itemId, variant)` from in-game drops (e.g.
+`Equip("lpc/weapon_sword_longsword", "longsword")`), compositing by LPC `zPos`.
+Verified: all 11,484 catalog-referenced layer files exist (0 missing), gear
+covers all 6 animations × both bodies × every variant.
+
+**Your slice / FYI (Codex/gameplay lane, not done here):** the drop/equipment
+system can already render any of these by id, but there's **no slot-exclusivity
+logic** — `EquipAccessory` just appends to the `accessories` list, so equipping
+two torsos (or two weapons) would stack. When the inventory/equip flow lands,
+add one-item-per-region replacement (suggest mapping the new slot names →
+equipment slots and unequipping the previous occupant before `Equip`).
+
+**Build note:** couldn't run a Unity compile in this environment (engine module
+DLLs aren't present); changes are `CharacterCreatorUI.cs` (rewrite),
+`CharacterCompositor.cs` (+`SwatchColor`), and the regenerated
+`layer_catalog.json` + credits. Please do a play check: open the creator (New
+Game) → panels/buttons/sliders show the Menu skin, colour sliders + swatches
+work for skin/eyes/hair/shirt/pants/shoes, Randomize/Done OK; then test a gear
+`Equip` call renders in-hand/on-body across directions.
+
+---
+
+### 2026-06-13 — LPC character creator: all 6 classic animations + player rescale (v3 catalog)
+
+`layer_catalog.json` is now **v3**. Every wardrobe item (all 31 curated LPC
+items) now ships sheets for **all 6 classic LPC animations** — `walk` (idle +
+9-frame walk), `cast` (7), `thrust` (8), `slash` (6), `shoot` (13), `hurt` (6)
+— not just walk. These are the "rows 0-20" block present on every LPC sheet
+(every curated source is >= 832x1344px), so coverage is identical across body,
+hair, clothes, hats, etc. — no missing-row fallback needed.
+
+- `CharacterCompositor.Bake(appearance, animId)` now bakes one animation at a
+  time (`animId` defaults to `catalog.defaultAnimation` = "walk").
+- `LayeredCharacterAnimator` bakes "walk" eagerly (drives idle/walk from
+  movement, as before) and the other 5 lazily/cached. New API:
+  `PlayOneShot("slash"|"thrust"|"shoot"|"cast"|"hurt", onComplete)` plays the
+  action once at the current facing row then returns to walk/idle — **not
+  wired to any gameplay trigger yet** (no combat system calls it). If/when
+  combat lands, this is the hook.
+- `CharacterCreatorUI` preview has a new `<  Animation  >` cycler (below the
+  rotate/Walk controls) so you can sanity-check every equipped item across
+  all 6 animations.
+- **Player rescale**: `pixelsPerUnit` changed 50 -> 64 (64px frame = 1 world
+  unit, matching the old PlayerAnimator's 128px@128ppu reference scale). This
+  was the previous "player looks oversized next to tiles/props" issue —
+  purely a catalog value, no animation/layout changes. If still too big/small,
+  adjust `pixelsPerUnit` in `import_lpc.py` and re-run (catalog-only regen,
+  instant).
+- `Pixel Pipeline/character_forge/README.md` updated for the v3 contract.
+
+Old v2-layout files (`lpc/<item>/l<N>/<body>/<variant>.png.bytes`, no `{anim}`
+folder) are orphaned on disk — harmless, just unused.
+
+---
+
+### 2026-06-13 — Dungeon overhaul: tiered rooms, lava/fire traps, void cells outside the layout, streaming everywhere
+
+Owner request, all of this is Codex-lane (`IsoCoreFoundation/Dungeons`,
+`IsoCoreFoundation/World`, `IsoCoreFoundation/Core/FoundationContent.cs`,
+plus possibly the root `IsoWorldChunkManager.cs`). I audited the current
+state first — summary below each item — then the ask.
+
+#### 1. Corridor width: tighten to 2-4 tiles
+
+`FoundationDungeonGenerator.CorridorRadiusForTier` (lines 185-193) currently
+returns a radius (1-3) that's used to dig corridors — radius 1 = 3 tiles
+wide, radius 3 = 7 tiles wide at high tiers, which is wider than asked.
+Please clamp so corridor width = `radius*2+1` lands in **2-4 tiles** across
+all tiers — e.g. radius 0 (1 tile, too narrow) should become a minimum digwidth
+of 2 by digging an asymmetric 2-wide strip rather than a centered odd-radius
+strip, and the max should cap at radius ~1.5 equivalent (4 wide) instead of
+the current radius-3/7-wide at tier 6. A simple `Mathf.Clamp(width, 2, 4)`
+on the corridor cross-section in `Connect()` (lines 159-183) should do it —
+exact tiling approach is your call, just keep it in [2,4] for every tier.
+
+#### 2. Room variety as tiers go up
+
+Already mostly there (`roomMin`/`roomMax` widen with tier, lines 41-42,
+`roomCount` grows 8→18). No change needed structurally — just make sure
+whatever room-kind logic (`Spawn`/`Exit`/`Combat`/`Arena`/`Junction`,
+lines 315-380) keeps producing a good mix at higher tiers (more `Arena` rooms
+since the ≥150-cell threshold becomes easier to hit with larger `roomMax`).
+Flag if you think the existing mix needs rebalancing once lava traps (below)
+are added — traps probably shouldn't spawn in `Spawn`/`Junction` rooms.
+
+#### 3. Lava/fire trap tiles (new — nothing like this exists today)
+
+Confirmed zero `lava`/`fire`/`trap`/`hazard` entries anywhere in
+`FoundationContent.cs` or `IsoCell.cs`. Needed:
+
+- New block defs in `FoundationContent.cs` `Blocks` registry: `lava` and
+  `fire_trap` (or one `dungeon_lava` block reused for both visual states —
+  your call). I can generate PixelLab tile art for these (animated-looking
+  lava/fire tiles) if you give me the target `Assets/Resources/Tiles/<id>`
+  filenames — ping back here with the exact IDs you pick and I'll run the
+  generator and promote the art (Claude lane, `Tools/PixelLab` +
+  `Assets/Resources/Tiles`).
+- `IsoCell` needs a hazard flag (e.g. `public bool Hazardous;` or reuse
+  `SurfaceBlockId == "lava"`/`"fire_trap"` as the check — simplest is just
+  checking `SurfaceBlockId` string, no new field needed if you're OK with
+  that).
+- `FoundationDungeonGenerator.BuildCells` (lines 205-238): after normal floor
+  assignment, stamp a tier-scaled fraction of non-`Spawn`/non-`Junction`
+  floor cells (suggest ~3-6% of `Combat`/`Arena` room floor cells, scaling up
+  with tier) with `surfaceBlockId = "lava"` or `"fire_trap"` instead of the
+  normal `DungeonFloorBlock()` pick. Keep `underBlockId` as the normal floor
+  so removing/extinguishing a trap later reveals normal floor.
+- Gameplay: damage-on-enter when the player's cell has a hazard surface block
+  — wire into whatever movement/collision check currently reads
+  `IsoCell`/`SurfaceBlockId` (similar pattern to `WeatherManager`'s
+  `OutdoorDamageRoutine` / `PlayerHealth.TakeDamage`, which I can point you
+  to if useful — that's Claude-lane code I wrote, in
+  `Assets/Scripts/World/Weather/WeatherManager.cs` lines 275-291).
+
+#### 4. Void cells outside the dungeon layout + ambient VFX
+
+Confirmed: every cell in a dungeon's render bounds (+1 padding) currently
+gets a real floor-or-wall block — there's no "nothing here" cell, and
+`IsoWorldRenderer.Configure` (lines 163-204) always renders *something*
+(falls back to a magenta placeholder cube for unresolved block IDs, lines
+167/188 — never skips rendering).
+
+Ask: any render cell whose `SurfaceBlockId` is empty/a new sentinel
+`"void"` should be **skipped entirely** by `IsoWorldRenderer.Configure` (no
+sprite, no placeholder cube — literally nothing drawn, so the player sees
+through to the background/skybox). Concretely:
+- `FoundationDungeonGenerator.BuildCells`: cells inside the render-bounds
+  rectangle but NOT part of any room/corridor footprint (currently forced to
+  `WallBlock = "stone_block"`) should instead get `surfaceBlockId = "void"`
+  and `solidBlock = false` (not walkable, but also not a wall — see below for
+  how that interacts with collision). Actual room/corridor floor and the
+  walls immediately ringing a room/corridor stay as they are now (so players
+  still see walls around rooms, not floating floors with no edges) — only
+  cells beyond that immediate wall ring become void.
+- `IsoWorldRenderer.Configure`: add an early-out for
+  `cell.SurfaceBlockId == "void"` (or null/empty) — don't rent/configure a
+  SpriteRenderer for it at all.
+- Collision/walkability: void cells should block movement (player can't walk
+  into the void) but render as nothing — i.e. treat like `SolidBlock` for
+  `IsoWorld.IsWalkable`/`IsBlocked` purposes even though they're not drawn as
+  a wall block. Either add a distinct check (`SurfaceBlockId == "void" =>
+  blocked`) in `IsoCell.Blocked`/`IsoWorld.IsWalkable`, or just set
+  `solidBlock = true` on void cells but give the renderer's void check
+  priority over the normal solid-block sprite path (i.e. void check happens
+  before the `block.color`/placeholder fallback, regardless of `solidBlock`).
+- **Ambient VFX for void**: clone the pattern in
+  `Assets/Scripts/IsoCoreFoundation/World/AmbientParticles.cs` (116 lines —
+  code-built `ParticleSystem`, day/night cross-fade between two presets) into
+  a new `VoidAmbientParticles.cs` (or extend `AmbientParticles` with a third
+  "Void" preset) that activates when the player's current cell or camera
+  view contains void cells — dark drifting motes/ash, low alpha, using
+  `Assets/PixelWeatherAsset/Materials/Fog.mat` + `fog.png` as a starting
+  texture (only existing fog-style asset in the project) tinted near-black/
+  deep-purple. Doesn't need to be fancy — same emitter-attached-to-camera
+  approach as `AmbientParticles` is fine.
+
+#### 5. "Map only updates as you move" — apply everywhere including dungeons
+
+Good news: the Foundation pipeline (`IsoWorldController` +
+`IsoWorld.GetOrCreateChunk`, in `Assets/Scripts/IsoCoreFoundation/World/`)
+**already does this** — chunks/cells are generated lazily on first access and
+streamed by player-chunk position (`IsoWorldController` doc comment: "Only
+re-streams when the player crosses a chunk boundary"), and dungeons already
+reuse this same controller via `FoundationInstanceSystem`'s render-cell
+override. So if the player is seeing the *whole* dungeon rendered at once
+right now, the likely cause is `FoundationDungeonGenerator` building+pushing
+the *entire* `FoundationDungeonBuild.cells`/`renderCells` set as the
+"desired"/instance cell list in one shot (bypassing the normal radius-based
+streaming for instance cells), rather than `IsoWorldController` itself.
+Please check: when `_instanceRenderCells`/`explicitInstanceCells` is set
+(`IsoWorldController.cs` ~line 34/120), does `DrainStreaming`/`Retarget` still
+respect `viewRadius`/`StreamCellsPerFrame`, or does it dump everything in
+`_instanceRenderCells` immediately? If the latter, gate it the same way the
+overworld is gated (only show cells within `viewRadius` of the player's
+current position within the instance, re-stream as they move through
+corridors/rooms) — same per-frame budget (`StreamCellsPerFrame`) should
+apply. The legacy `IsoWorldChunkManager.cs` (root `Assets/Scripts/`, ~2449
+lines) is a separate older system — confirm whether it's still active
+anywhere; if it's dead code now that Foundation streaming covers everything,
+flag it for removal in a future cleanup (don't delete now, just note it).
+
+No blocking order between items 1-5 — 3 and 4 are the biggest net-new pieces.
+Ping back here once you've picked the lava/fire-trap block IDs so I can
+generate/promote the tile art.
+
+#### Addendum (same day) — use the already-promoted `dungeon2_00..15` set, lava tiles already exist
+
+Owner pointed out the `dungeon2_00..15` family (`Assets/Resources/Tiles/`,
+32x32, already promoted, NOT yet wired into `FoundationDungeonGenerator`
+which currently only uses `dungeon_floor_1..5` + `stone_block`) already
+contains lava/fire-trap art — no new PixelLab generation needed for item 3.
+I inspected all 16 (4x4 grid, row-major, `dungeon2_00` = top-left):
+
+- **Lava/fire trap tiles**: `dungeon2_05` and `dungeon2_14` — both glowing
+  orange cracked-rock tiles (14 is the brighter variant). Use these directly
+  for item 3's `lava`/`fire_trap` block IDs (e.g. register two blocks
+  `lava` → `dungeon2_05`, `fire_trap` → `dungeon2_14`, or one `lava` block
+  with two visual variants picked by hash like `DungeonFloorBlock()` does).
+- **Plain stone floor variants** (gray, safe to use like
+  `dungeon_floor_1..5`): `dungeon2_00`, `01`, `03`, `06`, `09`, `12`.
+- **Overgrown/mossy floor variants** (good for higher-tier "ruins" rooms):
+  `dungeon2_08`, `15`.
+- **Wall/decorative blocks**: `dungeon2_02` (rune sigil wall — good for
+  `Spawn`/`Exit` room walls or a special marker wall), `dungeon2_07` and
+  `dungeon2_11` (plain stone block walls — replace/augment `stone_block` as
+  `WallBlock`).
+- **Dark "void-ish" floor tiles**: `dungeon2_04` and `dungeon2_13` (near-black
+  smooth/speckled tiles). These are NOT a substitute for the true
+  render-skipped void cells in item 4, but could be used as a transition
+  ring (1 cell) between real floor and true-void cells if a hard cutoff looks
+  bad — your call, optional.
+
+Concrete ask: replace `FoundationDungeonGenerator`'s `DungeonFloorBlock()`
+pool (currently `dungeon_floor_1..5`, lines 17-24/240-248) with the
+`dungeon2_00/01/03/06/09/12` set (+ `08`/`15` weighted lower for
+"overgrown" flavor at higher tiers if you want tier-based palette variety),
+and `WallBlock = "stone_block"` (line 10) with `dungeon2_07`/`dungeon2_11`
+(rotate or hash-pick between the two for variety; reserve `dungeon2_02` for
+`Spawn`/`Exit` room walls specifically as a landmark). Then layer in the
+`lava`/`fire_trap` hazard stamping from item 3 using `dungeon2_05`/`14`.
+`dungeon_floor_1..5`/`stone_block` can stay defined for back-compat.
+
+---
+
+### 2026-06-13 — PixelLab asset audit: missing nodes + ring-of-biomes test world spec
+
+Task #23-25. Full audit in `Docs/PIXELLAB_ASSET_PLAN.md` — please read that
+first for context on what's promoted vs. wired. This entry is the actionable
+spec; three independent pieces, do in any order.
+
+#### 1. Missing ResourceNodeDefinitions (ore ladder + decor)
+
+`FoundationContent.cs` has no Node entries for these, but they're referenced
+by biome JSON decor/feature lists. Art is in
+`Tools/BiomeSketch/assets/prop/review_candidates/pixellab_props/{ores,ambient,forest,mountain}/`
+(promote the relevant PNGs to `Assets/Resources/Props/` the same way existing
+nodes were promoted, then define via the `Node(id, color, toolType, mandatory,
+hits, h, drops)` factory around line 328):
+
+- `ore_copper`, `ore_iron`, `ore_silver`, `ore_gold`, `ore_manacrystal`,
+  `ore_starmetal` — pickaxe-type, progression difficulty matches name order
+  (copper easiest, starmetal hardest). Drops should feed the matching
+  ingot/material chain if one exists, else a raw-ore item per tier.
+- `glowbug`, `wisp` — ambient light props, no tool requirement, low/no hits
+  (decorative + maybe a tiny light-dust drop). Referenced by snow/forest/
+  dungeon "ambient" decor notes.
+- `forest_dead_tree`, `forest_stump` — forest decor, axe-type, similar to
+  existing `stump`/`log` but distinct art/footprint per the triage.
+- `rock_outcrop` — referenced by `beach.json` `decor.drySandRocks` (density
+  0.03, "apron" band) and mountain/snow decor; pickaxe-type, similar tier to
+  `shared_gray_rock`.
+
+Then add `BiomeNodeSpawn` entries to the relevant `BiomeDefinition` assets:
+ore ladder → mountain (+ snow for upper tiers per existing decor notes),
+`glowbug`/`wisp` → snow/forest/dungeon ambient, `forest_dead_tree`/
+`forest_stump` → forest, `rock_outcrop` → beach (`decor.drySandRocks`) +
+mountain/snow per their decor blocks. Use the density values already given in
+each biome JSON's `decor` section as `chancePerCell`.
+
+#### 2. Beach BlockGroupDefinition (carried over from prior entry, still open)
+
+Unchanged from the entry below — still needed if not already done.
+
+#### 3. Ring-of-biomes showcase world
+
+Add a new build step to `FoundationCreationInstanceShowroom.cs` (or a sibling
+static class if you'd rather keep the file size down), e.g.
+`BuildBiomeRing(FoundationWorld world, ...)`, called from `PrepareWorld`/
+`BuildShowroom` after the existing showroom content. Goal: player can walk in
+a ring around spawn and see every biome's real surface tiles plus its
+characteristic weather running constantly, for visual QA.
+
+- Layout: 6 wedge/ring sectors around the existing showroom area (expand
+  `MinX/MaxX/MinY/MaxY` bounds as needed — current bounds are
+  `(-32,-28)..(54,30)`, suggest growing the ring out to roughly a 40-48 tile
+  radius). Sectors: forest, meadow, mountain, snow, beach, dungeon-stone
+  (use the existing dungeon_stone tile group for the 6th wedge as a stand-in
+  "dungeon entrance" look — no need for actual dungeon logic).
+- Each sector: paint with that biome's real `surfaceGroup`/tile pool via
+  `AddRect`/`AddCell` (same helpers used elsewhere in this file) — pull tile
+  IDs from each biome's `BlockGroupDefinition`/`surfaceBasePool` so this
+  reflects the live data (forest_grass_base, meadow's grass family,
+  mountain_stone, snow tiles, beach_00.., dungeon_stone).
+- Weather per sector — **do not** route through the global singleton
+  `WeatherManager` (it only supports one active weather for the whole scene).
+  Instead, for each sector, look up the matching `WeatherDefinition` (e.g. via
+  `Resources.Load` or a small inline array) and if it has a
+  `particlePrefab`, `Instantiate` it directly at the sector's center
+  world position, parented to that sector's anchor (not the camera), and
+  `Play()` it so it loops continuously regardless of player position:
+  - snow sector → blizzard/snow `WeatherDefinition.particlePrefab`
+    (`PixelWeatherAsset` `SnowController`).
+  - forest + meadow → light rain (`RainController`).
+  - mountain → fog/low-visibility tint if a fog particle/overlay exists,
+    otherwise skip (no fog asset known — leave a TODO comment).
+  - beach, dungeon-stone, plains(center) → no constant weather (clear).
+- Keep it additive/optional: gate the whole ring behind a bool field (e.g.
+  `public bool buildBiomeRing = true;`) on the showroom config so it can be
+  disabled without touching the rest of the showroom.
+
+No rush on ordering between #1 and #3 — #1 unblocks biome decor density, #3
+is the visual showcase the player asked for. Ping back in this file if any of
+the tile/prop IDs referenced above don't match what's actually in
+`Assets/Resources/` and I'll re-check the promotion step.
+
+---
+
+### 2026-06-13 — beach_00..15 art is promoted but not wired into the beach biome at runtime
+
+Follow-up to #19/#20. Confirmed today: the `beach` runtime biome still renders
+with the legacy `sand_1`/`sand_2` blocks (`FoundationContent.cs` lines ~69-70,
+`IsoTerrainSampler.SurfaceVariant` fallback at lines 313 and 453) — the
+promoted 16-tile `beach_00..15` PixelLab family (`Assets/Resources/Tiles/`,
+done in #19) has no `BlockGroupDefinition` and isn't referenced by any
+`BiomeDefinition.surfaceGroup`.
+
+I've classified the 16 tiles by pixel inspection and staged the intended pool
+in `Assets/StreamingAssets/worldgen/biomes/beach.json` → `surfaceBasePool`
+(`wetBand`: beach_02/08/14 dark wet sand + beach_03 shells; `dryApron`:
+beach_00/12/06 light sand + beach_01/07/13 ripple texture) and
+`surfaceAccents` (beach_05/11 grass tufts, beach_09/15 pebbles, beach_04/10
+seaweed clumps — `accentRate` 0.12). This mirrors the shape of
+`meadow.json`/`snow.json`'s pools, which I believe you already have a plan to
+consume per the Phase 1 sampler spec below.
+
+When you build that sampler work (or sooner, if it's a quick win on its own):
+please create a `BlockGroupDefinition` for `beach` sourcing
+`beach_00..15` per the wetBand/dryApron/accent split above, point the beach
+`BiomeDefinition.surfaceGroup` at it, and update the `SurfaceVariant(...,
+"sand_1")` fallback calls (lines 313/453) to `"beach_00"` so even the
+no-surfaceGroup fallback case shows the new art instead of the old flat-color
+sand block. `sand_1`/`sand_2` can stay defined in `FoundationContent.cs` for
+back-compat (other things may reference them) — they just shouldn't be the
+*visible* beach surface anymore.
+
+---
+
+### 2026-06-12 — Phase 1 worldgen DATA done (A3/A4 climate table + B1-B4 blend bands): sampler spec for you
+
+Task #20. Read `Docs/WORLDGEN_RULES_PROPOSAL.md` Phase 1 (A3/A4, B1-B4). Confirmed
+by reading `IsoTerrainSampler.cs` + `BiomeDefinition.cs`: **none of A3/A4/B1-B4 are
+implemented yet** — `SelectBiome` is still pure nearest-centroid on
+`BiomeDefinition.temperature/moisture` (single point, not a rectangle), there is
+no lapse rate, and there is no border/blend logic anywhere in `SampleContinent`.
+So this is all new sampler work, not a refinement. I've data-specced everything
+in `Assets/StreamingAssets/worldgen/biomes/*.json`; this entry is the
+implementation spec. All field names below are EXACT — match them.
+
+#### A3 — climate table (replace SelectBiome's nearest-centroid)
+
+Every biome JSON now has a `climate` block:
+```json
+"climate": {
+  "temperatureRange": [tMin, tMax],
+  "moistureRange": [mMin, mMax],
+  "priority": <int>
+}
+```
+Values per biome: meadow `[0.35,0.75]x[0.0,0.45]` prio 0, forest
+`[0.25,0.7]x[0.45,1.0]` prio 1, snow `[0.0,0.25]x[0.0,1.0]` prio 2, beach/mountain
+`[0.0,1.0]x[0.0,1.0]` prio -1 (never win — see note below).
+
+**New `SelectBiome(t, m)`** (still a pure function of the lapse-adjusted climate
+point, A3):
+1. Collect every biome whose `climate.temperatureRange`/`moistureRange`
+   rectangle contains `(t, m)` (inclusive).
+2. If 0 matches: fall back to the OLD nearest-centroid behavior using
+   `BiomeDefinition.temperature/moisture` as a safety net (don't hard-fail —
+   rectangles don't tile the full unit square cleanly at every seam; the
+   nearest-centroid fallback covers any gap cells).
+3. If 1 match: that's the biome.
+4. If 2+ matches: pick the one with the HIGHEST `climate.priority` (ties broken
+   by nearest-centroid distance as today).
+5. beach (`priority: -1`) and mountain (`priority: -1`) will basically never win
+   step 4 against meadow/forest/snow (priority 0/1/2) — this is intentional.
+   beach/mountain are NOT selected via this table; they're gated separately
+   (beach by `SampleContinent`'s existing elevation/water-adjacency + the
+   existing `if (biomeIndex == _beachIndex) biomeIndex = _meadowIndex;` remap;
+   mountain by A4 elevation gate below). Their `climate` rectangles only exist
+   so step 2's fallback table is complete for any non-continent caller of
+   `SelectBiome`. **No desert.json was added** (proposal cleanup item 5) — per
+   the "remap hot/dry to meadow" option, meadow's rectangle (`temp 0.35-0.75,
+   moisture 0.0-0.45` = hot+dry) already covers desert's climate niche, so a
+   desert SelectBiome candidate naturally resolves to meadow via priority 0
+   with zero new data. If you'd rather commission desert art later, flag it and
+   I'll add `desert.json` + a suite entry then.
+
+#### A4 — elevation-gated mountain + lapse rate
+
+`meadow.json`/`forest.json`/`mountain.json` each have a new `lapseRate` block:
+```json
+"lapseRate": { "perHeightStep": <float> }
+```
+meadow `0.05`, forest `0.06`, mountain `0.08`. snow/beach have none (treat as 0).
+
+**Pseudocode for `SampleContinent`'s land branch** (where `SelectBiome(temp,
+moist)` is currently called at line ~326):
+```csharp
+// A4 step 1: provisional biome from RAW climate (for lapse rate lookup only)
+int provisional = SelectBiome(temp, moist);
+var provBiome = BiomeAt(provisional);
+float lapse = provBiome?.lapseRatePerHeightStep ?? 0f;  // new field, see below
+
+// A4 step 2: lapse-adjust temperature by height BEFORE the real biome pick.
+// height is the cliff-tier (1-4) computed a few lines below today - you'll need
+// to compute elevation/height tier BEFORE calling SelectBiome now, or do a
+// two-pass: pick height tier first (pure fn of e), then lapse-adjust temp,
+// then pick biome.
+float effectiveTemp = temp - lapse * height;  // height = tier 1-4 as computed today
+int biomeIndex = SelectBiome(effectiveTemp, moist);
+
+// A4 step 3: elevation gate for mountain - independent of climate table.
+// mountain.json's new "elevationGate.minHeight": 3
+if (height >= mountainBiome.elevationGateMinHeight)
+    biomeIndex = _mountainIndex;
+
+// existing beach remap stays AFTER this:
+if (biomeIndex == _beachIndex) biomeIndex = _meadowIndex;
+```
+Net effect: a meadow cell (temp ~0.5) at height 4 gets `effectiveTemp = 0.5 -
+0.05*4 = 0.30`, which falls into the gap between meadow's range (starts at 0.35)
+and snow's range (ends at 0.25) — the nearest-centroid fallback resolves that
+gap. At height 7: `0.5 - 0.35 = 0.15` lands squarely in snow's range
+`[0.0,0.25]`. This is the "high meadow becomes snow" effect from the proposal.
+Forest's steeper 0.06/step crosses into snow sooner (treeline). Tune the two
+constants in meadow.json/forest.json if the crossover height feels wrong in
+engine — they're data, not magic numbers in code.
+
+`BiomeDefinition.cs` needs new serialized fields to carry this from JSON into
+the runtime asset (currently only `temperature`/`moisture` exist):
+```csharp
+public Vector2 temperatureRange = new Vector2(0f, 1f);
+public Vector2 moistureRange = new Vector2(0f, 1f);
+public int climatePriority = 0;
+public float lapseRatePerHeightStep = 0f;
+public int elevationGateMinHeight = -1; // -1 = not elevation-gated; mountain = 3
+```
+Whatever your JSON->ScriptableObject loader is (FoundationContent biome import),
+map `climate.temperatureRange/moistureRange/priority`, `lapseRate.perHeightStep`,
+and `elevationGate.minHeight` -> these fields (mountain.json is the only biome
+with `elevationGate`; others omit it -> default -1). I used `3` for mountain to
+match the existing `stratification[0].band[0]`; feel free to instead read
+`noise_params.elevation.mountainAbove` directly if you'd rather keep one source
+of truth for the elevation threshold — either is fine, just pick one and note
+which here if you change it.
+
+#### B1-B4 — border distance field + blend band + crossfade + ramps
+
+Every biome JSON now has `transitionTo.<otherBiomeId>` entries shaped like:
+```json
+"transitionTo": {
+  "<otherBiome>": {
+    "cells": [minWidth, maxWidth],
+    "baseWeightCurve": "linear",
+    "accentRamp": {
+      "ownAccentWeightAtNear": <0..1>,
+      "ownAccentWeightAtFar": <0..1>,
+      "otherAccentWeightAtNear": <0..1>,
+      "otherAccentWeightAtFar": <0..1>
+    },
+    "featureDensityRamp": {
+      "groveCentersPer100AtNear": <float>,
+      "groveCentersPer100AtFar": <float>
+    }
+  }
+}
+```
+Pairs filled in: meadow<->forest (cells [4,7]), meadow<->beach (cells [2,3],
+mirrors `beach.json transitionTo.meadow`), meadow<->snow (cells [5,8], elevation-
+driven), forest<->snow (cells [5,8]), mountain<->meadow / mountain<->forest
+(cells [4,6]), mountain<->snow (cells [3,5]), snow<->meadow / snow<->forest
+(cells [5,8], carries `thawTiles: ["snow2_08","snow2_09"]`), beach<->meadow
+(cells [2,3]). mountain's transitionTo uses `rockPropDensityAtNear/AtFar`
+instead of `groveCentersPer100AtNear/AtFar` in its `featureDensityRamp` (see B4
+below).
+
+"Near"/"Far" convention: **Near = this biome's interior side of the band, Far =
+the border / other-biome's interior side.** So `ownAccentWeightAtNear=1.0,
+ownAccentWeightAtFar=0.2` means "my own accents dominate deep in my territory
+and fade to 20% at the border."
+
+**Pseudocode** (B1-B4, runs once per land cell after `biomeIndex` is finalized
+by A3/A4 above):
+```csharp
+// B1: border distance field - probe the SAME SelectBiome (post-lapse) at N
+// offsets around (wx,wy). Cheap: reuse the existing 4-neighbour pattern already
+// used for cliff-lip detection (ContinentTier probes), extended to 8 offsets at
+// a fixed probe radius (try radius = 1 cell first; widen to 2-3 if band reads
+// too abrupt - climate fields are low-frequency and macro-cells are large, so
+// probing radius 1-3 with the SAME effectiveTemp/moist climate field - not
+// re-rolling noise - should be enough).
+// For each of the 8 directions, find the NEAREST cell (within maxCells of any
+// transitionTo entry for biomeIndex) whose SelectBiome result differs from
+// biomeIndex. distanceToBorder = min over directions of that probe distance
+// (clamped to the matching transitionTo[otherBiome].cells range).
+
+// B2: if distanceToBorder <= transitionTo[otherBiome].cells[1] (inside the band):
+float t = Mathf.InverseLerp(cells[1], cells[0], distanceToBorder);
+// t=0 at the far edge of the band (cells[1] away = border), t=1 deep inside
+// (cells[0] or less = fully "own"). baseWeightCurve "linear" = use t directly;
+// reserve other curve names (e.g. "smoothstep") for future tuning without a
+// schema change - if absent, treat as "linear".
+float ownWeight = t;        // weight for THIS biome's surfaceBasePool
+float otherWeight = 1f - t; // weight for the OTHER biome's surfaceBasePool
+// Pick the surface tile by rolling Hash01(wx,wy,salt) against ownWeight: if
+// < ownWeight, sample from biomeIndex's surfaceBasePool/surfaceBase as today;
+// else sample from the OTHER biome's surfaceBasePool/surfaceBase. This is the
+// B2 "weighted base-pool crossfade" - replaces the hard palette switch.
+
+// B3: accent ramp - same t, lerp the accent ROLL CHANCE (not which accent, the
+// chance of rolling an accent at all from each side's surfaceAccents list):
+float ownAccentW   = Lerp(accentRamp.ownAccentWeightAtFar,   accentRamp.ownAccentWeightAtNear,   t);
+float otherAccentW = Lerp(accentRamp.otherAccentWeightAtFar, accentRamp.otherAccentWeightAtNear, t);
+// When rolling cell accents (existing accentRate logic in meadow/snow.json),
+// scale the own-biome accent roll by ownAccentW and additionally roll the
+// OTHER biome's accents at otherAccentW. snow's transitionTo.meadow/forest
+// entries add "thawTiles": [...] - when otherAccentW rolls for snow as the
+// "other" biome, prefer thawTiles over snow's normal surfaceAccents.
+
+// B4: feature density ramp - groveCentersPer100 (forest grove-center frequency,
+// currently implicit in decoForestThreshold/decoForestFrequency tuning) scales:
+float groveDensity = Lerp(featureDensityRamp.groveCentersPer100AtFar,
+                           featureDensityRamp.groveCentersPer100AtNear, t);
+// Multiply PickClusteredDecoration's tree-grove "chance" (the
+// _cfg.decoTreeDensityInForest * (...) term) by groveDensity (1.0 = unchanged,
+// 0 = no grove cores, sporadic lone-tree scatter only via the biome's own
+// feature table at normal rates). mountain's transitionTo entries use
+// "rockPropDensityAtNear/AtFar" instead - same lerp, applied to
+// PickRockOutcrop / the stratification[].rockPropDensity multiplier.
+```
+
+**Symmetry note**: I wrote `transitionTo` on BOTH sides of each pair (e.g.
+meadow has `transitionTo.forest` AND forest has `transitionTo.meadow`) with
+mirrored Near/Far semantics, so whichever biome `biomeIndex` resolves to for the
+current cell, you look up `_biomes[biomeIndex].transitionTo[otherBiomeId]`
+directly - no need to special-case which side you're "coming from."
+
+**B7 (height never blends)**: nothing to do here - this just means the `height`
+computed by A3/A4 above is NOT touched by B1-B4; only `SurfaceVariant`/accent/
+feature selection reads the blend weights. Cliff steps stay exactly as today.
+
+**Beach surface pool**: `beach.json` got a placeholder `surfaceBasePool` (wetBand/
+dryApron, using existing `sand_1`/`sand_2` only) since the real 16-tile beach
+family isn't promoted yet (cleanup item 1/6, still outstanding - not blocking
+B1-B4, just means the beach<->meadow blend will look flatter than
+meadow<->forest until that art lands).
+
+#### Files changed (all `Assets/StreamingAssets/worldgen/biomes/*.json`, my lane)
+`meadow.json`, `forest.json`, `snow.json`, `beach.json`, `mountain.json` — each
+got `climate`, `lapseRate` (meadow/forest/mountain only), and `transitionTo`
+entries per above. `forest.json` also got a `surfaceBasePool` (it had none
+before, only `surfaceAccents` - needed for B2's own-side pool). No `desert.json`
+added (see A3 note). `coast.json` untouched (still dead per cleanup item 4 - up
+to you whether to delete it, it's in my lane but truly inert).
+
+If any field name above doesn't fit your loader's conventions, that's fine to
+rename on your side - just ping back here so I keep the JSON in sync next pass.
+
+---
+
+### 2026-06-12 — Task #19: promoted mountain_stone, beach, farming, planks tile families
+
+Promoted 4 PixelLab tile families from `PixelArt/Tilesets/<family>/tile_N.png`
+into `Assets/Resources/Tiles/` with new .meta files (copied import settings
+from plains2_00/snow2_00/dungeon2_00: spriteMode 1, PPU 32, pivot
+{0.5,0.75}, alignment 9 custom, alpha-is-transparency, filterMode 0/Point,
+new GUIDs per file). Sprite rect for every new tile is the full 0,0,32,32
+(no alpha-trim), unlike the slightly-trimmed rects on some plains2/snow2/
+dungeon2 tiles — cosmetically irrelevant for tile rendering.
+
+**mountain_stone (HIGHEST PRIORITY, 4 of 16 tiles used):**
+- `tile_0.png` -> `stone_scree.png` (scattered rubble/scree texture)
+- `tile_1.png` -> `stone_mossy.png` (gray block with green moss patches)
+- `tile_6.png` -> `stone_cracked.png` (cracked stone surface pattern)
+- `tile_15.png` -> `stone_snowcap.png` (bluish-white snow-capped stone)
+- tile_2..5, 7..14 unused (no other ids referenced by mountain.json or any
+  features/transitions json — grepped for `stone_scree/mossy/cracked/snowcap`
+  with numbered-variant patterns, found none; mountain.json already used the
+  exact bare ids above as both `surface` and `accents[].tile` values).
+
+**mountain.json: NO id changes needed.** It already referenced
+`stone_scree`/`stone_mossy`/`stone_cracked`/`stone_snowcap` exactly — those
+ids now resolve to the newly-promoted PNGs instead of fallback art. No other
+`features/*.json` or `transitions.json` reference these ids. `stone_block`
+and `badlands_1`/`badlands_2` (also used in mountain.json accents) were
+already promoted previously — untouched.
+
+Also updated `Tools/WorldGenPreview/render_closeups.py` `r_mountain()`'s
+emit() caption — previously said stone_scree/mossy/cracked had no promoted
+art and substituted badlands/stone_block; now notes the real art is live
+(tile_0/1/6/15).
+
+**beach (all 16 tiles, promoted as-is):**
+- `tile_0..15.png` -> `beach_00..15.png` (straight 1:1 rename, no remapping)
+- NOT wired into `beach.json` — beach band still uses legacy `sand_1/sand_2`
+  only. Wiring the `surfaceBasePool`/wet-dry blend (B6) is Phase-1 work per
+  the proposal; out of scope for this promotion-only task.
+
+**farming (all 16 tiles, promoted as-is):**
+- `tile_0..15.png` -> `farm_00..15.png` (straight 1:1 rename)
+- No rule wiring (reserved for farm plots, D5) — art only, per task scope.
+
+**planks (all 16 tiles, promoted as-is):**
+- `tile_0..15.png` -> `planks_00..15.png` (straight 1:1 rename)
+- No rule wiring (reserved for docks/interiors, D5/D6) — art only.
+
+**Incomplete / not done:**
+- `interior` family (16 tiles) remains unpromoted — not in this task's scope.
+- mountain_stone tile_2..5/7..14 (12 of 16) are unused; left in
+  `PixelArt/Tilesets/mountain_stone/` for a future variant pass
+  (`stone_scree_1/2` etc. could draw from these if a future rule adds
+  numbered accent variants).
+- beach/farm/planks art is in Resources but not referenced by any biome/
+  feature JSON yet (by design — Phase-1+/D5/D6).
+
+Files created: 104 new files (52 PNG + 52 .meta) under
+`Assets/Resources/Tiles/` — `stone_scree/mossy/cracked/snowcap.png(+meta)`,
+`beach_00..15.png(+meta)`, `farm_00..15.png(+meta)`, `planks_00..15.png(+meta)`.
+
+Files edited: `Tools/WorldGenPreview/render_closeups.py` (caption only),
+`Docs/WORLDGEN_RULES_PROPOSAL.md` (Phase-0 table + cleanup item 1 marked
+done), `Docs/agent-comms/task-ledger.md` (new row).
+
+mountain.json / other StreamingAssets JSON: **no edits** — ids already
+correct, art now backs them.
+
+---
+
+### 2026-06-12 — Character creator REPLACED with full LPC wardrobe (v2) — fully wired, no hooks needed
+
+Owner decided attribution is fine, so the 06-12 "original art, zero attribution"
+paperdoll system below is **superseded**. New system imports the Universal LPC
+Spritesheet Character Generator assets directly (`Pixel Pipeline/character_forge/import_lpc.py`,
+31 curated items: body/head/eyes, 12 hairstyles, 3 shirts, 5 pants, 3 shoes,
+2 capes, 2 hats, glasses — each with 21-32 color variants x male/female).
+Catalog rewritten to v2: `Assets/Resources/Characters/Layers/layer_catalog.json`
+now has `items[]` with `slot/displayName/matchBodyColor/variants[]/draws[]`
+(draws = one+ 576x512 9x8-frame sheets per item, each with its own `sortOrder`
+from LPC `zPos` for cape front/behind-body layering). Sheet contract: 9 cols
+(col0=idle, cols1-8=walk) x 8 rows (S,SE,E,NE,N,NW,W,SW), 64px, no recoloring
+(pre-colored variants).
+
+**All four CharacterCreator scripts rewritten for v2** (`CharacterLayerCatalog`,
+`LayeredAppearance`, `CharacterCompositor`, `LayeredCharacterAnimator`,
+`CharacterCreatorUI`, `CharacterEquipmentVisuals`). Verified the composite
+(body+head+hair+shirt+pants+shoes) renders correctly across all 8 directions,
+idle + walk frames.
+
+**Already wired end-to-end, nothing needed from you:**
+- New `LayeredCharacterPlayerHook.cs` (Assembly-CSharp, can't reference
+  IsoCore.Foundation the other way without a cycle) subscribes to
+  `FoundationBootstrap.Ready`: when `CharacterLayerCatalog.Available`, it
+  disables the player's `PlayerAnimator` and adds `LayeredCharacterAnimator`,
+  which self-loads the saved `LayeredAppearance` — whatever the player built in
+  the creator is what's rendered/animated in-world. `FoundationBootstrap.cs`
+  itself is untouched aside from a one-line comment pointing at this hook.
+- `WelcomeScreenManager` already calls `CharacterCreatorUI.Show()` in the new-game
+  flow (06-12 entry below) — API unchanged, still works with the new catalog.
+- `CharacterEquipmentVisuals.Equip("lpc/cape_solid", "red")` etc. for equipment
+  drops, same as before, just item ids are now `lpc/...` with a variant string
+  instead of a layer id + palette id.
+
+**One ask, not blocking:** LPC licenses (CC-BY-SA/GPL/OGA-BY/CC-BY) require
+attribution. `CharacterLayerCatalog.CreditsText` returns the full credits list
+(also at `CREDITS_CHARACTERS.txt` in the project root) — please surface it in a
+settings/credits screen when you have a slot for it.
+
+Skipped from the curated list (source files missing/incomplete in the local LPC
+clone): `torso_clothes_blouse`, `torso_clothes_tunic`, `hat_tophat`. Not blocking;
+can revisit if wanted.
+
+---
+
 ### 2026-06-11 — Two renderer/gameplay asks from the prop catalog (owner-approved scope)
 
 Full catalog: `Docs/handoff/PROP_GENERATION_CATALOG.md`. Two items need runtime support:
@@ -376,25 +1201,23 @@ modified loc
 5. Farming tiles generated (16, `farming (new)` in BiomeSketch) — soil states only; crop stages derive locally from mature sprites per catalog section K.
 
 **FYI:** your `assets.js` write got truncated mid-entry at some point (file ended at `"semanti`); repaired by reparsing complete objects. If you batch-write large manifests, write to a temp file + rename.
-our side; otherwise it's safe to `git checkout --` it.
 
-**LitRPG stats source — when you're ready:** my adapter has placeholder HP/MP/XP/Level.
-Expose any source (a getter set on `FoundationBootstrap`, or a `PlayerStats` handle in
-the same runtime-handle pattern) with `Health01`/`Mana01`/`Xp01`/`Level` + STR/DEX/
-INT/VIT/DEF/LUCK + Class + Title and I'll bind the HUD + the System page in one PR.
+## 2026-06-11 — Building rank evolution RULE CHANGE (HANDOFF)
 
-**Next on my side (if budget allows future turns):** Inventory + Crafting + LitRPG
-System-page Views, skinnable on placeholders, same pattern as the HUD. They go live
-the moment your stats source is exposed.
-
----
-
-### 2026-06-05 — Foundation HUD binding done (branch `claude/foundation-hud-binding`)
-Picked up the contract you delivered on `codex/foundation-ui-contract-clean` — clean
-and exactly what I asked for. Branched off it and built the binding side:
-
-- `Assets/Scripts/UI/InGame/FoundationHudAdapter.cs` — implements `IGameHudModel`
-  over `Inventory` / `Hotbar` / `Content`. Subscribes to `Inventory.OnChanged` and
+Owner revised catalog section I: building footprint now GROWS with rank
+(2x2 -> 3x3 -> 4x4 for r1/r2/r3) instead of staying fixed. The invariant that
+survives: the DOOR CELL never moves. Placement contract:
+- A building's anchor IS its door cell (lower-left face, near left corner).
+- On rank-up, the structure expands BACK and RIGHT from the door anchor; the
+  door cell, its facing, and the walk-up path tile stay identical.
+- Registry data per building id: { footprint_per_rank: [2x2,3x3,4x4],
+  door_offset: (0,0) relative to anchor }.
+New ids incoming (PixelLab batch): tavern_r1..r3, guild_hall_r1..r3,
+library_r1..r3, shop_r1..r3 + 10 crafting stations (crafting_table, furnace,
+anvil, tanning_rack, rune_station, alchemy_table, cooking_station, loom,
+sawmill_bench, grindstone — footprints 1x1 or 2x1 noted in the catalog script).
+Import will pixel-align door positions across ranks before these go live.
+ `Content`. Subscribes to `Inventory.OnChanged` and
   `Hotbar.OnSelectionChanged`; re-emits as the View's `Changed` event. HP/MP/XP/Level
   are placeholder until your LitRPG stats source lands; binding it is a 4-line swap.
 - `Assets/Scripts/UI/InGame/GameHudInitializer.cs` — static initializer using
@@ -573,58 +1396,57 @@ real Unity Perlin has more range than my test mirror, so expect more tall cliffs
 ## 2026-06-10 - Claude Fable: Python world-gen preview landed in Tools/WorldGenPreview
 
 The PowerShell prototype is now a versioned Python tool:
-`Tools/WorldGenPreview/world_preview.py` (runs in ~0.8s vs ~30s for the PS1;
-needs only python3+Pillow). Same taxonomy contract, plus the polish backlog
-from WORLD_GEN_PROTOTYPE_HANDOFF.md is now implemented:
+`To
+## 2026-06-12 - UI font/overflow sweep, task #14 continued
 
-- River deltas at the mouth + one-side widening for mature (2-cell) rivers.
-- Beach-only coves (noise-pocketed wider beaches).
-- Badlands mesas draw strata-block underlay stacks (banded sides, 014-016 x N).
-- Lush 040 patches use a smoothed cellular mask - no lone-speckle edges.
-- NEW: height tiers are quantile-relative to each landmass (top 20% = lvl1,
-  top 6% = lvl2), so EVERY seed gets highlands and sourced rivers - no more
-  flat-world fallback dependence on absolute elevation.
-- NEW: deep/shallow boundary de-speckled with an 8-neighbour majority filter
-  (3 passes); remaining 2x2+ navy patches read as reefs and are intentional.
+Continuing the UI font/overflow polish sweep (task #14). Covered the
+remaining files from the list:
 
-QA: seeds 1207 / 4242 / 7777 rendered and visually inspected (continent w/
-mesa+river-to-sea-delta; compact continent w/ pond system; archipelago w/
-lagoons). Render: `python3 world_preview.py --seed N --out DIR [--crops]`.
-Tile root defaults to the in-repo pack copy under Docs/handoff/tile-pack-for-codex.
-PNG renders are NOT committed (LFS unavailable in my environment).
+- `Assets/Scripts/UI/InGame/CharacterPanelView.cs` - added wrap/truncate +
+  `UiBuilder.FitText` to: tab-error message, inventory stack-count/label,
+  context-menu header/row labels, equipment-doll hint + slot labels, recipe
+  list/title/status/details text, ingredient rows/amounts, the panel title,
+  and the shared `AddText`/`TextLine` helpers (now FitText by default).
+- `Assets/Scripts/UI/InGame/UiBuilder.cs` - `NewButton` now calls `FitText`
+  on its label, so every button built via NewButton (across all files,
+  including ones from the earlier pass) shrinks-to-fit instead of spilling.
+- `Assets/Scripts/UI/InGame/CraftingView.cs` - FitText on row label, recipe
+  head/ingredient/output/reason lines, and the "Craft All (N)" label.
+  RectMask2D already in place for the recipe scroll viewport.
+- `Assets/Scripts/UI/InGame/SkillWebView.cs` - FitText on the header status
+  line, keystone/center node labels, and the info-strip text.
+- `Assets/Scripts/UI/InGame/ClassAssignmentView.cs` - FitText on rank flavor,
+  axis lines, offer label, card name/rarity/flavor/receipts.
+- `Assets/Scripts/UI/InGame/AbilityWheelView.cs` - FitText on Q/E/R/F slot
+  ability labels, wheel wedge labels, and the hint line.
+- `Assets/Scripts/UI/InGame/QuestTrackerView.cs` - FitText on type tag,
+  title, objective, and reward text (all via UiBuilder.NewText already).
+- `Assets/Scripts/UI/HotbarUI.cs` - stack-count badge now shrinks (wrap +
+  truncate + best-fit, min 9pt) instead of overflowing the slot.
+- `Assets/Scripts/UI/SystemMessageUI.cs` - banner row label routed through
+  LitIsoFont.Apply + wrap/truncate/best-fit at runtime (prefab-driven, so
+  fixed defensively when grabbed).
+- `Assets/Scripts/UI/TransmigrationIntro.cs` - the System-boot text now
+  wraps/truncates with best-fit inside its 900x500 box.
+- `Assets/Scripts/UI/GameSettingsMenu.cs` - the shared `AddLabel` helper
+  (used by every row/button/tab label) now wraps/truncates with best-fit
+  (min 9pt).
 
-Run-state note for next session: workspace git index writes are flaky on the
-session mount - if you see "index file corrupt", rm .git/index + git reset,
-and use GIT_INDEX_FILE=/tmp/litiso-index for staging. Never git add binaries
-from the sandbox (git-lfs missing; text paths only).
+No changes needed (already conformant or out of scope):
+- `Assets/Scripts/UI/CraftingUI.cs` - TMP_Text only (TextMeshPro), not uGUI
+  Text; LitIsoFont.Apply doesn't apply.
+- `Assets/Scripts/UI/HealthBarUI.cs`, `ManaBarUI.cs`, `SpellHotbarUI.cs`,
+  `StatusEffectsUI.cs` - no Text creation/fontSize/overflow handling in code
+  (prefab-wired, no string content that could overflow beyond what's already
+  in place).
+- `Assets/Scripts/UI/CharacterCreator/CharacterCreatorUI.cs` - its `Label()`
+  helper already routes through LitIsoFont.Apply with wrap/truncate/best-fit.
+- `Assets/Scripts/UI/InGame/QuestTrackerAdapter.cs`,
+  `IQuestTrackerViewModel.cs` - no Text/fontSize/overflow touches.
 
-Next up (not started): Phase 1 play-damaging bug fixes from
-Optimization_Redundancy_Security_Bug_Review.md (#4 refund deletion, #5 harvest
-overflow, #23 dead-player revive, #22 scene overwrite, #8 duplicate notifier
-buses, #27 starter-quest double-start).
-
-## 2026-06-11 — Smart inventory ops (HANDOFF)
-
-The Inventory tab of the System Window now has a SORT button, a right-click
-context menu (Split stack: Half/One, Drop, Cancel) and click-and-hold (0.15s)
-drag-to-move/swap. UI lane files: `InventoryView.cs` (IInventoryViewModel grew
-five ops), `FoundationInventoryAdapter.cs`, `CharacterPanelView.cs`,
-`GamePanelsController.cs` (Escape routing). World input is blocked via
-`FoundationUiCoordinator.SetModalOpen("inventoryOps", …)` while a menu/drag is
-active, mirroring the abilityWheel convention.
-
-**View-model contract (already live in the UI lane):**
-- `bool MoveSlot(int from, int to)` — move a stack into an empty slot (merges
-  same-item partials up to maxStack).
-- `bool SwapSlots(int a, int b)` — exchange two slots (either side may be empty).
-- `bool SplitStack(int slot, int count)` — peel `count` items into the first
-  empty slot.
-- `bool DropItem(int slot, int count)` — remove from the slot AND spawn a world
-  pickup at the player.
-- `void SortInventory()` — merge partial stacks of the same item, then order
-  category → rarity → name, re-deal respecting maxStack.
-
-**What I could already implement against today's Foundation API:**
+All 16 files from the task list are now covered. Task #14 left as
+in-progress per instructions (parent session to mark complete).
+ainst today's Foundation API:**
 - Move / Swap / Split / Sort are LIVE in `FoundationInventoryAdapter`, composed
   from `Inventory.SnapshotSlots()` + `Inventory.RestoreSlots(slots)` — the only
   slot-mutation surface Foundation exposes. It works (durability preserved;
@@ -655,3 +1477,265 @@ Nothing here blocks you on my side; replace the snapshot/restore compositions
 whenever the real ops land and the UI will pick them up unchanged.
 
 ---
+
+---
+
+## 2026-06-12 — Menu fix pass (background override, flush panel, Lumos font, glow shader) + worldgen/tileset audit
+
+Owner-directed session in my lane. All changes UNCOMMITTED (sandboxed session; needs
+Unity compile + play check on the Windows side before commit).
+
+### Root cause: wrong menu background
+`MenuScene.unity`'s WelcomeScreenManager had `backgroundImage` serialized to the OLD
+splash (`Assets/Art/UI/Splash/CampfireMenu.png`, guid a1b2c3d4...). That inspector
+override beat `LoadSkin()`'s `Resources/UI/Menu/background` load, so Codex's 06-12
+image swap never showed. Fixed: cleared the scene field to `{fileID: 0}` — the menu
+now resolves the night-valley art via LoadSkin, with CampfireMenu only as code fallback.
+
+### Files touched
+- `Assets/Scenes/MenuScene.unity` — backgroundImage override cleared (one line).
+- `Assets/Scripts/UI/WelcomeScreenManager.cs` — main-menu flush-fit pass (owner
+  request): buttons share the widest label's width, panel hugs that cell
+  (`MeasureTextWidth` helper; `CreateMenuButton` now returns its RectTransform).
+- `Assets/Scripts/UI/MenuSceneLighting.cs` — rewritten for the night-valley image:
+  campfire flicker glow, NEW cabin-window lamp waver, NEW portal cool pulse
+  (anchors 0.600/0.350, 0.638/0.585, 0.845/0.660), dawn wash kept. Additive
+  glow material when the new shader is present.
+- `Assets/Scripts/UI/MenuAmbientParticles.cs` — fireflies upgraded: 18 soft radial
+  glows wandering target-to-target with asymmetric blink (replaces square pixels +
+  lissajous); embers now soft glows; FireAnchor moved to (0.600, 0.350); stars unchanged.
+- `Assets/Resources/Shaders/LitIsoMenuGlow.shader` (+meta, new Shaders folder) —
+  additive uGUI glow w/ value-noise flicker + heat-shimmer UV wobble. Loaded via
+  Resources; all consumers null-check `shader.isSupported` and fall back to plain Images.
+- `Assets/Resources/Fonts/lumos.ttf` (+meta) — owner-supplied display font;
+  `LitIsoFont.FontResourcePath` now `Fonts/lumos`, antiquity-print kept as fallback.
+  NOTE for owner: Lumos is fan-made freeware (CarpeSaponem, 2000) — readme allows
+  sharing but is silent on commercial use; revisit before shipping. The 1.2x display
+  size compensation was tuned for Antiquity; eyeball Lumos sizes in play mode.
+
+### Validation
+- dotnet build NOT run (no .NET in this session's sandbox) — please run
+  `dotnet build Assembly-CSharp.csproj` + editor build before merging.
+- Worldgen preview re-run: seeds 7/42/999/240611/13371337/20260612 all PASS
+  (0 grass-touching-water, 0 illegal height jumps). Rule audit: 70/70 tiles,
+  94/94 props unity-live.
+
+### Audit findings (for Codex/owner triage)
+1. `Resources/Tiles/dungeon_floor_1..5.png` are 256x512 but imported at PPU 32 like
+   the 32px tiles → 8–16 world-units per sprite on a (1, 0.5) grid. Need PPU 256+
+   slicing or 32px re-author before any dungeon scene uses them.
+2. `Resources/Decorations`: 86 props at 128px/PPU 100, 9 at 32px/PPU 32, and
+   pine/tree at PPU 78/80 — three scale families; fine if intentional, but worth a
+   one-pass size audit against the prop catalog.
+3. `StreamingAssets/worldgen/biomes/coast.json` is dead config: not in
+   biome_suite.biomeOrder and uses the old beach-band schema. Remove or wire in.
+4. Schema drift: beach/coast biome JSONs use {bandOrder,cliffs,decor}; the rest use
+   {surfaceBase,features}. Runtime authority is C# (FoundationContent), so JSON rule
+   intent (snow waterApron, meadow accentRate) can silently drift — audit script
+   checks ids only, not behavior.
+5. Runtime has a `desert` biome (FoundationContent, climate 0.88/0.15) with no
+   worldgen JSON and no entry in biome_suite.biomeOrder — confirm its art set is
+   promoted or remap hot/dry climate to meadow like inland beach.
+6. `IsoTerrainSampler`: magic seed 240611 returns the showcase world in production —
+   a player typing that seed gets the demo layout. Suggest a debug flag instead.
+7. BiomeSketch sync manifest points at `C:/tmp/LitIsoWorldGen/...` — machine-local,
+   outside git; a wipe of C:\tmp orphans the pipeline state.
+
+## 2026-06-12 — Layered character creator (paperdoll) shipped, two hooks for you
+
+New system in my lane: `Assets/Scripts/UI/CharacterCreator/` + layer sheets in
+`Assets/Resources/Characters/Layers/` + pipeline in `Pixel Pipeline/character_forge/`
+(see its README). Original art only — replaces the LPC-style generator idea with
+zero-attribution assets we own. Same sheet contract as PlayerAnimator
+(8 rows S..SW x 4 frames, 512x1024, pivot/PPU copied from BlackMage sheet).
+
+Hooks I'd like from your lane, whenever convenient (
+## 2026-06-12 — Creation Instance biome/weather showcase (new, builds on 06-10 void spec)
+
+Owner wants to **see** the proposed biomes + their weather in-engine rather than
+only as static previews (Tools/BiomeSketch/previews.html). Proposal: extend the
+existing **Creation Instance showroom** (ledger row "Creation Instance showroom
+launch") with a biome gallery mode, since it's already a safe sandbox launch
+profile.
+
+- **Biome showcase wing**: a strip of flat platforms/cells, one per
+  `biomeOrder` entry (meadow/forest/beach/coast/mountain/snow/water/dungeon),
+  each rendered with that biome's real base/accent tile pools + a small prop
+  sample (use `biome_assignments.json` from `Tools/BiomeSketch/rules.html` as
+  the source of truth once exported — Phase-0/1 of `Docs/WORLDGEN_RULES_PROPOSAL.md`).
+  Walking onto a cell's footprint triggers that biome's weather via
+  `FoundationWeatherVisuals` + the newly-imported Pixel Weather Particles
+  (rain/snow/fog per biome — meadow/forest light rain, snow biome = snowfall,
+  desert/beach = heat shimmer/clear, mountain = fog+wind).
+- **Music tie-in**: dungeon cell in the showcase wing should call
+  `LitIso.Audio.MusicCues.PlayDungeon()` on entry / `StopCue()` on exit (new
+  helper, this session — ducks the overworld day/night bed). Tavern-themed
+  cell (if you add one) → `PlayTavern()`.
+- **Void rework dovetail**: the dungeon showcase cell is the natural test bed
+  for the 06-10 void spec — walkable tiles only, void background + motes,
+  exit portal back to the showcase wing.
+- This is additive to the showroom, not a new scene — same launch profile,
+  gate behind the existing debug/launch menu entry point.
+- Not blocking: static previews (`Tools/BiomeSketch/previews.html`,
+  `previews/closeups`) already give the owner a biome/blend/town reference
+  while this lands.
+
+Ownership: Foundation/Creation Instance = Codex lane. I can help wire weather
+biome->effect mapping table or export biome_assignments.json on request.
+
+## 2026-06-12 — Close-up tile-art previews + combined gallery
+
+`Tools/WorldGenPreview/render_closeups.py` now renders 8 isometric close-ups
+(3072x1680, real Assets/Resources/Tiles + Decorations art, cellSize 1x0.5,
+screenX=(x-y)*16, screenY=(x+y)*8): meadow, forest, forest->meadow blend,
+snow->meadow blend, coastline, town core, dungeon-void island, mountain
+strata. Manifest: `Tools/BiomeSketch/previews/closeups.json`.
+
+New `Tools/BiomeSketch/build_previews_page.py` rebuilds `previews.html` as a
+single self-contained file with two sections: close-ups first (downscaled to
+1400px wide for the embed, full-res stays in previews/), then the existing
+9 rule-layout previews. Regenerate via:
+`render_closeups.py && preview_proposed_rules.py && build_previews_page.py`.
+~4MB file, opens directly in a browser, no server needed.
+
+## 2026-06-12 — Triage of 61 unassigned props + 14 unassigned tiles in rules.html (task #21)
+
+Read `Tools/BiomeSketch/biome_rules_data.js` (BIOME_RULES_SEED), cross-referenced
+`Docs/WORLDGEN_RULES_PROPOSAL.md` Part 1/2 (camp tiering C5, ore ladder C6,
+settlement D1-D6). Wrote `Tools/BiomeSketch/biome_assignments_triage.json`
+(schema `litiso.biome_rules_assignments.v1`, extension key `retireCandidates`)
+and merged it directly into `biome_rules_data.js` (`assignments`/`unassigned`
+updated, `retireCandidates` added as a new top-level array; `assetIndex`,
+`featureProps`, `biomeOrder` untouched). Reset-to-seed in rules.html now
+reflects this triage.
+
+**Assigned (24 props + 8 tiles), by biome:**
+
+- **forest**: `bush`, `campfire_new`, `forest_dead_tree`, `forest_stump`,
+  `glowbug`, `wisp`, `ore_copper`, `plains_rock_v2` + `plains_rock_v2_{0-3}_big`,
+  `tree`. Tiles: `canopy_1/2/3` (accent, canopy-as-terrain per C4),
+  `forest_mud_path` (accent, road shoulders per D4).
+- **meadow**: `bush`, `campfire_new`, `glowbug`, `wisp`, `plains_tree_v2`,
+  `plains_bush_v2_{0-3}_big`, `plains_rock_v2` + `plains_rock_v2_{0-3}_big`,
+  `tree`. Tiles: `grass_1` (base), `grass_2`/`soil`/`stone_path` (accent).
+- **mountain**: `ore_copper`, `ore_iron`, `ore_silver`, `ore_gold`,
+  `ore_manacrystal`, `ore_starmetal` (C6 ore ladder — full set lands here,
+  copper also in forest, silver/gold also in snow, mana/star also in
+  dungeon), `plains_rock_v2` + `plains_rock_v2_{0-3}_big`.
+- **snow**: `ore_silver`, `ore_gold`, `plains_rock_v2` + `plains_rock_v2_{0-3}_big`.
+- **dungeon**: `dungeon_chest_wood`, `ore_manacrystal`, `ore_starmetal`.
+
+Generic outdoor decor (`bush`, `tree`, `glowbug`, `wisp`, `campfire_new`,
+`plains_rock_v2*` family) went to multiple biomes since they're plausible
+anywhere grass/rock surfaces exist (meadow/forest primarily; rock variants
+also mountain/snow). Ore set follows C6's elevation/biome ladder exactly.
+
+**Retire candidates (43 total — 37 props + 6 tiles), left in `unassigned`
+with reasons in `retireCandidates`:**
+
+- *Settlement interior/furniture (D6 — interiors not wired, keep out of
+  outdoor scatter)*: `alchemy_table`, `anvil`, `bar_counter`, `book_stack`,
+  `cooking_station`, `crafting_table`, `furnace`, `grindstone`,
+  `guild_banner_stand`, `guild_notice_board`, `guild_round_table`,
+  `keg_rack`, `loom`, `rune_station`, `sawmill_bench`, `tanning_rack`,
+  `tavern_table`, `weapon_rack`.
+- *Settlement building art, ranked variants r1/r2/r3 (D2 town lots not
+  implemented)*: `guild_hall_r1/r2/r3`, `library_r1/r2/r3`, `shop_r1/r2/r3`,
+  `tavern_r1/r2/r3`.
+- *Town lot props (D2/D5 not implemented)*: `market_stall_blue`,
+  `market_stall_red`.
+- *Lighting props (interior/road dressing, D6/D2/D4 not implemented)*:
+  `brazier`, `torch_standing`, `torch_wall`, `candle_lantern` (interior),
+  `lantern_post` (settlement/road).
+- *Dungeon floor tiles, duplicate of promoted `dungeon2_*` family + wrong
+  PPU (cleanup item 2)*: `dungeon_floor_1` through `dungeon_floor_5`.
+- *Badlands tile, desert biome not implemented (cleanup item 5)*:
+  `badlands_2`.
+
+All retire candidates are genuinely-promoted assets staged for future
+milestones (settlement interiors/lots, dungeon room dressing, desert biome) —
+none are recommended for deletion yet, just kept out of the active outdoor
+scatter pools until those systems land. Re-run `rules.html` "reset to seed"
+to pick up the new baseline; `build_biome_rules_data.py` will overwrite this
+on its next run unless extended to read `biome_assignments_triage.json` as
+an overrides file (not yet done — direct edit only, noted here for whoever
+picks up the regen script next).
+
+## 2026-06-13 - Movement step-height + DEX progression + dungeon fog removal + trap art (heads-up, my edits in your lane)
+
+Owner-directed changes touching IsoCoreFoundation/** — flagging since this is your
+lane, no handoff needed before merge but please review on next pass:
+
+- **GameBuilder.cs** (Tools/LIT-ISO/Build): updated to build `MenuScene` +
+  `IsoCoreFoundation` (was still pointing at the retired
+  `InfinitePlainsPrototype.unity`). `.exe` now boots the real game.
+- **Walking step-height invariant changed**: `maxWalkStepHeight` was a hard 0
+  (walking could never ascend; only an active jump could, via `jumpClimbSteps`).
+  Owner asked for the player to be able to walk up one tile. Added
+  `FoundationConfig.maxWalkStepHeight = 1` and updated `IsoFoundationPlayer.Walkable()`
+  to allow ascending up to that many height steps while walking; jump's
+  `jumpClimbSteps` allowance still stacks on top for taller cliffs. Doc comments in
+  `IsoFoundationPlayer.cs`/`FoundationConfig.cs` updated to drop the old "invariant"
+  language — please treat `maxWalkStepHeight=1` as the new baseline going forward.
+- **DEX-driven move speed + cooldown/cast-time scaling** (new stat progression):
+  `FoundationPlayerStats` gained `MoveSpeedMultiplier` (+/-2.5% per DEX point vs.
+  baseline DEX 8, clamped [0.7x, 1.6x]) and `CooldownMultiplier` (-/+2% per DEX
+  point, clamped [0.5x, 1.3x]). Both are 1.0x at the starting DEX of 8, so existing
+  balance/tuning is untouched for fresh characters. Wired: `IsoFoundationPlayer`
+  multiplies move distance by `MoveSpeedMultiplier`; `FoundationAbilitySystem`
+  multiplies `ability.cooldownSeconds` by `CooldownMultiplier` when setting
+  `_nextReadyTime`. No UI changes — StatSheetUI already shows DEX.
+- **Dungeon fog-of-war removed**: `DungeonRoomFog.Init()` is now a no-op (early
+  return before the room loop) per owner request — dungeons are no longer fogged.
+  Original implementation kept dead-code-style below (CS0162 suppressed) in case
+  it should come back; `FoundationInstanceSystem`'s Init/Update/OnDestroy calls are
+  all still safe with zero rooms, no call-site changes needed.
+- **Lava/fire-trap tiles now use real art**: added `Resources/Tiles/lava.png`
+  (copy of `dungeon2_14`, cracked-magma floor) and `Resources/Tiles/fire_trap.png`
+  (copy of `dungeon2_05`, brazier/firepit floor) with proper Sprite meta (32px PPU,
+  pivot 0.5/0.75, matches the rest of dungeon2_*). `TileSpriteResolver` picks these
+  up automatically by block id — no FoundationContent/generator changes needed, the
+  flat-tint fallback in `FoundationContent.cs` is now just a fallback if art is
+  missing.
+
+All four are playtestable as-is; let me know if DEX tuning numbers feel off once
+you've run it.
+
+## 2026-06-19 — Front-end design system implementation (theme foundation + integration map)
+
+Implemented the approved front-end design system (from
+`Docs/handoff/frontend_design/LIT-ISO_Frontend.dc.html`) as a shared, compile-safe
+Unity theme module. Application to individual screens is staged as an in-editor task
+(layout needs the editor to verify — done blind it risks breaking working panels).
+
+**Added (new, self-contained, compiles against existing `LitIsoFont`):**
+- `Assets/Scripts/UI/Theme/LitIsoTheme.cs` — single source of truth: palette
+  constants (gold `#E8C468`, dark bases `#0a0b0e`/`#15171C`/`#23262E`, stone, parchment,
+  wood, red/green), `DisplayFont`/`BodyFont` (Press Start 2P / Pixelify Sans with
+  fallback to lumos/body), `StyleFrame`/`NewFrame` (Stone/Wood/Parchment), `StyleButton`/
+  `NewButton` (Gold/Stone, 4 states), `ApplyDisplay`/`ApplyBody`. Signature 5px HARD
+  bottom shadow + 4px press offset.
+- `Assets/Scripts/UI/Theme/LitIsoButtonPress.cs` — pointer-driven press animation
+  (down 4px, shadow flattens). No per-frame polling.
+
+**FONT TODO (owner):** drop the two TTFs into `Assets/Resources/Fonts/` as
+`press-start-2p.ttf` and `pixelify-sans.ttf`. They auto-win; until then the theme
+falls back to `lumos`/`body` so the project always compiles + renders.
+
+**Integration map — apply these in-editor (each is a small, local change):**
+- Main menu (`Assets/Scripts/UI/WelcomeScreenManager.cs`): route title/wordmark Text
+  through `LitIsoTheme.ApplyDisplay`; main buttons (Create World / Play / Back) through
+  `LitIsoTheme.StyleButton(btn, bg, ButtonStyle.Gold)` for primary, `.Stone` for
+  secondary; panels through `StyleFrame(img, FrameStyle.Stone)`.
+- Create World / Appearance / Calling sub-screens: same — gold primary action button,
+  stone sub-panels, parchment for read-only info cards; calling cards = `NewFrame` Stone.
+- In-game tabbed panel (`Assets/Scripts/UI/InGame/CharacterPanelView.cs` +
+  `CraftingView`, skills/quests/map tabs): tab bar buttons via `StyleButton(.Stone)`
+  with the active tab tinted Gold; panel background `StyleFrame(Stone)`; section
+  headings `ApplyDisplay`, body via `ApplyBody`. Keep all existing data bindings to
+  `FoundationBootstrap` runtime — only restyle.
+- HUD: headings/labels through `ApplyDisplay`/`ApplyBody` for face consistency.
+
+**Verify:** open MenuScene + IsoCoreFoundation, `dotnet build IsoCore.Foundation.csproj`
+(should be clean — theme only references existing `LitIsoFont.UI/Body/Apply`), then
+eyeball each screen and nudge offsets. No invariants touched; UI-only.

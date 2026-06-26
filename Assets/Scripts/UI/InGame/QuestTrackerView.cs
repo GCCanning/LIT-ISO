@@ -83,6 +83,12 @@ namespace LitIso.UI.InGame
 
         void BuildUI()
         {
+            // Retired: the quest tracker now renders inside GameUIController's top-right
+            // cluster (canonical HUD). Skip building this standalone top-right panel so
+            // the two don't overlap. Init()/Refresh() stay compiling but draw nothing.
+            return;
+
+#pragma warning disable CS0162 // unreachable code (intentional neutralization)
             if (_canvas != null)
                 Destroy(_canvas.gameObject);
 
@@ -174,6 +180,7 @@ namespace LitIso.UI.InGame
             rewRt.anchoredPosition = new Vector2(PanelPad, y);
             rewRt.sizeDelta = new Vector2(PanelW - PanelPad * 2, 14f);
             ApplyHudViewMode(_hudMode);
+#pragma warning restore CS0162
         }
 
         // ---- model change ---------------------------------------------------

@@ -1,4 +1,5 @@
 {
+ "_design": "PixelLab pl_grass tiles as forest floor (2026-06-24). pl_grass_01 (dark) dominant; pl_soil_01 for leaf-litter/underbrush accents. Trees remain the biome identity.",
  "params": {
   "temperature": [
    0.25,
@@ -9,29 +10,20 @@
    1.0
   ]
  },
- "surfaceBase": "forest_grass_base",
- "surfaceAccents": [
-  {
-   "tile": "forest_floor",
-   "w": 14
-  },
-  {
-   "tile": "forest_leaf_litter",
-   "w": 12
-  },
-  {
-   "tile": "forest_moss_grass",
-   "w": 10
-  },
-  {
-   "tile": "forest_dark_underbrush",
-   "w": 6
-  },
-  {
-   "tile": "forest_grass_tufts",
-   "w": 6
-  }
- ],
+ "climate": {
+  "temperatureRange": [
+   0.25,
+   0.7
+  ],
+  "moistureRange": [
+   0.45,
+   1.0
+  ],
+  "priority": 1
+ },
+ "lapseRate": {
+  "perHeightStep": 0.06
+ },
  "elevation": {
   "range": [
    0,
@@ -39,12 +31,141 @@
   ],
   "relief": "rolling"
  },
+ "surfaceBase": "pl_grass_01",
+ "surfaceBasePool": [
+  {
+   "tile": "pl_grass_01",
+   "w": 40
+  },
+  {
+   "tile": "pl_grass_02",
+   "w": 24
+  },
+  {
+   "tile": "pl_grass_05",
+   "w": 20
+  },
+  {
+   "tile": "pl_grass_03",
+   "w": 18
+  },
+  {
+   "tile": "pl_soil_01",
+   "w": 10
+  },
+  {
+   "tile": "pl_grass_04",
+   "w": 10
+  }
+ ],
+ "heightBandOverrides": [
+  {
+   "heightRange": [
+    0,
+    0
+   ],
+   "tilePool": [
+    {
+     "tile": "pl_grass_01",
+     "w": 30
+    },
+    {
+     "tile": "pl_soil_01",
+     "w": 22
+    },
+    {
+     "tile": "pl_grass_05",
+     "w": 15
+    },
+    {
+     "tile": "pl_grass_03",
+     "w": 14
+    }
+   ]
+  },
+  {
+   "heightRange": [
+    1,
+    1
+   ],
+   "tilePool": [
+    {
+     "tile": "pl_grass_01",
+     "w": 40
+    },
+    {
+     "tile": "pl_grass_02",
+     "w": 20
+    },
+    {
+     "tile": "pl_grass_05",
+     "w": 20
+    },
+    {
+     "tile": "pl_soil_01",
+     "w": 10
+    }
+   ]
+  },
+  {
+   "heightRange": [
+    2,
+    6
+   ],
+   "tilePool": [
+    {
+     "tile": "pl_grass_02",
+     "w": 20
+    },
+    {
+     "tile": "pl_grass_01",
+     "w": 20
+    },
+    {
+     "tile": "pl_grass_05",
+     "w": 20
+    },
+    {
+     "tile": "pl_grass_04",
+     "w": 10
+    },
+    {
+     "tile": "pl_grass_03",
+     "w": 8
+    }
+   ]
+  }
+ ],
+ "surfaceAccents": [
+  {
+   "tile": "pl_soil_01",
+   "w": 7
+  },
+  {
+   "tile": "pl_grass_01",
+   "w": 4
+  },
+  {
+   "tile": "pl_grass_02",
+   "w": 4
+  },
+  {
+   "tile": "pl_grass_03",
+   "w": 3
+  },
+  {
+   "tile": "pl_soil_01",
+   "w": 3
+  }
+ ],
+ "accentRate": 0.22,
+ "accentClump": 0.28,
  "features": [
   "forest_grove",
+  "forest_clearing",
   "forest_bush_patch",
-  "clearing",
-  "rock_outcrop",
-  "stump_log_litter"
+  "stump_log_litter",
+  "rock_outcrop"
  ],
  "transitionTo": {
   "meadow": {
@@ -52,7 +173,34 @@
     4,
     7
    ],
-   "_": "tree density fades grove->sporadic; flower/tuft density rises toward plains (owner rule)"
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.2,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 0.8
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 1.0,
+    "groveCentersPer100AtFar": 0
+   }
+  },
+  "snow": {
+   "cells": [
+    5,
+    8
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 1.0,
+    "groveCentersPer100AtFar": 0
+   }
   }
  }
 }

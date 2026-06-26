@@ -21,6 +21,15 @@ public class GameStartupManager : MonoBehaviour
              "actually shows when you press Play.")]
     public bool skipMenuInDevelopment = false;
 
+    // Keep the game rendering when the editor/window isn't focused. Without this,
+    // Unity pauses the Game view on focus loss, so off-screen tooling (and remote
+    // screenshots) only ever capture a black frame. Runs once before any scene loads.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void EnableRunInBackground()
+    {
+        Application.runInBackground = true;
+    }
+
     private void Awake()
     {
         // Optional fast-path for iteration. OFF by default.

@@ -1,21 +1,21 @@
 {
+ "_design": "Meadow SIGNATURE feature. Minecraft plains: visible coloured flower clusters are the biome identity cue. Tighter clusters (radius 2, fillDensity 0.45) = defined patches, not random scatter. Added tuft variants and plains_flower_grass tile as alternative entries. Reduced centersPer100 (1.8 vs 2.2) — fewer patches but each reads clearly.",
+
  "configured": {
   "type": "cluster",
   "entries": [
-   {
-    "id": "flower",
-    "w": 3
-   },
-   {
-    "id": "flower_tulip",
-    "w": 2
-   }
+   { "id": "flower",              "w": 4 },
+   { "id": "flower_tulip",        "w": 3 },
+   { "id": "plains_grass_tufts",  "w": 2 },
+   { "id": "tuft",                "w": 1 }
   ]
  },
  "placement": {
-  "groveCentersPer100": 2.2,
+  "groveCentersPer100": 1.8,
   "radius": 2,
-  "fillDensity": 0.35,
-  "band": "grass"
+  "fillDensity": 0.45,
+  "band": "grass",
+  "minSpacingBetweenCenters": 8,
+  "_": "Min spacing 8 = flower patches are deliberate island accents across meadow, never merging into one blob."
  }
 }

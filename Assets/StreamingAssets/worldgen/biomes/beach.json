@@ -1,0 +1,146 @@
+{
+ "_design": "PixelLab pl_sand tiles (2026-06-24). h0=water_deep (ocean kept), h1=wet sand pl_sand_01, h2-3=dry sand pl_sand_02/03.",
+ "params": {
+  "appliedAs": "band where continents meet water",
+  "runtimeBiome": "beach"
+ },
+ "climate": {
+  "temperatureRange": [
+   0.0,
+   1.0
+  ],
+  "moistureRange": [
+   0.0,
+   1.0
+  ],
+  "priority": -1
+ },
+ "elevation": {
+  "range": [
+   0,
+   2
+  ],
+  "relief": "flat"
+ },
+ "lapseRate": {
+  "perHeightStep": 0.02
+ },
+ "surfaceBase": "pl_sand_02",
+ "heightBandOverrides": [
+  {
+   "heightRange": [
+    0,
+    0
+   ],
+   "_": "Water band \u2014 kept as-is per user request",
+   "tilePool": [
+    {
+     "tile": "water_deep",
+     "w": 60
+    },
+    {
+     "tile": "water_swell_1",
+     "w": 25
+    }
+   ]
+  },
+  {
+   "heightRange": [
+    1,
+    1
+   ],
+   "_": "Wet sand",
+   "tilePool": [
+    {
+     "tile": "pl_sand_01",
+     "w": 55
+    },
+    {
+     "tile": "pl_sand_02",
+     "w": 20
+    },
+    {
+     "tile": "pl_sand_03",
+     "w": 12
+    }
+   ]
+  },
+  {
+   "heightRange": [
+    2,
+    3
+   ],
+   "_": "Dry sand/dune",
+   "tilePool": [
+    {
+     "tile": "pl_sand_02",
+     "w": 50
+    },
+    {
+     "tile": "pl_sand_03",
+     "w": 20
+    },
+    {
+     "tile": "pl_sand_01",
+     "w": 15
+    }
+   ]
+  }
+ ],
+ "surfaceBasePool": [
+  {
+   "tile": "pl_sand_02",
+   "w": 55
+  },
+  {
+   "tile": "water_deep",
+   "w": 40
+  },
+  {
+   "tile": "pl_sand_01",
+   "w": 18
+  },
+  {
+   "tile": "pl_sand_03",
+   "w": 14
+  }
+ ],
+ "surfaceAccents": [
+  {
+   "tile": "pl_sand_01",
+   "w": 5
+  },
+  {
+   "tile": "pl_sand_03",
+   "w": 4
+  },
+  {
+   "tile": "pl_stone_03",
+   "w": 3
+  }
+ ],
+ "accentRate": 0.07,
+ "accentClump": 0.5,
+ "features": [
+  "shore_rocks"
+ ],
+ "transitionTo": {
+  "meadow": {
+   "cells": [
+    2,
+    4
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "groveCentersPer100AtNear": 0,
+    "groveCentersPer100AtFar": 0
+   }
+  }
+ }
+}

@@ -1,68 +1,290 @@
 {
+ "_design": "PixelLab pl_stone tiles (2026-06-24). pl_stone_01 grey=base, pl_stone_02 dark-cobble=mid, pl_stone_03 pale=snowcap. Grassy lower slopes use pl_grass_01/02.",
  "params": {
-  "promotedBy": "elevation",
-  "see": "noise_params.elevation.mountainAbove"
+  "promotedBy": "elevation"
  },
- "surfaceBase": "grass_3",
+ "climate": {
+  "temperatureRange": [
+   0.0,
+   1.0
+  ],
+  "moistureRange": [
+   0.0,
+   1.0
+  ],
+  "priority": -1
+ },
+ "elevationGate": {
+  "minHeight": 3
+ },
+ "lapseRate": {
+  "perHeightStep": 0.08
+ },
  "stratification": [
+  {
+   "band": [
+    0,
+    1
+   ],
+   "_": "Exposed rock base",
+   "tilePool": [
+    {
+     "tile": "pl_stone_01",
+     "w": 50
+    },
+    {
+     "tile": "pl_stone_02",
+     "w": 25
+    },
+    {
+     "tile": "pl_stone_03",
+     "w": 20
+    }
+   ],
+   "rockPropDensity": 0.1,
+   "oreDensity": 0.008
+  },
+  {
+   "band": [
+    1,
+    2
+   ],
+   "_": "Grassy lower slopes",
+   "tilePool": [
+    {
+     "tile": "pl_grass_01",
+     "w": 45
+    },
+    {
+     "tile": "pl_stone_03",
+     "w": 20
+    },
+    {
+     "tile": "pl_stone_01",
+     "w": 20
+    },
+    {
+     "tile": "pl_grass_02",
+     "w": 10
+    }
+   ],
+   "rockPropDensity": 0.08,
+   "oreDensity": 0.018,
+   "features": [
+    "lone_pine"
+   ]
+  },
+  {
+   "band": [
+    2,
+    3
+   ],
+   "_": "Alpine meadow \u2014 pl_grass dominates with stone outcrops",
+   "tilePool": [
+    {
+     "tile": "pl_grass_02",
+     "w": 30
+    },
+    {
+     "tile": "pl_stone_03",
+     "w": 25
+    },
+    {
+     "tile": "pl_grass_01",
+     "w": 20
+    },
+    {
+     "tile": "pl_stone_01",
+     "w": 15
+    },
+    {
+     "tile": "pl_grass_03",
+     "w": 6
+    }
+   ],
+   "rockPropDensity": 0.12,
+   "oreDensity": 0.035
+  },
   {
    "band": [
     3,
     4
    ],
-   "surface": "grass_3",
-   "accents": [
+   "_": "Wind-scoured high alpine \u2014 stone breaking through",
+   "tilePool": [
     {
-     "tile": "stone_mossy",
+     "tile": "pl_stone_01",
+     "w": 30
+    },
+    {
+     "tile": "pl_stone_02",
+     "w": 25
+    },
+    {
+     "tile": "pl_grass_01",
+     "w": 15
+    },
+    {
+     "tile": "pl_stone_03",
+     "w": 12
+    },
+    {
+     "tile": "pl_stone_02",
      "w": 8
     }
    ],
-   "rockPropDensity": 0.06,
-   "oreDensity": 0.01
+   "rockPropDensity": 0.18,
+   "oreDensity": 0.055
   },
   {
    "band": [
     4,
     5
    ],
-   "surface": "stone_scree",
-   "accents": [
+   "_": "Snowcap approach \u2014 pale stone and dark cobble",
+   "tilePool": [
     {
-     "tile": "stone_mossy",
-     "w": 10
+     "tile": "pl_stone_03",
+     "w": 40
     },
     {
-     "tile": "badlands_1",
+     "tile": "pl_stone_02",
+     "w": 25
+    },
+    {
+     "tile": "pl_stone_01",
+     "w": 20
+    },
+    {
+     "tile": "pl_snow_01",
      "w": 8
     }
    ],
-   "rockPropDensity": 0.14,
-   "oreDensity": 0.03
+   "rockPropDensity": 0.22,
+   "oreDensity": 0.07
   },
   {
    "band": [
     5,
     7
    ],
-   "surface": "stone_cracked",
-   "accents": [
+   "_": "True snowcap \u2014 pale stone and snow",
+   "tilePool": [
     {
-     "tile": "stone_snowcap",
-     "w": 14
+     "tile": "pl_stone_03",
+     "w": 50
     },
     {
-     "tile": "stone_block",
-     "w": 8
+     "tile": "pl_snow_01",
+     "w": 30
+    },
+    {
+     "tile": "pl_stone_02",
+     "w": 18
     }
    ],
-   "rockPropDensity": 0.22,
-   "oreDensity": 0.06
+   "rockPropDensity": 0.28,
+   "oreDensity": 0.09
   }
  ],
  "features": [
   "rock_outcrop",
+  "alpine_rock_vein",
+  "lone_pine",
   "ore_copper",
-  "lone_pine"
+  "ore_iron",
+  "ore_silver"
  ],
- "_": "owner rule: stone & snowcap increase with height; ore scales with elevation"
+ "oreDistribution": {
+  "ore_copper": {
+   "minH": 1,
+   "maxH": 4,
+   "peakH": 2,
+   "baseDensity": 0.04
+  },
+  "ore_iron": {
+   "minH": 2,
+   "maxH": 5,
+   "peakH": 3,
+   "baseDensity": 0.025
+  },
+  "ore_silver": {
+   "minH": 3,
+   "maxH": 6,
+   "peakH": 4,
+   "baseDensity": 0.012
+  },
+  "ore_gold": {
+   "minH": 4,
+   "maxH": 7,
+   "peakH": 5,
+   "baseDensity": 0.006
+  },
+  "ore_manacrystal": {
+   "minH": 5,
+   "maxH": 7,
+   "peakH": 6,
+   "baseDensity": 0.003
+  },
+  "ore_starmetal": {
+   "minH": 6,
+   "maxH": 7,
+   "peakH": 7,
+   "baseDensity": 0.001
+  }
+ },
+ "transitionTo": {
+  "meadow": {
+   "cells": [
+    4,
+    6
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "rockPropDensityAtNear": 0.1,
+    "rockPropDensityAtFar": 0.0
+   }
+  },
+  "forest": {
+   "cells": [
+    4,
+    6
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.0,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 1.0
+   },
+   "featureDensityRamp": {
+    "rockPropDensityAtNear": 0.1,
+    "rockPropDensityAtFar": 0.0
+   }
+  },
+  "snow": {
+   "cells": [
+    3,
+    5
+   ],
+   "baseWeightCurve": "linear",
+   "accentRamp": {
+    "ownAccentWeightAtNear": 1.0,
+    "ownAccentWeightAtFar": 0.3,
+    "otherAccentWeightAtNear": 0.0,
+    "otherAccentWeightAtFar": 0.7
+   },
+   "featureDensityRamp": {
+    "rockPropDensityAtNear": 0.22,
+    "rockPropDensityAtFar": 0.1
+   }
+  }
+ },
+ "_": "heightFreq 0.13 = wider gradual peaks. pl_stone increases with height, pl_snow at snowcap."
 }

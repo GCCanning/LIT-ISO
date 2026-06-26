@@ -1,17 +1,20 @@
 {
+ "_design": "Meadow secondary texture. Reduces dead-grass monotony between flower patches. Tuft + grass_tufts mix. Fewer and bigger patches than flower_patch (radius 2.5, fillDensity 0.38). Low-priority filler — gets suppressed if flower_patch or bush_patch already occupies the cell.",
+
  "configured": {
   "type": "cluster",
   "entries": [
-   {
-    "id": "tuft",
-    "w": 1
-   }
+   { "id": "tuft",               "w": 4 },
+   { "id": "plains_grass_tufts", "w": 3 },
+   { "id": "tuft",               "w": 2 }
   ]
  },
  "placement": {
-  "groveCentersPer100": 2.5,
-  "radius": 2,
-  "fillDensity": 0.4,
-  "band": "grass"
+  "groveCentersPer100": 1.4,
+  "radius": 3,
+  "fillDensity": 0.38,
+  "band": "grass",
+  "minSpacingBetweenCenters": 6,
+  "priority": -1
  }
 }

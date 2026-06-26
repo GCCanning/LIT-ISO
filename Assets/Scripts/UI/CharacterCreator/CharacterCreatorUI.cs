@@ -7,60 +7,42 @@ using UnityEngine.UI;
 namespace LitIso.CharacterCreator
 {
     /// <summary>
-    /// Stardew-style character creator (v3, LPC wardrobe). Entirely programmatic
-    /// uGUI (legacy Text via LitIsoFont). Skinned with the shared Menu UI art
-    /// (Resources/UI/Menu: panel / button / button_hover / button_pressed /
-    /// input_frame / slider_track / slider_handle), 9-sliced, so the creator
-    /// matches the welcome/main-menu look. If any sprite is missing it falls
-    /// back to flat panels + outlines, so it always renders.
-    ///
-    /// Left: live animated preview (rotate / walk toggle / animation cycler).
-    /// Right: body type, then a colour SLIDER + live swatch for skin and eyes,
-    /// and for each clothing slot (hair, shirt, pants, shoes) an item picker
-    /// (&lt; &gt; arrows) plus a colour slider + swatch. Randomize + Done at the
-    /// bottom.
-    ///
-    /// Scope: basic customization only. Weapons, armour and other gear come from
-    /// in-game drops via <see cref="CharacterEquipmentVisuals"/> and are
-    /// intentionally NOT editable here.
-    ///
-    /// Usage: CharacterCreatorUI.Show(onConfirmed); from any menu flow.
+    /// Character creator — two-panel layout (APPEARANCE preview left, CHARACTER
+    /// options right). Options panel: Randomize, body type toggle, then per-slot
+    /// item picker + colour swatches for hair/shirt/pants/shoes/eyes/skin.
+    /// Preview panel: animated character with Turn and animation-cycle controls.
+    /// Cosmetic only — gear is loot. Drives the LPC compositor via LayeredAppearance.
     /// </summary>
     public class CharacterCreatorUI : MonoBehaviour
     {
         public static event Action<LayeredAppearance> OnConfirmed;
 
-        // ----- procedural fallback palette (used only if Menu art is absent) ---
-        static readonly Color PanelBg = new(0.07f, 0.09f, 0.13f, 0.96f);
-        static readonly Color SectionBg = new(0.11f, 0.13f, 0.18f, 0.9f);
-        static readonly Color InputBg = new(0.05f, 0.06f, 0.09f, 0.92f);
-        static readonly Color Border = new(0.30f, 0.36f, 0.42f, 1f);
-        static readonly Color TextCol = new(0.95f, 0.91f, 0.74f, 1f);
-        static readonly Color HandleCol = new(0.98f, 0.85f, 0.45f, 1f);
-
-        // ----- shared Menu UI art (9-sliced) -----
-        Sprite _spPanel, _spButton, _spButtonHover, _spButtonPressed, _spInput,
-               _spSliderTrack, _spSliderHandle;
-
         LayeredAppearance _appearance;
         CharacterLayerCatalog _cat;
 
-        // preview state
+        // preview
         Image _previewImage;
         CharacterCompositor.BakeResult _baked;
-        int _previewRow; // 0 = S, facing camera
+        int _previewRow;
         bool _previewWalking = true;
-        float _previewTimer;
-
-        // animation preview cycler (walk, cast, thrust, slash, shoot, hurt)
         string[] _animIds;
         int _previewAnimIndex;
         int _previewActionFrame;
         float _previewActionTimer;
-        Text _animLabel;
 
-        readonly List<Action> _refreshers = new(); // refresh labels/sliders/swatches
-        bool _refreshing; // guards slider onValueChanged against refresh-time clamps
+        readonly List<Action> _refreshers = new();
+        RectTransform _charContent;   // rebuilt on item/style change
+
+        Text _dirLabel;
+        Text _frameLabel;
+        readonly List<Image> _pillImages = new();
+        readonly List<Text>  _pillTexts  = new();
+        RectTransform _scrollRoot;   // OptionsScroll RT — kept for RebuildOptions
+        static readonly string[] DirLabels = { "↑ N", "← W", "↓ S", "→ E" };
+
+        // HTML section-label colour (#a39e90) — dimmer than parchment, between
+        // WarmTan and Parchment; no exact LitIsoTheme token, so define it here.
+        static readonly Color LabelColor = LitIsoTheme.Hex("#a39e90");
 
         public static CharacterCreatorUI Show(Action<LayeredAppearance> onConfirmed = null)
         {
@@ -77,7 +59,6 @@ namespace LitIso.CharacterCreator
 
         void Awake()
         {
-            LoadSkin();
             _cat = CharacterLayerCatalog.Instance;
             _appearance = LayeredAppearance.LoadOrDefault();
             _animIds = _cat.AnimationIds.ToArray();
@@ -87,23 +68,11 @@ namespace LitIso.CharacterCreator
             Rebake();
         }
 
-        void LoadSkin()
-        {
-            _spPanel = Resources.Load<Sprite>("UI/Menu/panel");
-            _spButton = Resources.Load<Sprite>("UI/Menu/button");
-            _spButtonHover = Resources.Load<Sprite>("UI/Menu/button_hover");
-            _spButtonPressed = Resources.Load<Sprite>("UI/Menu/button_pressed");
-            _spInput = Resources.Load<Sprite>("UI/Menu/input_frame");
-            _spSliderTrack = Resources.Load<Sprite>("UI/Menu/slider_track");
-            _spSliderHandle = Resources.Load<Sprite>("UI/Menu/slider_handle");
-        }
-
         string CurrentAnimId => _animIds[_previewAnimIndex];
 
         void Update()
         {
             if (_baked == null || _previewImage == null) return;
-
             bool cycling = (CurrentAnimId == "walk" && _previewWalking) || CurrentAnimId != "walk";
             if (cycling)
             {
@@ -115,14 +84,12 @@ namespace LitIso.CharacterCreator
                     _previewActionFrame = (_previewActionFrame + 1) % Mathf.Max(1, _baked.framesPerRow);
                 }
                 SetPreviewSprite(_previewActionFrame);
+                if (_frameLabel != null && _baked != null)
+                    _frameLabel.text = $"frame {_previewActionFrame + 1}/{Mathf.Max(1, _baked.framesPerRow)}";
             }
-            else
-            {
-                SetPreviewSprite(0);
-            }
+            else SetPreviewSprite(0);
         }
 
-        // Clamp the facing row to the baked anim's row count (4 or 1) and pick the frame.
         void SetPreviewSprite(int frame)
         {
             if (_baked == null || _baked.sprites.Length == 0 || _previewImage == null) return;
@@ -140,13 +107,10 @@ namespace LitIso.CharacterCreator
             _previewActionFrame = 0;
             _previewActionTimer = 0f;
             SetPreviewSprite(0);
-            if (_animLabel != null) _animLabel.text = Capitalize(CurrentAnimId);
-            _refreshing = true;
             foreach (var r in _refreshers) r();
-            _refreshing = false;
         }
 
-        // ------------------------------------------------------------- UI build
+        // ----------------------------------------------------------------- build
         void BuildUI()
         {
             var canvasGo = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -156,268 +120,1086 @@ namespace LitIso.CharacterCreator
             canvas.sortingOrder = 220;
             var scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1280, 720);
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
 
             if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
                 new GameObject("EventSystem",
                     typeof(UnityEngine.EventSystems.EventSystem),
                     typeof(UnityEngine.EventSystems.StandaloneInputModule));
 
-            // dim/scrim background
-            var dim = MakeRect("Dim", canvasGo.transform);
-            Stretch(dim);
-            var dimImg = dim.gameObject.AddComponent<Image>();
-            dimImg.color = new Color(0, 0, 0, 0.55f);
+            // Full-screen backdrop
+            var bg = NewImage(canvasGo.transform, "BG", LitIsoTheme.Scene);
+            Stretch(bg.rectTransform);
 
-            // main panel (skinned)
-            var panel = MakeRect("Panel", canvasGo.transform);
-            panel.sizeDelta = new Vector2(840, 600);
-            SkinPanel(panel, PanelBg);
+            // ── CARD (80px H margins, 60px V margins) ──
+            var cardGo = new GameObject("Card", typeof(RectTransform));
+            cardGo.transform.SetParent(canvasGo.transform, false);
+            var card = cardGo.GetComponent<RectTransform>();
+            card.anchorMin = Vector2.zero; card.anchorMax = Vector2.one;
+            card.offsetMin = new Vector2(80f, 60f);
+            card.offsetMax = new Vector2(-80f, -60f);
 
-            Label(panel, "Create Your Character", new Vector2(0, 272), 26, bold: true);
+            var cardImg = cardGo.AddComponent<Image>();
+            cardImg.color = LitIsoTheme.Panel;
+            var cardOl = cardGo.AddComponent<Outline>();
+            cardOl.effectColor = LitIsoTheme.Stone;
+            cardOl.effectDistance = new Vector2(2f, -2f);
+            cardOl.useGraphicAlpha = false;
+            AddGoldInnerLine(card);
+            AddCornerBrackets(card);
 
-            BuildPreviewColumn(panel);
-            BuildOptionsColumn(panel);
+            // ── TOP BAR (28px) ──
+            var topBar = NewRect("TopBar", card);
+            topBar.anchorMin = new Vector2(0, 1); topBar.anchorMax = new Vector2(1, 1);
+            topBar.pivot = new Vector2(0.5f, 1);
+            topBar.sizeDelta = new Vector2(0, 28f);
+            topBar.anchoredPosition = Vector2.zero;
+            topBar.gameObject.AddComponent<Image>().color = LitIsoTheme.Base;
+            var tbH = topBar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            tbH.padding = new RectOffset(16, 16, 0, 0);
+            tbH.spacing = 8f;
+            tbH.childControlWidth = true; tbH.childControlHeight = true;
+            tbH.childForceExpandWidth = false; tbH.childForceExpandHeight = true;
+            var tLeft = NewText(topBar, "TBL", "LIT-ISO", 9, TextAnchor.MiddleLeft, LitIsoTheme.WarmTan, true);
+            tLeft.gameObject.AddComponent<LayoutElement>().preferredWidth = 110f;
+            var tMid = NewText(topBar, "TBC", "[ CHARACTER CREATION ]", 10, TextAnchor.MiddleCenter, LitIsoTheme.Gold, true);
+            tMid.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            var tRight = NewText(topBar, "TBR", "DAY 1 / 7", 9, TextAnchor.MiddleRight, LitIsoTheme.Amber, true);
+            tRight.gameObject.AddComponent<LayoutElement>().preferredWidth = 110f;
 
-            // bottom buttons
-            Btn(panel, "Randomize", new Vector2(-220, -270), new Vector2(170, 44), () =>
+            // Gold hairline below top bar
+            var topRule = NewRect("TopRule", card);
+            topRule.anchorMin = new Vector2(0, 1); topRule.anchorMax = new Vector2(1, 1);
+            topRule.pivot = new Vector2(0.5f, 1);
+            topRule.sizeDelta = new Vector2(0, 1f);
+            topRule.anchoredPosition = new Vector2(0, -28f);
+            topRule.gameObject.AddComponent<Image>().color = LitIsoTheme.GoldDeep;
+
+            // ── MAIN ROW ──
+            var main = NewRect("Main", card);
+            main.anchorMin = Vector2.zero; main.anchorMax = Vector2.one;
+            main.offsetMin = new Vector2(0, 0);
+            main.offsetMax = new Vector2(0, -29f);
+            var mainH = main.gameObject.AddComponent<HorizontalLayoutGroup>();
+            mainH.spacing = 0f;
+            mainH.childControlWidth = true; mainH.childControlHeight = true;
+            mainH.childForceExpandWidth = false; mainH.childForceExpandHeight = true;
+
+            BuildPreviewPanel(main);
+            BuildCharacterPanel(main);
+        }
+
+        void BuildPreviewPanel(RectTransform parent)
+        {
+            var panel = Panel(parent, "PreviewPanel");
+            var le = panel.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth = 420f; le.flexibleHeight = 1f;
+            var v = panel.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.padding = new RectOffset(20, 20, 14, 14);
+            v.spacing = 6f;
+            v.childControlWidth = true; v.childControlHeight = true;
+            v.childForceExpandWidth = true; v.childForceExpandHeight = false;
+
+            // Mini header
+            var hdr = NewText(panel.transform, "Hdr", "APPEARANCE", 11, TextAnchor.UpperLeft, LitIsoTheme.Gold, true);
+            FixedH(hdr, 22f);
+            Divider(panel.transform, LitIsoTheme.GoldDeep, 1f);
+
+            // Avatar — fixed 320px so it doesn't swallow the panel
+            var avatarHolder = NewRect("Avatar", panel.transform);
+            var avLe = avatarHolder.gameObject.AddComponent<LayoutElement>();
+            avLe.minHeight = 200f; avLe.preferredHeight = 320f;
+            var avBg = avatarHolder.gameObject.AddComponent<Image>();
+            avBg.color = LitIsoTheme.Base; avBg.raycastTarget = false;
+            var avOl = avatarHolder.gameObject.AddComponent<Outline>();
+            avOl.effectColor = LitIsoTheme.Stone; avOl.effectDistance = new Vector2(2f, -2f); avOl.useGraphicAlpha = false;
+            var charRt = NewRect("Char", avatarHolder);
+            charRt.anchorMin = new Vector2(0.5f, 0.5f); charRt.anchorMax = new Vector2(0.5f, 0.5f);
+            charRt.pivot = new Vector2(0.5f, 0.5f);
+            charRt.sizeDelta = new Vector2(300f, 300f);
+            _previewImage = charRt.gameObject.AddComponent<Image>();
+            _previewImage.preserveAspect = true;
+            _previewImage.raycastTarget = false;
+
+            // Animation pill grid (5 columns)
+            var pillHolder = NewRect("Pills", panel.transform);
+            pillHolder.gameObject.AddComponent<LayoutElement>().preferredHeight = 100f;
+            var pillBg = pillHolder.gameObject.AddComponent<Image>();
+            pillBg.color = LitIsoTheme.Base; pillBg.raycastTarget = false;
+            var pillOl = pillHolder.gameObject.AddComponent<Outline>();
+            pillOl.effectColor = LitIsoTheme.Stone; pillOl.effectDistance = new Vector2(2f, -2f); pillOl.useGraphicAlpha = false;
+            var grid = pillHolder.gameObject.AddComponent<GridLayoutGroup>();
+            grid.cellSize = new Vector2(72f, 26f);
+            grid.spacing  = new Vector2(4f, 4f);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 5;
+            grid.childAlignment = TextAnchor.UpperLeft;
+            grid.padding = new RectOffset(8, 8, 8, 8);
+
+            _pillImages.Clear(); _pillTexts.Clear();
+            for (int i = 0; i < _animIds.Length; i++)
+            {
+                int captured = i;
+                string raw = _animIds[i];
+                string label = raw.Length > 0 ? char.ToUpperInvariant(raw[0]) + raw.Substring(1) : raw;
+                bool active = i == _previewAnimIndex;
+
+                var pill = NewRect("Pill_" + raw, pillHolder.transform);
+                var pillImg = pill.gameObject.AddComponent<Image>();
+                pillImg.color = active ? LitIsoTheme.Gold : LitIsoTheme.Raised;
+                var btnOl = pill.gameObject.AddComponent<Outline>();
+                btnOl.effectColor = LitIsoTheme.Base; btnOl.effectDistance = new Vector2(1f, -1f);
+                btnOl.useGraphicAlpha = false;
+                var pillBtn = pill.gameObject.AddComponent<Button>();
+                pillBtn.targetGraphic = pillImg;
+                pillBtn.transition = Selectable.Transition.None;
+                pillBtn.onClick.AddListener(() =>
+                {
+                    _previewAnimIndex = captured;
+                    if (_baked?.texture != null) Destroy(_baked.texture);
+                    _baked = CharacterCompositor.Bake(_appearance, CurrentAnimId);
+                    _previewActionFrame = 0; _previewActionTimer = 0f;
+                    foreach (var r in _refreshers) r();
+                });
+                var pillTxt = NewText(pill, "T", label, 9, TextAnchor.MiddleCenter,
+                    active ? LitIsoTheme.GoldText : LitIsoTheme.Parchment);
+                pillTxt.rectTransform.anchorMin = Vector2.zero;
+                pillTxt.rectTransform.anchorMax = Vector2.one;
+                pillTxt.rectTransform.offsetMin = pillTxt.rectTransform.offsetMax = Vector2.zero;
+                pillTxt.resizeTextForBestFit = true;
+                pillTxt.resizeTextMaxSize = 11; pillTxt.resizeTextMinSize = 9;
+                pillTxt.raycastTarget = false;
+                _pillImages.Add(pillImg); _pillTexts.Add(pillTxt);
+            }
+
+            // Pill refresher
+            _refreshers.Add(() =>
+            {
+                for (int i = 0; i < _pillImages.Count && i < _animIds.Length; i++)
+                {
+                    bool a = i == _previewAnimIndex;
+                    _pillImages[i].color = a ? LitIsoTheme.Gold : LitIsoTheme.Raised;
+                    _pillTexts[i].color  = a ? LitIsoTheme.GoldText : LitIsoTheme.Parchment;
+                }
+            });
+
+            // Direction row
+            var dirRow = NewRect("DirRow", panel.transform);
+            FixedH(dirRow, 44f);
+            var dirBg = dirRow.gameObject.AddComponent<Image>();
+            dirBg.color = LitIsoTheme.Base; dirBg.raycastTarget = false;
+            var dirOl = dirRow.gameObject.AddComponent<Outline>();
+            dirOl.effectColor = LitIsoTheme.Stone; dirOl.effectDistance = new Vector2(2f, -2f); dirOl.useGraphicAlpha = false;
+            var dirH = dirRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            dirH.spacing = 8f; dirH.childControlWidth = true; dirH.childControlHeight = true;
+            dirH.childForceExpandWidth = false; dirH.childForceExpandHeight = true;
+            dirH.padding = new RectOffset(8, 8, 4, 4);
+            var turnBtn = ThemeButton(dirRow, "Turn", "◀  TURN  ▶", false, () =>
+            {
+                if (_baked != null && _baked.rowCount > 0)
+                    _previewRow = (_previewRow + 1) % _baked.rowCount;
+                if (_dirLabel != null) _dirLabel.text = DirLabels[_previewRow % DirLabels.Length];
+            });
+            turnBtn.GetComponent<LayoutElement>().preferredWidth = 140f;
+            _dirLabel = NewText(dirRow, "Dir", DirLabels[0], 12, TextAnchor.MiddleLeft, LitIsoTheme.Parchment);
+            _dirLabel.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+
+            // Footer: frame counter + Randomize
+            var foot = NewRect("Footer", panel.transform);
+            FixedH(foot, 32f);
+            var fH = foot.gameObject.AddComponent<HorizontalLayoutGroup>();
+            fH.spacing = 8f; fH.childControlWidth = true; fH.childControlHeight = true;
+            fH.childForceExpandWidth = false; fH.childForceExpandHeight = true;
+            _frameLabel = NewText(foot, "Frame", "frame 1/1", 11, TextAnchor.MiddleLeft, LitIsoTheme.WarmTan);
+            _frameLabel.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            var rndBtn = ThemeButton(foot, "Rand", "⚄  RANDOMIZE", true, () =>
             {
                 var keep = _appearance.equipped;
                 _appearance = LayeredAppearance.Random(_cat);
                 _appearance.equipped = keep;
-                Rebake();
-            });
-            Btn(panel, "Done", new Vector2(220, -270), new Vector2(170, 44), Confirm);
+                RebuildOptions();
+            }, 12);
+            rndBtn.GetComponent<LayoutElement>().preferredWidth = 160f;
         }
 
-        void BuildPreviewColumn(RectTransform panel)
+        void BuildCharacterPanel(RectTransform parent)
         {
-            var box = MakeRect("Preview", panel);
-            box.anchoredPosition = new Vector2(-280, 6);
-            box.sizeDelta = new Vector2(240, 400);
-            SkinPanel(box, SectionBg);
+            // Use explicit anchor-based layout — no VerticalLayoutGroup on the panel itself.
+            // VLGs fighting with flexibleHeight are the root cause of the oversized buttons.
+            var panelImg = Panel(parent, "CharacterPanel");
+            var panel    = panelImg.rectTransform;
+            panelImg.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
-            var img = MakeRect("Char", box);
-            img.sizeDelta = new Vector2(256, 256);
-            img.anchoredPosition = new Vector2(0, 40);
-            _previewImage = img.gameObject.AddComponent<Image>();
-            _previewImage.preserveAspect = true;
-            _previewImage.raycastTarget = false;
+            const float hdrH = 42f;  // header strip height
+            const float ftrH = 50f;  // footer strip height
+            const float padH = 12f;  // top / bottom inner padding
+            const float padW = 22f;  // left / right inner padding
+            const float divH = 1f;
 
-            // rotate + walk toggle
-            Btn(box, "<", new Vector2(-78, -140), new Vector2(38, 34),
-                () => _previewRow = (_previewRow + 1) % _baked.rowCount);
-            Btn(box, ">", new Vector2(-34, -140), new Vector2(38, 34),
-                () => _previewRow = (_previewRow + _baked.rowCount - 1) % _baked.rowCount);
-            Btn(box, "Walk", new Vector2(55, -140), new Vector2(86, 34),
-                () => _previewWalking = !_previewWalking);
+            // ── HEADER (anchored to top, full width) ──────────────────────────
+            var header = NewRect("Header", panel);
+            header.anchorMin = new Vector2(0f, 1f); header.anchorMax = new Vector2(1f, 1f);
+            header.pivot = new Vector2(0.5f, 1f);
+            header.sizeDelta = new Vector2(-padW * 2f, hdrH);
+            header.anchoredPosition = new Vector2(0f, -padH);
 
-            // animation cycler — sanity-check every outfit across all 6 animations
-            Btn(box, "<", new Vector2(-78, -182), new Vector2(38, 34), () =>
+            var hH = header.gameObject.AddComponent<HorizontalLayoutGroup>();
+            hH.spacing = 10f; hH.childControlWidth = true; hH.childControlHeight = true;
+            hH.childForceExpandWidth = false; hH.childForceExpandHeight = true;
+
+            NewText(header, "Title", "CHARACTER", 13, TextAnchor.MiddleLeft, LitIsoTheme.Gold, true)
+                .gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+
+            var rnd = ThemeButton(header, "Rnd", "⚄  RANDOMIZE", true, () =>
             {
-                _previewAnimIndex = (_previewAnimIndex + _animIds.Length - 1) % _animIds.Length;
-                Rebake();
-            });
-            _animLabel = Label(box, Capitalize(CurrentAnimId), new Vector2(20, -182), 15);
-            _animLabel.rectTransform.sizeDelta = new Vector2(80, 30);
-            Btn(box, ">", new Vector2(82, -182), new Vector2(38, 34), () =>
+                var keep = _appearance.equipped;
+                _appearance = LayeredAppearance.Random(_cat);
+                _appearance.equipped = keep;
+                RebuildOptions();
+            }, 12, true);
+            var rndLe = rnd.GetComponent<LayoutElement>();
+            rndLe.preferredWidth = 148f; rndLe.preferredHeight = hdrH;
+
+            // Gold hairline below header
+            var topDiv = NewRect("HDivider", panel);
+            topDiv.anchorMin = new Vector2(0f, 1f); topDiv.anchorMax = new Vector2(1f, 1f);
+            topDiv.pivot = new Vector2(0.5f, 1f);
+            topDiv.sizeDelta = new Vector2(0f, divH);
+            topDiv.anchoredPosition = new Vector2(0f, -(padH + hdrH + 2f));
+            topDiv.gameObject.AddComponent<Image>().color = LitIsoTheme.GoldDeep;
+
+            // ── FOOTER (anchored to bottom, full width) ───────────────────────
+            var foot = NewRect("Footer", panel);
+            foot.anchorMin = new Vector2(0f, 0f); foot.anchorMax = new Vector2(1f, 0f);
+            foot.pivot = new Vector2(0.5f, 0f);
+            foot.sizeDelta = new Vector2(-padW * 2f, ftrH);
+            foot.anchoredPosition = new Vector2(0f, padH);
+
+            var fH = foot.gameObject.AddComponent<HorizontalLayoutGroup>();
+            fH.spacing = 12f; fH.childControlWidth = true; fH.childControlHeight = true;
+            fH.childForceExpandWidth = false; fH.childForceExpandHeight = true;
+
+            var reset = ThemeButton(foot, "Reset", "RESET", false, () =>
             {
-                _previewAnimIndex = (_previewAnimIndex + 1) % _animIds.Length;
-                Rebake();
-            });
+                var keep = _appearance.equipped;
+                _appearance = LayeredAppearance.LoadOrDefault();
+                _appearance.equipped = keep;
+                RebuildOptions();
+            }, 14, true);
+            var resetLe = reset.GetComponent<LayoutElement>();
+            resetLe.preferredWidth = 160f; resetLe.preferredHeight = ftrH;
+
+            NewRect("Spacer", foot).gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+
+            var confirm = ThemeButton(foot, "Confirm", "CONFIRM  ▸", true, Confirm, 15, true);
+            var confirmLe = confirm.GetComponent<LayoutElement>();
+            confirmLe.preferredWidth = 220f; confirmLe.preferredHeight = ftrH;
+
+            // Stone hairline above footer
+            var botDiv = NewRect("FDivider", panel);
+            botDiv.anchorMin = new Vector2(0f, 0f); botDiv.anchorMax = new Vector2(1f, 0f);
+            botDiv.pivot = new Vector2(0.5f, 0f);
+            botDiv.sizeDelta = new Vector2(0f, divH);
+            botDiv.anchoredPosition = new Vector2(0f, padH + ftrH + 4f);
+            botDiv.gameObject.AddComponent<Image>().color = LitIsoTheme.Stone;
+
+            // ── SCROLL AREA (fills everything between dividers) ────────────────
+            float scrollTop = padH + hdrH + divH + 6f;
+            float scrollBot = padH + ftrH + divH + 6f;
+
+            _scrollRoot = NewRect("OptionsScroll", panel);
+            _scrollRoot.anchorMin = Vector2.zero; _scrollRoot.anchorMax = Vector2.one;
+            _scrollRoot.offsetMin = new Vector2(0f, scrollBot);
+            _scrollRoot.offsetMax = new Vector2(0f, -scrollTop);
+
+            var scroll = _scrollRoot.gameObject.AddComponent<ScrollRect>();
+            scroll.horizontal = false; scroll.vertical = true;
+            scroll.scrollSensitivity = 40f;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+
+            var viewport = NewRect("Viewport", _scrollRoot);
+            Stretch(viewport);
+            viewport.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.001f);
+            viewport.gameObject.AddComponent<RectMask2D>();
+
+            var content = NewRect("Content", viewport);
+            content.anchorMin = new Vector2(0f, 1f); content.anchorMax = new Vector2(1f, 1f);
+            content.pivot = new Vector2(0.5f, 1f); content.sizeDelta = Vector2.zero;
+            var vlg = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            vlg.spacing = 14f; vlg.padding = new RectOffset((int)padW, (int)padW, 8, 16);
+            vlg.childControlWidth = true; vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true; vlg.childForceExpandHeight = false;
+            var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            scroll.viewport = viewport; scroll.content = content;
+
+            _charContent = content;
+            BuildOptions(content);
         }
 
-        void BuildOptionsColumn(RectTransform panel)
+        // Clear and rebuild just the scroll content (on body type change / randomize).
+        void RebuildOptions()
         {
-            var col = MakeRect("Options", panel);
-            col.anchoredPosition = new Vector2(120, -6);
-            col.sizeDelta = new Vector2(560, 540);
-
-            float y = 244;
-
-            // Body type — arrows only (no colour).
-            ArrowOnlyRow(col, ref y, "Body",
-                () => _appearance.bodyType,
-                dir => Cycle(_cat.bodyTypes.ToList(), _appearance.bodyType, dir, v => _appearance.bodyType = v),
-                Capitalize);
-
-            // Skin tone — colour slider (drives body + head + matchBodyColor items).
-            var bodyDef = _cat.Find("lpc/body");
-            ColorOnlyRow(col, ref y, "Skin", () => bodyDef,
-                () => _appearance.skinVariant, v => _appearance.skinVariant = v);
-
-            // Eye colour — colour slider (resolves the chosen eyes item).
-            ColorOnlyRow(col, ref y, "Eyes", () => _cat.Find(_appearance.eyesId),
-                () => _appearance.eyesVariant, v => _appearance.eyesVariant = v);
-
-            y -= 8;
-            ItemSlot(col, ref y, "Hair", "hair", allowNone: true,
-                () => _appearance.hairId, v => _appearance.hairId = v,
-                () => _appearance.hairVariant, v => _appearance.hairVariant = v);
-            ItemSlot(col, ref y, "Shirt", "shirt", allowNone: false,
-                () => _appearance.shirtId, v => _appearance.shirtId = v,
-                () => _appearance.shirtVariant, v => _appearance.shirtVariant = v);
-            ItemSlot(col, ref y, "Pants", "pants", allowNone: false,
-                () => _appearance.pantsId, v => _appearance.pantsId = v,
-                () => _appearance.pantsVariant, v => _appearance.pantsVariant = v);
-            ItemSlot(col, ref y, "Shoes", "shoes", allowNone: false,
-                () => _appearance.shoesId, v => _appearance.shoesId = v,
-                () => _appearance.shoesVariant, v => _appearance.shoesVariant = v);
-        }
-
-        // One slot = an item-picker line (arrows) + a colour slider line.
-        void ItemSlot(RectTransform parent, ref float y, string label, string slot, bool allowNone,
-            Func<string> getId, Action<string> setId, Func<string> getVariant, Action<string> setVariant)
-        {
-            var options = _cat.CosmeticSlot(slot);
-
-            // line A: item picker
-            Label(parent, label, new Vector2(-250, y), 15, alignLeft: true);
-            var nameLabel = Label(parent, "", new Vector2(-20, y), 15);
-            nameLabel.rectTransform.sizeDelta = new Vector2(150, 28);
-            Btn(parent, "<", new Vector2(-128, y), new Vector2(30, 28), () =>
-            {
-                var list = options.Select(o => o.id).ToList();
-                if (allowNone) list.Insert(0, "");
-                int i = list.IndexOf(getId() ?? "");
-                if (i < 0) i = 0;
-                i = ((i - 1) % list.Count + list.Count) % list.Count;
-                ApplyItem(list[i], getVariant, setId, setVariant);
-            });
-            Btn(parent, ">", new Vector2(118, y), new Vector2(30, 28), () =>
-            {
-                var list = options.Select(o => o.id).ToList();
-                if (allowNone) list.Insert(0, "");
-                int i = list.IndexOf(getId() ?? "");
-                if (i < 0) i = 0;
-                i = ((i + 1) % list.Count + list.Count) % list.Count;
-                ApplyItem(list[i], getVariant, setId, setVariant);
-            });
-            _refreshers.Add(() => nameLabel.text = ItemDisplayName(getId(), allowNone));
-
-            // line B: colour slider for the selected item
-            y -= 34;
-            ColorLine(parent, y, () => _cat.Find(getId()), getVariant, setVariant);
-            y -= 40;
-        }
-
-        void ApplyItem(string newId, Func<string> getVariant, Action<string> setId, Action<string> setVariant)
-        {
-            setId(newId);
-            if (!string.IsNullOrEmpty(newId))
-            {
-                var def = _cat.Find(newId);
-                setVariant(def.SafeVariant(getVariant()));
-            }
+            if (_charContent == null) { Rebake(); return; }
+            _refreshers.Clear();
+            // Destroy children immediately so BuildOptions sees a clean slate.
+            for (int i = _charContent.childCount - 1; i >= 0; i--)
+                DestroyImmediate(_charContent.GetChild(i).gameObject);
+            _charContent.sizeDelta = Vector2.zero;
+            BuildOptions(_charContent);
             Rebake();
         }
 
-        // label + colour slider + swatch on a single line (skin / eyes).
-        void ColorOnlyRow(RectTransform parent, ref float y, string label,
-            Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
+        void BuildOptions(RectTransform content)
         {
-            Label(parent, label, new Vector2(-250, y), 15, alignLeft: true);
-            ColorLine(parent, y, getDef, getVariant, setVariant);
-            y -= 40;
+            BuildBodyTypeToggle(content);
+            Divider(content, LitIsoTheme.Raised, 1f);
+
+            var bodyDef = _cat.Find("lpc/body");
+            BuildColorOnlyRow(content, "SKIN TONE", () => bodyDef,
+                () => _appearance.skinVariant, v => _appearance.skinVariant = v);
+            Divider(content, LitIsoTheme.Raised, 1f);
+
+            var bodyExtras = _cat.BodyExtras();
+            if (bodyExtras.Count > 0)
+            {
+                ItemPickerBlockNullable(content, "BODY EXTRAS", bodyExtras,
+                    () => _appearance.bodyExtraId,
+                    (id, variant) => { _appearance.bodyExtraId = id; _appearance.bodyExtraVariant = variant; });
+                SwatchBlock(content, "EXTRAS COLOUR",
+                    () => string.IsNullOrEmpty(_appearance.bodyExtraId) ? null : _cat.Find(_appearance.bodyExtraId),
+                    () => _appearance.bodyExtraVariant, v => _appearance.bodyExtraVariant = v);
+                Divider(content, LitIsoTheme.Raised, 1f);
+            }
+
+            var headExtras = _cat.HeadExtras();
+            if (headExtras.Count > 0)
+            {
+                ItemPickerBlockNullable(content, "HEAD ACCESSORIES", headExtras,
+                    () => _appearance.headAccId,
+                    (id, variant) => { _appearance.headAccId = id; _appearance.headAccVariant = variant; });
+                SwatchBlock(content, "ACCESSORY COLOUR",
+                    () => string.IsNullOrEmpty(_appearance.headAccId) ? null : _cat.Find(_appearance.headAccId),
+                    () => _appearance.headAccVariant, v => _appearance.headAccVariant = v);
+                Divider(content, LitIsoTheme.Raised, 1f);
+            }
+
+            BuildSlotRow(content, "HAIR", "hair",
+                () => _appearance.hairId, (id, v2) => { _appearance.hairId = id; _appearance.hairVariant = v2; },
+                () => _cat.Find(_appearance.hairId), () => _appearance.hairVariant, v => _appearance.hairVariant = v);
+            Divider(content, LitIsoTheme.Raised, 1f);
+
+            BuildColorOnlyRow(content, "EYES",
+                () => _cat.Find(_appearance.eyesId),
+                () => _appearance.eyesVariant, v => _appearance.eyesVariant = v);
+            Divider(content, LitIsoTheme.Raised, 1f);
+
+            BuildSlotRow(content, "SHIRT", "shirt",
+                () => _appearance.shirtId, (id, v2) => { _appearance.shirtId = id; _appearance.shirtVariant = v2; },
+                () => _cat.Find(_appearance.shirtId), () => _appearance.shirtVariant, v => _appearance.shirtVariant = v);
+            Divider(content, LitIsoTheme.Raised, 1f);
+
+            BuildSlotRow(content, "PANTS", "pants",
+                () => _appearance.pantsId, (id, v2) => { _appearance.pantsId = id; _appearance.pantsVariant = v2; },
+                () => _cat.Find(_appearance.pantsId), () => _appearance.pantsVariant, v => _appearance.pantsVariant = v);
+            Divider(content, LitIsoTheme.Raised, 1f);
+
+            BuildSlotRow(content, "SHOES", "shoes",
+                () => _appearance.shoesId, (id, v2) => { _appearance.shoesId = id; _appearance.shoesVariant = v2; },
+                () => _cat.Find(_appearance.shoesId), () => _appearance.shoesVariant, v => _appearance.shoesVariant = v);
         }
 
-        // swatch + slider + variant-name, wired to the current item's variants.
-        void ColorLine(RectTransform parent, float y,
+        // ---- new slot-row builders (style picker + HSV colour picker) -----------
+
+        void BuildSlotRow(RectTransform content, string label, string slot,
+            Func<string> getCurrentId, Action<string, string> setIdVariant,
             Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
         {
-            // swatch
-            var swRt = MakeRect("Swatch", parent);
-            swRt.anchoredPosition = new Vector2(-150, y);
-            swRt.sizeDelta = new Vector2(26, 26);
-            var swatch = swRt.gameObject.AddComponent<Image>();
-            swatch.color = Color.gray;
-            swatch.raycastTarget = false;
-            AddOutline(swRt);
+            var items = _cat.CosmeticSlot(slot);
 
-            // slider
-            var slider = MakeSlider(parent, new Vector2(40, y), new Vector2(210, 18));
+            var block = NewRect("SlotRow_" + label, content);
+            var bv = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            bv.spacing = 6f; bv.childControlWidth = true; bv.childControlHeight = true;
+            bv.childForceExpandWidth = true; bv.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+                ContentSizeFitter.FitMode.PreferredSize;
 
-            // variant label
-            var valLabel = Label(parent, "", new Vector2(196, y), 13);
-            valLabel.rectTransform.sizeDelta = new Vector2(86, 26);
-            valLabel.alignment = TextAnchor.MiddleLeft;
+            // Label row — two columns matching content below
+            var labelRow = NewRect("LabelRow", block.transform);
+            FixedH(labelRow, 22f);
+            var lh = labelRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            lh.spacing = 16f; lh.childControlWidth = true; lh.childControlHeight = true;
+            lh.childForceExpandWidth = false; lh.childForceExpandHeight = true;
+            NewText(labelRow.transform, "SL", label + " STYLE", 14, TextAnchor.MiddleLeft, LabelColor, true)
+                .gameObject.AddComponent<LayoutElement>().preferredWidth = 200f;
+            NewText(labelRow.transform, "CL", label + " COLOUR", 14, TextAnchor.MiddleLeft, LabelColor, true)
+                .gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
-            slider.onValueChanged.AddListener(v =>
+            // Content row
+            var contentRow = NewRect("ContentRow", block.transform);
+            contentRow.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+                ContentSizeFitter.FitMode.PreferredSize;
+            var ch = contentRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ch.spacing = 16f; ch.childControlWidth = true; ch.childControlHeight = true;
+            ch.childForceExpandWidth = false; ch.childForceExpandHeight = true;
+
+            if (items.Count > 0)
             {
-                if (_refreshing) return; // ignore clamps fired while we set min/max
-                var def = getDef();
-                if (def == null || def.variants.Length == 0) return;
-                int idx = Mathf.Clamp(Mathf.RoundToInt(v), 0, def.variants.Length - 1);
-                if (def.variants[idx] == getVariant()) return; // no-op, avoids rebake storms
-                setVariant(def.variants[idx]);
+                var leftPane = NewRect("StylePane", contentRow.transform);
+                var lv = leftPane.gameObject.AddComponent<VerticalLayoutGroup>();
+                lv.spacing = 4f; lv.childControlWidth = true; lv.childControlHeight = true;
+                lv.childForceExpandWidth = true; lv.childForceExpandHeight = false;
+                leftPane.gameObject.AddComponent<LayoutElement>().preferredWidth = 200f;
+                leftPane.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+                    ContentSizeFitter.FitMode.PreferredSize;
+                BuildInlineItemPicker(leftPane.transform, items, getCurrentId, setIdVariant);
+            }
+
+            var rightPane = NewRect("ColorPane", contentRow.transform);
+            var rightLe = rightPane.gameObject.AddComponent<LayoutElement>();
+            rightLe.flexibleWidth = 1f;
+            BuildInlineColorPicker(rightPane.transform, getDef, getVariant, setVariant);
+        }
+
+        void BuildColorOnlyRow(RectTransform content, string label,
+            Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
+        {
+            var block = NewRect("ColorRow_" + label, content);
+            var bv = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            bv.spacing = 6f; bv.childControlWidth = true; bv.childControlHeight = true;
+            bv.childForceExpandWidth = true; bv.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+                ContentSizeFitter.FitMode.PreferredSize;
+
+            var lbl = NewText(block.transform, "L", label, 14, TextAnchor.UpperLeft, LabelColor, true);
+            FixedH(lbl, 22f);
+
+            var colorPane = NewRect("ColorPane", block.transform);
+            colorPane.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            BuildInlineColorPicker(colorPane.transform, getDef, getVariant, setVariant);
+        }
+
+        void BuildInlineItemPicker(Transform parent, List<ItemDef> items,
+            Func<string> getCurrentId, Action<string, string> setIdVariant)
+        {
+            if (items.Count == 0) return;
+            int curIdx = Mathf.Max(0, items.FindIndex(i => i.id == getCurrentId()));
+
+            var pickerRow = NewRect("PickerRow", parent);
+            FixedH(pickerRow, 44f);
+            var ph = pickerRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            ph.spacing = 6f; ph.childControlWidth = true; ph.childControlHeight = true;
+            ph.childForceExpandWidth = false; ph.childForceExpandHeight = true;
+
+            var nameText = NewText(pickerRow.transform, "Name",
+                items[curIdx].displayName ?? items[curIdx].id,
+                16, TextAnchor.MiddleCenter, LitIsoTheme.Parchment);
+            nameText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            nameText.resizeTextForBestFit = true;
+            nameText.resizeTextMaxSize = 16; nameText.resizeTextMinSize = 10;
+
+            var countText = NewText(parent, "Count", $"{curIdx + 1} / {items.Count}",
+                12, TextAnchor.UpperRight, LabelColor);
+            FixedH(countText, 18f);
+
+            void Refresh(int idx)
+            {
+                var item = items[idx];
+                nameText.text = item.displayName ?? item.id;
+                countText.text = $"{idx + 1} / {items.Count}";
+                string curV = getCurrentId() == item.id
+                    ? (_cat.Find(getCurrentId())?.SafeVariant(null) ?? "") : "";
+                setIdVariant(item.id, item.SafeVariant(curV));
                 Rebake();
-            });
+            }
+
+            var prevBtn = ThemeButton(pickerRow, "Prev", "◀", false,
+                () => { curIdx = ((curIdx - 1) + items.Count) % items.Count; Refresh(curIdx); });
+            prevBtn.transform.SetSiblingIndex(0);
+            prevBtn.GetComponent<LayoutElement>().preferredWidth = 44f;
+
+            var nextBtn = ThemeButton(pickerRow, "Next", "▶", false,
+                () => { curIdx = (curIdx + 1) % items.Count; Refresh(curIdx); });
+            nextBtn.GetComponent<LayoutElement>().preferredWidth = 44f;
 
             _refreshers.Add(() =>
             {
-                var def = getDef();
-                if (def == null || def.variants.Length == 0)
-                {
-                    slider.interactable = false;
-                    slider.SetValueWithoutNotify(0);
-                    swatch.color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
-                    valLabel.text = "—";
-                    return;
-                }
-                slider.interactable = true;
-                int idx = Array.IndexOf(def.variants, getVariant());
-                if (idx < 0) idx = 0;
-                slider.minValue = 0;
-                slider.maxValue = def.variants.Length - 1;
-                slider.SetValueWithoutNotify(idx);
-                swatch.color = CharacterCompositor.SwatchColor(def, def.variants[idx], _appearance.bodyType);
-                valLabel.text = Capitalize(def.variants[idx]);
+                curIdx = Mathf.Max(0, items.FindIndex(i => i.id == getCurrentId()));
+                nameText.text = items[curIdx].displayName ?? items[curIdx].id;
+                countText.text = $"{curIdx + 1} / {items.Count}";
             });
         }
 
-        string ItemDisplayName(string id, bool allowNone)
+        void BuildInlineColorPicker(Transform parent,
+            Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
         {
-            if (string.IsNullOrEmpty(id)) return allowNone ? "None" : "—";
-            return _cat.Find(id)?.displayName ?? id;
+            var block = NewRect("HSVPicker", parent);
+            var bv = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            bv.spacing = 4f; bv.childControlWidth = true; bv.childControlHeight = true;
+            bv.childForceExpandWidth = true; bv.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+                ContentSizeFitter.FitMode.PreferredSize;
+
+            // Top row: colour preview + hex InputField
+            var topRow = NewRect("TopRow", block.transform);
+            FixedH(topRow, 36f);
+            var trh = topRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            trh.spacing = 8f; trh.childControlWidth = true; trh.childControlHeight = true;
+            trh.childForceExpandWidth = false; trh.childForceExpandHeight = true;
+
+            var previewGo = NewRect("Preview", topRow.transform);
+            previewGo.gameObject.AddComponent<LayoutElement>().preferredWidth = 44f;
+            var previewImg = previewGo.gameObject.AddComponent<Image>();
+            previewImg.raycastTarget = false;
+            var previewOl = previewGo.gameObject.AddComponent<Outline>();
+            previewOl.effectColor = LitIsoTheme.Base;
+            previewOl.effectDistance = new Vector2(2f, -2f);
+            previewOl.useGraphicAlpha = false;
+
+            var hexIF = BuildHexInput(topRow.transform, "HexInput", "#000000");
+            var hexLe = hexIF.gameObject.GetComponent<LayoutElement>() ??
+                        hexIF.gameObject.AddComponent<LayoutElement>();
+            hexLe.flexibleWidth = 1f;
+
+            // H / S / V sliders
+            Slider hSlider = null, sSlider = null, vSlider = null;
+            BuildLabeledSliderRow(block.transform, "H", 0f, out hSlider, "HSlider");
+            BuildLabeledSliderRow(block.transform, "S", 0f, out sSlider, "SSlider");
+            BuildLabeledSliderRow(block.transform, "V", 0f, out vSlider, "VSlider");
+
+            void SyncToVariant()
+            {
+                var def = getDef();
+                if (def?.variants == null || def.variants.Length == 0) return;
+                string vv = getVariant();
+                if (string.IsNullOrEmpty(vv)) vv = def.variants[0];
+                Color c = CharacterCompositor.SwatchColor(def, vv, _appearance.bodyType);
+                Color.RGBToHSV(c, out float h, out float s, out float val);
+                hSlider?.SetValueWithoutNotify(h);
+                sSlider?.SetValueWithoutNotify(s);
+                vSlider?.SetValueWithoutNotify(val);
+                if (previewImg != null) previewImg.color = c;
+                if (hexIF != null && !hexIF.isFocused) hexIF.text = ColorToHex(c);
+            }
+
+            void ApplyFromHSV()
+            {
+                var def = getDef();
+                if (def?.variants == null || def.variants.Length == 0) return;
+                Color target = Color.HSVToRGB(hSlider.value, sSlider.value, vSlider.value);
+                string best = BestVariant(def, target, _appearance.bodyType);
+                if (best != getVariant()) { setVariant(best); Rebake(); }
+                Color actual = CharacterCompositor.SwatchColor(def, getVariant(), _appearance.bodyType);
+                if (previewImg != null) previewImg.color = actual;
+            }
+
+            hSlider.onValueChanged.AddListener(_ => ApplyFromHSV());
+            sSlider.onValueChanged.AddListener(_ => ApplyFromHSV());
+            vSlider.onValueChanged.AddListener(_ => ApplyFromHSV());
+
+            hexIF.onEndEdit.AddListener(hex =>
+            {
+                if (TryParseHex(hex, out Color target))
+                {
+                    var def = getDef();
+                    if (def?.variants != null && def.variants.Length > 0)
+                    {
+                        string best = BestVariant(def, target, _appearance.bodyType);
+                        if (best != getVariant()) { setVariant(best); Rebake(); }
+                    }
+                }
+                SyncToVariant();
+            });
+
+            _refreshers.Add(() => SyncToVariant());
+            SyncToVariant();
         }
 
-        void Cycle(List<string> options, string current, int dir, Action<string> set)
+        void BuildLabeledSliderRow(Transform parent, string labelText, float initVal,
+            out Slider slider, string sliderName)
         {
-            if (options.Count == 0) return;
-            int i = options.IndexOf(current);
-            if (i < 0) i = 0;
-            i = ((i + dir) % options.Count + options.Count) % options.Count;
-            set(options[i]);
+            var row = NewRect(sliderName + "Row", parent);
+            FixedH(row, 22f);
+            var rh = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            rh.spacing = 6f; rh.childControlWidth = true; rh.childControlHeight = true;
+            rh.childForceExpandWidth = false; rh.childForceExpandHeight = true;
+
+            var lbl = NewText(row.transform, "L", labelText, 11, TextAnchor.MiddleLeft, LabelColor);
+            lbl.gameObject.AddComponent<LayoutElement>().preferredWidth = 14f;
+
+            slider = BuildSlider(row.transform, sliderName, 0f, 1f, initVal);
+            slider.GetComponent<LayoutElement>().flexibleWidth = 1f;
         }
 
-        static string Capitalize(string s) =>
-            string.IsNullOrEmpty(s) ? s : char.ToUpperInvariant(s[0]) + s.Substring(1).Replace('_', ' ');
-
-        // "label  < value >" row (no colour). Rebakes after every change.
-        void ArrowOnlyRow(RectTransform parent, ref float y, string label,
-            Func<string> get, Action<int> cycle, Func<string, string> format)
+        static Slider BuildSlider(Transform parent, string name, float minV, float maxV, float initVal)
         {
-            Label(parent, label, new Vector2(-250, y), 15, alignLeft: true);
-            var valueLabel = Label(parent, "", new Vector2(-20, y), 15);
-            valueLabel.rectTransform.sizeDelta = new Vector2(150, 28);
-            Btn(parent, "<", new Vector2(-128, y), new Vector2(30, 28), () => { cycle(-1); Rebake(); });
-            Btn(parent, ">", new Vector2(118, y), new Vector2(30, 28), () => { cycle(1); Rebake(); });
-            _refreshers.Add(() => valueLabel.text = format(get() ?? ""));
-            y -= 40;
+            var go = NewRect(name, parent);
+            go.gameObject.AddComponent<LayoutElement>();
+            var bg = go.gameObject.AddComponent<Image>();
+            bg.color = new Color(0.22f, 0.22f, 0.22f, 1f);
+
+            var fillArea = NewRect("FillArea", go);
+            fillArea.anchorMin = new Vector2(0f, 0.25f);
+            fillArea.anchorMax = new Vector2(1f, 0.75f);
+            fillArea.offsetMin = new Vector2(6f, 0f);
+            fillArea.offsetMax = new Vector2(-14f, 0f);
+
+            var fill = NewRect("Fill", fillArea);
+            fill.anchorMin = Vector2.zero;
+            fill.anchorMax = new Vector2(0f, 1f);
+            fill.sizeDelta = Vector2.zero;
+            fill.gameObject.AddComponent<Image>().color = LitIsoTheme.Gold;
+
+            var handleArea = NewRect("HandleArea", go);
+            Stretch(handleArea);
+
+            var handle = NewRect("Handle", handleArea);
+            handle.anchorMin = new Vector2(0f, 0.05f);
+            handle.anchorMax = new Vector2(0f, 0.95f);
+            handle.sizeDelta = new Vector2(12f, 0f);
+            handle.gameObject.AddComponent<Image>().color = LitIsoTheme.Parchment;
+
+            var slider = go.gameObject.AddComponent<Slider>();
+            slider.fillRect = fill;
+            slider.handleRect = handle;
+            slider.targetGraphic = bg;
+            slider.direction = Slider.Direction.LeftToRight;
+            slider.minValue = minV; slider.maxValue = maxV; slider.value = initVal;
+
+            var cb = slider.colors;
+            cb.normalColor = Color.white;
+            cb.highlightedColor = new Color(0.88f, 0.88f, 0.88f, 1f);
+            cb.pressedColor = new Color(0.72f, 0.72f, 0.72f, 1f);
+            cb.fadeDuration = 0.05f;
+            slider.colors = cb;
+            return slider;
+        }
+
+        static InputField BuildHexInput(Transform parent, string name, string initText)
+        {
+            var go = NewRect(name, parent);
+            go.gameObject.AddComponent<LayoutElement>();
+            var bg = go.gameObject.AddComponent<Image>();
+            bg.color = new Color(0.18f, 0.18f, 0.18f, 1f);
+
+            var phGo = NewRect("Placeholder", go);
+            Stretch(phGo);
+            phGo.offsetMin = new Vector2(6f, 2f); phGo.offsetMax = new Vector2(-6f, -2f);
+            var ph = phGo.gameObject.AddComponent<Text>();
+            LitIsoTheme.ApplyBody(ph, 12, LitIsoTheme.WarmTan);
+            ph.text = "#rrggbb"; ph.alignment = TextAnchor.MiddleLeft;
+
+            var textGo = NewRect("Text", go);
+            Stretch(textGo);
+            textGo.offsetMin = new Vector2(6f, 2f); textGo.offsetMax = new Vector2(-6f, -2f);
+            var t = textGo.gameObject.AddComponent<Text>();
+            LitIsoTheme.ApplyBody(t, 12, LitIsoTheme.Parchment);
+            t.alignment = TextAnchor.MiddleLeft;
+            t.supportRichText = false;
+
+            var input = go.gameObject.AddComponent<InputField>();
+            input.targetGraphic = bg;
+            input.textComponent = t;
+            input.placeholder = ph;
+            input.characterLimit = 7;
+            input.contentType = InputField.ContentType.Standard;
+            input.text = initText;
+            return input;
+        }
+
+        string BestVariant(ItemDef def, Color target, string bodyType)
+        {
+            if (def?.variants == null || def.variants.Length == 0) return "";
+            float minD = float.MaxValue;
+            string best = def.variants[0];
+            foreach (var v in def.variants)
+            {
+                Color c = CharacterCompositor.SwatchColor(def, v, bodyType);
+                float d = (c.r - target.r) * (c.r - target.r) +
+                          (c.g - target.g) * (c.g - target.g) +
+                          (c.b - target.b) * (c.b - target.b);
+                if (d < minD) { minD = d; best = v; }
+            }
+            return best;
+        }
+
+        static string ColorToHex(Color c)
+        {
+            Color32 c32 = c;
+            return $"#{c32.r:X2}{c32.g:X2}{c32.b:X2}";
+        }
+
+        static bool TryParseHex(string hex, out Color color)
+        {
+            color = Color.black;
+            if (string.IsNullOrEmpty(hex)) return false;
+            hex = hex.TrimStart('#');
+            if (hex.Length != 6) return false;
+            try
+            {
+                byte r = Convert.ToByte(hex.Substring(0, 2), 16);
+                byte g = Convert.ToByte(hex.Substring(2, 2), 16);
+                byte b = Convert.ToByte(hex.Substring(4, 2), 16);
+                color = new Color(r / 255f, g / 255f, b / 255f);
+                return true;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// For <= 6 items in the slot: shows them as side-by-side segmented toggle buttons —
+        /// the selected one is gold, others are stone. For more items falls back to the
+        /// prev / name / next picker so the layout stays clean at any catalog size.
+        /// </summary>
+        void SegmentedItemBlock(RectTransform content, string label, string slot,
+            Func<string> getCurrentId, Action<string, string> setIdVariant)
+        {
+            var items = _cat.CosmeticSlot(slot);
+            if (items.Count == 0) return;
+
+            // Fall back to prev/next picker when there are many style options.
+            if (items.Count > 6)
+            {
+                ItemPickerBlock(content, label + " STYLE", slot, getCurrentId, setIdVariant);
+                return;
+            }
+
+            // Skip showing a one-item "picker" — there's nothing to choose.
+            if (items.Count == 1)
+            {
+                // Just apply the single item silently.
+                if (getCurrentId() != items[0].id)
+                {
+                    string variant = items[0].SafeVariant("");
+                    setIdVariant(items[0].id, variant);
+                }
+                return;
+            }
+
+            var block = NewRect("Seg_" + label, content);
+            var v = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 8f; v.childControlWidth = true; v.childControlHeight = true;
+            v.childForceExpandWidth = true; v.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var lbl = NewText(block.transform, "L", label, 14, TextAnchor.UpperLeft, LabelColor, true);
+            FixedH(lbl, 20f);
+
+            var row = NewRect("Row", block.transform);
+            FixedH(row, 44f);
+            var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.spacing = 6f; h.childControlWidth = true; h.childControlHeight = true;
+            h.childForceExpandWidth = false; h.childForceExpandHeight = true;
+
+            var btnImages = new List<Image>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+                string capturedId = item.id;
+                bool sel = getCurrentId() == capturedId;
+
+                var bt = NewRect("Seg_" + i, row.transform);
+                bt.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+                var btImg = bt.gameObject.AddComponent<Image>();
+                btImg.color = sel ? LitIsoTheme.Gold : LitIsoTheme.Raised;
+                var btOl = bt.gameObject.AddComponent<Outline>();
+                btOl.effectColor = LitIsoTheme.Base; btOl.effectDistance = new Vector2(2f, -2f); btOl.useGraphicAlpha = false;
+
+                var btn = bt.gameObject.AddComponent<Button>();
+                btn.targetGraphic = btImg;
+                btn.transition = Selectable.Transition.None;
+                btn.onClick.AddListener(() =>
+                {
+                    if (getCurrentId() == capturedId) return;
+                    var def = _cat.Find(capturedId);
+                    string variant = def?.SafeVariant("") ?? "";
+                    setIdVariant(capturedId, variant);
+                    Rebake();
+                });
+
+                var btLbl = NewText(bt, "T", item.displayName ?? item.id, 16,
+                    TextAnchor.MiddleCenter, sel ? LitIsoTheme.GoldText : LitIsoTheme.Parchment);
+                btLbl.raycastTarget = false;
+                btLbl.rectTransform.anchorMin = Vector2.zero; btLbl.rectTransform.anchorMax = Vector2.one;
+                btLbl.rectTransform.offsetMin = btLbl.rectTransform.offsetMax = Vector2.zero;
+                btLbl.resizeTextForBestFit = true; btLbl.resizeTextMaxSize = 16; btLbl.resizeTextMinSize = 11;
+
+                int capturedIdx = i;
+                _refreshers.Add(() =>
+                {
+                    bool s = getCurrentId() == item.id;
+                    btImg.color = s ? LitIsoTheme.Gold : LitIsoTheme.Raised;
+                    btLbl.color = s ? LitIsoTheme.GoldText : LitIsoTheme.Parchment;
+                });
+                btnImages.Add(btImg);
+            }
+        }
+
+        /// <summary>Male / Female segmented toggle.</summary>
+        void BuildBodyTypeToggle(RectTransform content)
+        {
+            var block = NewRect("BodyTypeBlock", content);
+            var v = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 8f; v.childControlWidth = true; v.childControlHeight = true;
+            v.childForceExpandWidth = true; v.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var lbl = NewText(block.transform, "L", "BODY TYPE", 14, TextAnchor.UpperLeft, LabelColor, true);
+            FixedH(lbl, 20f);
+
+            var row = NewRect("Row", block.transform);
+            FixedH(row, 44f);
+            var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.spacing = 10f; h.childControlWidth = true; h.childControlHeight = true;
+            h.childForceExpandWidth = false; h.childForceExpandHeight = true;
+
+            var types = _cat.bodyTypes;
+            var buttons = new List<Button>();
+            foreach (var bt in types)
+            {
+                string captured = bt;
+                bool sel = _appearance.bodyType == captured;
+                var b = ThemeButton(row, "BT_" + bt, bt == "male" ? "Male" : "Female", sel, () =>
+                {
+                    if (_appearance.bodyType == captured) return;
+                    _appearance.bodyType = captured;
+                    RebuildOptions();
+                });
+                b.GetComponent<LayoutElement>().preferredWidth = 130f;
+                buttons.Add(b);
+            }
+
+            // Keep toggle highlights in sync after rebuild.
+            _refreshers.Add(() =>
+            {
+                for (int i = 0; i < buttons.Count && i < types.Length; i++)
+                {
+                    var img = buttons[i].GetComponent<Image>();
+                    if (img != null) img.color = (_appearance.bodyType == types[i]) ? LitIsoTheme.Gold : LitIsoTheme.Raised;
+                }
+            });
+        }
+
+        /// <summary>
+        /// A labelled item-picker row: prev / item-name / next buttons that cycle
+        /// through all creator-visible items in the slot. Selecting a new item
+        /// preserves the current variant if it exists, otherwise picks the first.
+        /// </summary>
+        void ItemPickerBlock(RectTransform content, string label, string slot,
+            Func<string> getCurrentId, Action<string, string> setIdVariant)
+        {
+            var items = _cat.CosmeticSlot(slot);
+            if (items.Count == 0) return;
+
+            var block = NewRect("Picker_" + label, content);
+            var v = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 6f; v.childControlWidth = true; v.childControlHeight = true;
+            v.childForceExpandWidth = true; v.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var lbl = NewText(block.transform, "L", label, 14, TextAnchor.UpperLeft, LabelColor, true);
+            FixedH(lbl, 20f);
+
+            var row = NewRect("Row", block.transform);
+            FixedH(row, 44f);
+            var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.spacing = 8f; h.childControlWidth = true; h.childControlHeight = true;
+            h.childForceExpandWidth = false; h.childForceExpandHeight = true;
+
+            // Find current index.
+            int curIdx = Mathf.Max(0, items.FindIndex(i => i.id == getCurrentId()));
+
+            // Name label in the centre.
+            var nameText = NewText(row.transform, "Name",
+                items[curIdx].displayName ?? items[curIdx].id, 16, TextAnchor.MiddleCenter, LitIsoTheme.Parchment);
+            nameText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+
+            void Refresh(int idx)
+            {
+                var item = items[idx];
+                nameText.text = item.displayName ?? item.id;
+                string curVariant = getCurrentId() == item.id
+                    ? _cat.Find(getCurrentId())?.SafeVariant(null) ?? ""
+                    : "";
+                string variant = item.SafeVariant(curVariant);
+                setIdVariant(item.id, variant);
+                Rebake();
+            }
+
+            // Prev button — insert BEFORE the name text.
+            var prev = ThemeButton(row, "Prev", "◀", false, () =>
+            {
+                curIdx = ((curIdx - 1) + items.Count) % items.Count;
+                Refresh(curIdx);
+            });
+            prev.transform.SetSiblingIndex(0);
+            prev.GetComponent<LayoutElement>().preferredWidth = 44f;
+
+            // Next button — after name.
+            var next = ThemeButton(row, "Next", "▶", false, () =>
+            {
+                curIdx = (curIdx + 1) % items.Count;
+                Refresh(curIdx);
+            });
+            next.GetComponent<LayoutElement>().preferredWidth = 44f;
+
+            // Item count hint.
+            var count = NewText(block.transform, "Count",
+                $"{curIdx + 1} / {items.Count}", 13, TextAnchor.UpperRight, LabelColor);
+            FixedH(count, 16f);
+
+            _refreshers.Add(() =>
+            {
+                curIdx = Mathf.Max(0, items.FindIndex(i => i.id == getCurrentId()));
+                nameText.text = items[curIdx].displayName ?? items[curIdx].id;
+                count.text = $"{curIdx + 1} / {items.Count}";
+            });
+        }
+
+        void ItemPickerBlockNullable(RectTransform content, string label, List<ItemDef> items,
+            Func<string> getCurrentId, Action<string, string> setIdVariant)
+        {
+            // Prepend a "None" synthetic entry
+            var list = new List<(string id, string name)> { ("", "None") };
+            foreach (var it in items) list.Add((it.id, it.displayName ?? it.id));
+
+            var block = NewRect("NullPicker_" + label, content);
+            var bv = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            bv.spacing = 6f; bv.childControlWidth = true; bv.childControlHeight = true;
+            bv.childForceExpandWidth = true; bv.childForceExpandHeight = false;
+            block.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+                ContentSizeFitter.FitMode.PreferredSize;
+
+            var lbl = NewText(block.transform, "L", label, 13, TextAnchor.UpperLeft, LabelColor, true);
+            FixedH(lbl, 18f);
+
+            var row = NewRect("Row", block.transform);
+            FixedH(row, 36f);
+            var rh = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            rh.spacing = 8f; rh.childControlWidth = true; rh.childControlHeight = true;
+            rh.childForceExpandWidth = false; rh.childForceExpandHeight = true;
+
+            int curIdx = Mathf.Max(0, list.FindIndex(x => x.id == (getCurrentId() ?? "")));
+
+            var nameText = NewText(row.transform, "Name", list[curIdx].name, 14,
+                TextAnchor.MiddleCenter, LitIsoTheme.Parchment);
+            nameText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+
+            void Refresh(int idx)
+            {
+                string id = list[idx].id;
+                nameText.text = list[idx].name;
+                if (string.IsNullOrEmpty(id)) { setIdVariant("", ""); Rebake(); return; }
+                var def = _cat.Find(id);
+                string curV = getCurrentId() == id ? (def?.SafeVariant(null) ?? "") : "";
+                setIdVariant(id, def?.SafeVariant(curV) ?? "");
+                Rebake();
+            }
+
+            var prev = ThemeButton(row, "Prev", "◀", false, () =>
+            {
+                curIdx = ((curIdx - 1) + list.Count) % list.Count; Refresh(curIdx);
+            });
+            prev.transform.SetSiblingIndex(0);
+            prev.GetComponent<LayoutElement>().preferredWidth = 36f;
+
+            var next = ThemeButton(row, "Next", "▶", false, () =>
+            {
+                curIdx = (curIdx + 1) % list.Count; Refresh(curIdx);
+            });
+            next.GetComponent<LayoutElement>().preferredWidth = 36f;
+
+            var cnt = NewText(block.transform, "Cnt", $"{curIdx} / {list.Count - 1}", 12,
+                TextAnchor.UpperRight, LabelColor);
+            FixedH(cnt, 16f);
+
+            _refreshers.Add(() =>
+            {
+                curIdx = Mathf.Max(0, list.FindIndex(x => x.id == (getCurrentId() ?? "")));
+                nameText.text = list[curIdx].name;
+                cnt.text = $"{curIdx} / {list.Count - 1}";
+            });
+        }
+
+        // A labelled block with a wrapping grid of colour swatches for one def.
+        void SwatchBlock(RectTransform content, string label,
+            Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
+        {
+            var def = getDef();
+
+            var block = NewRect("Block_" + label, content);
+            var v = block.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.spacing = 8f; v.childControlWidth = true; v.childControlHeight = true;
+            v.childForceExpandWidth = true; v.childForceExpandHeight = false;
+            var fit = block.gameObject.AddComponent<ContentSizeFitter>();
+            fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var lbl = NewText(block.transform, "L", label, 14, TextAnchor.UpperLeft, LabelColor, true);
+            FixedH(lbl, 20f);
+
+            if (def == null || def.variants == null || def.variants.Length == 0)
+            {
+                var none = NewText(block.transform, "None", "—", 14, TextAnchor.UpperLeft, LitIsoTheme.WarmTan);
+                FixedH(none, 24f);
+                return;
+            }
+
+            // HTML: 46x46 swatches, 12px gap, wrapping flex row.
+            var grid = NewRect("Grid", block.transform);
+            var g = grid.gameObject.AddComponent<GridLayoutGroup>();
+            g.cellSize = new Vector2(46f, 46f);
+            g.spacing = new Vector2(12f, 12f);
+            g.padding = new RectOffset(0, 0, 0, 0);
+            var gfit = grid.gameObject.AddComponent<ContentSizeFitter>();
+            gfit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            var variants = def.variants;
+            var outlines = new List<Outline>(variants.Length);
+            for (int i = 0; i < variants.Length; i++)
+            {
+                string variant = variants[i];
+                var cell = NewRect("Sw", grid);
+                var img = cell.gameObject.AddComponent<Image>();
+                img.color = CharacterCompositor.SwatchColor(def, variant, _appearance.bodyType);
+                var ol = cell.gameObject.AddComponent<Outline>();
+                ol.effectColor = LitIsoTheme.Base; ol.effectDistance = new Vector2(3f, -3f); ol.useGraphicAlpha = false;
+                outlines.Add(ol);
+                var btn = cell.gameObject.AddComponent<Button>();
+                btn.targetGraphic = img;
+                string captured = variant;
+                btn.onClick.AddListener(() =>
+                {
+                    if (captured == getVariant()) return;
+                    setVariant(captured);
+                    Rebake();
+                });
+            }
+
+            _refreshers.Add(() =>
+            {
+                string cur = getVariant();
+                for (int i = 0; i < outlines.Count && i < variants.Length; i++)
+                {
+                    bool s = variants[i] == cur;
+                    outlines[i].effectColor = s ? LitIsoTheme.Gold : LitIsoTheme.Base;
+                    outlines[i].effectDistance = s ? new Vector2(4f, -4f) : new Vector2(3f, -3f);
+                }
+            });
         }
 
         void Confirm()
         {
             _appearance.Save();
             OnConfirmed?.Invoke(_appearance.Clone());
-            // live-apply to the in-game player so the created character is what's rendered
             var anim = FindFirstObjectByType<LayeredCharacterAnimator>();
             if (anim != null) anim.Apply(_appearance.Clone());
             Destroy(gameObject);
         }
 
-        // ------------------------------------------------------- skinned helpers
-        static RectTransform MakeRect(string name, Transform parent)
+        // ---------------------------------------------------------------- helpers
+        static RectTransform NewRect(string name, Transform parent)
         {
             var go = new GameObject(name, typeof(RectTransform));
             var rt = go.GetComponent<RectTransform>();
@@ -427,138 +1209,153 @@ namespace LitIso.CharacterCreator
 
         static void Stretch(RectTransform rt)
         {
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
             rt.offsetMin = rt.offsetMax = Vector2.zero;
         }
 
-        static void AddOutline(RectTransform rt)
+        static void FixedH(Component c, float h)
         {
-            var o = rt.gameObject.GetComponent<Outline>() ?? rt.gameObject.AddComponent<Outline>();
-            o.effectColor = Border;
-            o.effectDistance = new Vector2(1.5f, -1.5f);
+            var le = c.gameObject.GetComponent<LayoutElement>() ?? c.gameObject.AddComponent<LayoutElement>();
+            le.minHeight = h; le.preferredHeight = h;
         }
 
-        // 9-sliced panel, or flat fill + outline if no art.
-        Image SkinPanel(RectTransform rt, Color fallback)
+        static Image NewImage(Transform parent, string name, Color color)
         {
+            var rt = NewRect(name, parent);
             var img = rt.gameObject.AddComponent<Image>();
-            if (_spPanel != null)
-            {
-                img.sprite = _spPanel;
-                img.type = Image.Type.Sliced;
-                img.color = Color.white;
-            }
-            else
-            {
-                img.color = fallback;
-                AddOutline(rt);
-            }
+            img.color = color;
             return img;
         }
 
-        // 9-sliced button with sprite-swap hover/press, or flat fallback.
-        void Btn(RectTransform parent, string label, Vector2 pos, Vector2 size, Action onClick)
+        static Image Divider(Transform parent, Color color, float thickness)
         {
-            var rt = MakeRect($"Btn_{label}", parent);
-            rt.anchoredPosition = pos;
-            rt.sizeDelta = size;
-            var img = rt.gameObject.AddComponent<Image>();
-            var btn = rt.gameObject.AddComponent<Button>();
-            btn.targetGraphic = img;
-            if (_spButton != null)
-            {
-                img.sprite = _spButton;
-                img.type = Image.Type.Sliced;
-                img.color = Color.white;
-                btn.transition = Selectable.Transition.SpriteSwap;
-                btn.spriteState = new SpriteState
-                {
-                    highlightedSprite = _spButtonHover != null ? _spButtonHover : _spButton,
-                    pressedSprite = _spButtonPressed != null ? _spButtonPressed : (_spButtonHover != null ? _spButtonHover : _spButton),
-                    selectedSprite = _spButtonHover != null ? _spButtonHover : _spButton,
-                };
-            }
-            else
-            {
-                img.color = SectionBg;
-                AddOutline(rt);
-                var cb = btn.colors;
-                cb.normalColor = SectionBg;
-                cb.highlightedColor = new Color(0.22f, 0.26f, 0.34f, 1f);
-                cb.pressedColor = new Color(0.10f, 0.12f, 0.18f, 1f);
-                btn.colors = cb;
-            }
-            btn.onClick.AddListener(() => onClick());
-
-            var t = Label(rt, label, Vector2.zero, 16);
-            var trt = t.rectTransform;
-            trt.anchorMin = Vector2.zero;
-            trt.anchorMax = Vector2.one;
-            trt.offsetMin = trt.offsetMax = Vector2.zero;
+            var img = NewImage(parent, "Divider", color);
+            img.raycastTarget = false;
+            FixedH(img, thickness);
+            return img;
         }
 
-        // Slider skinned with slider_track (bg) + slider_handle (handle), or flat.
-        // Mirrors WelcomeScreenManager's proven handle-as-direct-child setup.
-        Slider MakeSlider(RectTransform parent, Vector2 pos, Vector2 size)
+        static Text NewText(Transform parent, string name, string value, int size, TextAnchor anchor, Color color, bool display = false)
         {
-            var rt = MakeRect("Slider", parent);
-            rt.anchoredPosition = pos;
-            rt.sizeDelta = size;
-            var bg = rt.gameObject.AddComponent<Image>();
-            if (_spSliderTrack != null)
-            {
-                bg.sprite = _spSliderTrack;
-                bg.type = Image.Type.Sliced;
-                bg.color = Color.white;
-            }
-            else
-            {
-                bg.color = InputBg;
-                AddOutline(rt);
-            }
-
-            var slider = rt.gameObject.AddComponent<Slider>();
-            slider.fillRect = null;
-            slider.direction = Slider.Direction.LeftToRight;
-            slider.wholeNumbers = true;
-
-            var handle = MakeRect("Handle", rt);
-            handle.sizeDelta = new Vector2(18, size.y + 6);
-            var hImg = handle.gameObject.AddComponent<Image>();
-            if (_spSliderHandle != null)
-            {
-                hImg.sprite = _spSliderHandle;
-                hImg.type = Image.Type.Simple;
-                hImg.color = Color.white;
-            }
-            else
-            {
-                hImg.color = HandleCol;
-            }
-            slider.handleRect = handle;
-            slider.targetGraphic = hImg;
-            return slider;
-        }
-
-        Text Label(RectTransform parent, string text, Vector2 pos, int size,
-            bool bold = false, bool alignLeft = false)
-        {
-            var rt = MakeRect("Label", parent);
-            rt.anchoredPosition = pos;
-            rt.sizeDelta = new Vector2(280, 30);
+            var rt = NewRect(name, parent);
             var t = rt.gameObject.AddComponent<Text>();
-            LitIsoFont.Apply(t, size, bold ? FontStyle.Bold : FontStyle.Normal);
+            t.text = value; t.alignment = anchor;
+            if (display) LitIsoTheme.ApplyDisplay(t, size, color);
+            else LitIsoTheme.ApplyBody(t, size, color);
             t.horizontalOverflow = HorizontalWrapMode.Wrap;
             t.verticalOverflow = VerticalWrapMode.Truncate;
-            t.resizeTextForBestFit = true;
-            t.resizeTextMaxSize = t.fontSize;
-            t.resizeTextMinSize = 10;
-            t.text = text;
-            t.color = TextCol;
-            t.alignment = alignLeft ? TextAnchor.MiddleLeft : TextAnchor.MiddleCenter;
-            t.raycastTarget = false;
             return t;
+        }
+
+        static Image Panel(Transform parent, string name)
+        {
+            var rt = NewRect(name, parent);
+            var img = rt.gameObject.AddComponent<Image>();
+            img.color = LitIsoTheme.Panel;
+            var ol = rt.gameObject.AddComponent<Outline>();
+            ol.effectColor = LitIsoTheme.Stone;
+            ol.effectDistance = new Vector2(2f, -2f);
+            ol.useGraphicAlpha = false;
+            return img;
+        }
+
+        Button ThemeButton(Transform parent, string name, string label, bool gold, Action onClick,
+            int size = 20, bool display = false)
+        {
+            var rt = NewRect(name, parent);
+            rt.gameObject.AddComponent<LayoutElement>();
+            var img = rt.gameObject.AddComponent<Image>();
+            img.color = gold ? LitIsoTheme.Gold : LitIsoTheme.Raised;
+            var ol = rt.gameObject.AddComponent<Outline>();
+            ol.effectColor = LitIsoTheme.Base; ol.effectDistance = new Vector2(2f, -2f); ol.useGraphicAlpha = false;
+
+            var btn = rt.gameObject.AddComponent<Button>();
+            btn.targetGraphic = img;
+            btn.transition = Selectable.Transition.ColorTint;
+            var cb = btn.colors;
+            cb.normalColor = Color.white;
+            cb.highlightedColor = new Color(0.88f, 0.88f, 0.88f, 1f);
+            cb.pressedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
+            cb.fadeDuration = 0.06f;
+            btn.colors = cb;
+
+            var t = NewText(rt, "L", label, size, TextAnchor.MiddleCenter,
+                gold ? LitIsoTheme.GoldText : LitIsoTheme.Parchment, display);
+            var trt = t.rectTransform;
+            trt.anchorMin = Vector2.zero; trt.anchorMax = Vector2.one;
+            trt.offsetMin = new Vector2(8f, 4f); trt.offsetMax = new Vector2(-8f, -4f);
+            t.resizeTextForBestFit = true; t.resizeTextMaxSize = t.fontSize; t.resizeTextMinSize = 10;
+
+            btn.onClick.AddListener(() => onClick());
+            return btn;
+        }
+
+        static void AddGoldInnerLine(RectTransform parent)
+        {
+            var go = new GameObject("GoldFrame", typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var img = go.AddComponent<Image>();
+            img.color = new Color(LitIsoTheme.GoldDeep.r, LitIsoTheme.GoldDeep.g,
+                                  LitIsoTheme.GoldDeep.b, 0.55f);
+            img.raycastTarget = false;
+            var rt = img.rectTransform;
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(3f, 3f); rt.offsetMax = new Vector2(-3f, -3f);
+            var fillGo = new GameObject("Fill", typeof(RectTransform));
+            fillGo.transform.SetParent(rt, false);
+            var frt = fillGo.GetComponent<RectTransform>();
+            frt.anchorMin = Vector2.zero; frt.anchorMax = Vector2.one;
+            frt.offsetMin = new Vector2(1f, 1f); frt.offsetMax = new Vector2(-1f, -1f);
+            fillGo.AddComponent<Image>().color = LitIsoTheme.Panel;
+            go.transform.SetAsFirstSibling();
+        }
+
+        static void AddCornerBrackets(RectTransform parent)
+        {
+            var corners = new (Vector2 anchor, string name)[]
+            {
+                (new Vector2(0, 1), "BracketTL"),
+                (new Vector2(1, 1), "BracketTR"),
+                (new Vector2(0, 0), "BracketBL"),
+                (new Vector2(1, 0), "BracketBR"),
+            };
+            foreach (var (anchor, name) in corners)
+            {
+                var go = new GameObject(name, typeof(RectTransform));
+                go.transform.SetParent(parent, false);
+                var rt = go.GetComponent<RectTransform>();
+                rt.anchorMin = rt.anchorMax = anchor;
+                rt.pivot = anchor;
+                rt.sizeDelta = new Vector2(12f, 12f);
+                rt.anchoredPosition = new Vector2(anchor.x == 0 ? 6f : -6f,
+                                                  anchor.y == 1 ? -6f : 6f);
+
+                void AddBar(string n, bool horiz)
+                {
+                    var b = new GameObject(n, typeof(RectTransform));
+                    b.transform.SetParent(go.transform, false);
+                    var bImg = b.AddComponent<Image>();
+                    bImg.color = LitIsoTheme.Gold; bImg.raycastTarget = false;
+                    var brt = bImg.rectTransform;
+                    if (horiz)
+                    {
+                        brt.anchorMin = new Vector2(0, anchor.y == 1 ? 1 : 0);
+                        brt.anchorMax = new Vector2(1, anchor.y == 1 ? 1 : 0);
+                        brt.pivot     = new Vector2(0.5f, anchor.y == 1 ? 1f : 0f);
+                        brt.sizeDelta = new Vector2(0, 2f);
+                    }
+                    else
+                    {
+                        brt.anchorMin = new Vector2(anchor.x == 0 ? 0 : 1, 0);
+                        brt.anchorMax = new Vector2(anchor.x == 0 ? 0 : 1, 1);
+                        brt.pivot     = new Vector2(anchor.x == 0 ? 0f : 1f, 0.5f);
+                        brt.sizeDelta = new Vector2(2f, 0);
+                    }
+                    brt.anchoredPosition = Vector2.zero;
+                }
+                AddBar("H", true);
+                AddBar("V", false);
+            }
         }
 
         void OnDestroy()
