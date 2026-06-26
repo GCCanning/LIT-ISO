@@ -4,6 +4,39 @@
 
 ---
 
+### 2026-06-26 — Session handoff: working-tree cleared, two PRs open
+
+**PRs open (do not merge without owner review):**
+- `feat/biome-asset-wiring` — massive catch-up commit (5 checkpoints). Contains:
+  - BiomeDefinition `surfaceBasePool`/`surfaceAccents`/`BiomeTransition` structs
+  - FoundationContent: 25 PixelLab tiles registered + biome pool assignments
+  - IsoTerrainSampler: mountain elevation gate, height tiers 5-7, 3-octave FBM
+  - CharacterAppearanceCatalog: BlackMage/HollowedLight/ReferenceKnight REMOVED,
+    replaced by 4 LitIsoCreator appearances (Adventurer is new default)
+  - Worldgen JSON: biomes + features + noise_params + surface_rules + transitions updated
+  - UI overhaul scripts (CharacterPanelView, WelcomeScreenManager, etc.) + legacy deletions
+  - New decoration PNGs, tile variants (dungeon2_*, farm_*, plains2_*, planks_*, etc.)
+  - **Unity compile/play validation pending** — run FoundationValidator before merge.
+
+- `feat/movement-input-guard` — one-line bug fix:
+  - `IsoFoundationPlayer.Update`: added `FoundationUiCoordinator.BlocksWorldInput` guard
+    before `Input.GetAxisRaw`. WASD/movement no longer leaks through open menus.
+  - Static check only; needs Unity play-test to confirm feel.
+
+**Owner direction from this session:**
+- Only LPC (LitIsoCreator) characters + slimes should be generating in-world. Old placeholder
+  sprites (BlackMage, HollowedLight, ReferenceKnight) intentionally deleted.
+- Do not auto-merge PRs; owner reviews first.
+
+**Still TODO (not started this session):**
+- B7: `BuildGame.bat` resilient — always buildable .exe after new content
+- A1/B3: Seven-Day trial loop (scoring → rank → class offers → skill points)
+- Real save/load cross-lane (codex/foundation-save-load-core WIP)
+- BiomeTransition blend bands wired into `IsoTerrainSampler.SurfaceVariant` (Phase-1 B3/B4)
+- `FoundationConfig` default tile IDs updated to `pl_*` names (remove old string fallbacks)
+
+---
+
 ### 2026-06-05 — Foundation progression adapters + quest tracker done
 
 PR `claude/foundation-progression-adapters` is ready. **Merge `codex/litrpg-foundation-systems` first** — this branch compiles against `FoundationPlayerStats`, `FoundationProgression`, and the new `FoundationBootstrap.Stats`/`Progression` properties from that branch.
