@@ -1,0 +1,940 @@
+{
+ "sprites": {
+  "alchemy_table": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "anvil": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "bar_counter": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "boat_rowing": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "book_stack": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "brazier": {
+   "category": "campobject",
+   "heightUnits": 1.1
+  },
+  "bush": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_arm": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_barrel": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "cactus_barrel2": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "cactus_dead": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_pad": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_pear": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_round": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_small": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "cactus_tall": {
+   "category": "bush",
+   "heightUnits": 0.6
+  },
+  "campfire_new": {
+   "category": "campobject",
+   "heightUnits": 1.1
+  },
+  "candle_lantern": {
+   "category": "campobject",
+   "heightUnits": 1.1
+  },
+  "cooking_station": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "copper_vein": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "crafting_table": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "dock_post": {
+   "category": "tallmarker",
+   "heightUnits": 1.4
+  },
+  "dungeon_chest_wood": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "fence_rope_r0c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r0c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r0c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r0c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r0c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r0c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r0c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r1c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r1c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r1c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r1c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r2c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r3c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r3c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r4c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r4c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r5c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r6c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r6c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r6c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r6c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r7c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r7c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r7c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_rope_r7c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_stone_r0c0": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c1": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c2": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c3": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c4": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c6": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r0c7": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c0": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c1": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c2": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c3": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c6": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r1c7": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c0": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c1": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c2": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c3": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c4": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r2c6": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r3c1": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r3c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r3c6": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r4c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r4c6": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c0": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c1": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c2": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c3": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c4": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r5c6": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r6c0": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r6c1": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r6c2": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r6c3": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r6c4": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r6c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r7c0": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r7c3": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r7c4": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_stone_r7c5": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "fence_wood_r0c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r0c7": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r1c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r1c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r1c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r1c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r1c7": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r2c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r3c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r3c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r3c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r4c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r4c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r4c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r5c6": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r6c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r6c1": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r6c2": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r6c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r6c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r6c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r7c0": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r7c3": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r7c4": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "fence_wood_r7c5": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "flower": {
+   "category": "groundcover",
+   "heightUnits": 0.28
+  },
+  "flower_tulip": {
+   "category": "groundcover",
+   "heightUnits": 0.28
+  },
+  "forest_bush": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "forest_dead_tree": {
+   "category": "tree",
+   "heightUnits": 3.0
+  },
+  "forest_deep_oak_tree": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "forest_moss_bush": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "forest_mushrooms": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "forest_oak_tree": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "forest_pine": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "forest_stump": {
+   "category": "stump",
+   "heightUnits": 0.5
+  },
+  "furnace": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "glowbug": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "grindstone": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "guild_banner_stand": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "guild_hall_r1": {
+   "category": "monument",
+   "heightUnits": 5.5
+  },
+  "guild_hall_r2": {
+   "category": "monument",
+   "heightUnits": 5.5
+  },
+  "guild_hall_r3": {
+   "category": "monument",
+   "heightUnits": 5.5
+  },
+  "guild_notice_board": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "guild_round_table": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "keg_rack": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "lantern_post": {
+   "category": "campobject",
+   "heightUnits": 1.1
+  },
+  "library_r1": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "library_r2": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "library_r3": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "log": {
+   "category": "stump",
+   "heightUnits": 0.5
+  },
+  "loom": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "market_stall_blue": {
+   "category": "campobject",
+   "heightUnits": 1.1
+  },
+  "market_stall_red": {
+   "category": "campobject",
+   "heightUnits": 1.1
+  },
+  "ore_copper": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "ore_gold": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "ore_iron": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "ore_manacrystal": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "ore_silver": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "ore_starmetal": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "pine": {
+   "category": "tree",
+   "heightUnits": 3.0
+  },
+  "plains_bush": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_0": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_0_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_1": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_1_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_2": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_2_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_3": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_bush_v2_3_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_dry_bush": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_0": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_0_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_1": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_1_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_2": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_2_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_3": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_rock_v2_3_big": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_small_tree": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2_0": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2_0_young": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2_1": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2_1_young": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2_3": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_tree_v2_3_young": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "plains_willow": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "rock": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "rune_station": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "sawmill_bench": {
+   "category": "furniture",
+   "heightUnits": 0.85
+  },
+  "scarecrow": {
+   "category": "tallmarker",
+   "heightUnits": 1.4
+  },
+  "shared_gray_rock": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "shop_r1": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "shop_r2": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "shop_r3": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "shore_stone": {
+   "category": "smallrock",
+   "heightUnits": 0.5
+  },
+  "stump": {
+   "category": "stump",
+   "heightUnits": 0.5
+  },
+  "tanning_rack": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "tavern_r1": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "tavern_r2": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "tavern_r3": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "tavern_sign": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "tavern_table": {
+   "category": "building",
+   "heightUnits": 3.8
+  },
+  "torch_standing": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "torch_wall": {
+   "category": "fence",
+   "heightUnits": 0.9
+  },
+  "tree": {
+   "category": "tree",
+   "heightUnits": 3.0
+  },
+  "tuft": {
+   "category": "groundcover",
+   "heightUnits": 0.28
+  },
+  "weapon_rack": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  },
+  "wisp": {
+   "category": "unclassified",
+   "heightUnits": 0.7
+  }
+ }
+}

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "cleanRoomPolicy": "shipping-assets-must-be-original-litiso-art",
+  "sheetContract": {
+    "directionOrder": ["S", "SE", "E", "NE", "N", "NW", "W", "SW"],
+    "framesPerRow": 4,
+    "directionCount": 8,
+    "resourceRoot": "Characters/Player",
+    "notes": "Initial runtime contract is one composed 8D sheet. Future doll layers can export into this same sheet contract."
+  },
+  "creatorTabs": [
+    "body",
+    "face",
+    "hair",
+    "clothes",
+    "colors",
+    "summary"
+  ],
+  "itemSlots": [
+    { "id": "head", "displayName": "Head", "runtimeLayer": "overlay", "saveField": "headItemId" },
+    { "id": "back", "displayName": "Back", "runtimeLayer": "overlay", "saveField": "backItemId" },
+    { "id": "weapon", "displayName": "Weapon", "runtimeLayer": "heldTool", "saveField": "weaponItemId" },
+    { "id": "tool", "displayName": "Tool", "runtimeLayer": "heldTool", "saveField": "toolItemId" }
+  ],
+  "appearances": [
+    {
+      "id": "human_male",
+      "displayName": "Human (Male)",
+      "bodyType": "male",
+      "lpcBodyId": "lpc/body",
+      "lpcHeadId": "lpc/heads_human_male",
+      "provenanceId": "lpc_universal_spritesheet"
+    },
+    {
+      "id": "human_female",
+      "displayName": "Human (Female)",
+      "bodyType": "female",
+      "lpcBodyId": "lpc/body",
+      "lpcHeadId": "lpc/heads_human_female",
+      "provenanceId": "lpc_universal_spritesheet"
+    }
+  ]
+}

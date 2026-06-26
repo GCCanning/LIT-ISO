@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#070809; }
+  body{ font-family:'Pixelify Sans',sans-serif; -webkit-font-smoothing:none; image-rendering:pixelated; }
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background:#0c0e12; }
+  ::-webkit-scrollbar-thumb{ background:#3a3326; border:2px solid #0c0e12; }
+  @keyframes litEmber{ 0%{ transform:translateY(0) translateX(0); opacity:0; } 12%{ opacity:.9; } 70%{ opacity:.7; } 100%{ transform:translateY(-220px) translateX(var(--dx,0)); opacity:0; } }
+  @keyframes litGlow{ 0%,100%{ opacity:.55; transform:scale(1); } 50%{ opacity:.8; transform:scale(1.06); } }
+  @keyframes litWordGlow{ 0%,100%{ text-shadow:0 0 0 #000, 4px 4px 0 #000, 0 0 18px rgba(232,196,104,.25); } 50%{ text-shadow:0 0 0 #000, 4px 4px 0 #000, 0 0 30px rgba(232,196,104,.55); } }
+  @keyframes litBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+  @keyframes litWalk{ 0%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(2px) rotate(3deg); } 100%{ transform:translateY(0) rotate(0deg); } }
+  @keyframes litBlink{ 0%,92%,100%{ transform:scaleY(1); } 96%{ transform:scaleY(.1); } }
+  @keyframes litCaret{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+  @keyframes litRise{ 0%{ opacity:0; transform:translateY(8px); } 100%{ opacity:1; transform:translateY(0); } }
+</style>
+</helmet>
+
+<div style="position:fixed; inset:0; background:radial-gradient(140% 120% at 50% 20%, #14110c 0%, #090a0d 55%, #050507 100%); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+
+  <div ref="{{ stageRef }}" style="position:relative; width:1920px; height:1080px; flex:none; transform:{{ stageTransform }}; transform-origin:center center; overflow:hidden; background:{{ stageBg }}; box-shadow:0 0 0 4px #000, 0 0 0 6px #2a2e38, 0 30px 80px rgba(0,0,0,.7);">
+
+    <!-- ============ SCENE BACKDROP ============ -->
+    <sc-if value="{{ sceneOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute; inset:0;">
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, #0a0c14 0%, #11131c 38%, #1a1813 70%, #241d14 100%);"></div>
+    <div style="position:absolute; left:0; right:0; bottom:0; height:42%; background:linear-gradient(180deg, rgba(40,30,16,0) 0%, #1c160d 60%, #0f0b06 100%);"></div>
+    <!-- distant ridge -->
+    <div style="position:absolute; left:-2%; right:-2%; bottom:30%; height:140px; background:#0c0f15; clip-path:polygon(0 100%,0 60%,8% 70%,16% 40%,24% 62%,33% 30%,42% 58%,52% 38%,60% 64%,70% 44%,80% 66%,90% 48%,100% 70%,100% 100%); opacity:.85;"></div>
+    <div style="position:absolute; left:-2%; right:-2%; bottom:24%; height:120px; background:#0a0c11; clip-path:polygon(0 100%,0 70%,10% 50%,20% 72%,30% 52%,40% 74%,50% 48%,62% 72%,72% 54%,84% 74%,94% 56%,100% 72%,100% 100%);"></div>
+    <!-- ground -->
+    <div style="position:absolute; left:0; right:0; bottom:0; height:24%; background:linear-gradient(180deg,#241b10,#140e07);"></div>
+    <!-- campfire warm glow -->
+    <div style="position:absolute; left:62%; bottom:14%; width:680px; height:680px; margin-left:-340px; border-radius:50%; background:radial-gradient(circle, rgba(232,160,60,.5) 0%, rgba(200,110,40,.22) 30%, rgba(120,60,20,0) 62%); animation:litGlow 4.5s ease-in-out infinite; pointer-events:none;"></div>
+    <!-- campfire body -->
+    <div style="position:absolute; left:62%; bottom:20%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center;">
+      <div style="width:46px; height:60px; background:linear-gradient(180deg,#ffd66b,#e8852e 55%,#b8431e); border-radius:50% 50% 46% 46%; box-shadow:0 0 40px rgba(232,140,50,.7); animation:litGlow 1.6s ease-in-out infinite;"></div>
+      <div style="margin-top:-14px; width:74px; height:18px;">
+        <div style="width:74px; height:10px; background:#3a2616; transform:skewX(-26deg); margin-bottom:3px;"></div>
+        <div style="width:74px; height:10px; background:#2c1c10; transform:skewX(26deg);"></div>
+      </div>
+    </div>
+    <!-- embers -->
+    <sc-if value="{{ embersOn }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; pointer-events:none;">
+        <sc-for list="{{ embers }}" as="e" hint-placeholder-count="14">
+          <span style="position:absolute; left:{{ e.left }}; bottom:24%; width:{{ e.size }}; height:{{ e.size }}; background:{{ e.color }}; box-shadow:0 0 6px {{ e.color }}; --dx:{{ e.dx }}; animation:litEmber {{ e.dur }} linear {{ e.delay }} infinite;"></span>
+        </sc-for>
+      </div>
+    </sc-if>
+    <!-- vignette -->
+    <div style="position:absolute; inset:0; pointer-events:none; background:radial-gradient(120% 100% at 50% 45%, rgba(0,0,0,0) 50%, rgba(0,0,0,.55) 100%);"></div>
+    </div>
+    </sc-if>
+
+    <!-- ============ TITLE / MAIN MENU ============ -->
+    <sc-if value="{{ isTitle }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; display:flex; align-items:center;">
+        <div style="margin-left:120px; width:560px; animation:litRise .4s ease both;">
+          <div style="font-family:'Press Start 2P'; font-size:14px; letter-spacing:6px; color:#8a8578; margin-bottom:14px;">A LITRPG SURVIVAL CRAFTER</div>
+          <h1 style="font-family:'Press Start 2P'; font-size:88px; line-height:.96; margin:0 0 6px; color:#E8C468; text-shadow:4px 4px 0 #000; animation:litWordGlow 4s ease-in-out infinite;">LIT<span style="color:#d8d4c8;">-</span>ISO</h1>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:42px;">
+            <div style="width:14px; height:14px; background:#E8C468; transform:rotate(45deg);"></div>
+            <div style="height:2px; flex:1; background:linear-gradient(90deg,#5a4d2a,transparent);"></div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:flex-start; gap:12px;">
+            <sc-for list="{{ menuButtons }}" as="b" hint-placeholder-count="6">
+              <button onClick="{{ b.action }}" style="font-family:'Pixelify Sans'; font-weight:600; font-size:26px; letter-spacing:1px; color:#d8d4c8; background:rgba(21,23,28,.78); border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:14px 30px 14px 22px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all .08s; min-width:300px; text-align:left;" style-hover="background:#E8C468; color:#1a1408; box-shadow:inset 0 0 0 2px #f5d98a, 0 0 18px rgba(232,196,104,.35);" style-active="transform:translateX(3px);">
+                <span style="width:10px; height:10px; background:currentColor; transform:rotate(45deg); opacity:.8;"></span>
+                {{ b.label }}
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute; right:24px; bottom:18px; font-family:'Press Start 2P'; font-size:11px; color:#5a564c;">v0.7.2 · build 1184</div>
+    </sc-if>
+
+    <!-- ============ CREATE WORLD ============ -->
+    <sc-if value="{{ isCreate }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+        <div style="position:relative; width:760px; background:#15171C; border:3px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, inset 0 0 0 4px #15171C, inset 0 0 0 5px #5a4d2a, 0 18px 50px rgba(0,0,0,.6); padding:46px 54px; animation:litRise .35s ease both;">
+          <div style="position:absolute; top:-3px; left:-3px; width:14px; height:14px; background:#E8C468;"></div>
+          <div style="position:absolute; top:-3px; right:-3px; width:14px; height:14px; background:#E8C468;"></div>
+          <div style="position:absolute; bottom:-3px; left:-3px; width:14px; height:14px; background:#E8C468;"></div>
+          <div style="position:absolute; bottom:-3px; right:-3px; width:14px; height:14px; background:#E8C468;"></div>
+
+          <h2 style="font-family:'Press Start 2P'; font-size:30px; color:#E8C468; margin:0 0 6px; text-shadow:3px 3px 0 #000;">CREATE WORLD</h2>
+          <div style="font-size:20px; color:#8a8578; margin-bottom:34px;">Forge a new realm from earth and ember.</div>
+
+          <!-- world name -->
+          <label style="display:block; font-family:'Press Start 2P'; font-size:12px; letter-spacing:2px; color:{{ nameLabelColor }}; margin-bottom:10px;">WORLD NAME</label>
+          <input value="{{ worldName }}" onInput="{{ setWorldName }}" placeholder="Name your realm…" style="width:100%; font-family:'Pixelify Sans'; font-weight:600; font-size:24px; color:#e8e4d8; background:#0e1014; border:2px solid {{ nameBorderColor }}; box-shadow:inset 0 2px 0 #000; padding:14px 16px; outline:none; margin-bottom:6px;">
+          <sc-if value="{{ worldErr }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:18px; color:#d96a55; margin-bottom:14px;">▸ A world needs a name before you can play.</div>
+          </sc-if>
+
+          <!-- seed -->
+          <label style="display:block; font-family:'Press Start 2P'; font-size:12px; letter-spacing:2px; color:#8a8578; margin:22px 0 10px;">SEED</label>
+          <input value="{{ seed }}" onInput="{{ setSeed }}" placeholder="blank = random" style="width:100%; font-family:'Pixelify Sans'; font-weight:600; font-size:24px; color:#e8e4d8; background:#0e1014; border:2px solid #2c313c; box-shadow:inset 0 2px 0 #000; padding:14px 16px; outline:none;">
+
+          <!-- difficulty -->
+          <div style="display:flex; align-items:center; justify-content:space-between; margin:30px 0 12px;">
+            <label style="font-family:'Press Start 2P'; font-size:12px; letter-spacing:2px; color:#8a8578;">DIFFICULTY</label>
+            <span style="font-family:'Press Start 2P'; font-size:14px; color:{{ diffColor }};">{{ diffLabel }}</span>
+          </div>
+          <div style="display:flex; gap:0; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c;">
+            <sc-for list="{{ diffSegments }}" as="d" hint-placeholder-count="3">
+              <button onClick="{{ d.onPick }}" style="flex:1; font-family:'Pixelify Sans'; font-weight:600; font-size:22px; padding:14px 0; cursor:pointer; border:none; border-right:2px solid #0a0b0e; color:{{ d.fg }}; background:{{ d.bg }}; transition:all .1s;" style-hover="filter:brightness(1.25);">{{ d.label }}</button>
+            </sc-for>
+          </div>
+          <div style="font-size:19px; color:#a39e90; margin-top:14px; min-height:48px;">{{ diffDesc }}</div>
+
+          <!-- actions -->
+          <div style="display:flex; gap:16px; margin-top:30px;">
+            <button onClick="{{ playWorld }}" style="flex:1; font-family:'Press Start 2P'; font-size:18px; color:#1a1408; background:#E8C468; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #f5d98a, 0 5px 0 #8a6f24; padding:18px 0; cursor:pointer; transition:all .06s;" style-hover="background:#f5d98a;" style-active="transform:translateY(4px); box-shadow:inset 0 0 0 2px #f5d98a, 0 1px 0 #8a6f24;">PLAY ▸</button>
+            <button onClick="{{ backToTitle }}" style="font-family:'Press Start 2P'; font-size:18px; color:#d8d4c8; background:#23262E; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, 0 5px 0 #0a0b0e; padding:18px 34px; cursor:pointer; transition:all .06s;" style-hover="background:#2c303a;" style-active="transform:translateY(4px); box-shadow:inset 0 0 0 2px #2c313c, 0 1px 0 #0a0b0e;">BACK</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CHARACTER CREATOR ============ -->
+    <sc-if value="{{ isChar }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; display:flex; padding:60px 80px; gap:48px; align-items:stretch;">
+
+        <!-- preview -->
+        <div style="width:520px; flex:none; background:#15171C; border:3px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, inset 0 0 0 4px #15171C, inset 0 0 0 5px #5a4d2a; display:flex; flex-direction:column;">
+          <div style="font-family:'Press Start 2P'; font-size:16px; color:#E8C468; padding:22px 26px 0; text-shadow:2px 2px 0 #000;">APPEARANCE</div>
+          <div style="font-size:18px; color:#8a8578; padding:8px 26px 0;">Cosmetic only — gear is loot.</div>
+
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; position:relative;">
+            <!-- pedestal glow -->
+            <div style="position:absolute; bottom:90px; width:280px; height:80px; background:radial-gradient(circle, rgba(232,196,104,.18), transparent 70%); border-radius:50%;"></div>
+            <!-- AVATAR -->
+            <div style="transform:{{ avatarTransform }}; animation:litBob 2.4s ease-in-out infinite; display:flex; flex-direction:column; align-items:center; image-rendering:pixelated;">
+              <!-- hair top -->
+              <div style="width:{{ hairW }}; height:{{ hairH }}; background:{{ hairColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+              <!-- head -->
+              <div style="position:relative; width:88px; height:80px; background:{{ skinColor }}; box-shadow:0 0 0 3px #0a0b0e; margin-top:2px;">
+                <div style="position:absolute; top:6px; left:0; width:100%; height:14px; background:{{ hairColor }};"></div>
+                <div style="position:absolute; top:34px; left:18px; width:14px; height:16px; background:{{ eyeColor }}; animation:litBlink 4s infinite;"></div>
+                <div style="position:absolute; top:34px; right:18px; width:14px; height:16px; background:{{ eyeColor }}; animation:litBlink 4s infinite;"></div>
+              </div>
+              <!-- torso + arms -->
+              <div style="display:flex; align-items:flex-start; margin-top:4px;">
+                <div style="width:22px; height:78px; background:{{ shirtColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+                <div style="width:104px; height:96px; background:{{ shirtColor }}; box-shadow:0 0 0 3px #0a0b0e; margin:0 4px; position:relative;">
+                  <div style="position:absolute; left:50%; top:0; transform:translateX(-50%); width:6px; height:100%; background:rgba(0,0,0,.18);"></div>
+                </div>
+                <div style="width:22px; height:78px; background:{{ shirtColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+              </div>
+              <!-- hands -->
+              <div style="display:flex; justify-content:space-between; width:152px; margin-top:-4px;">
+                <div style="width:22px; height:20px; background:{{ skinColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+                <div style="width:22px; height:20px; background:{{ skinColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+              </div>
+              <!-- legs -->
+              <div style="display:flex; gap:8px; margin-top:6px;">
+                <div style="width:40px; height:60px; background:{{ pantsColor }}; box-shadow:0 0 0 3px #0a0b0e; transform-origin:top center; animation:{{ legAnimL }};"></div>
+                <div style="width:40px; height:60px; background:{{ pantsColor }}; box-shadow:0 0 0 3px #0a0b0e; transform-origin:top center; animation:{{ legAnimR }};"></div>
+              </div>
+              <!-- shoes -->
+              <div style="display:flex; gap:8px; margin-top:2px;">
+                <div style="width:46px; height:18px; background:{{ shoeColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+                <div style="width:46px; height:18px; background:{{ shoeColor }}; box-shadow:0 0 0 3px #0a0b0e;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- preview controls -->
+          <div style="display:flex; gap:10px; padding:0 26px 26px;">
+            <button onClick="{{ toggleFacing }}" style="flex:1; font-family:'Pixelify Sans'; font-weight:600; font-size:20px; color:#d8d4c8; background:#23262E; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:12px 0; cursor:pointer;" style-hover="background:#2c303a;">⟲ Turn</button>
+            <button onClick="{{ toggleWalk }}" style="flex:1; font-family:'Pixelify Sans'; font-weight:600; font-size:20px; color:{{ walkFg }}; background:{{ walkBg }}; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:12px 0; cursor:pointer;" style-hover="filter:brightness(1.15);">{{ walkLabel }}</button>
+          </div>
+        </div>
+
+        <!-- slots -->
+        <div style="flex:1; background:#15171C; border:3px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, inset 0 0 0 4px #15171C, inset 0 0 0 5px #5a4d2a; display:flex; flex-direction:column; min-width:0;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:24px 30px 18px; border-bottom:2px solid #0a0b0e;">
+            <h2 style="font-family:'Press Start 2P'; font-size:22px; color:#E8C468; margin:0; text-shadow:2px 2px 0 #000;">CHARACTER</h2>
+            <button onClick="{{ randomize }}" style="font-family:'Pixelify Sans'; font-weight:600; font-size:20px; color:#1a1408; background:#E8C468; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #f5d98a; padding:10px 18px; cursor:pointer;" style-hover="background:#f5d98a;">⚄ Randomize</button>
+          </div>
+
+          <div style="flex:1; overflow:auto; padding:8px 30px 18px;">
+            <!-- hair style row -->
+            <div style="padding:18px 0; border-bottom:1px solid #23262E;">
+              <div style="font-family:'Press Start 2P'; font-size:12px; letter-spacing:1px; color:#a39e90; margin-bottom:14px;">HAIR STYLE</div>
+              <div style="display:flex; gap:10px;">
+                <sc-for list="{{ hairStyles }}" as="h" hint-placeholder-count="3">
+                  <button onClick="{{ h.onPick }}" style="font-family:'Pixelify Sans'; font-weight:600; font-size:20px; color:{{ h.fg }}; background:{{ h.bg }}; border:2px solid {{ h.border }}; box-shadow:inset 0 0 0 2px #15171C; padding:10px 22px; cursor:pointer;" style-hover="filter:brightness(1.2);">{{ h.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <!-- swatch slots -->
+            <sc-for list="{{ slots }}" as="s" hint-placeholder-count="6">
+              <div style="padding:18px 0; border-bottom:1px solid #23262E;">
+                <div style="font-family:'Press Start 2P'; font-size:12px; letter-spacing:1px; color:#a39e90; margin-bottom:14px;">{{ s.label }}</div>
+                <div style="display:flex; flex-wrap:wrap; gap:12px;">
+                  <sc-for list="{{ s.colors }}" as="c" hint-placeholder-count="6">
+                    <button onClick="{{ c.onPick }}" title="{{ c.col }}" style="width:46px; height:46px; cursor:pointer; background:{{ c.col }}; border:3px solid {{ c.border }}; box-shadow:inset 0 0 0 2px #0a0b0e, 0 0 0 1px #0a0b0e; transition:transform .08s;" style-hover="transform:translateY(-3px);"></button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex; gap:14px; padding:20px 30px; border-top:2px solid #0a0b0e;">
+            <button onClick="{{ resetChar }}" style="font-family:'Press Start 2P'; font-size:15px; color:#d8d4c8; background:#23262E; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, 0 5px 0 #0a0b0e; padding:16px 26px; cursor:pointer; transition:all .06s;" style-hover="background:#2c303a;" style-active="transform:translateY(4px); box-shadow:inset 0 0 0 2px #2c313c, 0 1px 0 #0a0b0e;">RESET</button>
+            <button onClick="{{ confirmChar }}" style="flex:1; font-family:'Press Start 2P'; font-size:18px; color:#1a1408; background:#E8C468; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #f5d98a, 0 5px 0 #8a6f24; padding:16px 0; cursor:pointer; transition:all .06s;" style-hover="background:#f5d98a;" style-active="transform:translateY(4px); box-shadow:inset 0 0 0 2px #f5d98a, 0 1px 0 #8a6f24;">{{ confirmLabel }}</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CLASS SELECTION ============ -->
+    <sc-if value="{{ isClass }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; padding:50px 80px 40px;">
+        <div style="text-align:center; margin-bottom:8px;">
+          <h2 style="font-family:'Press Start 2P'; font-size:34px; color:#E8C468; margin:0; text-shadow:3px 3px 0 #000;">CHOOSE YOUR CALLING</h2>
+          <div style="font-size:21px; color:#a39e90; margin-top:14px;">Sets your starting gifts — you can still learn everything in time.</div>
+        </div>
+
+        <div style="flex:1; display:flex; gap:26px; align-items:stretch; margin:30px 0; min-height:0;">
+          <sc-for list="{{ classCards }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.onPick }}" style="flex:1; min-width:0; text-align:left; cursor:pointer; display:flex; flex-direction:column; background:{{ c.bg }}; border:3px solid {{ c.border }}; box-shadow:{{ c.shadow }}; padding:28px 24px; transition:transform .1s;" style-hover="transform:translateY(-6px);">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+                <div style="width:18px; height:18px; background:{{ c.color }}; transform:rotate(45deg); box-shadow:0 0 12px {{ c.color }};"></div>
+                <span style="font-family:'Press Start 2P'; font-size:13px; letter-spacing:2px; color:{{ c.color }};">{{ c.el }}</span>
+              </div>
+              <div style="font-family:'Press Start 2P'; font-size:24px; color:#f0ece0; margin-bottom:6px; text-shadow:2px 2px 0 #000;">{{ c.name }}</div>
+              <div style="font-size:18px; font-style:italic; color:#8a8578; margin-bottom:18px;">“{{ c.title }}”</div>
+              <div style="font-size:19px; line-height:1.45; color:#c4bfb2; text-wrap:pretty; flex:1;">{{ c.desc }}</div>
+
+              <div style="margin-top:20px; padding-top:18px; border-top:1px solid rgba(255,255,255,.08); display:grid; grid-template-columns:1fr 1fr; gap:10px 18px;">
+                <sc-for list="{{ c.statRows }}" as="st" hint-placeholder-count="6">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-family:'Press Start 2P'; font-size:11px; color:#8a8578;">{{ st.k }}</span>
+                    <span style="font-family:'Pixelify Sans'; font-weight:700; font-size:20px; color:{{ st.color }};">{{ st.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="margin-top:18px; text-align:center; font-family:'Press Start 2P'; font-size:12px; padding:10px 0; color:{{ c.tagFg }}; background:{{ c.tagBg }}; border:2px solid {{ c.border }};">{{ c.tag }}</div>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:18px;">
+          <button onClick="{{ backToTitle }}" style="font-family:'Press Start 2P'; font-size:18px; color:#d8d4c8; background:#23262E; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, 0 5px 0 #0a0b0e; padding:18px 40px; cursor:pointer; transition:all .06s;" style-hover="background:#2c303a;" style-active="transform:translateY(4px); box-shadow:inset 0 0 0 2px #2c313c, 0 1px 0 #0a0b0e;">BACK</button>
+          <button onClick="{{ beginGame }}" style="font-family:'Press Start 2P'; font-size:18px; color:{{ beginFg }}; background:{{ beginBg }}; border:2px solid #0a0b0e; box-shadow:{{ beginShadow }}; padding:18px 60px; cursor:{{ beginCursor }}; transition:all .06s;" style-active="{{ beginActive }}">{{ beginLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ STYLE GUIDE / TOKENS ============ -->
+    <sc-if value="{{ isTokens }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; overflow:auto; padding:56px 80px; background:linear-gradient(180deg,#0c0e12,#0e1014);">
+        <div style="font-family:'Press Start 2P'; font-size:13px; letter-spacing:5px; color:#8a8578; margin-bottom:10px;">LIT-ISO · DESIGN TOKENS</div>
+        <h2 style="font-family:'Press Start 2P'; font-size:38px; color:#E8C468; margin:0 0 8px; text-shadow:3px 3px 0 #000;">STYLE GUIDE</h2>
+        <div style="font-size:20px; color:#8a8578; margin-bottom:40px;">Cozy dark fantasy · isometric pixel-art · shared across every screen.</div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px;">
+          <!-- palette -->
+          <div style="background:#15171C; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:26px;">
+            <div style="font-family:'Press Start 2P'; font-size:14px; color:#E8C468; margin-bottom:20px;">PALETTE</div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+              <sc-for list="{{ palette }}" as="p" hint-placeholder-count="8">
+                <div>
+                  <div style="height:64px; background:{{ p.hex }}; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);"></div>
+                  <div style="font-family:'Pixelify Sans'; font-weight:600; font-size:15px; color:#d8d4c8; margin-top:8px;">{{ p.name }}</div>
+                  <div style="font-family:'Press Start 2P'; font-size:9px; color:#8a8578; margin-top:3px;">{{ p.hex }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- type -->
+          <div style="background:#15171C; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:26px;">
+            <div style="font-family:'Press Start 2P'; font-size:14px; color:#E8C468; margin-bottom:20px;">TYPE</div>
+            <div style="font-family:'Press Start 2P'; font-size:11px; color:#8a8578; margin-bottom:6px;">DISPLAY · Press Start 2P</div>
+            <div style="font-family:'Press Start 2P'; font-size:32px; color:#E8C468; margin-bottom:6px; text-shadow:2px 2px 0 #000;">LIT-ISO</div>
+            <div style="font-family:'Press Start 2P'; font-size:18px; color:#d8d4c8; margin-bottom:24px;">SECTION TITLE</div>
+            <div style="height:1px; background:#23262E; margin:18px 0;"></div>
+            <div style="font-family:'Press Start 2P'; font-size:11px; color:#8a8578; margin-bottom:10px;">BODY / UI · Pixelify Sans</div>
+            <div style="font-family:'Pixelify Sans'; font-weight:700; font-size:26px; color:#e8e4d8;">Heading 26 / 700</div>
+            <div style="font-family:'Pixelify Sans'; font-weight:600; font-size:21px; color:#d8d4c8;">Label & button 21 / 600</div>
+            <div style="font-family:'Pixelify Sans'; font-weight:400; font-size:19px; color:#a39e90;">Body copy 19 / 400 — readable over a busy scene.</div>
+          </div>
+
+          <!-- frame variations -->
+          <div style="background:#15171C; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:26px;">
+            <div style="font-family:'Press Start 2P'; font-size:14px; color:#E8C468; margin-bottom:8px;">PANEL FRAME · 3 VARIANTS</div>
+            <div style="font-size:16px; color:#8a8578; margin-bottom:20px;">Locked: <span style="color:#E8C468;">Stone</span>. Wood &amp; Parchment for sub-panels.</div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+              <div style="height:120px; background:#15171C; border:3px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c, inset 0 0 0 4px #15171C, inset 0 0 0 5px #5a4d2a; display:flex; align-items:flex-end; justify-content:center; padding:8px; font-family:'Press Start 2P'; font-size:10px; color:#E8C468;">STONE</div>
+              <div style="height:120px; background:#241a10; border:3px solid #0a0b0e; box-shadow:inset 0 0 0 3px #3a2a18, inset 0 0 0 5px #5a3f22; display:flex; align-items:flex-end; justify-content:center; padding:8px; font-family:'Press Start 2P'; font-size:10px; color:#c9a26a;">WOOD</div>
+              <div style="height:120px; background:#d9c9a3; border:3px solid #6b5836; box-shadow:inset 0 0 0 2px #c2ad82; display:flex; align-items:flex-end; justify-content:center; padding:8px; font-family:'Press Start 2P'; font-size:10px; color:#5a4326;">PARCHMENT</div>
+            </div>
+          </div>
+
+          <!-- button states -->
+          <div style="background:#15171C; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:26px;">
+            <div style="font-family:'Press Start 2P'; font-size:14px; color:#E8C468; margin-bottom:20px;">BUTTON STATES</div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; align-items:start;">
+              <div>
+                <div style="font-family:'Press Start 2P'; font-size:9px; color:#8a8578; margin-bottom:10px; text-align:center;">REST</div>
+                <div style="font-family:'Press Start 2P'; font-size:12px; text-align:center; color:#1a1408; background:#E8C468; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #f5d98a, 0 5px 0 #8a6f24; padding:14px 0;">PLAY</div>
+              </div>
+              <div>
+                <div style="font-family:'Press Start 2P'; font-size:9px; color:#8a8578; margin-bottom:10px; text-align:center;">HOVER</div>
+                <div style="font-family:'Press Start 2P'; font-size:12px; text-align:center; color:#1a1408; background:#f5d98a; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #fff0c8, 0 5px 0 #8a6f24, 0 0 16px rgba(232,196,104,.4); padding:14px 0;">PLAY</div>
+              </div>
+              <div>
+                <div style="font-family:'Press Start 2P'; font-size:9px; color:#8a8578; margin-bottom:10px; text-align:center;">PRESSED</div>
+                <div style="font-family:'Press Start 2P'; font-size:12px; text-align:center; color:#1a1408; background:#d9b658; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #f5d98a, 0 1px 0 #8a6f24; padding:14px 0; transform:translateY(4px);">PLAY</div>
+              </div>
+              <div>
+                <div style="font-family:'Press Start 2P'; font-size:9px; color:#8a8578; margin-bottom:10px; text-align:center;">DISABLED</div>
+                <div style="font-family:'Press Start 2P'; font-size:12px; text-align:center; color:#5a564c; background:#1c1f25; border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #23262E; padding:14px 0;">PLAY</div>
+              </div>
+            </div>
+            <div style="font-size:16px; color:#8a8578; margin-top:22px; line-height:1.5;">Depth via 5px hard bottom shadow (no blur) — press shifts down 4px. Borders 2px #0a0b0e + 2px inset stone bevel. Gold accents at <span style="color:#E8C468;">#E8C468</span>.</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- scanlines overlay -->
+    <sc-if value="{{ scanOn }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0px, rgba(0,0,0,.16) 1px, transparent 1px, transparent 3px); mix-blend-mode:multiply; z-index:50;"></div>
+    </sc-if>
+  </div>
+
+  <!-- ============ SCREEN NAV (dev / scene select) ============ -->
+  <div style="position:fixed; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; background:rgba(12,14,18,.92); border:2px solid #0a0b0e; box-shadow:inset 0 0 0 2px #2c313c; padding:7px; z-index:100;">
+    <sc-for list="{{ navButtons }}" as="n" hint-placeholder-count="5">
+      <button onClick="{{ n.onPick }}" style="font-family:'Pixelify Sans'; font-weight:600; font-size:17px; color:{{ n.fg }}; background:{{ n.bg }}; border:none; padding:9px 18px; cursor:pointer; transition:all .1s;" style-hover="filter:brightness(1.3);">{{ n.label }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1280, &quot;height&quot;: 760 },
+  &quot;scene&quot;:     { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;hasSave&quot;:   { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;scanlines&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;embers&quot;:    { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.skinPal  = ['#f1c9a5','#e0a878','#c98a5e','#a3673f','#7a4a2b','#5a3620'];
+    this.hairPal  = ['#2a2320','#5a3a22','#8a5a2c','#c9a23f','#d9d2c4','#7a3030','#3a3550'];
+    this.eyePal   = ['#3a2a1c','#5a7a4a','#3a5a7a','#6a4a7a','#7a3a3a'];
+    this.shirtPal = ['#7a3030','#3a5a7a','#3a6a4a','#6a5a8a','#8a6a3a','#cdbfa0','#2c313c'];
+    this.pantsPal = ['#2c313c','#3a3a4a','#5a4a3a','#3a4a3a','#4a3a4a'];
+    this.shoePal  = ['#2a2018','#4a3a2a','#3a3a40'];
+
+    this.classes = [
+      { key:'mage',   name:'MAGE',   title:'Apprentice of Ember', el:'EMBER',   color:'#c97ad9', desc:'Channels raw elemental magic. Fragile in melee, devastating at range.', stats:{STR:-1,DEX:1,INT:4,VIT:0,DEF:0,LUCK:1} },
+      { key:'tank',   name:'TANK',   title:'Shieldbearer',        el:'STONE',   color:'#d39a4a', desc:'Soaks blows so the party survives. Slow, immovable, dependable.',       stats:{STR:2,DEX:-1,INT:0,VIT:3,DEF:3,LUCK:0} },
+      { key:'rogue',  name:'ROGUE',  title:'Cutpurse',            el:'GALE',    color:'#4fb38a', desc:'Strikes from shadow and vanishes. Rewards timing and a little luck.',   stats:{STR:1,DEX:4,INT:1,VIT:-1,DEF:0,LUCK:3} },
+      { key:'knight', name:'KNIGHT', title:'Sworn Blade',         el:'GLIMMER', color:'#e8c468', desc:'Balanced martial training — a steady hand in any fight.',               stats:{STR:3,DEX:1,INT:0,VIT:2,DEF:2,LUCK:0} },
+    ];
+
+    this.diffData = [
+      { label:'EASY',   color:'#6fae6f', desc:'Forgiving foes, generous loot, no permadeath. A gentle way into the realm.' },
+      { label:'NORMAL', color:'#E8C468', desc:'The intended balance — fair fights, meaningful scarcity, honest risk.' },
+      { label:'HARD',   color:'#d96a55', desc:'Punishing enemies, sparse resources, harsh nights. For seasoned survivors.' },
+    ];
+
+    this.palette = [
+      { name:'Scene',    hex:'#0a0c14' }, { name:'Panel',    hex:'#15171C' },
+      { name:'Panel 2',  hex:'#1D2027' }, { name:'Raised',   hex:'#23262E' },
+      { name:'Border',   hex:'#0a0b0e' }, { name:'Bevel',    hex:'#2c313c' },
+      { name:'Gold',     hex:'#E8C468' }, { name:'Gold Lit',  hex:'#f5d98a' },
+      { name:'Gold Deep',hex:'#5a4d2a' }, { name:'Text',     hex:'#d8d4c8' },
+      { name:'Text Dim', hex:'#8a8578' }, { name:'Warn',     hex:'#d96a55' },
+    ];
+
+    this.state = {
+      screen:'title',
+      scale: this.calcScale(),
+      hasSave: this.props.hasSave ?? true,
+      worldName:'', seed:'', diff:1, worldErr:false,
+      skinI:1, hairI:1, hairStyle:1, eyeI:0, shirtI:1, pantsI:0, shoeI:0,
+      facing:1, walking:false, charDone:false,
+      classI:-1,
+    };
+  }
+
+  calcScale() {
+    if (typeof window === 'undefined') return 1;
+    return Math.min(window.innerWidth / 1920, (window.innerHeight - 70) / 1080);
+  }
+  componentDidMount() {
+    this._r = () => this.setState({ scale: this.calcScale() });
+    window.addEventListener('resize', this._r);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._r); }
+
+  go(s) { this.setState({ screen:s }); }
+
+  randomize() {
+    const r = (a) => Math.floor(Math.random() * a.length);
+    this.setState({
+      skinI:r(this.skinPal), hairI:r(this.hairPal), hairStyle:Math.floor(Math.random()*3),
+      eyeI:r(this.eyePal), shirtI:r(this.shirtPal), pantsI:r(this.pantsPal), shoeI:r(this.shoePal),
+    });
+  }
+  resetChar() {
+    this.setState({ skinI:1, hairI:1, hairStyle:1, eyeI:0, shirtI:1, pantsI:0, shoeI:0, charDone:false });
+  }
+
+  renderVals() {
+    const s = this.state;
+
+    // ----- scene -----
+    const embers = [];
+    for (let i = 0; i < 14; i++) {
+      embers.push({
+        left: (50 + Math.sin(i * 1.7) * 16 + (i % 3) * 3) + '%',
+        size: (3 + (i % 3) * 2) + 'px',
+        color: i % 3 === 0 ? '#f5d98a' : (i % 3 === 1 ? '#e8a03c' : '#d9762a'),
+        dx: (Math.sin(i) * 40).toFixed(0) + 'px',
+        dur: (3.2 + (i % 4) * 0.9).toFixed(1) + 's',
+        delay: (i * 0.45).toFixed(2) + 's',
+      });
+    }
+
+    // ----- nav -----
+    const screens = [
+      { k:'title',  label:'Title' }, { k:'create', label:'Create World' },
+      { k:'char',   label:'Character' }, { k:'class',  label:'Class Select' },
+      { k:'tokens', label:'Style Guide' },
+    ];
+    const navButtons = screens.map(x => ({
+      label:x.label, onPick:() => this.go(x.k),
+      fg: s.screen === x.k ? '#1a1408' : '#a39e90',
+      bg: s.screen === x.k ? '#E8C468' : 'transparent',
+    }));
+
+    // ----- title menu -----
+    const allMenu = [
+      { label:'Continue',          action:() => this.go('char'),   show:s.hasSave },
+      { label:'New Game',          action:() => this.go('create'), show:true },
+      { label:'Creation Instance', action:() => this.go('char'),   show:true },
+      { label:'Load Game',         action:() => this.go('create'), show:true },
+      { label:'Options',           action:() => {},                show:true },
+      { label:'Quit',              action:() => {},                show:true },
+    ];
+    const menuButtons = allMenu.filter(b => b.show);
+
+    // ----- create world -----
+    const diffSegments = this.diffData.map((d, i) => ({
+      label:d.label, onPick:() => this.setState({ diff:i }),
+      fg: s.diff === i ? '#1a1408' : '#a39e90',
+      bg: s.diff === i ? d.color : '#1a1d23',
+    }));
+    const dd = this.diffData[s.diff];
+    const setWorldName = (e) => this.setState({ worldName:e.target.value, worldErr:false });
+    const setSeed = (e) => this.setState({ seed:e.target.value });
+    const playWorld = () => {
+      if (!s.worldName.trim()) { this.setState({ worldErr:true }); return; }
+      this.go('char');
+    };
+
+    // ----- character -----
+    const mkSlot = (key, label, pal) => ({
+      label, colors: pal.map((col, i) => ({
+        col, onPick:() => this.setState({ [key]:i, charDone:false }),
+        border: s[key] === i ? '#E8C468' : '#0a0b0e',
+      })),
+    });
+    const slots = [
+      mkSlot('skinI','BODY SKIN', this.skinPal),
+      mkSlot('hairI','HAIR COLOUR', this.hairPal),
+      mkSlot('eyeI','EYES', this.eyePal),
+      mkSlot('shirtI','SHIRT', this.shirtPal),
+      mkSlot('pantsI','PANTS', this.pantsPal),
+      mkSlot('shoeI','SHOES', this.shoePal),
+    ];
+    const hairStyles = ['Short','Mid','Tall'].map((label, i) => ({
+      label, onPick:() => this.setState({ hairStyle:i, charDone:false }),
+      fg: s.hairStyle === i ? '#1a1408' : '#a39e90',
+      bg: s.hairStyle === i ? '#E8C468' : '#1a1d23',
+      border: s.hairStyle === i ? '#E8C468' : '#2c313c',
+    }));
+    const hairDims = [['72px','16px'],['84px','26px'],['64px','40px']][s.hairStyle];
+
+    // ----- class -----
+    const classCards = this.classes.map((c, i) => {
+      const sel = s.classI === i;
+      const statRows = Object.entries(c.stats).map(([k, v]) => ({
+        k, label:(v > 0 ? '+' : '') + v,
+        color: v > 0 ? '#6fae6f' : (v < 0 ? '#d96a55' : '#8a8578'),
+      }));
+      return {
+        ...c, statRows, onPick:() => this.setState({ classI:i }),
+        bg: sel ? '#201d14' : '#15171C',
+        border: sel ? '#E8C468' : '#0a0b0e',
+        shadow: sel
+          ? 'inset 0 0 0 2px #5a4d2a, 0 0 28px rgba(232,196,104,.3), 0 10px 24px rgba(0,0,0,.5)'
+          : 'inset 0 0 0 2px #2c313c, 0 8px 18px rgba(0,0,0,.4)',
+        tag: sel ? 'SELECTED' : 'CHOOSE',
+        tagFg: sel ? '#1a1408' : '#a39e90',
+        tagBg: sel ? '#E8C468' : 'transparent',
+      };
+    });
+    const hasClass = s.classI >= 0;
+    const beginGame = () => { if (hasClass) this.go('title'); };
+
+    return {
+      // flags
+      isTitle: s.screen === 'title', isCreate: s.screen === 'create',
+      isChar: s.screen === 'char', isClass: s.screen === 'class', isTokens: s.screen === 'tokens',
+      scanOn: this.props.scanlines ?? true,
+      embersOn: this.props.embers ?? true,
+      sceneOn: this.props.scene ?? true,
+      stageBg: (this.props.scene ?? true) ? '#0b0d11' : 'repeating-conic-gradient(#181a1f 0% 25%, #21242b 0% 50%) 50% / 40px 40px',
+      stageRef: this._stageRef || (this._stageRef = React.createRef()),
+      stageTransform: 'scale(' + s.scale + ')',
+
+      embers, navButtons, menuButtons, palette: this.palette,
+
+      // create world
+      diffSegments, diffLabel: dd.label, diffColor: dd.color, diffDesc: dd.desc,
+      worldName: s.worldName, seed: s.seed, worldErr: s.worldErr,
+      setWorldName, setSeed, playWorld, backToTitle:() => this.go('title'),
+      nameLabelColor: s.worldErr ? '#d96a55' : '#8a8578',
+      nameBorderColor: s.worldErr ? '#d96a55' : '#2c313c',
+
+      // character
+      slots, hairStyles,
+      skinColor: this.skinPal[s.skinI], hairColor: this.hairPal[s.hairI],
+      eyeColor: this.eyePal[s.eyeI], shirtColor: this.shirtPal[s.shirtI],
+      pantsColor: this.pantsPal[s.pantsI], shoeColor: this.shoePal[s.shoeI],
+      hairW: hairDims[0], hairH: hairDims[1],
+      avatarTransform: 'scaleX(' + s.facing + ')',
+      legAnimL: s.walking ? 'litWalk .4s steps(3) infinite' : 'none',
+      legAnimR: s.walking ? 'litWalk .4s steps(3) infinite reverse' : 'none',
+      toggleFacing:() => this.setState({ facing: s.facing * -1 }),
+      toggleWalk:() => this.setState({ walking: !s.walking }),
+      walkLabel: s.walking ? '❚❚ Idle' : '▸ Walk',
+      walkFg: s.walking ? '#1a1408' : '#d8d4c8',
+      walkBg: s.walking ? '#E8C468' : '#23262E',
+      randomize:() => this.randomize(), resetChar:() => this.resetChar(),
+      confirmChar:() => { this.setState({ charDone:true }); this.go('class'); },
+      confirmLabel: s.charDone ? '✓ CONFIRMED' : 'CONFIRM ▸',
+
+      // class
+      classCards,
+      beginGame, beginLabel: hasClass ? 'BEGIN ▸' : 'SELECT A CLASS',
+      beginFg: hasClass ? '#1a1408' : '#5a564c',
+      beginBg: hasClass ? '#E8C468' : '#1c1f25',
+      beginCursor: hasClass ? 'pointer' : 'not-allowed',
+      beginShadow: hasClass ? 'inset 0 0 0 2px #f5d98a, 0 5px 0 #8a6f24' : 'inset 0 0 0 2px #23262E',
+      beginActive: hasClass ? 'transform:translateY(4px); box-shadow:inset 0 0 0 2px #f5d98a, 0 1px 0 #8a6f24;' : '',
+    };
+  }
+}
+</script>
+</body>
+</html>

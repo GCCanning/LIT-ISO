@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>LIT-ISO — Character Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── CSS CUSTOM PROPERTIES ─── */
+:root {
+  --scene-bg:    #0a0c14;
+  --panel:       #15171C;
+  --panel2:      #1D2027;
+  --raised:      #23262E;
+  --stone:       #2c313c;
+  --base:        #0a0b0e;
+  --gold-deep:   #5a4d2a;
+  --gold:        #E8C468;
+  --gold-lit:    #f5d98a;
+  --gold-hi:     #fff0c8;
+  --gold-press:  #d9b658;
+  --gold-shadow: #8a6f24;
+  --gold-text:   #1a1408;
+  --parchment:   #d8d4c8;
+  --warm-tan:    #8a8578;
+  --text-dimmer: #5a564c;
+  --red:         #d96a55;
+  --green:       #6fae6f;
+  --amber:       #e8a03c;
+
+  --font-display: 'Press Start 2P', monospace;
+  --font-body:    'Pixelify Sans', sans-serif;
+  --border:       2px solid var(--base);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--scene-bg);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  image-rendering: pixelated;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ─── ANIMATED BACKGROUND ─── */
+body {
+  background: linear-gradient(135deg, #0a0c14, #0d111e, #0a0c14);
+  background-size: 400% 400%;
+  animation: bgShift 12s ease infinite;
+}
+
+@keyframes bgShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating particles via pseudo-elements */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  width: 8px; height: 8px;
+  top: 20%; left: 8%;
+  background: rgba(232,196,104,0.06);
+  transform: rotate(45deg);
+  animation: driftA 18s ease-in-out infinite;
+}
+
+body::after {
+  width: 6px; height: 6px;
+  top: 65%; right: 10%;
+  background: rgba(232,196,104,0.05);
+  transform: rotate(45deg);
+  animation: driftB 22s ease-in-out infinite;
+}
+
+@keyframes driftA {
+  0%,100% { transform: rotate(45deg) translate(0,0); opacity: 0.06; }
+  33%     { transform: rotate(45deg) translate(20px,-40px); opacity: 0.12; }
+  66%     { transform: rotate(45deg) translate(-15px, 30px); opacity: 0.04; }
+}
+
+@keyframes driftB {
+  0%,100% { transform: rotate(45deg) translate(0,0); opacity: 0.05; }
+  40%     { transform: rotate(45deg) translate(-25px, 20px); opacity: 0.10; }
+  70%     { transform: rotate(45deg) translate(18px,-35px); opacity: 0.03; }
+}
+
+/* ─── CARD CENTERING WRAPPER ─── */
+#card-outer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ─── CARD BORDER WRAPPER (layered stone-frame border) ─── */
+#card-border {
+  position: relative;
+  /* outer ink-black border */
+  border: 2px solid #0a0b0e;
+  /* stone bevel + gold-deep hairline via box-shadow */
+  box-shadow:
+    0 0 0 1px #2c313c,
+    0 0 0 2px #5a4d2a,
+    0 8px 48px rgba(0,0,0,0.8);
+  line-height: 0;
+  /* responsive card sizing */
+  width: min(1760px, calc(100vw - 160px));
+  height: min(900px, calc(100vh - 120px));
+}
+
+/* ─── CORNER STUDS (gold diamonds on card border) ─── */
+.card-stud {
+  position: absolute;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  z-index: 30;
+  box-shadow: 0 0 4px rgba(232,196,104,0.4);
+}
+.card-stud.tl { top: -5px; left: -5px; }
+.card-stud.tr { top: -5px; right: -5px; }
+.card-stud.bl { bottom: -5px; left: -5px; }
+.card-stud.br { bottom: -5px; right: -5px; }
+
+/* ─── CORNER L-BRACKETS ─── */
+.corner-bracket {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-color: var(--gold);
+  border-style: solid;
+  z-index: 31;
+}
+.corner-bracket.tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+.corner-bracket.tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
+.corner-bracket.bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+.corner-bracket.br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+
+/* ─── CARD INNER (the actual UI surface) ─── */
+#card {
+  position: relative;
+  width: 100%; height: 100%;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  line-height: normal;
+}
+
+/* ─── SCAN-LINE OVERLAY ─── */
+#card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ─── TOP BAR ─── */
+#top-bar {
+  height: 28px;
+  background: var(--base);
+  border-bottom: 1px solid var(--gold-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+#top-bar-version {
+  position: absolute;
+  left: 14px;
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--text-dimmer);
+  letter-spacing: 1px;
+}
+
+#top-bar-title {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--gold);
+  letter-spacing: 3px;
+}
+
+#top-bar-day {
+  position: absolute;
+  right: 14px;
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--amber);
+  letter-spacing: 1px;
+}
+
+/* ─── MAIN BODY (two panels) ─── */
+#main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ─── LEFT PANEL ─── */
+#panel-left {
+  width: 400px;
+  min-width: 320px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-right: var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── RIGHT PANEL ─── */
+#panel-right {
+  flex: 1;
+  background: var(--panel2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── PANEL MINI HEADERS ─── */
+.panel-mini-header {
+  padding: 6px 14px 5px;
+  border-bottom: 2px solid var(--base);
+  background: var(--panel);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+}
+
+.panel-mini-header.right-bg {
+  background: var(--panel2);
+}
+
+.panel-mini-title {
+  font-family: var(--font-display);
+  font-size: 7px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.panel-mini-rule {
+  height: 1px;
+  background: var(--gold-deep);
+  flex-shrink: 0;
+}
+
+/* ─── BUTTONS (gold) ─── */
+.btn-gold {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--gold-text);
+  background: var(--gold);
+  border: 2px solid var(--base);
+  box-shadow: 0 3px 0 0 var(--gold-shadow);
+  padding: 6px 12px;
+  cursor: pointer;
+  image-rendering: pixelated;
+  letter-spacing: 1px;
+  transition: background 0.05s, box-shadow 0.05s, transform 0.05s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  outline: none;
+}
+.btn-gold:hover { background: var(--gold-lit); }
+.btn-gold:active {
+  background: var(--gold-press);
+  box-shadow: 0 1px 0 0 var(--gold-shadow);
+  transform: translateY(2px);
+}
+
+.btn-stone {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--parchment);
+  background: var(--stone);
+  border: 2px solid var(--base);
+  box-shadow: 0 3px 0 0 var(--base);
+  padding: 6px 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.05s, box-shadow 0.05s, transform 0.05s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  outline: none;
+}
+.btn-stone:hover { background: var(--raised); }
+.btn-stone:active {
+  box-shadow: 0 1px 0 0 var(--base);
+  transform: translateY(2px);
+}
+
+/* ─── PREVIEW AREA ─── */
+#preview-area {
+  flex: 1;
+  background: var(--panel2);
+  border-bottom: 2px solid var(--base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scanline on preview */
+#preview-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.07) 3px,
+    rgba(0,0,0,0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Inner frame */
+#preview-area::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--gold-deep);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.preview-corner {
+  position: absolute;
+  width: 16px; height: 16px;
+  border-color: var(--gold);
+  border-style: solid;
+  z-index: 6;
+}
+.preview-corner.tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+.preview-corner.tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
+.preview-corner.bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+.preview-corner.br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+
+/* ─── PIXEL CHARACTER ─── */
+#char-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+#char-sprite {
+  width: 128px;
+  height: 160px;
+  position: relative;
+  image-rendering: pixelated;
+  animation: idle-bob 1.4s ease-in-out infinite;
+}
+
+@keyframes idle-bob {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes walk-anim {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  25% { transform: translateY(-3px) rotate(1deg); }
+  50% { transform: translateY(0px) rotate(-1deg); }
+  75% { transform: translateY(-3px) rotate(1deg); }
+}
+
+@keyframes spellcast-anim {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  20% { transform: translateY(-6px) scale(1.05); }
+  40% { transform: translateY(0px) scale(0.98); }
+  60% { transform: translateY(-3px) scale(1.02); }
+}
+
+@keyframes slash-anim {
+  0% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-8px) rotate(-5deg); }
+  40% { transform: translateX(10px) rotate(8deg); }
+  70% { transform: translateX(0) rotate(0deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+@keyframes hurt-anim {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(0); }
+}
+
+@keyframes run-anim {
+  0%, 100% { transform: translateY(0px) skewX(0deg); }
+  25% { transform: translateY(-6px) skewX(-3deg); }
+  50% { transform: translateY(-1px) skewX(0deg); }
+  75% { transform: translateY(-6px) skewX(3deg); }
+}
+
+@keyframes thrust-anim {
+  0%, 60%, 100% { transform: translateX(0); }
+  30% { transform: translateX(12px); }
+}
+
+@keyframes shoot-anim {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-2px) rotate(-3deg); }
+  50% { transform: translateY(2px) rotate(2deg); }
+}
+
+.anim-idle     { animation: idle-bob 1.4s ease-in-out infinite; }
+.anim-walk     { animation: walk-anim 0.6s linear infinite; }
+.anim-run      { animation: run-anim 0.35s linear infinite; }
+.anim-spellcast{ animation: spellcast-anim 1.2s ease-in-out infinite; }
+.anim-slash    { animation: slash-anim 0.5s ease-in-out infinite; }
+.anim-thrust   { animation: thrust-anim 0.7s ease-in-out infinite; }
+.anim-shoot    { animation: shoot-anim 0.8s ease-in-out infinite; }
+.anim-hurt     { animation: hurt-anim 0.6s ease-in-out infinite; }
+
+#char-sprite svg { width: 100%; height: 100%; }
+
+#anim-label {
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--warm-tan);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+#char-shadow {
+  width: 56px; height: 9px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
+  margin-top: -4px;
+}
+
+/* ─── ANIMATION PILLS ─── */
+#anim-pills-row {
+  padding: 6px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-bottom: 2px solid var(--base);
+  flex-shrink: 0;
+  background: var(--panel);
+}
+
+.anim-pill {
+  font-family: var(--font-display);
+  font-size: 5px;
+  padding: 4px 7px;
+  background: var(--raised);
+  color: var(--parchment);
+  border: 2px solid var(--base);
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.05s;
+  outline: none;
+}
+.anim-pill:hover { background: var(--stone); }
+.anim-pill.active {
+  background: var(--gold);
+  color: var(--gold-text);
+  box-shadow: 0 2px 0 0 var(--gold-shadow);
+}
+
+/* ─── TURN CONTROL ─── */
+#turn-row {
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--base);
+  flex-shrink: 0;
+  background: var(--panel);
+  height: 36px;
+}
+
+.turn-btn {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--gold);
+  background: var(--raised);
+  border: 2px solid var(--base);
+  box-shadow: 0 2px 0 0 var(--base);
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.05s;
+  outline: none;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+.turn-btn:hover { background: var(--stone); }
+.turn-btn:active {
+  box-shadow: 0 1px 0 0 var(--base);
+  transform: translateY(1px);
+}
+
+#dir-label {
+  font-family: var(--font-display);
+  font-size: 7px;
+  color: var(--parchment);
+  letter-spacing: 2px;
+  text-align: center;
+  min-width: 60px;
+}
+
+#turn-sub {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--text-dimmer);
+  text-align: center;
+  margin-top: 1px;
+}
+
+/* ─── FRAME COUNTER + RANDOMIZE ROW ─── */
+#preview-footer {
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: var(--panel);
+  height: 36px;
+}
+
+#frame-counter {
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--warm-tan);
+  letter-spacing: 0.5px;
+}
+
+/* ─── RIGHT PANEL SCROLL ─── */
+#options-scroll {
+  flex: 1;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0 14px 12px;
+  background: var(--panel2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--raised) var(--base);
+}
+
+#options-scroll::-webkit-scrollbar { width: 6px; }
+#options-scroll::-webkit-scrollbar-track {
+  background: var(--base);
+  border-left: 1px solid var(--base);
+}
+#options-scroll::-webkit-scrollbar-thumb {
+  background: var(--raised);
+  border: 1px solid var(--base);
+}
+#options-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-deep);
+}
+
+/* ─── SECTIONS ─── */
+.section {
+  padding: 8px 0 6px;
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--warm-tan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--stone);
+  margin: 2px 0;
+}
+
+/* ─── SEGMENTED BUTTONS ─── */
+.seg-group {
+  display: flex;
+  gap: 0;
+  border: 2px solid var(--base);
+  width: fit-content;
+}
+
+.seg-btn {
+  font-family: var(--font-display);
+  font-size: 7px;
+  padding: 7px 18px;
+  background: var(--raised);
+  color: var(--parchment);
+  border: none;
+  border-right: 2px solid var(--base);
+  cursor: pointer;
+  transition: all 0.05s;
+  outline: none;
+  letter-spacing: 1px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+.seg-btn:last-child { border-right: none; }
+.seg-btn:hover { background: var(--stone); }
+.seg-btn.active {
+  background: var(--gold);
+  color: var(--gold-text);
+}
+
+/* ─── SWATCHES ─── */
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.swatch {
+  width: 26px; height: 26px;
+  border: 2px solid var(--base);
+  cursor: pointer;
+  transition: all 0.05s;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+}
+.swatch:hover { border-color: var(--warm-tan); }
+.swatch.selected {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 1px var(--gold-shadow);
+}
+
+/* circular swatches for skin */
+.swatch-circle {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--base);
+  cursor: pointer;
+  transition: all 0.05s;
+  flex-shrink: 0;
+}
+.swatch-circle:hover { border-color: var(--warm-tan); }
+.swatch-circle.selected {
+  border: 2px solid var(--gold);
+  outline: 1px solid var(--gold-shadow);
+}
+
+/* smaller swatches for hair/shirt colour */
+.swatch-sm {
+  width: 22px; height: 22px;
+  border: 2px solid var(--base);
+  cursor: pointer;
+  transition: all 0.05s;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  border-radius: 50%;
+}
+.swatch-sm:hover { border-color: var(--warm-tan); }
+.swatch-sm.selected {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 1px var(--gold-shadow);
+}
+
+.swatch-name {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--warm-tan);
+  margin-top: 4px;
+}
+
+/* ─── PICKERS ─── */
+.picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 2px solid var(--base);
+  width: 100%;
+  height: 36px;
+}
+
+.picker-arrow {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--gold);
+  background: var(--raised);
+  border: none;
+  border-right: 2px solid var(--base);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.05s;
+  outline: none;
+  flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.picker-arrow:last-child {
+  border-right: none;
+  border-left: 2px solid var(--base);
+}
+.picker-arrow:hover { background: var(--stone); color: var(--gold-lit); }
+.picker-arrow:active { background: var(--base); }
+
+.picker-label {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--parchment);
+  padding: 6px 10px;
+  background: var(--panel);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker-counter {
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--warm-tan);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* ─── RIGHT PANEL FOOTER ─── */
+#panel-right-footer {
+  flex-shrink: 0;
+  background: var(--panel);
+  border-top: 2px solid var(--stone);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 40px;
+}
+
+.btn-gold-lg {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--gold-text);
+  background: var(--gold);
+  border: 2px solid var(--base);
+  box-shadow: 0 3px 0 0 var(--gold-shadow);
+  padding: 7px 22px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.05s;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+}
+.btn-gold-lg:hover { background: var(--gold-lit); }
+.btn-gold-lg:active {
+  background: var(--gold-press);
+  box-shadow: 0 1px 0 0 var(--gold-shadow);
+  transform: translateY(2px);
+}
+
+/* ─── SUBSECTION LABELS ─── */
+.subsection-label {
+  font-family: var(--font-display);
+  font-size: 6px;
+  color: var(--text-dimmer);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  margin-top: 8px;
+}
+
+/* ─── EYE STYLE BUTTONS ─── */
+.eye-style-group {
+  display: flex;
+  gap: 0;
+  border: 2px solid var(--base);
+  width: fit-content;
+  margin-bottom: 7px;
+}
+
+/* ─── TOAST NOTIFICATION ─── */
+#toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--raised);
+  border: 2px solid var(--gold-deep);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 8px;
+  padding: 10px 20px;
+  letter-spacing: 1px;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+  box-shadow: 4px 4px 0 0 var(--base);
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ─── RESPONSIVE SCALE ─── */
+@media (max-width: 1920px) {
+  #card-border {
+    width: min(1760px, calc(100vw - 160px));
+    height: min(900px, calc(100vh - 120px));
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div id="card-outer">
+  <div id="card-border">
+    <!-- Corner studs -->
+    <div class="card-stud tl"></div>
+    <div class="card-stud tr"></div>
+    <div class="card-stud bl"></div>
+    <div class="card-stud br"></div>
+    <!-- Corner L-brackets -->
+    <div class="corner-bracket tl"></div>
+    <div class="corner-bracket tr"></div>
+    <div class="corner-bracket bl"></div>
+    <div class="corner-bracket br"></div>
+
+    <div id="card">
+
+      <!-- ─── TOP BAR ─── -->
+      <div id="top-bar">
+        <span id="top-bar-version">LIT-ISO v0.1</span>
+        <span id="top-bar-title">[ CHARACTER CREATION ]</span>
+        <span id="top-bar-day">DAY 1 / 7</span>
+      </div>
+
+      <!-- ─── MAIN CONTENT (two panels) ─── -->
+      <div id="main-content">
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- LEFT PANEL: APPEARANCE                            -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div id="panel-left">
+
+          <!-- Mini Header -->
+          <div class="panel-mini-header">
+            <div class="panel-mini-title">Appearance</div>
+          </div>
+          <div class="panel-mini-rule"></div>
+
+          <!-- Preview Area -->
+          <div id="preview-area">
+            <div class="preview-corner tl"></div>
+            <div class="preview-corner tr"></div>
+            <div class="preview-corner bl"></div>
+            <div class="preview-corner br"></div>
+
+            <div id="char-container">
+              <!-- Pixel character SVG -->
+              <div id="char-sprite" class="anim-idle">
+                <svg viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg" style="width:128px;height:160px;image-rendering:pixelated;">
+                  <!-- HAIR -->
+                  <rect id="svg-hair" x="10" y="1" width="12" height="7" fill="#c86030"/>
+                  <!-- side hair -->
+                  <rect id="svg-hair2" x="9" y="3" width="2" height="5" fill="#c86030"/>
+                  <rect id="svg-hair3" x="21" y="3" width="2" height="5" fill="#c86030"/>
+
+                  <!-- HEAD (skin) -->
+                  <rect id="svg-head" x="10" y="5" width="12" height="11" fill="#e8a86a"/>
+                  <!-- eyes -->
+                  <rect id="svg-eye-l" x="12" y="9" width="3" height="2" fill="#3868b8"/>
+                  <rect id="svg-eye-r" x="17" y="9" width="3" height="2" fill="#3868b8"/>
+                  <!-- nose dot -->
+                  <rect x="15" y="12" width="2" height="1" fill="#c8885a"/>
+                  <!-- mouth -->
+                  <rect x="13" y="14" width="6" height="1" fill="#c8885a"/>
+
+                  <!-- NECK -->
+                  <rect id="svg-neck" x="14" y="16" width="4" height="3" fill="#e8a86a"/>
+
+                  <!-- SHIRT/TORSO -->
+                  <rect id="svg-shirt" x="9" y="19" width="14" height="10" fill="#3060a8"/>
+                  <!-- shirt detail -->
+                  <rect id="svg-shirt2" x="11" y="20" width="10" height="1" fill="#2050a0"/>
+                  <!-- collar -->
+                  <rect id="svg-collar" x="13" y="19" width="6" height="2" fill="#e8a86a"/>
+
+                  <!-- LEFT ARM -->
+                  <rect id="svg-arm-l" x="5" y="19" width="4" height="9" fill="#3060a8"/>
+                  <rect id="svg-hand-l" x="5" y="28" width="4" height="3" fill="#e8a86a"/>
+
+                  <!-- RIGHT ARM -->
+                  <rect id="svg-arm-r" x="23" y="19" width="4" height="9" fill="#3060a8"/>
+                  <rect id="svg-hand-r" x="23" y="28" width="4" height="3" fill="#e8a86a"/>
+
+                  <!-- BELT -->
+                  <rect x="9" y="29" width="14" height="2" fill="#7a4018"/>
+                  <rect x="15" y="29" width="2" height="2" fill="#d8a020"/>
+
+                  <!-- PANTS/LEGS -->
+                  <rect id="svg-pants-l" x="9" y="31" width="6" height="7" fill="#303840"/>
+                  <rect id="svg-pants-r" x="17" y="31" width="6" height="7" fill="#303840"/>
+
+                  <!-- SHOES -->
+                  <rect id="svg-shoe-l" x="8" y="37" width="7" height="3" fill="#4a2810"/>
+                  <rect id="svg-shoe-r" x="17" y="37" width="7" height="3" fill="#4a2810"/>
+                </svg>
+              </div>
+              <div id="char-shadow"></div>
+              <div id="anim-label">▸ IDLE</div>
+            </div>
+          </div>
+
+          <!-- Animation Pills -->
+          <div id="anim-pills-row">
+            <button class="anim-pill active" data-anim="idle">idle</button>
+            <button class="anim-pill" data-anim="walk">walk</button>
+            <button class="anim-pill" data-anim="run">run</button>
+            <button class="anim-pill" data-anim="spellcast">spellcast</button>
+            <button class="anim-pill" data-anim="slash">slash</button>
+            <button class="anim-pill" data-anim="thrust">thrust</button>
+            <button class="anim-pill" data-anim="shoot">shoot</button>
+            <button class="anim-pill" data-anim="hurt">hurt</button>
+          </div>
+
+          <!-- Turn Control -->
+          <div id="turn-row">
+            <button class="turn-btn" id="turn-prev">◀</button>
+            <div>
+              <div id="dir-label">SOUTH</div>
+              <div id="turn-sub">◀ TURN ▶</div>
+            </div>
+            <button class="turn-btn" id="turn-next">▶</button>
+          </div>
+
+          <!-- Preview Footer -->
+          <div id="preview-footer">
+            <div id="frame-counter">1 / 4 frames</div>
+            <button class="btn-gold" id="randomize-all-btn" style="font-size:7px;padding:5px 10px;">⚄ RANDOMIZE</button>
+          </div>
+
+        </div>
+        <!-- /panel-left -->
+
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- RIGHT PANEL: CHARACTER OPTIONS                    -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div id="panel-right">
+
+          <!-- Mini Header -->
+          <div class="panel-mini-header right-bg">
+            <div class="panel-mini-title">Character</div>
+            <button class="btn-gold" id="randomize-char-btn" style="font-size:6px;padding:5px 10px;">⚄ Randomize</button>
+          </div>
+          <div class="panel-mini-rule"></div>
+
+          <!-- Scrollable Options -->
+          <div id="options-scroll">
+
+            <!-- BODY TYPE -->
+            <div class="section">
+              <div class="section-label">Body Type</div>
+              <div class="seg-group" id="body-type-group">
+                <button class="seg-btn active" data-value="male">Male</button>
+                <button class="seg-btn" data-value="female">Female</button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- SKIN TONE -->
+            <div class="section">
+              <div class="section-label">Skin Tone</div>
+              <div class="swatch-row" id="skin-swatches">
+                <div class="swatch-circle selected" data-skin="light" data-name="Light" style="background:#f5d5b0;"></div>
+                <div class="swatch-circle" data-skin="amber" data-name="Amber" style="background:#e8a86a;"></div>
+                <div class="swatch-circle" data-skin="olive" data-name="Olive" style="background:#c8a060;"></div>
+                <div class="swatch-circle" data-skin="taupe" data-name="Taupe" style="background:#b08850;"></div>
+                <div class="swatch-circle" data-skin="bronze" data-name="Bronze" style="background:#a06838;"></div>
+                <div class="swatch-circle" data-skin="brown" data-name="Brown" style="background:#784828;"></div>
+                <div class="swatch-circle" data-skin="black" data-name="Black" style="background:#4a2818;"></div>
+                <div class="swatch-circle" data-skin="blue" data-name="Azure" style="background:#6890c8;"></div>
+                <div class="swatch-circle" data-skin="bright_green" data-name="Emerald" style="background:#68c870;"></div>
+                <div class="swatch-circle" data-skin="dark_green" data-name="Forest" style="background:#3a7840;"></div>
+              </div>
+              <div class="swatch-name" id="skin-name">Light</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- HAIR STYLE -->
+            <div class="section">
+              <div class="section-label">Hair Style</div>
+              <div class="picker-row">
+                <button class="picker-arrow" id="hair-prev">◀</button>
+                <div class="picker-label" id="hair-label">Shaggy</div>
+                <button class="picker-arrow" id="hair-next">▶</button>
+              </div>
+              <div class="picker-counter" id="hair-counter">13 / 114</div>
+            </div>
+
+            <!-- HAIR COLOUR -->
+            <div class="section" style="padding-top:2px;">
+              <div class="section-label">Hair Colour</div>
+              <div class="swatch-row" id="hair-colour-swatches" style="gap:4px;">
+                <div class="swatch-sm selected" data-hc="carrot" data-name="Carrot" style="background:#d85020;"></div>
+                <div class="swatch-sm" data-hc="orange" data-name="Orange" style="background:#e8882a;"></div>
+                <div class="swatch-sm" data-hc="ash" data-name="Ash" style="background:#b0a898;"></div>
+                <div class="swatch-sm" data-hc="platinum" data-name="Platinum" style="background:#d8d4c8;"></div>
+                <div class="swatch-sm" data-hc="white" data-name="White" style="background:#f8f8f8;"></div>
+                <div class="swatch-sm" data-hc="gray" data-name="Gray" style="background:#908880;"></div>
+                <div class="swatch-sm" data-hc="blonde" data-name="Blonde" style="background:#e8d070;"></div>
+                <div class="swatch-sm" data-hc="sandy" data-name="Sandy" style="background:#d0a858;"></div>
+                <div class="swatch-sm" data-hc="strawberry" data-name="Strawberry" style="background:#e87850;"></div>
+                <div class="swatch-sm" data-hc="gold" data-name="Gold" style="background:#e8c060;"></div>
+                <div class="swatch-sm" data-hc="ginger" data-name="Ginger" style="background:#c86030;"></div>
+                <div class="swatch-sm" data-hc="redhead" data-name="Redhead" style="background:#b03020;"></div>
+                <div class="swatch-sm" data-hc="brown" data-name="Brown" style="background:#7a4018;"></div>
+                <div class="swatch-sm" data-hc="dark_brown" data-name="Dark Brown" style="background:#4a2810;"></div>
+                <div class="swatch-sm" data-hc="black" data-name="Black" style="background:#181008;"></div>
+                <div class="swatch-sm" data-hc="auburn" data-name="Auburn" style="background:#9a3810;"></div>
+                <div class="swatch-sm" data-hc="teal" data-name="Teal" style="background:#2888a0;"></div>
+                <div class="swatch-sm" data-hc="blue" data-name="Blue" style="background:#2858b0;"></div>
+                <div class="swatch-sm" data-hc="purple" data-name="Purple" style="background:#6040a0;"></div>
+                <div class="swatch-sm" data-hc="pink" data-name="Pink" style="background:#e870a8;"></div>
+                <div class="swatch-sm" data-hc="green" data-name="Green" style="background:#4a9040;"></div>
+                <div class="swatch-sm" data-hc="silver" data-name="Silver" style="background:#c0c0b8;"></div>
+              </div>
+              <div class="swatch-name" id="hair-colour-name">Carrot</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- EYES -->
+            <div class="section">
+              <div class="section-label">Eyes</div>
+              <div class="eye-style-group" id="eye-style-group">
+                <button class="seg-btn active" data-value="human">Human</button>
+                <button class="seg-btn" data-value="cyclops">Cyclops</button>
+              </div>
+              <div class="swatch-row" id="eye-swatches" style="gap:4px;">
+                <div class="swatch-sm" data-ec="brown" data-name="Brown" style="background:#8a5530;"></div>
+                <div class="swatch-sm" data-ec="hazel" data-name="Hazel" style="background:#9a7038;"></div>
+                <div class="swatch-sm" data-ec="amber" data-name="Amber" style="background:#c89030;"></div>
+                <div class="swatch-sm" data-ec="green" data-name="Green" style="background:#5a9040;"></div>
+                <div class="swatch-sm" data-ec="teal" data-name="Teal" style="background:#3888a8;"></div>
+                <div class="swatch-sm selected" data-ec="blue" data-name="Blue" style="background:#3868b8;"></div>
+                <div class="swatch-sm" data-ec="grey" data-name="Grey" style="background:#7888a0;"></div>
+                <div class="swatch-sm" data-ec="violet" data-name="Violet" style="background:#8040a8;"></div>
+                <div class="swatch-sm" data-ec="red" data-name="Red" style="background:#c03030;"></div>
+                <div class="swatch-sm" data-ec="black" data-name="Black" style="background:#201810;"></div>
+                <div class="swatch-sm" data-ec="gold" data-name="Gold" style="background:#d8a020;"></div>
+                <div class="swatch-sm" data-ec="silver" data-name="Silver" style="background:#a8a8b8;"></div>
+              </div>
+              <div class="swatch-name" id="eye-colour-name">Blue</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- HEAD ACCESSORIES -->
+            <div class="section">
+              <div class="section-label">Head Accessories</div>
+              <div class="picker-row">
+                <button class="picker-arrow" id="head-prev">◀</button>
+                <div class="picker-label" id="head-label">None</div>
+                <button class="picker-arrow" id="head-next">▶</button>
+              </div>
+              <div class="picker-counter" id="head-counter">1 / 59</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- SHIRT -->
+            <div class="section">
+              <div class="section-label">Shirt</div>
+              <div class="picker-row">
+                <button class="picker-arrow" id="shirt-prev">◀</button>
+                <div class="picker-label" id="shirt-label">Tunic</div>
+                <button class="picker-arrow" id="shirt-next">▶</button>
+              </div>
+              <div class="picker-counter" id="shirt-counter">2 / 29</div>
+              <div class="subsection-label" style="margin-top:7px;">Shirt Colour</div>
+              <div class="swatch-row" id="shirt-colour-swatches" style="gap:4px;">
+                <div class="swatch-sm" data-sc="white" data-name="White" style="background:#e8e4d8;"></div>
+                <div class="swatch-sm" data-sc="cream" data-name="Cream" style="background:#d9c9a3;"></div>
+                <div class="swatch-sm" data-sc="red" data-name="Red" style="background:#c03030;"></div>
+                <div class="swatch-sm" data-sc="dark_red" data-name="Dark Red" style="background:#801818;"></div>
+                <div class="swatch-sm" data-sc="orange" data-name="Orange" style="background:#d06820;"></div>
+                <div class="swatch-sm" data-sc="yellow" data-name="Yellow" style="background:#d8b830;"></div>
+                <div class="swatch-sm" data-sc="green" data-name="Green" style="background:#4a9040;"></div>
+                <div class="swatch-sm" data-sc="dark_green" data-name="Dark Green" style="background:#285828;"></div>
+                <div class="swatch-sm" data-sc="teal" data-name="Teal" style="background:#289090;"></div>
+                <div class="swatch-sm selected" data-sc="blue" data-name="Blue" style="background:#3060a8;"></div>
+                <div class="swatch-sm" data-sc="dark_blue" data-name="Dark Blue" style="background:#1a3868;"></div>
+                <div class="swatch-sm" data-sc="purple" data-name="Purple" style="background:#5a30a0;"></div>
+                <div class="swatch-sm" data-sc="pink" data-name="Pink" style="background:#c04880;"></div>
+                <div class="swatch-sm" data-sc="brown" data-name="Brown" style="background:#7a4018;"></div>
+                <div class="swatch-sm" data-sc="tan" data-name="Tan" style="background:#a87840;"></div>
+                <div class="swatch-sm" data-sc="gray" data-name="Gray" style="background:#606878;"></div>
+                <div class="swatch-sm" data-sc="dark_gray" data-name="Dark Gray" style="background:#303840;"></div>
+                <div class="swatch-sm" data-sc="black" data-name="Black" style="background:#181818;"></div>
+                <div class="swatch-sm" data-sc="linen" data-name="Linen" style="background:#e0d8c0;"></div>
+              </div>
+              <div class="swatch-name" id="shirt-colour-name">Blue</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- PANTS -->
+            <div class="section">
+              <div class="section-label">Pants</div>
+              <div class="picker-row">
+                <button class="picker-arrow" id="pants-prev">◀</button>
+                <div class="picker-label" id="pants-label">Trousers</div>
+                <button class="picker-arrow" id="pants-next">▶</button>
+              </div>
+              <div class="picker-counter" id="pants-counter">1 / 13</div>
+              <div class="subsection-label" style="margin-top:7px;">Pants Colour</div>
+              <div class="swatch-row" id="pants-colour-swatches" style="gap:4px;">
+                <div class="swatch-sm" data-pc="white" data-name="White" style="background:#e8e4d8;"></div>
+                <div class="swatch-sm" data-pc="cream" data-name="Cream" style="background:#d9c9a3;"></div>
+                <div class="swatch-sm" data-pc="red" data-name="Red" style="background:#c03030;"></div>
+                <div class="swatch-sm" data-pc="dark_red" data-name="Dark Red" style="background:#801818;"></div>
+                <div class="swatch-sm" data-pc="orange" data-name="Orange" style="background:#d06820;"></div>
+                <div class="swatch-sm" data-pc="yellow" data-name="Yellow" style="background:#d8b830;"></div>
+                <div class="swatch-sm" data-pc="green" data-name="Green" style="background:#4a9040;"></div>
+                <div class="swatch-sm" data-pc="dark_green" data-name="Dark Green" style="background:#285828;"></div>
+                <div class="swatch-sm" data-pc="teal" data-name="Teal" style="background:#289090;"></div>
+                <div class="swatch-sm" data-pc="blue" data-name="Blue" style="background:#3060a8;"></div>
+                <div class="swatch-sm" data-pc="dark_blue" data-name="Dark Blue" style="background:#1a3868;"></div>
+                <div class="swatch-sm" data-pc="purple" data-name="Purple" style="background:#5a30a0;"></div>
+                <div class="swatch-sm" data-pc="brown" data-name="Brown" style="background:#7a4018;"></div>
+                <div class="swatch-sm" data-pc="tan" data-name="Tan" style="background:#a87840;"></div>
+                <div class="swatch-sm" data-pc="gray" data-name="Gray" style="background:#606878;"></div>
+                <div class="swatch-sm selected" data-pc="dark_gray" data-name="Dark Gray" style="background:#303840;"></div>
+                <div class="swatch-sm" data-pc="black" data-name="Black" style="background:#181818;"></div>
+                <div class="swatch-sm" data-pc="linen" data-name="Linen" style="background:#e0d8c0;"></div>
+              </div>
+              <div class="swatch-name" id="pants-colour-name">Dark Gray</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- SHOES -->
+            <div class="section">
+              <div class="section-label">Shoes</div>
+              <div class="picker-row">
+                <button class="picker-arrow" id="shoes-prev">◀</button>
+                <div class="picker-label" id="shoes-label">Leather Boots</div>
+                <button class="picker-arrow" id="shoes-next">▶</button>
+              </div>
+              <div class="picker-counter" id="shoes-counter">1 / 15</div>
+              <div class="subsection-label" style="margin-top:7px;">Shoe Colour</div>
+              <div class="swatch-row" id="shoes-colour-swatches" style="gap:4px;">
+                <div class="swatch-sm selected" data-shoec="brown" data-name="Brown" style="background:#4a2810;"></div>
+                <div class="swatch-sm" data-shoec="light_brown" data-name="Light Brown" style="background:#7a4018;"></div>
+                <div class="swatch-sm" data-shoec="tan" data-name="Tan" style="background:#a87840;"></div>
+                <div class="swatch-sm" data-shoec="black" data-name="Black" style="background:#181818;"></div>
+                <div class="swatch-sm" data-shoec="dark_gray" data-name="Dark Gray" style="background:#303840;"></div>
+                <div class="swatch-sm" data-shoec="gray" data-name="Gray" style="background:#606878;"></div>
+                <div class="swatch-sm" data-shoec="red" data-name="Red" style="background:#c03030;"></div>
+                <div class="swatch-sm" data-shoec="blue" data-name="Blue" style="background:#3060a8;"></div>
+                <div class="swatch-sm" data-shoec="green" data-name="Green" style="background:#4a9040;"></div>
+                <div class="swatch-sm" data-shoec="white" data-name="White" style="background:#e8e4d8;"></div>
+                <div class="swatch-sm" data-shoec="gold" data-name="Gold" style="background:#e8c060;"></div>
+                <div class="swatch-sm" data-shoec="purple" data-name="Purple" style="background:#5a30a0;"></div>
+              </div>
+              <div class="swatch-name" id="shoes-colour-name">Brown</div>
+            </div>
+
+            <!-- padding at bottom of scroll -->
+            <div style="height:10px;"></div>
+
+          </div>
+          <!-- /options-scroll -->
+
+          <!-- RIGHT FOOTER -->
+          <div id="panel-right-footer">
+            <button class="btn-stone" id="reset-btn">↺ RESET</button>
+            <div style="flex:1;"></div>
+            <button class="btn-gold-lg" id="confirm-btn">CONFIRM ▸</button>
+          </div>
+
+        </div>
+        <!-- /panel-right -->
+
+      </div>
+      <!-- /main-content -->
+
+    </div>
+    <!-- /card -->
+  </div>
+  <!-- /card-border -->
+</div>
+<!-- /card-outer -->
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────
+const HAIR_STYLES = [
+  'Afro','Cornrows','Dreadlocks Long','Dreadlocks Short','Flat Top','Fade',
+  'Mohawk','Ponytail','Bun','Braids','Bangs','Shaggy','Short','Long Flowing',
+  'Elf Braid','Messy Bun','Wizard Beard','Mutton Chops','Goatee','Full Beard'
+];
+const HAIR_TOTAL = 114;
+
+const HEAD_ACC = [
+  'None','Elf Ears','Cat Ears','Dog Ears','Lizard Fins','Dragon Horns',
+  'Curled Horns','Viking Horns','Feathered Cap','Hood','Crown','Antlers',
+  'Skull Mask','Fox Ears','Bat Wings','Circlet'
+];
+const HEAD_TOTAL = 59;
+
+const SHIRTS = [
+  'None','Tunic','Longsleeve','Longsleeve Buttoned','Cardigan','Chainmail',
+  'Leather Vest','Plate Chest','Robe Top','Apron','Overalls','Suspenders',
+  'Cape','Cloak','Jacket','Doublet','Corset','Sailor Top','Toga'
+];
+const SHIRT_TOTAL = 29;
+
+const PANTS = [
+  'Trousers','Shorts','Breeches','Skirt','Long Skirt','Kilt',
+  'Chainmail Leggings','Plate Greaves','Robe Bottom','Loincloth',
+  'Overalls Bottom','Capris','None'
+];
+const PANTS_TOTAL = 13;
+
+const SHOES = [
+  'Leather Boots','Sandals','Bare Feet','Shoes','High Boots',
+  'Plate Boots','Chainmail Boots','Slippers','Wrappings','Clogs',
+  'Heels','Moccasins','Sabatons','Thigh Boots','Pattens'
+];
+const SHOES_TOTAL = 15;
+
+const DIRECTIONS = ['South','West','North','East'];
+
+const SKIN_COLOURS = {
+  light: '#f5d5b0', amber: '#e8a86a', olive: '#c8a060', taupe: '#b08850',
+  bronze: '#a06838', brown: '#784828', black: '#4a2818', blue: '#6890c8',
+  bright_green: '#68c870', dark_green: '#3a7840'
+};
+
+const SKIN_FACE_SHADOW = {
+  light: '#c8885a', amber: '#c87048', olive: '#a88040', taupe: '#906838',
+  bronze: '#805030', brown: '#5a3820', black: '#381808', blue: '#5070a8',
+  bright_green: '#40a848', dark_green: '#286030'
+};
+
+const HAIR_COLOURS = {
+  orange:'#e8882a', ash:'#b0a898', platinum:'#d8d4c8', white:'#f8f8f8',
+  gray:'#908880', blonde:'#e8d070', sandy:'#d0a858', strawberry:'#e87850',
+  gold:'#e8c060', ginger:'#c86030', carrot:'#d85020', redhead:'#b03020',
+  brown:'#7a4018', dark_brown:'#4a2810', black:'#181008', auburn:'#9a3810',
+  teal:'#2888a0', blue:'#2858b0', purple:'#6040a0', pink:'#e870a8',
+  green:'#4a9040', silver:'#c0c0b8'
+};
+
+const EYE_COLOURS = {
+  brown:'#8a5530', hazel:'#9a7038', amber:'#c89030', green:'#5a9040',
+  teal:'#3888a8', blue:'#3868b8', grey:'#7888a0', violet:'#8040a8',
+  red:'#c03030', black:'#201810', gold:'#d8a020', silver:'#a8a8b8'
+};
+
+const SHIRT_COLOURS = {
+  white:'#e8e4d8', cream:'#d9c9a3', red:'#c03030', dark_red:'#801818',
+  orange:'#d06820', yellow:'#d8b830', green:'#4a9040', dark_green:'#285828',
+  teal:'#289090', blue:'#3060a8', dark_blue:'#1a3868', purple:'#5a30a0',
+  pink:'#c04880', brown:'#7a4018', tan:'#a87840', gray:'#606878',
+  dark_gray:'#303840', black:'#181818', linen:'#e0d8c0'
+};
+
+const PANTS_COLOURS = { ...SHIRT_COLOURS };
+
+const SHOES_COLOURS = {
+  brown:'#4a2810', light_brown:'#7a4018', tan:'#a87840', black:'#181818',
+  dark_gray:'#303840', gray:'#606878', red:'#c03030', blue:'#3060a8',
+  green:'#4a9040', white:'#e8e4d8', gold:'#e8c060', purple:'#5a30a0'
+};
+
+// ─── STATE ───────────────────────────────────────────────────
+const state = {
+  bodyType: 'male',
+  skinKey: 'light',
+  hairIdx: 12,
+  hairColKey: 'carrot',
+  eyeStyle: 'human',
+  eyeColKey: 'blue',
+  headIdx: 0,
+  shirtIdx: 1,
+  shirtColKey: 'blue',
+  pantsIdx: 0,
+  pantsColKey: 'dark_gray',
+  shoesIdx: 0,
+  shoesColKey: 'brown',
+  animKey: 'idle',
+  dirIdx: 0,
+  frame: 1
+};
+
+// Store defaults for reset
+const DEFAULTS = JSON.parse(JSON.stringify(state));
+
+// ─── UTILS ───────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function pickRandom(arr) {
+  return Math.floor(Math.random() * arr.length);
+}
+
+function pickRandomKey(obj) {
+  const keys = Object.keys(obj);
+  return keys[Math.floor(Math.random() * keys.length)];
+}
+
+// ─── APPLY STATE TO SVG ──────────────────────────────────────
+function applyStateToSVG() {
+  const skinCol = SKIN_COLOURS[state.skinKey] || '#e8a86a';
+  const skinShadow = SKIN_FACE_SHADOW[state.skinKey] || '#c8885a';
+  const hairCol = HAIR_COLOURS[state.hairColKey] || '#c86030';
+  const eyeCol = EYE_COLOURS[state.eyeColKey] || '#3868b8';
+  const shirtCol = SHIRT_COLOURS[state.shirtColKey] || '#3060a8';
+  const pantsCol = PANTS_COLOURS[state.pantsColKey] || '#303840';
+  const shoeCol = SHOES_COLOURS[state.shoesColKey] || '#4a2810';
+
+  const setFill = (id, col) => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('fill', col);
+  };
+
+  // Skin
+  setFill('svg-head', skinCol);
+  setFill('svg-neck', skinCol);
+  setFill('svg-collar', skinCol);
+  setFill('svg-hand-l', skinCol);
+  setFill('svg-hand-r', skinCol);
+
+  // Face shadow / detail
+  const mouth = document.querySelector('#char-sprite svg rect[x="13"][y="14"]');
+  const nose = document.querySelector('#char-sprite svg rect[x="15"][y="12"]');
+  if (mouth) mouth.setAttribute('fill', skinShadow);
+  if (nose) nose.setAttribute('fill', skinShadow);
+
+  // Hair
+  setFill('svg-hair', hairCol);
+  setFill('svg-hair2', hairCol);
+  setFill('svg-hair3', hairCol);
+
+  // Eyes
+  const eyeL = document.getElementById('svg-eye-l');
+  const eyeR = document.getElementById('svg-eye-r');
+  if (state.eyeStyle === 'cyclops') {
+    if (eyeL) { eyeL.setAttribute('x','13'); eyeL.setAttribute('width','6'); }
+    if (eyeR) { eyeR.setAttribute('width','0'); }
+  } else {
+    if (eyeL) { eyeL.setAttribute('x','12'); eyeL.setAttribute('width','3'); }
+    if (eyeR) { eyeR.setAttribute('x','17'); eyeR.setAttribute('width','3'); }
+  }
+  setFill('svg-eye-l', eyeCol);
+  setFill('svg-eye-r', eyeCol);
+
+  // Shirt
+  setFill('svg-shirt', shirtCol);
+  setFill('svg-shirt2', shaderDarken(shirtCol, 0.8));
+  setFill('svg-arm-l', shirtCol);
+  setFill('svg-arm-r', shirtCol);
+
+  // Pants
+  setFill('svg-pants-l', pantsCol);
+  setFill('svg-pants-r', pantsCol);
+
+  // Shoes
+  setFill('svg-shoe-l', shoeCol);
+  setFill('svg-shoe-r', shoeCol);
+}
+
+function shaderDarken(hex, factor) {
+  let r = parseInt(hex.slice(1,3),16);
+  let g = parseInt(hex.slice(3,5),16);
+  let b = parseInt(hex.slice(5,7),16);
+  r = Math.round(r * factor);
+  g = Math.round(g * factor);
+  b = Math.round(b * factor);
+  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+}
+
+// ─── APPLY ANIMATION ─────────────────────────────────────────
+function applyAnim() {
+  const sprite = document.getElementById('char-sprite');
+  sprite.className = 'anim-' + state.animKey;
+  const label = document.getElementById('anim-label');
+  label.textContent = '▸ ' + state.animKey.toUpperCase();
+
+  // Update pills
+  document.querySelectorAll('.anim-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.anim === state.animKey);
+  });
+
+  // Frame counter (fake but fun)
+  const frameCounts = { idle:4, walk:8, run:6, spellcast:8, slash:6, thrust:5, shoot:7, hurt:4 };
+  const fc = frameCounts[state.animKey] || 4;
+  const fr = Math.ceil(fc / 4);
+  document.getElementById('frame-counter').textContent = fr + ' / ' + fc + ' frames';
+}
+
+// ─── APPLY DIRECTION ─────────────────────────────────────────
+function applyDirection() {
+  document.getElementById('dir-label').textContent = DIRECTIONS[state.dirIdx].toUpperCase();
+}
+
+// ─── PICKER HELPERS ──────────────────────────────────────────
+function setupPicker(prevId, nextId, labelId, counterId, arr, total, stateKey) {
+  document.getElementById(prevId).addEventListener('click', () => {
+    state[stateKey] = (state[stateKey] - 1 + arr.length) % arr.length;
+    updatePicker(labelId, counterId, arr, total, state[stateKey]);
+    updateSVGForKey(stateKey);
+  });
+  document.getElementById(nextId).addEventListener('click', () => {
+    state[stateKey] = (state[stateKey] + 1) % arr.length;
+    updatePicker(labelId, counterId, arr, total, state[stateKey]);
+    updateSVGForKey(stateKey);
+  });
+}
+
+function updatePicker(labelId, counterId, arr, total, idx) {
+  document.getElementById(labelId).textContent = arr[idx];
+  document.getElementById(counterId).textContent = (idx + 1) + ' / ' + total;
+}
+
+function updateSVGForKey(key) {
+  applyStateToSVG();
+}
+
+// ─── SWATCH GROUP HELPER ─────────────────────────────────────
+function setupSwatchGroup(containerId, dataAttr, stateKey, nameId, colourMap, svgUpdateFn) {
+  const container = document.getElementById(containerId);
+  container.querySelectorAll('[data-' + dataAttr + ']').forEach(sw => {
+    sw.addEventListener('click', () => {
+      container.querySelectorAll('[data-' + dataAttr + ']').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      state[stateKey] = sw.dataset[dataAttr];
+      document.getElementById(nameId).textContent = sw.dataset.name;
+      if (svgUpdateFn) svgUpdateFn();
+    });
+  });
+}
+
+// ─── SEGMENTED BUTTON GROUP ───────────────────────────────────
+function setupSegGroup(containerId, stateKey, onChange) {
+  const grp = document.getElementById(containerId);
+  grp.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      grp.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state[stateKey] = btn.dataset.value;
+      if (onChange) onChange(btn.dataset.value);
+    });
+  });
+}
+
+// ─── RANDOMIZE ───────────────────────────────────────────────
+function doRandomize() {
+  // Skin
+  const skinKeys = Object.keys(SKIN_COLOURS);
+  state.skinKey = skinKeys[pickRandom(skinKeys)];
+  document.getElementById('skin-swatches').querySelectorAll('.swatch-circle').forEach(s => {
+    s.classList.toggle('selected', s.dataset.skin === state.skinKey);
+  });
+  document.getElementById('skin-name').textContent =
+    document.querySelector(`[data-skin="${state.skinKey}"]`)?.dataset.name || state.skinKey;
+
+  // Hair style
+  state.hairIdx = pickRandom(HAIR_STYLES);
+  updatePicker('hair-label','hair-counter', HAIR_STYLES, HAIR_TOTAL, state.hairIdx);
+
+  // Hair colour
+  state.hairColKey = pickRandomKey(HAIR_COLOURS);
+  document.getElementById('hair-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.hc === state.hairColKey);
+  });
+  document.getElementById('hair-colour-name').textContent =
+    document.querySelector(`[data-hc="${state.hairColKey}"]`)?.dataset.name || state.hairColKey;
+
+  // Eye colour
+  state.eyeColKey = pickRandomKey(EYE_COLOURS);
+  document.getElementById('eye-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.ec === state.eyeColKey);
+  });
+  document.getElementById('eye-colour-name').textContent =
+    document.querySelector(`[data-ec="${state.eyeColKey}"]`)?.dataset.name || state.eyeColKey;
+
+  // Head accessories
+  state.headIdx = pickRandom(HEAD_ACC);
+  updatePicker('head-label','head-counter', HEAD_ACC, HEAD_TOTAL, state.headIdx);
+
+  // Shirt
+  state.shirtIdx = Math.floor(Math.random() * SHIRTS.length);
+  updatePicker('shirt-label','shirt-counter', SHIRTS, SHIRT_TOTAL, state.shirtIdx);
+  state.shirtColKey = pickRandomKey(SHIRT_COLOURS);
+  document.getElementById('shirt-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.sc === state.shirtColKey);
+  });
+  document.getElementById('shirt-colour-name').textContent =
+    document.querySelector(`[data-sc="${state.shirtColKey}"]`)?.dataset.name || state.shirtColKey;
+
+  // Pants
+  state.pantsIdx = Math.floor(Math.random() * PANTS.length);
+  updatePicker('pants-label','pants-counter', PANTS, PANTS_TOTAL, state.pantsIdx);
+  state.pantsColKey = pickRandomKey(PANTS_COLOURS);
+  document.getElementById('pants-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.pc === state.pantsColKey);
+  });
+  document.getElementById('pants-colour-name').textContent =
+    document.querySelector(`[data-pc="${state.pantsColKey}"]`)?.dataset.name || state.pantsColKey;
+
+  // Shoes
+  state.shoesIdx = Math.floor(Math.random() * SHOES.length);
+  updatePicker('shoes-label','shoes-counter', SHOES, SHOES_TOTAL, state.shoesIdx);
+  state.shoesColKey = pickRandomKey(SHOES_COLOURS);
+  document.getElementById('shoes-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.shoec === state.shoesColKey);
+  });
+  document.getElementById('shoes-colour-name').textContent =
+    document.querySelector(`[data-shoec="${state.shoesColKey}"]`)?.dataset.name || state.shoesColKey;
+
+  applyStateToSVG();
+  showToast('Character randomized!');
+}
+
+// ─── RESET ───────────────────────────────────────────────────
+function doReset() {
+  Object.assign(state, JSON.parse(JSON.stringify(DEFAULTS)));
+
+  // Body type
+  document.getElementById('body-type-group').querySelectorAll('.seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.value === state.bodyType);
+  });
+
+  // Skin
+  document.getElementById('skin-swatches').querySelectorAll('.swatch-circle').forEach(s => {
+    s.classList.toggle('selected', s.dataset.skin === state.skinKey);
+  });
+  document.getElementById('skin-name').textContent = 'Light';
+
+  // Hair style
+  updatePicker('hair-label','hair-counter', HAIR_STYLES, HAIR_TOTAL, state.hairIdx);
+
+  // Hair colour
+  document.getElementById('hair-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.hc === state.hairColKey);
+  });
+  document.getElementById('hair-colour-name').textContent = 'Carrot';
+
+  // Eye style
+  document.getElementById('eye-style-group').querySelectorAll('.seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.value === state.eyeStyle);
+  });
+
+  // Eye colour
+  document.getElementById('eye-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.ec === state.eyeColKey);
+  });
+  document.getElementById('eye-colour-name').textContent = 'Blue';
+
+  // Head
+  updatePicker('head-label','head-counter', HEAD_ACC, HEAD_TOTAL, state.headIdx);
+
+  // Shirt
+  updatePicker('shirt-label','shirt-counter', SHIRTS, SHIRT_TOTAL, state.shirtIdx);
+  document.getElementById('shirt-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.sc === state.shirtColKey);
+  });
+  document.getElementById('shirt-colour-name').textContent = 'Blue';
+
+  // Pants
+  updatePicker('pants-label','pants-counter', PANTS, PANTS_TOTAL, state.pantsIdx);
+  document.getElementById('pants-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.pc === state.pantsColKey);
+  });
+  document.getElementById('pants-colour-name').textContent = 'Dark Gray';
+
+  // Shoes
+  updatePicker('shoes-label','shoes-counter', SHOES, SHOES_TOTAL, state.shoesIdx);
+  document.getElementById('shoes-colour-swatches').querySelectorAll('.swatch-sm').forEach(s => {
+    s.classList.toggle('selected', s.dataset.shoec === state.shoesColKey);
+  });
+  document.getElementById('shoes-colour-name').textContent = 'Brown';
+
+  // Anim
+  state.animKey = 'idle';
+  applyAnim();
+
+  // Direction
+  state.dirIdx = 0;
+  applyDirection();
+
+  applyStateToSVG();
+  showToast('Character reset.');
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ANIM PILLS
+  document.querySelectorAll('.anim-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      state.animKey = pill.dataset.anim;
+      applyAnim();
+    });
+  });
+
+  // TURN BUTTONS
+  document.getElementById('turn-prev').addEventListener('click', () => {
+    state.dirIdx = (state.dirIdx - 1 + DIRECTIONS.length) % DIRECTIONS.length;
+    applyDirection();
+  });
+  document.getElementById('turn-next').addEventListener('click', () => {
+    state.dirIdx = (state.dirIdx + 1) % DIRECTIONS.length;
+    applyDirection();
+  });
+
+  // BODY TYPE
+  setupSegGroup('body-type-group', 'bodyType', null);
+
+  // SKIN SWATCHES
+  setupSwatchGroup('skin-swatches', 'skin', 'skinKey', 'skin-name', SKIN_COLOURS, applyStateToSVG);
+
+  // HAIR PICKERS
+  setupPicker('hair-prev','hair-next','hair-label','hair-counter', HAIR_STYLES, HAIR_TOTAL, 'hairIdx');
+
+  // HAIR COLOUR SWATCHES
+  setupSwatchGroup('hair-colour-swatches', 'hc', 'hairColKey', 'hair-colour-name', HAIR_COLOURS, applyStateToSVG);
+
+  // EYE STYLE
+  setupSegGroup('eye-style-group', 'eyeStyle', () => applyStateToSVG());
+
+  // EYE COLOUR SWATCHES
+  setupSwatchGroup('eye-swatches', 'ec', 'eyeColKey', 'eye-colour-name', EYE_COLOURS, applyStateToSVG);
+
+  // HEAD PICKER
+  setupPicker('head-prev','head-next','head-label','head-counter', HEAD_ACC, HEAD_TOTAL, 'headIdx');
+
+  // SHIRT PICKER + COLOUR
+  setupPicker('shirt-prev','shirt-next','shirt-label','shirt-counter', SHIRTS, SHIRT_TOTAL, 'shirtIdx');
+  setupSwatchGroup('shirt-colour-swatches', 'sc', 'shirtColKey', 'shirt-colour-name', SHIRT_COLOURS, applyStateToSVG);
+
+  // PANTS PICKER + COLOUR
+  setupPicker('pants-prev','pants-next','pants-label','pants-counter', PANTS, PANTS_TOTAL, 'pantsIdx');
+  setupSwatchGroup('pants-colour-swatches', 'pc', 'pantsColKey', 'pants-colour-name', PANTS_COLOURS, applyStateToSVG);
+
+  // SHOES PICKER + COLOUR
+  setupPicker('shoes-prev','shoes-next','shoes-label','shoes-counter', SHOES, SHOES_TOTAL, 'shoesIdx');
+  setupSwatchGroup('shoes-colour-swatches', 'shoec', 'shoesColKey', 'shoes-colour-name', SHOES_COLOURS, applyStateToSVG);
+
+  // RANDOMIZE BUTTONS
+  document.getElementById('randomize-all-btn').addEventListener('click', doRandomize);
+  document.getElementById('randomize-char-btn').addEventListener('click', doRandomize);
+
+  // RESET
+  document.getElementById('reset-btn').addEventListener('click', doReset);
+
+  // CONFIRM
+  document.getElementById('confirm-btn').addEventListener('click', () => {
+    showToast('Character confirmed! Entering the world…');
+  });
+
+  // Initial render — Shaggy is index 11 (0-based)
+  state.hairIdx = 11;
+  updatePicker('hair-label','hair-counter', HAIR_STYLES, HAIR_TOTAL, state.hairIdx);
+
+  applyStateToSVG();
+  applyAnim();
+  applyDirection();
+});
+</script>
+</body>
+</html>

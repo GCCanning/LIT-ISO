@@ -1,0 +1,119 @@
+═══════════════════════════════════════════════════════════
+QUICK AUDIO FIX TEST — FOLLOW THESE STEPS
+═══════════════════════════════════════════════════════════
+
+STEP 1: CREATE & VALIDATE SCENE (60 seconds)
+────────────────────────────────────────────
+1. In Unity, go to: Tools > Iso World > Build And Validate Full Playtest Scene
+2. Wait for dialog to close
+3. Look at Console for output
+
+EXPECTED CONSOLE OUTPUT:
+   [QuickPlayTestSetup] === Quick Play Test Setup ===
+   ✓ Created... (multiple setup messages)
+   Press ▶ Play to test.
+
+✅ PASS: If you see "Full playtest scene ready!" at the end
+❌ FAIL: If you see errors or "Missing:" messages
+
+───────────────────────────────────────────────────────────
+
+STEP 2: VERIFY SCENE SETUP (30 seconds)
+────────────────────────────────────────
+1. Look at the Hierarchy panel (left side)
+2. Expand "Main Camera"
+3. Click on Main Camera in Hierarchy
+4. Look at Inspector (right panel)
+5. Scroll down to see the components
+
+EXPECTED COMPONENTS ON MAIN CAMERA:
+   ✅ Camera
+   ✅ AudioListener (RED/YELLOW warning icon means it's there!)
+   ✅ AudioListenerEnsurer
+   ✅ SceneValidator
+   ✅ CameraFollow
+
+❌ If AudioListener is missing: Try Step 1 again
+
+───────────────────────────────────────────────────────────
+
+STEP 3: PLAY & LISTEN (120 seconds)
+────────────────────────────────────
+1. Press Play button (▶) in Unity
+2. Wait for scene to load (2-3 seconds)
+3. Look at Console for validation output
+
+EXPECTED CONSOLE OUTPUT:
+   ═══════════════════════════════════════════════════════════
+   [SceneValidator] Starting comprehensive scene validation...
+   ═══════════════════════════════════════════════════════════
+
+   [AudioListener Validation]
+      ✅ Found AudioListener on: Main Camera
+
+   [Main Camera Validation]
+      ✅ Main Camera found: Main Camera
+
+   [Gameplay Components Validation]
+      ✅ Player found...
+      ✅ World found...
+      etc...
+
+   ═══════════════════════════════════════════════════════════
+   [SceneValidator] Scene validation complete!
+   ═══════════════════════════════════════════════════════════
+
+4. Check for audio warnings in Console
+
+❌ FAIL SIGNS:
+   - "There are no audio listeners in the scene" (the original warning)
+   - AudioListener validation shows ❌ or ⚠️
+   - Red error messages
+
+✅ PASS SIGNS:
+   - All validations show ✅
+   - No warning about missing AudioListener
+   - Console is clean (no red errors related to audio)
+
+───────────────────────────────────────────────────────────
+
+STEP 4: TEST AUDIO (30 seconds)
+────────────────────────────────
+1. Still in Play mode
+2. Wait 5-10 seconds and listen for background music
+3. Look at Console — should see day/night music crossfading
+
+EXPECTED:
+   - Ambient music plays in background
+   - No audio-related errors in Console
+   - Music crossfades smoothly
+
+❌ If no music:
+   - That's OK if audio files aren't found
+   - Look for message: "⚠ Day music not found..." in console
+   - Audio listener itself is still working (our fix is good)
+
+───────────────────────────────────────────────────────────
+
+FINAL RESULT
+────────────
+
+✅ ALL STEPS PASS?
+   → The audio listener fix is WORKING
+   → Ready to build and test full features
+
+❌ STEP 1-2 FAILED?
+   → Scene didn't set up properly
+   → Try: Tools > Iso World > Create Infinite Plains Prototype
+   → Then: Tools > Iso World > Validate Current Full Playtest Scene
+
+❌ STEP 3 SHOWS AUDIO WARNINGS?
+   → The fix is partially working but something is still missing
+   → Copy the exact warning from Console
+   → Run: Tools > Iso World > Quick Play Test (on current scene)
+   → Then press Play again
+
+═══════════════════════════════════════════════════════════
+Total Time: ~3 minutes
+Status: Ready for testing ✅
+═══════════════════════════════════════════════════════════

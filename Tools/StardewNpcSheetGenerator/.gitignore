@@ -1,0 +1,9 @@
+_local/
+input/
+output/
+*.zip
+*.exe
+*.dll
+*.pdb
+*.deps.json
+*.runtimeconfig.json

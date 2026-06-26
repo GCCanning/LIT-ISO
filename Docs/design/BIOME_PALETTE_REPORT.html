@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO Biome Palette &amp; Asset Report</title>
+<style>
+  body { font-family: system-ui, sans-serif; background:#1b1f24; color:#e8e8e8; padding:24px; max-width:1000px; margin:auto; }
+  h1 { font-size:1.6em; }
+  h2 { margin-top:2.2em; border-bottom:1px solid #444; padding-bottom:4px; }
+  .swatches { display:flex; gap:6px; margin:10px 0; }
+  .swatch { width:60px; height:60px; border-radius:6px; border:1px solid #000; display:flex; align-items:flex-end; justify-content:center; font-size:10px; color:#000; text-shadow:0 0 2px #fff; }
+  table { width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
+  td, th { border:1px solid #444; padding:6px 10px; text-align:left; vertical-align:top; }
+  th { background:#2a2f36; }
+  code { background:#2a2f36; padding:1px 4px; border-radius:3px; }
+  .forbidden { color:#ff9a9a; }
+</style>
+</head>
+<body>
+<h1>LIT-ISO Biome Palette &amp; Asset Report</h1>
+<p>Average/dominant colours were sampled directly from the shipped tile PNGs in
+<code>Assets/Resources/Tiles</code> for each biome's representative tile family.
+Prop/tile contracts are pulled from
+<code>Docs/design/BIOME_TILE_PROP_RULES.md</code> and
+<code>Docs/IsoCoreFoundation/18_Biome_Generation_And_Asset_Placement_Rules.md</code>.</p>
+
+<h2>1. Meadow / Grasslands</h2>
+<div class="swatches">
+<div class="swatch" style="background:#5b883d">#5b883d</div>
+<div class="swatch" style="background:#6f9345">#6f9345</div>
+<div class="swatch" style="background:#a0c050">#a0c050</div>
+<div class="swatch" style="background:#80b040">#80b040</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>plains2_00..15</code> (field), <code>plains_flower_grass</code>, <code>plains_grass_tufts</code>, <code>grass_1..3</code> (accent)</td></tr>
+<tr><th>Props (allowed)</th><td>Oak trees, flowers/tulips near shrubs or water, shrubs, logs near forest edges, grey boulders at cliff bases</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>Water props, strata bands, canopy blocks, brown rocks, ore</td></tr>
+</table>
+
+<h2>2. Forest</h2>
+<div class="swatches">
+<div class="swatch" style="background:#4a753b">#4a753b</div>
+<div class="swatch" style="background:#39502e">#39502e</div>
+<div class="swatch" style="background:#446f36">#446f36</div>
+<div class="swatch" style="background:#305030">#305030</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>forest_grass_base</code>, <code>forest_floor</code> (dominant), <code>canopy_1..3</code>, <code>forest_moss_grass</code>, <code>forest_leaf_litter</code>, <code>forest_dark_underbrush</code>, <code>forest_mud_path</code></td></tr>
+<tr><th>Props (allowed)</th><td>Oak trees, mossy logs/stumps, shrubs/tufts in clearings only, copper veins riding rock-outcrop clusters (~1 in 6 rock rolls)</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>Field flowers under canopy, foam stones, strata bands</td></tr>
+</table>
+
+<h2>3. Taiga (Cold Forest)</h2>
+<div class="swatches">
+<div class="swatch" style="background:#acc0c2">#acc0c2</div>
+<div class="swatch" style="background:#3e6437">#3e6437</div>
+<div class="swatch" style="background:#56703b">#56703b</div>
+<div class="swatch" style="background:#e0f0f0">#e0f0f0</div>
+</div>
+<table>
+<tr><th>Tiles</th><td>Cold field base (<code>snow2_*</code> light variants) carrying dark pine canopy/underbrush (<code>forest_dark_underbrush</code>, <code>forest_moss_grass</code>, <code>canopy_2/3</code>)</td></tr>
+<tr><th>Props (allowed)</th><td>Pines + oaks (pine dominant), grass tufts, logs, grey rocks, copper veins in outcrops</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>Flowers (too cold), water props</td></tr>
+</table>
+
+<h2>4. Badlands / Desert</h2>
+<div class="swatches">
+<div class="swatch" style="background:#592f29">#592f29</div>
+<div class="swatch" style="background:#5a2f29">#5a2f29</div>
+<div class="swatch" style="background:#5b6468">#5b6468</div>
+<div class="swatch" style="background:#804020">#804020</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>badlands_1</code>, <code>badlands_2</code> (field), <code>sand_1</code> + <code>dirt</code> (dark dirt/rubble accent), <code>stone_cracked</code></td></tr>
+<tr><th>Props (allowed)</th><td>Brown rock clusters, copper veins</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>All vegetation, grey wet stones, foam stones</td></tr>
+</table>
+
+<h2>5. Beach / Coast</h2>
+<div class="swatches">
+<div class="swatch" style="background:#bda788">#bda788</div>
+<div class="swatch" style="background:#b6a184">#b6a184</div>
+<div class="swatch" style="background:#c1aa89">#c1aa89</div>
+<div class="swatch" style="background:#e0d0a0">#e0d0a0</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>beach_00..15</code> (field), <code>sand_1/2</code> accents</td></tr>
+<tr><th>Props (allowed)</th><td>Sparse brown rocks; foam stones at the waterline cell only</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>Vegetation (trees/bushes/flowers), strata bands</td></tr>
+</table>
+
+<h2>6. River</h2>
+<div class="swatches">
+<div class="swatch" style="background:#63a3bf">#63a3bf</div>
+<div class="swatch" style="background:#161f35">#161f35</div>
+<div class="swatch" style="background:#c5ae8c">#c5ae8c</div>
+<div class="swatch" style="background:#70b0d0">#70b0d0</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>water</code> (stream surface, dominant), <code>water_deep</code> (channel center), beach/sand bank patches at edges</td></tr>
+<tr><th>Props (allowed)</th><td>Foam stones in lowland streams only</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>Swells, sparkles (ocean-only)</td></tr>
+</table>
+
+<h2>7. Ocean</h2>
+<div class="swatches">
+<div class="swatch" style="background:#182239">#182239</div>
+<div class="swatch" style="background:#172138">#172138</div>
+<div class="swatch" style="background:#294160">#294160</div>
+<div class="swatch" style="background:#2e4b6e">#2e4b6e</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>water_deep</code>, <code>water_deep_2/3</code> (navy, seamless field), <code>water_swell_1/2</code> (shallow rim accents, &lt;=15%)</td></tr>
+<tr><th>Props (allowed)</th><td>Foam stones on the land edge; sparkles deep &amp; open only; swells near the shallow rim</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>River/light-water family tiles (grid seams; rivers only)</td></tr>
+</table>
+
+<h2>8. Crag / Mountain</h2>
+<div class="swatches">
+<div class="swatch" style="background:#566a6e">#566a6e</div>
+<div class="swatch" style="background:#5e6567">#5e6567</div>
+<div class="swatch" style="background:#6b7566">#6b7566</div>
+<div class="swatch" style="background:#8c9a9e">#8c9a9e</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>stone_block</code> / <code>stone_scree</code> (cobble/slab caps), <code>stone_mossy</code> (lower band accent), <code>stone_snowcap</code> (high band), badlands strata for mesa banding</td></tr>
+<tr><th>Props (allowed)</th><td>Grey boulders, pinnacles at the back of clusters, ore increases with height/stone exposure</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>All vegetation</td></tr>
+</table>
+
+<h2>9. Snow / Tundra</h2>
+<div class="swatches">
+<div class="swatch" style="background:#afc2c4">#afc2c4</div>
+<div class="swatch" style="background:#bbd5de">#bbd5de</div>
+<div class="swatch" style="background:#8c9a9e">#8c9a9e</div>
+<div class="swatch" style="background:#e0f0f0">#e0f0f0</div>
+</div>
+<table>
+<tr><th>Tiles</th><td><code>snow2_00..15</code> (field/accent set), <code>stone_snowcap</code> for exposed rock/peaks</td></tr>
+<tr><th>Props (allowed)</th><td>Reduced overall decor density; ice/snow lake aprons near water transitions</td></tr>
+<tr><th class="forbidden">Forbidden</th><td>Warm-biome plants/flowers unless in a transition band to meadow/forest</td></tr>
+</table>
+
+</body>
+</html>

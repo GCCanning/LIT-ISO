@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIT-ISO Stardew NPC Sheet Runner</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#171a1f;color:#e8e1d1;font-family:Segoe UI,Arial,sans-serif;min-height:100vh}
+header{padding:16px 20px;background:#222731;border-bottom:1px solid #394150}
+h1{font-size:20px;margin:0 0 5px;color:#f0c76d}
+p{margin:0;color:#aeb7c6;line-height:1.4}
+main{display:grid;grid-template-columns:360px 1fr;gap:16px;padding:16px}
+section{background:#242a34;border:1px solid #3a4352;border-radius:6px;padding:14px}
+h2{font-size:14px;color:#f0c76d;margin:0 0 10px}
+label{display:block;font-size:12px;color:#b9c2cf;margin:9px 0}
+input,select,textarea,button,a.btn{width:100%;background:#303746;color:#eee4d2;border:1px solid #4b5668;border-radius:5px;padding:8px;font:inherit;font-size:12px;text-decoration:none}
+textarea{height:190px;resize:vertical;font-family:Consolas,monospace}
+button{cursor:pointer;margin-top:10px}
+button:hover,a.btn:hover{border-color:#e0b75b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.muted{font-size:12px;color:#9da7b5;margin-top:8px}
+code{color:#f2c96f}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Stardew NPC Sheet Runner</h1>
+  <p>Command builder for the Nexus SDV NPC Sheet Generator. Use Stardew IDs for explicit shirt, pants, hat, and accessory choices.</p>
+</header>
+<main>
+  <section>
+    <h2>References</h2>
+    <a class="btn" href="https://mateusaquino.github.io/stardewids/" target="_blank" rel="noopener">Open Stardew IDs</a>
+    <a class="btn" href="https://www.nexusmods.com/stardewvalley/mods/37108?tab=files" target="_blank" rel="noopener" style="margin-top:8px">Open Nexus Files</a>
+    <p class="muted">Nexus requires login for the file. Download it manually, then run <code>setup_sdv_npc_generator.ps1</code>.</p>
+  </section>
+  <section>
+    <h2>Command</h2>
+    <textarea id="cmd" readonly></textarea>
+    <button id="copy">Copy Command</button>
+    <p class="muted">Run from the LIT-ISO repo root after setup.</p>
+  </section>
+  <section>
+    <h2>Core</h2>
+    <div class="grid">
+      <label>Random count<input id="random" type="number" min="0" value="12"></label>
+      <label>Seed<input id="seed" type="number" value="240611"></label>
+    </div>
+    <label>Gender<select id="gender"><option>both</option><option>male</option><option>female</option></select></label>
+    <label>Actions filter<input id="actions" value="WalkingDown,WalkingRight,WalkingUp,WalkingLeft"></label>
+    <div class="grid">
+      <label>Hats<select id="hats"><option>no</option><option>yes</option></select></label>
+      <label>Accessories<select id="accessories"><option>no</option><option>yes</option></select></label>
+    </div>
+    <label>Content dir override<input id="content" placeholder="C:\Path\To\Stardew Valley\Content"></label>
+  </section>
+  <section>
+    <h2>Explicit Outfit</h2>
+    <div class="grid">
+      <label>Shirt ID<input id="shirt" type="number" placeholder="1021"></label>
+      <label>Pants ID<input id="pants" type="number" placeholder="0"></label>
+      <label>Hair index<input id="hair" type="number" placeholder="11"></label>
+      <label>Hat ID<input id="hat" type="number" placeholder="4 or -1"></label>
+      <label>Accessory ID<input id="accessory" type="number" placeholder="6 or -1"></label>
+      <label>Shoe row<input id="shoeindex" type="number" placeholder="optional"></label>
+    </div>
+    <div class="grid">
+      <label>Hair color<input id="haircolor" placeholder="191919"></label>
+      <label>Pants color<input id="pantscolor" placeholder="1e90ff"></label>
+      <label>Shoe color<input id="shoecolor" placeholder="a0522d"></label>
+      <label>Verbose<select id="verbose"><option>yes</option><option>no</option></select></label>
+    </div>
+  </section>
+</main>
+<script>
+const ids = ["random","seed","gender","actions","hats","accessories","content","shirt","pants","hair","hat","accessory","shoeindex","haircolor","pantscolor","shoecolor","verbose"];
+const $ = id => document.getElementById(id);
+function q(value){return value.includes(" ") ? `"${value.replaceAll('"','\\"')}"` : value}
+function add(args, name, value){
+  if(value === "") return;
+  args.push(name, q(value));
+}
+function command(){
+  const args = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "Tools\\StardewNpcSheetGenerator\\run_sdv_npc_generator.ps1"];
+  add(args, "-Random", $("random").value);
+  add(args, "-Gender", $("gender").value);
+  if($("seed").value !== "0") add(args, "-Seed", $("seed").value);
+  add(args, "-Actions", $("actions").value);
+  add(args, "-Hats", $("hats").value);
+  add(args, "-Accessories", $("accessories").value);
+  add(args, "-ContentDir", $("content").value);
+  add(args, "-Shirt", $("shirt").value);
+  add(args, "-Pants", $("pants").value);
+  add(args, "-Hair", $("hair").value);
+  add(args, "-Hat", $("hat").value);
+  add(args, "-Accessory", $("accessory").value);
+  add(args, "-ShoeIndex", $("shoeindex").value);
+  add(args, "-HairColor", $("haircolor").value.replace("#",""));
+  add(args, "-PantsColor", $("pantscolor").value.replace("#",""));
+  add(args, "-ShoeColor", $("shoecolor").value.replace("#",""));
+  if($("verbose").value === "yes") args.push("-VerboseLog");
+  $("cmd").value = args.join(" ");
+}
+ids.forEach(id => $(id).addEventListener("input", command));
+$("copy").addEventListener("click", async () => navigator.clipboard.writeText($("cmd").value));
+command();
+</script>
+</body>
+</html>

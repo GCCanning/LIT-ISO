@@ -1,0 +1,1459 @@
+{
+  "version": 4,
+  "frameSize": 64,
+  "defaultAnimation": "walk",
+  "rowOrder": [
+    "N",
+    "W",
+    "S",
+    "E"
+  ],
+  "pixelsPerUnit": 64,
+  "pivotX": 0.5,
+  "pivotY": 0.5,
+  "bodyTypes": [
+    "male",
+    "female"
+  ],
+  "items": [
+    {
+      "id": "lpc/body",
+      "slot": "body",
+      "kind": "cosmetic",
+      "displayName": "Body Color",
+      "matchBodyColor": true,
+      "paletteMaterial": "body",
+      "baseVariant": "light",
+      "variants": [
+        "light",
+        "amber",
+        "olive",
+        "taupe",
+        "bronze",
+        "brown",
+        "black",
+        "blue",
+        "bright_green",
+        "dark_green",
+        "fur_black",
+        "fur_brown",
+        "fur_copper",
+        "fur_gold",
+        "fur_grey",
+        "fur_tan",
+        "fur_white",
+        "green",
+        "lavender",
+        "pale_green",
+        "zombie",
+        "zombie_green"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/body/male",
+          "sortOrder": 10
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/body/female",
+          "sortOrder": 10
+        }
+      ]
+    },
+    {
+      "id": "lpc/heads_human_male",
+      "slot": "head",
+      "kind": "cosmetic",
+      "displayName": "Human Male",
+      "matchBodyColor": true,
+      "paletteMaterial": "body",
+      "baseVariant": "light",
+      "variants": [
+        "light",
+        "amber",
+        "olive",
+        "taupe",
+        "bronze",
+        "brown",
+        "black",
+        "blue",
+        "bright_green",
+        "dark_green",
+        "fur_black",
+        "fur_brown",
+        "fur_copper",
+        "fur_gold",
+        "fur_grey",
+        "fur_tan",
+        "fur_white",
+        "green",
+        "lavender",
+        "pale_green",
+        "zombie",
+        "zombie_green"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/heads_human_male/male",
+          "sortOrder": 100
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/heads_human_male/female",
+          "sortOrder": 100
+        }
+      ]
+    },
+    {
+      "id": "lpc/eyes_cyclops",
+      "slot": "eyes",
+      "kind": "cosmetic",
+      "displayName": "Cyclops Eyes",
+      "matchBodyColor": false,
+      "paletteMaterial": "eye",
+      "baseVariant": "cyclops",
+      "variants": [
+        "cyclops",
+        "blue",
+        "brown",
+        "gray",
+        "green",
+        "orange",
+        "purple",
+        "red",
+        "yellow"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "combat",
+          "rowOffset": 41,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 45,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 49,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/eyes_cyclops/male",
+          "sortOrder": 105
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/eyes_cyclops/female",
+          "sortOrder": 105
+        }
+      ]
+    },
+    {
+      "id": "lpc/hair_plain",
+      "slot": "hair",
+      "kind": "cosmetic",
+      "displayName": "Plain",
+      "matchBodyColor": false,
+      "paletteMaterial": "hair",
+      "baseVariant": "orange",
+      "variants": [
+        "orange",
+        "ash",
+        "platinum",
+        "white",
+        "gray",
+        "blonde",
+        "sandy",
+        "strawberry",
+        "gold",
+        "ginger",
+        "carrot",
+        "redhead",
+        "red",
+        "light_brown",
+        "chestnut",
+        "dark_brown",
+        "dark_gray",
+        "black",
+        "raven",
+        "rose",
+        "pink",
+        "purple",
+        "violet",
+        "navy",
+        "blue",
+        "green"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/hair_plain/male",
+          "sortOrder": 120
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/hair_plain/female",
+          "sortOrder": 120
+        }
+      ]
+    },
+    {
+      "id": "lpc/torso_clothes_tunic",
+      "slot": "shirt",
+      "kind": "cosmetic",
+      "displayName": "Tunic",
+      "matchBodyColor": false,
+      "paletteMaterial": "cloth",
+      "baseVariant": "black",
+      "variants": [
+        "black",
+        "blue",
+        "bluegray",
+        "brown",
+        "charcoal",
+        "forest",
+        "gray",
+        "green",
+        "lavender",
+        "leather",
+        "maroon",
+        "navy",
+        "orange",
+        "pink",
+        "purple",
+        "red",
+        "rose",
+        "sky",
+        "slate",
+        "tan",
+        "teal",
+        "walnut",
+        "white",
+        "yellow"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/torso_clothes_tunic/female",
+          "sortOrder": 35
+        }
+      ]
+    },
+    {
+      "id": "lpc/legs_pants",
+      "slot": "pants",
+      "kind": "cosmetic",
+      "displayName": "Pants",
+      "matchBodyColor": false,
+      "paletteMaterial": "cloth",
+      "baseVariant": "brown",
+      "variants": [
+        "brown",
+        "leather",
+        "walnut",
+        "yellow",
+        "tan",
+        "orange",
+        "rose",
+        "maroon",
+        "red",
+        "pink",
+        "lavender",
+        "purple",
+        "blue",
+        "navy",
+        "teal",
+        "bluegray",
+        "forest",
+        "green",
+        "white",
+        "sky",
+        "slate",
+        "gray",
+        "black",
+        "charcoal"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/legs_pants/male",
+          "sortOrder": 20
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/legs_pants/female",
+          "sortOrder": 20
+        }
+      ]
+    },
+    {
+      "id": "lpc/feet_shoes_basic",
+      "slot": "shoes",
+      "kind": "cosmetic",
+      "displayName": "Basic Shoes",
+      "matchBodyColor": false,
+      "paletteMaterial": "cloth",
+      "baseVariant": "black",
+      "variants": [
+        "black",
+        "blue",
+        "bluegray",
+        "brown",
+        "charcoal",
+        "forest",
+        "gray",
+        "green",
+        "lavender",
+        "leather",
+        "maroon",
+        "navy",
+        "orange",
+        "pink",
+        "purple",
+        "red",
+        "rose",
+        "sky",
+        "slate",
+        "tan",
+        "teal",
+        "walnut",
+        "white",
+        "yellow",
+        "steel",
+        "iron",
+        "ceramic",
+        "brass",
+        "copper",
+        "bronze",
+        "silver",
+        "gold"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/feet_shoes_basic/male",
+          "sortOrder": 15
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/feet_shoes_basic/female",
+          "sortOrder": 15
+        }
+      ]
+    },
+    {
+      "id": "lpc/torso_armour_plate",
+      "slot": "shirt",
+      "kind": "equipment",
+      "displayName": "Plate",
+      "matchBodyColor": false,
+      "paletteMaterial": "metal",
+      "baseVariant": "ceramic",
+      "variants": [
+        "ceramic",
+        "brass",
+        "copper",
+        "bronze",
+        "iron",
+        "steel",
+        "silver",
+        "gold"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/torso_armour_plate/male",
+          "sortOrder": 60
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/torso_armour_plate/female",
+          "sortOrder": 60
+        }
+      ],
+      "equipSlot": "chest"
+    },
+    {
+      "id": "lpc/hat_helmet_legion",
+      "slot": "head",
+      "kind": "equipment",
+      "displayName": "Legion",
+      "matchBodyColor": false,
+      "paletteMaterial": "metal",
+      "baseVariant": "ceramic",
+      "variants": [
+        "ceramic",
+        "brass",
+        "copper",
+        "bronze",
+        "iron",
+        "steel",
+        "silver",
+        "gold"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "spellcast",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 7,
+          "fps": 8
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 12,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        },
+        {
+          "id": "shoot",
+          "rowOffset": 16,
+          "rows": 4,
+          "cols": 13,
+          "fps": 14
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 20,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 21,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "run",
+          "rowOffset": 25,
+          "rows": 4,
+          "cols": 8,
+          "fps": 12
+        },
+        {
+          "id": "jump",
+          "rowOffset": 29,
+          "rows": 4,
+          "cols": 5,
+          "fps": 8
+        },
+        {
+          "id": "sit",
+          "rowOffset": 33,
+          "rows": 4,
+          "cols": 3,
+          "fps": 4
+        },
+        {
+          "id": "emote",
+          "rowOffset": 37,
+          "rows": 4,
+          "cols": 3,
+          "fps": 6
+        },
+        {
+          "id": "climb",
+          "rowOffset": 41,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "combat",
+          "rowOffset": 42,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "backslash",
+          "rowOffset": 46,
+          "rows": 4,
+          "cols": 13,
+          "fps": 12
+        },
+        {
+          "id": "halfslash",
+          "rowOffset": 50,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/hat_helmet_legion/male",
+          "sortOrder": 130
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/hat_helmet_legion/female",
+          "sortOrder": 130
+        }
+      ],
+      "equipSlot": "head"
+    },
+    {
+      "id": "lpc/weapon_sword_arming",
+      "slot": "weapon",
+      "kind": "equipment",
+      "displayName": "Arming Sword",
+      "matchBodyColor": false,
+      "paletteMaterial": "metal",
+      "baseVariant": "brass",
+      "variants": [
+        "brass",
+        "bronze",
+        "ceramic",
+        "copper",
+        "gold",
+        "iron",
+        "silver",
+        "steel"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 4,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        },
+        {
+          "id": "idle",
+          "rowOffset": 5,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        },
+        {
+          "id": "combat",
+          "rowOffset": 9,
+          "rows": 4,
+          "cols": 2,
+          "fps": 6
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/weapon_sword_arming/male",
+          "sortOrder": 9
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/weapon_sword_arming/female",
+          "sortOrder": 9
+        }
+      ],
+      "equipSlot": "weapon"
+    },
+    {
+      "id": "lpc/weapon_magic_gnarled",
+      "slot": "weapon",
+      "kind": "equipment",
+      "displayName": "Gnarled staff",
+      "matchBodyColor": false,
+      "paletteMaterial": "metal",
+      "baseVariant": "medium",
+      "variants": [
+        "medium",
+        "light",
+        "red",
+        "dark",
+        "brass",
+        "bronze",
+        "ceramic",
+        "copper",
+        "gold",
+        "iron",
+        "silver",
+        "steel"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "hurt",
+          "rowOffset": 4,
+          "rows": 1,
+          "cols": 6,
+          "fps": 8
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/weapon_magic_gnarled/male",
+          "sortOrder": 9
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/weapon_magic_gnarled/female",
+          "sortOrder": 9
+        }
+      ],
+      "equipSlot": "weapon"
+    },
+    {
+      "id": "lpc/shield_round",
+      "slot": "offhand",
+      "kind": "equipment",
+      "displayName": "Round Shield",
+      "matchBodyColor": false,
+      "paletteMaterial": "cloth",
+      "baseVariant": "brown",
+      "variants": [
+        "brown",
+        "black",
+        "gold",
+        "green",
+        "silver",
+        "yellow"
+      ],
+      "animations": [
+        {
+          "id": "walk",
+          "rowOffset": 0,
+          "rows": 4,
+          "cols": 9,
+          "fps": 10
+        },
+        {
+          "id": "thrust",
+          "rowOffset": 4,
+          "rows": 4,
+          "cols": 8,
+          "fps": 10
+        },
+        {
+          "id": "slash",
+          "rowOffset": 8,
+          "rows": 4,
+          "cols": 6,
+          "fps": 12
+        }
+      ],
+      "draws": [
+        {
+          "bodyType": "male",
+          "sheet": "Characters/Layers/lpc/shield_round/male",
+          "sortOrder": 110
+        },
+        {
+          "bodyType": "female",
+          "sheet": "Characters/Layers/lpc/shield_round/female",
+          "sortOrder": 110
+        }
+      ],
+      "equipSlot": "offhand"
+    }
+  ]
+}

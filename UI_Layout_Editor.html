@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LIT-ISO UI Layout Editor</title>
+<style>
+  @font-face {
+    font-family: 'Lumos';
+    src: url('lumos.ttf') format('truetype');
+  }
+  :root {
+    /* colors pulled from GameUIController.cs to match the real HUD */
+    --panel-bg: rgba(16,18,22,0.90);
+    --panel-border: #caa45c;
+    --accent: #f2e8bd;          /* TextCol */
+    --bar-track: #0d0f17;       /* BarTrack */
+    --bar-hp: #cc4040;          /* HealthCol */
+    --bar-mp: #4d8ce6;          /* ManaCol */
+    --bar-hunger: #d99940;      /* HungerCol */
+    --bar-xp: #d9b34d;          /* XpCol */
+    --slot-bg: #1a1f29;         /* SlotBg */
+    --slot-select: #fad973;     /* SlotSelect */
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Lumos', Georgia, 'Times New Roman', serif;
+    background: #1a1f26;
+    color: var(--accent);
+    overflow: hidden;
+    height: 100vh;
+  }
+  /* ---------- Top tab bar ---------- */
+  #tabbar {
+    display: flex;
+    background: #11151b;
+    border-bottom: 2px solid var(--panel-border);
+    flex-wrap: wrap;
+  }
+  #tabbar button {
+    background: #232b35;
+    color: #ddd;
+    border: none;
+    border-right: 1px solid #000;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  #tabbar button.active {
+    background: var(--accent);
+    color: #222;
+    font-weight: bold;
+  }
+  #tabbar button:hover { background: #3a4554; }
+  #tabbar .spacer { flex: 1; }
+  #tabbar .insp-toggle {
+    background: var(--panel-border);
+    color: #222;
+    font-weight: bold;
+  }
+
+  /* ---------- Stage (the simulated game screen) ---------- */
+  #stage-wrap {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 46px);
+    overflow: hidden;
+  }
+  .screen {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg,#2b3a4a 0%, #1c2530 60%, #0f141b 100%);
+    display: none;
+  }
+  .screen.active { display: block; }
+  .screen::after {
+    content: attr(data-screenlabel);
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: #6c7a8a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* ---------- Draggable / resizable UI elements ---------- */
+  .ui-el {
+    position: absolute;
+    background: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--accent);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    cursor: move;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .ui-el.selected {
+    outline: 2px dashed #5cf;
+    z-index: 999;
+  }
+  .ui-el .el-title {
+    padding: 4px 8px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.35);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-family: Georgia, serif; /* title chrome stays distinct from in-game text */
+    color: #aaa;
+  }
+  .ui-el .el-body {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+  .ui-el .text-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+  .ui-el .resize-handle {
+    position: absolute;
+    width: 16px; height: 16px;
+    right: 0; bottom: 0;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 50%, var(--panel-border) 50%);
+    z-index: 5;
+  }
+  /* drag handle just for repositioning the text block within the element */
+  .ui-el .text-drag-handle {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    border: 1px dashed #5cf;
+    border-radius: 2px;
+    cursor: move;
+    z-index: 6;
+    opacity: 0.55;
+  }
+  .ui-el .text-drag-handle:hover { opacity: 1; }
+
+  /* mini decorative elements used inside mockups */
+  .bar { height: 14px; border-radius: 4px; background: var(--bar-track); position:relative; overflow:hidden; flex-shrink:0; border:1px solid rgba(255,255,255,0.08); }
+  .bar > div { position:absolute; left:0; top:0; bottom:0; }
+  .bar.hp > div { background: var(--bar-hp); width:78%; }
+  .bar.mp > div { background: var(--bar-mp); width:55%; }
+  .bar.hunger > div { background: var(--bar-hunger); width:64%; }
+  .bar.xp > div { background: var(--bar-xp); width:38%; }
+  .bar.progress > div { background: #4caf50; width:42%; }
+  .slot-row { display:flex; gap:4px; flex-wrap:wrap; }
+  .slot { width:34px; height:34px; background: var(--slot-bg); border:1px solid var(--panel-border); border-radius:4px; flex-shrink:0; }
+  .slot.selected { border-color: var(--slot-select); }
+  .btn-mock {
+    background:#3a4554; border:1px solid var(--panel-border); border-radius:4px;
+    padding:4px 0; text-align:center; flex-shrink:0;
+  }
+  .grid { display:grid; grid-template-columns: repeat(6, 1fr); gap:4px; }
+  .grid .slot { width:auto; aspect-ratio:1/1; height:auto; }
+  .stat-row { display:flex; justify-content:space-between; }
+
+  /* ---------- Floating control panel ---------- */
+  #controls {
+    position: fixed;
+    top: 56px; right: 12px;
+    width: 280px;
+    background: rgba(15,18,22,0.97);
+    border: 2px solid var(--panel-border);
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 2000;
+    color: #eee;
+    font-family: Georgia, serif;
+  }
+  #controls.hidden { display: none; }
+  #insp-header {
+    cursor: move;
+    background: var(--panel-border);
+    color: #222;
+    font-weight: bold;
+    padding: 8px 10px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #insp-header button {
+    background: #222; color: #eee; border: none; border-radius: 3px;
+    padding: 2px 8px; cursor: pointer; font-size: 12px;
+  }
+  #insp-body { padding: 10px 12px; max-height: 80vh; overflow-y: auto; }
+  #controls h3 { margin: 10px 0 6px 0; font-size: 13px; color: var(--accent); border-top: 1px solid #333; padding-top: 8px; }
+  #controls h3:first-child { margin-top: 0; border-top: none; padding-top: 0; }
+  #controls label { display:block; margin-top:6px; font-size: 12px; }
+  #controls input[type=range], #controls input[type=number], #controls select, #controls input[type=color] { width: 100%; }
+  #controls .row { display:flex; gap:8px; }
+  #controls .row > div { flex:1; }
+  #controls button.action {
+    width:100%; margin-top:10px; padding:8px; cursor:pointer;
+    background: var(--accent); color:#222; border:none; border-radius:4px; font-weight:bold;
+  }
+  #controls .hint { font-size: 11px; color: #999; margin-top: 6px; }
+  #export-out {
+    width: 100%; height: 140px; margin-top: 8px; font-family: monospace; font-size: 11px;
+    background:#0d1014; color:#9f9; border:1px solid #444;
+  }
+  #reopen-insp {
+    position: fixed; top: 56px; right: 12px; z-index: 2000;
+    background: var(--panel-border); color:#222; border:none; border-radius:4px;
+    padding: 6px 10px; cursor:pointer; font-weight:bold; display:none;
+  }
+</style>
+</head>
+<body>
+
+<div id="tabbar">
+  <div class="spacer"></div>
+  <button class="insp-toggle" id="insp-toggle-btn">Hide Inspector</button>
+</div>
+
+<button id="reopen-insp">Show Inspector</button>
+
+<div id="stage-wrap">
+  <!-- screens injected by JS -->
+</div>
+
+<div id="controls">
+  <div id="insp-header">
+    <span>Element Inspector</span>
+    <button id="insp-close">Hide</button>
+  </div>
+  <div id="insp-body">
+    <div id="no-selection">Click an element to select it. Drag it to move, use the corner handle to resize, and drag the small dashed square (top-left) to reposition its text/content within the element.</div>
+    <div id="selection-fields" style="display:none">
+      <div><strong id="sel-name">--</strong></div>
+
+      <h3>Box</h3>
+      <div class="row">
+        <div><label>X<input type="number" id="f-x"></label></div>
+        <div><label>Y<input type="number" id="f-y"></label></div>
+      </div>
+      <div class="row">
+        <div><label>W<input type="number" id="f-w"></label></div>
+        <div><label>H<input type="number" id="f-h"></label></div>
+      </div>
+
+      <h3>Text</h3>
+      <label>Font size: <span id="f-font-val"></span>px
+        <input type="range" id="f-font" min="8" max="48" step="1">
+      </label>
+      <div class="row">
+        <div><label>Horizontal align
+          <select id="f-align">
+            <option value="flex-start">Left</option>
+            <option value="center">Center</option>
+            <option value="flex-end">Right</option>
+          </select>
+        </label></div>
+        <div><label>Vertical align
+          <select id="f-valign">
+            <option value="flex-start">Top</option>
+            <option value="center">Middle</option>
+            <option value="flex-end">Bottom</option>
+          </select>
+        </label></div>
+      </div>
+      <div class="row">
+        <div><label>Text offset X<input type="number" id="f-offx"></label></div>
+        <div><label>Text offset Y<input type="number" id="f-offy"></label></div>
+      </div>
+      <div class="row">
+        <div><label>Text color<input type="color" id="f-color"></label></div>
+        <div><label>Font
+          <select id="f-fontfamily">
+            <option value="Lumos">Lumos (game font)</option>
+            <option value="serif">Serif</option>
+            <option value="sans-serif">Sans-serif</option>
+          </select>
+        </label></div>
+      </div>
+      <label><input type="checkbox" id="f-bold" style="width:auto;"> Bold</label>
+      <label><input type="checkbox" id="f-hidden" style="width:auto;"> Hidden (not shown in-game)</label>
+    </div>
+
+    <button class="action" id="export-btn">Export Layout JSON</button>
+    <button class="action" id="reset-btn" style="background:#555;color:#eee;margin-top:6px;">Reset Current Tab</button>
+    <textarea id="export-out" readonly placeholder="Exported JSON appears here..."></textarea>
+    <div class="hint">Resize the browser window to roughly match your game window for accurate proportions. All values are pixels relative to the screen area. Drag this inspector by its header to move it out of the way.</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   LIT-ISO UI Layout Editor
+   Mirrors the real uGUI screens (GameUIController HUD, GamePanelsController
+   panels, MenuScene, options menu) using the same colors/font as the game
+   (GameUIController.cs color constants + Resources/Fonts/lumos.ttf).
+   Drag elements to move, corner handle to resize, the small dashed square
+   to reposition text within an element, and use the inspector for exact
+   numeric control (position, size, font size, text alignment/offset,
+   color, hide/show). Export JSON and send it back for implementation.
+   ============================================================ */
+
+const SCREENS = {
+  mainmenu: {
+    label: "Main Menu",
+    elements: [
+      { id: "logo",       title: "Game Logo / Title",     x: 260, y: 60,  w: 360, h: 110, font: 32,
+        body: `LIT-ISO` },
+      { id: "btn-start",  title: "Start Game Button",      x: 380, y: 220, w: 220, h: 46, font: 18,
+        body: `Start Game`, isButton: true },
+      { id: "btn-continue", title: "Continue Button",      x: 380, y: 280, w: 220, h: 46, font: 18,
+        body: `Continue`, isButton: true },
+      { id: "btn-options", title: "Options Button",        x: 380, y: 340, w: 220, h: 46, font: 18,
+        body: `Options`, isButton: true },
+      { id: "btn-quit",   title: "Quit Button",            x: 380, y: 400, w: 220, h: 46, font: 18,
+        body: `Quit`, isButton: true },
+      { id: "version",    title: "Version Label",          x: 16,  y: 660, w: 160, h: 30, font: 12,
+        body: `v0.1.0-dev` },
+    ]
+  },
+  options: {
+    label: "Options Menu",
+    elements: [
+      { id: "opt-panel-title", title: "Panel Title",       x: 320, y: 60,  w: 360, h: 50, font: 24,
+        body: `Options` },
+      { id: "opt-music",  title: "Music Volume Slider",    x: 320, y: 140, w: 360, h: 60, font: 16,
+        body: `Music Volume`, extra: `<input type="range" style="width:100%" disabled>` },
+      { id: "opt-sfx",    title: "SFX Volume Slider",      x: 320, y: 210, w: 360, h: 60, font: 16,
+        body: `SFX Volume`, extra: `<input type="range" style="width:100%" disabled>` },
+      { id: "opt-resolution", title: "Resolution Dropdown", x: 320, y: 280, w: 360, h: 60, font: 16,
+        body: `Resolution`, extra: `<div class="btn-mock">1920x1080 ▾</div>` },
+      { id: "opt-fullscreen", title: "Fullscreen Toggle",  x: 320, y: 350, w: 360, h: 46, font: 16,
+        body: `Fullscreen   [ x ]` },
+      { id: "opt-back",   title: "Back Button",            x: 320, y: 430, w: 360, h: 46, font: 18,
+        body: `Back`, isButton: true },
+    ]
+  },
+  hud: {
+    label: "HUD (Adventure)",
+    elements: [
+      { id: "hud-vitals", title: "Vitals (HP/MP/Hunger/XP)", x: 20, y: 20, w: 240, h: 140, font: 13,
+        body: ``, extra: `<div class="bar hp"><div></div></div><div class="bar mp"><div></div></div><div class="bar hunger"><div></div></div><div class="bar xp"><div></div></div>` },
+      { id: "hud-hotbar", title: "Hotbar Slots",           x: 470, y: 660, w: 380, h: 60, font: 12,
+        body: ``, extra: `<div class="slot-row">${'<div class="slot"></div>'.repeat(8)}</div>` },
+      { id: "hud-dayclock", title: "Day/Time Clock Strip", x: 20, y: 170, w: 220, h: 44, font: 13,
+        body: `Day 4 — 14:32` },
+      { id: "hud-questtracker", title: "Quest Tracker",    x: 1020, y: 20, w: 260, h: 160, font: 13,
+        body: `Active Quest`, extra: `<div class="stat-row"><span>Gather 5 Wood</span><span>3/5</span></div>` },
+      { id: "hud-abilitywheel", title: "Ability Wheel (hold-X)", x: 600, y: 320, w: 180, h: 180, font: 12,
+        body: `Ability Wheel`, extra: `<div class="slot-row" style="justify-content:center;">${'<div class="slot"></div>'.repeat(4)}</div>` },
+      { id: "hud-notify", title: "Notification Toasts",    x: 470, y: 20, w: 380, h: 70, font: 13,
+        body: `System: You found a Copper Ore` },
+      { id: "hud-trialbanner", title: "Trial Status Banner", x: 20, y: 660, w: 380, h: 50, font: 13,
+        body: `Trial Day 4 — Grade: B+` },
+    ]
+  },
+  inventory: {
+    label: "Inventory Panel",
+    elements: [
+      { id: "inv-panel", title: "Inventory Panel",         x: 380, y: 60, w: 480, h: 480, font: 14,
+        body: `Inventory`, extra: `<div class="grid">${'<div class="slot"></div>'.repeat(24)}</div>` },
+      { id: "inv-equip", title: "Equipment Slots",          x: 60, y: 100, w: 220, h: 320, font: 13,
+        body: `Equipment`, extra: `<div class="slot-row" style="flex-direction:column;align-items:center;">
+                 <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
+               </div>` },
+      { id: "inv-tooltip", title: "Item Tooltip",           x: 880, y: 100, w: 220, h: 120, font: 12,
+        body: `Copper Ore`, extra: `<div>A chunk of raw copper.</div>` },
+      { id: "inv-close",  title: "Close Button",            x: 800, y: 60, w: 60, h: 40, font: 16,
+        body: `X`, isButton: true },
+    ]
+  },
+  character: {
+    label: "Character Sheet",
+    elements: [
+      { id: "char-panel", title: "Character Sheet Panel",  x: 380, y: 60, w: 480, h: 480, font: 14,
+        body: `Character`, extra: `<div class="stat-row"><span>Level</span><span>4</span></div>
+               <div class="stat-row"><span>Strength</span><span>12</span></div>
+               <div class="stat-row"><span>Vitality</span><span>10</span></div>
+               <div class="stat-row"><span>Agility</span><span>9</span></div>
+               <div class="stat-row"><span>XP</span><span>340 / 500</span></div>` },
+      { id: "char-portrait", title: "Portrait",            x: 100, y: 100, w: 180, h: 180, font: 13,
+        body: `Portrait` },
+      { id: "char-close", title: "Close Button",           x: 800, y: 60, w: 60, h: 40, font: 16,
+        body: `X`, isButton: true },
+    ]
+  },
+  crafting: {
+    label: "Crafting Panel",
+    elements: [
+      { id: "craft-tabs", title: "Station Filter Tabs",    x: 100, y: 60, w: 600, h: 44, font: 13,
+        body: ``, extra: `<div class="slot-row"><div class="btn-mock" style="flex:1;">All</div><div class="btn-mock" style="flex:1;">Furnace</div><div class="btn-mock" style="flex:1;">Tannery</div><div class="btn-mock" style="flex:1;">Workbench</div></div>` },
+      { id: "craft-list", title: "Recipe List",            x: 100, y: 120, w: 280, h: 420, font: 13,
+        body: `Smelt Copper`, extra: `<div>Tan Hide</div><div>Craft Copper Axe</div><div>Craft Stone Pickaxe</div><div>Cook Roasted Apple</div>` },
+      { id: "craft-details", title: "Recipe Details Pane", x: 400, y: 120, w: 380, h: 280, font: 13,
+        body: `Smelt Copper`, extra: `<div>2x Copper Ore → 1x Copper Bar</div>
+               <div>Fuel: Wood 0/1</div>
+               <div>Time: 6s</div>
+               <div class="bar progress"><div></div></div>
+               <div>Working... 42%</div>` },
+      { id: "craft-button", title: "Craft Button",         x: 400, y: 420, w: 180, h: 50, font: 16,
+        body: `Craft`, isButton: true },
+      { id: "craft-close", title: "Close Button",          x: 800, y: 60, w: 60, h: 40, font: 16,
+        body: `X`, isButton: true },
+    ]
+  },
+};
+
+const STORAGE_KEY = "litiso-ui-layout-v2";
+let layout = loadLayout();
+let activeTab = Object.keys(SCREENS)[0];
+let selected = null; // { tab, id }
+
+function defaultState(el) {
+  return {
+    x: el.x, y: el.y, w: el.w, h: el.h, font: el.font,
+    align: "center", valign: "center",
+    offx: 0, offy: 0,
+    color: "#f2e8bd",
+    fontfamily: "Lumos",
+    bold: false,
+    hidden: false,
+  };
+}
+
+function defaultLayout() {
+  const out = {};
+  for (const [tab, def] of Object.entries(SCREENS)) {
+    out[tab] = {};
+    for (const el of def.elements) out[tab][el.id] = defaultState(el);
+  }
+  return out;
+}
+
+function loadLayout() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const def = defaultLayout();
+      for (const tab of Object.keys(def)) {
+        parsed[tab] = parsed[tab] || {};
+        for (const id of Object.keys(def[tab])) {
+          parsed[tab][id] = Object.assign({}, def[tab][id], parsed[tab][id] || {});
+        }
+      }
+      return parsed;
+    }
+  } catch (e) {}
+  return defaultLayout();
+}
+
+function saveLayout() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
+}
+
+function buildTabs() {
+  const bar = document.getElementById("tabbar");
+  // remove existing tab buttons (keep spacer + inspector toggle)
+  bar.querySelectorAll("button[data-tab]").forEach(b => b.remove());
+  for (const [tab, def] of Object.entries(SCREENS)) {
+    const btn = document.createElement("button");
+    btn.textContent = def.label;
+    btn.dataset.tab = tab;
+    if (tab === activeTab) btn.classList.add("active");
+    btn.onclick = () => switchTab(tab);
+    bar.insertBefore(btn, bar.querySelector(".spacer"));
+  }
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  selected = null;
+  updateInspector();
+  document.querySelectorAll("#tabbar button[data-tab]").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.dataset.tab === tab));
+}
+
+function buildScreens() {
+  const wrap = document.getElementById("stage-wrap");
+  wrap.innerHTML = "";
+  for (const [tab, def] of Object.entries(SCREENS)) {
+    const screen = document.createElement("div");
+    screen.className = "screen" + (tab === activeTab ? " active" : "");
+    screen.dataset.tab = tab;
+    screen.dataset.screenlabel = def.label;
+    for (const el of def.elements) {
+      screen.appendChild(buildElement(tab, el));
+    }
+    wrap.appendChild(screen);
+  }
+}
+
+function applyTextStyle(node, state) {
+  node.style.justifyContent = state.valign;
+  node.style.alignItems = state.align;
+  node.style.textAlign = state.align === "flex-start" ? "left" : state.align === "flex-end" ? "right" : "center";
+  node.style.transform = `translate(${state.offx}px, ${state.offy}px)`;
+  node.style.color = state.color;
+  node.style.fontFamily = state.fontfamily === "Lumos" ? "'Lumos', Georgia, serif" : state.fontfamily;
+  node.style.fontWeight = state.bold ? "bold" : "normal";
+}
+
+function buildElement(tab, el) {
+  const state = layout[tab][el.id];
+  const node = document.createElement("div");
+  node.className = "ui-el";
+  node.dataset.tab = tab;
+  node.dataset.id = el.id;
+  node.style.left = state.x + "px";
+  node.style.top = state.y + "px";
+  node.style.width = state.w + "px";
+  node.style.height = state.h + "px";
+  node.style.display = state.hidden ? "none" : "flex";
+
+  const titleEl = document.createElement("div");
+  titleEl.className = "el-title";
+  titleEl.textContent = el.title + (state.hidden ? " (hidden)" : "");
+  node.appendChild(titleEl);
+
+  const bodyEl = document.createElement("div");
+  bodyEl.className = "el-body";
+
+  const textEl = document.createElement("div");
+  textEl.className = "text-content";
+  textEl.style.fontSize = state.font + "px";
+  let inner = "";
+  if (el.body) inner += (el.isButton ? `<div class="btn-mock">${el.body}</div>` : `<div>${el.body}</div>`);
+  if (el.extra) inner += el.extra;
+  textEl.innerHTML = inner;
+  applyTextStyle(textEl, state);
+  bodyEl.appendChild(textEl);
+
+  const textHandle = document.createElement("div");
+  textHandle.className = "text-drag-handle";
+  textHandle.title = "Drag to reposition text/content";
+  bodyEl.appendChild(textHandle);
+
+  node.appendChild(bodyEl);
+
+  const handle = document.createElement("div");
+  handle.className = "resize-handle";
+  node.appendChild(handle);
+
+  // ---- selection + drag (box) ----
+  node.addEventListener("mousedown", (e) => {
+    if (e.target === handle || e.target === textHandle) return;
+    e.preventDefault();
+    select(tab, el.id);
+    const startX = e.clientX, startY = e.clientY;
+    const origX = state.x, origY = state.y;
+    function onMove(ev) {
+      state.x = Math.round(origX + (ev.clientX - startX));
+      state.y = Math.round(origY + (ev.clientY - startY));
+      node.style.left = state.x + "px";
+      node.style.top = state.y + "px";
+      if (isSelected(tab, el.id)) syncInspectorFields();
+    }
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      saveLayout();
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+
+  // ---- resize (box) ----
+  handle.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    select(tab, el.id);
+    const startX = e.clientX, startY = e.clientY;
+    const origW = state.w, origH = state.h;
+    function onMove(ev) {
+      state.w = Math.max(40, Math.round(origW + (ev.clientX - startX)));
+      state.h = Math.max(30, Math.round(origH + (ev.clientY - startY)));
+      node.style.width = state.w + "px";
+      node.style.height = state.h + "px";
+      if (isSelected(tab, el.id)) syncInspectorFields();
+    }
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      saveLayout();
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+
+  // ---- text content offset drag ----
+  textHandle.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    select(tab, el.id);
+    const startX = e.clientX, startY = e.clientY;
+    const origX = state.offx, origY = state.offy;
+    function onMove(ev) {
+      state.offx = Math.round(origX + (ev.clientX - startX));
+      state.offy = Math.round(origY + (ev.clientY - startY));
+      textEl.style.transform = `translate(${state.offx}px, ${state.offy}px)`;
+      if (isSelected(tab, el.id)) syncInspectorFields();
+    }
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      saveLayout();
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+
+  return node;
+}
+
+function isSelected(tab, id) {
+  return selected && selected.tab === tab && selected.id === id;
+}
+
+function select(tab, id) {
+  selected = { tab, id };
+  document.querySelectorAll(".ui-el").forEach(n => {
+    n.classList.toggle("selected", n.dataset.tab === tab && n.dataset.id === id);
+  });
+  updateInspector();
+}
+
+function updateInspector() {
+  const noSel = document.getElementById("no-selection");
+  const fields = document.getElementById("selection-fields");
+  if (!selected) {
+    noSel.style.display = "block";
+    fields.style.display = "none";
+    return;
+  }
+  noSel.style.display = "none";
+  fields.style.display = "block";
+  const def = SCREENS[selected.tab].elements.find(e => e.id === selected.id);
+  document.getElementById("sel-name").textContent = def.title;
+  syncInspectorFields();
+}
+
+function syncInspectorFields() {
+  if (!selected) return;
+  const state = layout[selected.tab][selected.id];
+  document.getElementById("f-x").value = state.x;
+  document.getElementById("f-y").value = state.y;
+  document.getElementById("f-w").value = state.w;
+  document.getElementById("f-h").value = state.h;
+  document.getElementById("f-font").value = state.font;
+  document.getElementById("f-font-val").textContent = state.font;
+  document.getElementById("f-align").value = state.align;
+  document.getElementById("f-valign").value = state.valign;
+  document.getElementById("f-offx").value = state.offx;
+  document.getElementById("f-offy").value = state.offy;
+  document.getElementById("f-color").value = state.color;
+  document.getElementById("f-fontfamily").value = state.fontfamily;
+  document.getElementById("f-bold").checked = state.bold;
+  document.getElementById("f-hidden").checked = state.hidden;
+}
+
+function rerenderSelected() {
+  if (!selected) return;
+  buildScreens();
+  switchTab(activeTab);
+  // re-select after rebuild
+  selected = { tab: selected.tab, id: selected.id };
+  const node = document.querySelector(`.ui-el[data-tab="${selected.tab}"][data-id="${selected.id}"]`);
+  if (node) node.classList.add("selected");
+}
+
+function applyField(prop, value) {
+  if (!selected) return;
+  const state = layout[selected.tab][selected.id];
+  state[prop] = value;
+  const node = document.querySelector(`.ui-el[data-tab="${selected.tab}"][data-id="${selected.id}"]`);
+  if (!node) return;
+  const textEl = node.querySelector(".text-content");
+
+  switch (prop) {
+    case "x": node.style.left = value + "px"; break;
+    case "y": node.style.top = value + "px"; break;
+    case "w": node.style.width = value + "px"; break;
+    case "h": node.style.height = value + "px"; break;
+    case "font": textEl.style.fontSize = value + "px"; break;
+    case "offx": case "offy":
+      textEl.style.transform = `translate(${state.offx}px, ${state.offy}px)`;
+      break;
+    case "hidden":
+      node.style.display = value ? "none" : "flex";
+      node.querySelector(".el-title").textContent =
+        SCREENS[selected.tab].elements.find(e => e.id === selected.id).title + (value ? " (hidden)" : "");
+      break;
+    default:
+      applyTextStyle(textEl, state);
+  }
+  saveLayout();
+}
+
+function wireInspector() {
+  document.getElementById("f-x").addEventListener("input", e => applyField("x", parseInt(e.target.value) || 0));
+  document.getElementById("f-y").addEventListener("input", e => applyField("y", parseInt(e.target.value) || 0));
+  document.getElementById("f-w").addEventListener("input", e => applyField("w", Math.max(40, parseInt(e.target.value) || 40)));
+  document.getElementById("f-h").addEventListener("input", e => applyField("h", Math.max(30, parseInt(e.target.value) || 30)));
+  document.getElementById("f-font").addEventListener("input", e => {
+    document.getElementById("f-font-val").textContent = e.target.value;
+    applyField("font", parseInt(e.target.value));
+  });
+  document.getElementById("f-align").addEventListener("change", e => applyField("align", e.target.value));
+  document.getElementById("f-valign").addEventListener("change", e => applyField("valign", e.target.value));
+  document.getElementById("f-offx").addEventListener("input", e => applyField("offx", parseInt(e.target.value) || 0));
+  document.getElementById("f-offy").addEventListener("input", e => applyField("offy", parseInt(e.target.value) || 0));
+  document.getElementById("f-color").addEventListener("input", e => applyField("color", e.target.value));
+  document.getElementById("f-fontfamily").addEventListener("change", e => applyField("fontfamily", e.target.value));
+  document.getElementById("f-bold").addEventListener("change", e => applyField("bold", e.target.checked));
+  document.getElementById("f-hidden").addEventListener("change", e => applyField("hidden", e.target.checked));
+
+  document.getElementById("export-btn").addEventListener("click", () => {
+    document.getElementById("export-out").value = JSON.stringify(layout, null, 2);
+  });
+
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    const def = defaultLayout();
+    layout[activeTab] = def[activeTab];
+    saveLayout();
+    selected = null;
+    buildScreens();
+    switchTab(activeTab);
+    updateInspector();
+  });
+
+  // ---- inspector hide/show ----
+  const controls = document.getElementById("controls");
+  const reopenBtn = document.getElementById("reopen-insp");
+  function hideInspector() {
+    controls.classList.add("hidden");
+    reopenBtn.style.display = "block";
+  }
+  function showInspector() {
+    controls.classList.remove("hidden");
+    reopenBtn.style.display = "none";
+  }
+  document.getElementById("insp-close").addEventListener("click", hideInspector);
+  document.getElementById("insp-toggle-btn").addEventListener("click", hideInspector);
+  reopenBtn.addEventListener("click", showInspector);
+
+  // ---- inspector drag-to-move ----
+  const header = document.getElementById("insp-header");
+  header.addEventListener("mousedown", (e) => {
+    if (e.target.tagName === "BUTTON") return;
+    e.preventDefault();
+    const rect = controls.getBoundingClientRect();
+    const startX = e.clientX, startY = e.clientY;
+    const origLeft = rect.left, origTop = rect.top;
+    controls.style.right = "auto";
+    controls.style.left = origLeft + "px";
+    controls.style.top = origTop + "px";
+    function onMove(ev) {
+      controls.style.left = (origLeft + (ev.clientX - startX)) + "px";
+      controls.style.top = (origTop + (ev.clientY - startY)) + "px";
+    }
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+}
+
+buildTabs();
+buildScreens();
+wireInspector();
+updateInspector();
+</script>
+</body>
+</html>

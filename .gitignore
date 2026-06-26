@@ -37,6 +37,9 @@ Thumbs.db
 TempEvalDryRun/
 TempEvalDryRunFreshOnly/
 TempEvalStrict/
+.headroom/
+.serena/
+Docs/.fuse_hidden*
 
 # One-off color swatch dumps from asset review sessions
 /0

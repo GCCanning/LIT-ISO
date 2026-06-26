@@ -1,0 +1,37 @@
+*{box-sizing:border-box}
+body{margin:0;height:100vh;display:flex;overflow:hidden;background:#16181d;color:#e5e1d6;font-family:Segoe UI,Arial,sans-serif}
+#side{width:360px;min-width:320px;background:#20242b;border-right:1px solid #343944;display:flex;flex-direction:column;gap:10px;padding:12px;overflow:hidden}
+header h1{font-size:18px;margin:0 0 4px;color:#f0c66b;font-weight:650}
+header p{font-size:12px;line-height:1.35;margin:0;color:#aab0ba}
+.panel{background:#252a33;border:1px solid #363d49;border-radius:6px;padding:10px}
+.muted{font-size:12px;color:#9ca4b2;margin-top:8px}
+.row{display:flex;gap:8px;margin-top:8px}
+button,.filePick,.smallPick,select,input[type=range]{font:inherit}
+button,.filePick,.smallPick,select{background:#303744;color:#eee1ce;border:1px solid #4a5361;border-radius:5px;padding:7px 9px;font-size:12px}
+button{cursor:pointer}
+button:hover,.filePick:hover,.smallPick:hover{border-color:#d2aa57}
+button.on{background:#57451f;border-color:#e2b75b}
+.filePick,.smallPick{display:block;cursor:pointer;text-align:center}
+.filePick input,.smallPick input{display:none}
+.layerList{flex:1;overflow:auto;padding:0;background:transparent;border:0}
+.layer{background:#252a33;border:1px solid #363d49;border-radius:6px;padding:9px;margin-bottom:8px}
+.layerHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.layerName{font-size:12px;font-weight:650;color:#f0c66b}
+.layer select{width:100%;margin-bottom:7px}
+.layer label{display:block;font-size:11px;color:#b8bfca}
+.layer input[type=range]{width:100%;margin-top:4px}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#20242b;border-bottom:1px solid #343944}
+#bar label{font-size:12px;color:#b8bfca;display:flex;align-items:center;gap:6px}
+#frameSlider{width:180px}
+#zoomSlider{width:120px}
+#stageWrap{flex:1;display:grid;place-items:center;min-height:0;background:#111317}
+#stage{image-rendering:pixelated;background:#0c0e12;border:1px solid #343944;box-shadow:0 14px 45px rgba(0,0,0,.35)}
+#notes{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px 12px;background:#20242b;border-top:1px solid #343944;color:#aeb5c0;font-size:12px;line-height:1.35}
+code{color:#f1c977}
+@media(max-width:900px){
+  body{flex-direction:column;overflow:auto;height:auto}
+  #side{width:100%;min-width:0;max-height:none}
+  #main{min-height:640px}
+  #notes{grid-template-columns:1fr}
+}

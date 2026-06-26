@@ -1,0 +1,940 @@
+{
+ "sprites": {
+  "alchemy_table": {
+   "contentFracH": 0.9766,
+   "bottomPadFrac": 0.0078
+  },
+  "anvil": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.0547
+  },
+  "bar_counter": {
+   "contentFracH": 0.9219,
+   "bottomPadFrac": 0.0469
+  },
+  "boat_rowing": {
+   "contentFracH": 0.7109,
+   "bottomPadFrac": 0.1562
+  },
+  "book_stack": {
+   "contentFracH": 0.8516,
+   "bottomPadFrac": 0.0703
+  },
+  "brazier": {
+   "contentFracH": 0.8516,
+   "bottomPadFrac": 0.0391
+  },
+  "bush": {
+   "contentFracH": 0.7188,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_arm": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_barrel": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_barrel2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_dead": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_pad": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_pear": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_round": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_small": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cactus_tall": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "campfire_new": {
+   "contentFracH": 0.5469,
+   "bottomPadFrac": 0.2031
+  },
+  "candle_lantern": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "cooking_station": {
+   "contentFracH": 0.8828,
+   "bottomPadFrac": 0.0469
+  },
+  "copper_vein": {
+   "contentFracH": 0.625,
+   "bottomPadFrac": 0.0625
+  },
+  "crafting_table": {
+   "contentFracH": 0.9219,
+   "bottomPadFrac": 0.0312
+  },
+  "dock_post": {
+   "contentFracH": 0.8359,
+   "bottomPadFrac": 0.0859
+  },
+  "dungeon_chest_wood": {
+   "contentFracH": 0.7734,
+   "bottomPadFrac": 0.1328
+  },
+  "fence_rope_r0c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r0c1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r0c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r0c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r0c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r0c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r0c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r1c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r1c1": {
+   "contentFracH": 0.25,
+   "bottomPadFrac": 0.3333
+  },
+  "fence_rope_r1c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r1c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c1": {
+   "contentFracH": 0.25,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r2c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r3c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r3c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r4c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r4c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c1": {
+   "contentFracH": 0.25,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r5c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r6c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r6c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r6c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r6c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_rope_r7c0": {
+   "contentFracH": 0.1667,
+   "bottomPadFrac": 0.8333
+  },
+  "fence_rope_r7c2": {
+   "contentFracH": 0.1667,
+   "bottomPadFrac": 0.8333
+  },
+  "fence_rope_r7c3": {
+   "contentFracH": 0.1667,
+   "bottomPadFrac": 0.8333
+  },
+  "fence_rope_r7c5": {
+   "contentFracH": 0.1667,
+   "bottomPadFrac": 0.8333
+  },
+  "fence_stone_r0c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c2": {
+   "contentFracH": 0.5,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r0c7": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r1c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r1c1": {
+   "contentFracH": 0.4167,
+   "bottomPadFrac": 0.0833
+  },
+  "fence_stone_r1c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r1c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r1c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r1c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r1c7": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c1": {
+   "contentFracH": 0.5,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r2c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r3c1": {
+   "contentFracH": 0.0833,
+   "bottomPadFrac": 0.9167
+  },
+  "fence_stone_r3c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r3c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r4c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r4c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r5c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r5c1": {
+   "contentFracH": 0.6667,
+   "bottomPadFrac": 0.0833
+  },
+  "fence_stone_r5c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r5c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r5c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r5c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r5c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r6c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r6c1": {
+   "contentFracH": 0.4167,
+   "bottomPadFrac": 0.0833
+  },
+  "fence_stone_r6c2": {
+   "contentFracH": 0.4167,
+   "bottomPadFrac": 0.0833
+  },
+  "fence_stone_r6c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r6c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r6c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r7c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r7c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r7c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_stone_r7c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r0c7": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r1c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r1c1": {
+   "contentFracH": 0.6667,
+   "bottomPadFrac": 0.1667
+  },
+  "fence_wood_r1c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r1c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r1c7": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c1": {
+   "contentFracH": 0.5833,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r2c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r3c1": {
+   "contentFracH": 0.0833,
+   "bottomPadFrac": 0.9167
+  },
+  "fence_wood_r3c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r3c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r4c1": {
+   "contentFracH": 0.0833,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r4c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r4c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r5c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r5c1": {
+   "contentFracH": 0.5833,
+   "bottomPadFrac": 0.4167
+  },
+  "fence_wood_r5c2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r5c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r5c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r5c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r5c6": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r6c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r6c1": {
+   "contentFracH": 0.6667,
+   "bottomPadFrac": 0.1667
+  },
+  "fence_wood_r6c2": {
+   "contentFracH": 0.6667,
+   "bottomPadFrac": 0.1667
+  },
+  "fence_wood_r6c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r6c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r6c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r7c0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r7c3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r7c4": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "fence_wood_r7c5": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "flower": {
+   "contentFracH": 0.625,
+   "bottomPadFrac": 0.0312
+  },
+  "flower_tulip": {
+   "contentFracH": 0.6875,
+   "bottomPadFrac": 0.125
+  },
+  "forest_bush": {
+   "contentFracH": 0.7422,
+   "bottomPadFrac": 0.1328
+  },
+  "forest_dead_tree": {
+   "contentFracH": 0.9297,
+   "bottomPadFrac": 0.0312
+  },
+  "forest_deep_oak_tree": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "forest_moss_bush": {
+   "contentFracH": 0.7422,
+   "bottomPadFrac": 0.1328
+  },
+  "forest_mushrooms": {
+   "contentFracH": 0.9141,
+   "bottomPadFrac": 0.0391
+  },
+  "forest_oak_tree": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "forest_pine": {
+   "contentFracH": 0.9922,
+   "bottomPadFrac": 0.0
+  },
+  "forest_stump": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.0703
+  },
+  "furnace": {
+   "contentFracH": 0.9609,
+   "bottomPadFrac": 0.0234
+  },
+  "glowbug": {
+   "contentFracH": 0.7812,
+   "bottomPadFrac": 0.0703
+  },
+  "grindstone": {
+   "contentFracH": 0.9375,
+   "bottomPadFrac": 0.0234
+  },
+  "guild_banner_stand": {
+   "contentFracH": 0.9688,
+   "bottomPadFrac": 0.0078
+  },
+  "guild_hall_r1": {
+   "contentFracH": 0.875,
+   "bottomPadFrac": 0.0781
+  },
+  "guild_hall_r2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "guild_hall_r3": {
+   "contentFracH": 0.9922,
+   "bottomPadFrac": 0.0
+  },
+  "guild_notice_board": {
+   "contentFracH": 0.9609,
+   "bottomPadFrac": 0.0312
+  },
+  "guild_round_table": {
+   "contentFracH": 0.8828,
+   "bottomPadFrac": 0.0156
+  },
+  "keg_rack": {
+   "contentFracH": 0.9453,
+   "bottomPadFrac": 0.0234
+  },
+  "lantern_post": {
+   "contentFracH": 0.9688,
+   "bottomPadFrac": 0.0078
+  },
+  "library_r1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "library_r2": {
+   "contentFracH": 0.9688,
+   "bottomPadFrac": 0.0
+  },
+  "library_r3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "log": {
+   "contentFracH": 0.7188,
+   "bottomPadFrac": 0.0938
+  },
+  "loom": {
+   "contentFracH": 0.9844,
+   "bottomPadFrac": 0.0078
+  },
+  "market_stall_blue": {
+   "contentFracH": 0.9531,
+   "bottomPadFrac": 0.0312
+  },
+  "market_stall_red": {
+   "contentFracH": 0.9609,
+   "bottomPadFrac": 0.0156
+  },
+  "ore_copper": {
+   "contentFracH": 0.6484,
+   "bottomPadFrac": 0.1641
+  },
+  "ore_gold": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.1016
+  },
+  "ore_iron": {
+   "contentFracH": 0.9219,
+   "bottomPadFrac": 0.0312
+  },
+  "ore_manacrystal": {
+   "contentFracH": 0.8906,
+   "bottomPadFrac": 0.0703
+  },
+  "ore_silver": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "ore_starmetal": {
+   "contentFracH": 0.8438,
+   "bottomPadFrac": 0.0625
+  },
+  "pine": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_bush": {
+   "contentFracH": 0.7422,
+   "bottomPadFrac": 0.1328
+  },
+  "plains_bush_v2_0": {
+   "contentFracH": 0.8203,
+   "bottomPadFrac": 0.0938
+  },
+  "plains_bush_v2_0_big": {
+   "contentFracH": 0.8203,
+   "bottomPadFrac": 0.0938
+  },
+  "plains_bush_v2_1": {
+   "contentFracH": 0.8047,
+   "bottomPadFrac": 0.0938
+  },
+  "plains_bush_v2_1_big": {
+   "contentFracH": 0.8047,
+   "bottomPadFrac": 0.0938
+  },
+  "plains_bush_v2_2": {
+   "contentFracH": 0.7734,
+   "bottomPadFrac": 0.1172
+  },
+  "plains_bush_v2_2_big": {
+   "contentFracH": 0.7734,
+   "bottomPadFrac": 0.1172
+  },
+  "plains_bush_v2_3": {
+   "contentFracH": 0.8125,
+   "bottomPadFrac": 0.0938
+  },
+  "plains_bush_v2_3_big": {
+   "contentFracH": 0.8125,
+   "bottomPadFrac": 0.0938
+  },
+  "plains_dry_bush": {
+   "contentFracH": 0.7422,
+   "bottomPadFrac": 0.1328
+  },
+  "plains_rock": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.0703
+  },
+  "plains_rock_v2": {
+   "contentFracH": 0.7188,
+   "bottomPadFrac": 0.1484
+  },
+  "plains_rock_v2_0": {
+   "contentFracH": 0.9219,
+   "bottomPadFrac": 0.0312
+  },
+  "plains_rock_v2_0_big": {
+   "contentFracH": 0.9219,
+   "bottomPadFrac": 0.0312
+  },
+  "plains_rock_v2_1": {
+   "contentFracH": 0.8438,
+   "bottomPadFrac": 0.0703
+  },
+  "plains_rock_v2_1_big": {
+   "contentFracH": 0.8438,
+   "bottomPadFrac": 0.0703
+  },
+  "plains_rock_v2_2": {
+   "contentFracH": 0.7188,
+   "bottomPadFrac": 0.1484
+  },
+  "plains_rock_v2_2_big": {
+   "contentFracH": 0.7188,
+   "bottomPadFrac": 0.1484
+  },
+  "plains_rock_v2_3": {
+   "contentFracH": 0.7734,
+   "bottomPadFrac": 0.1094
+  },
+  "plains_rock_v2_3_big": {
+   "contentFracH": 0.7734,
+   "bottomPadFrac": 0.1094
+  },
+  "plains_small_tree": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2": {
+   "contentFracH": 0.9531,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2_0": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2_0_young": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2_1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2_1_young": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2_3": {
+   "contentFracH": 0.9531,
+   "bottomPadFrac": 0.0
+  },
+  "plains_tree_v2_3_young": {
+   "contentFracH": 0.9531,
+   "bottomPadFrac": 0.0
+  },
+  "plains_willow": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "rock": {
+   "contentFracH": 0.8438,
+   "bottomPadFrac": 0.0312
+  },
+  "rune_station": {
+   "contentFracH": 0.9062,
+   "bottomPadFrac": 0.0234
+  },
+  "sawmill_bench": {
+   "contentFracH": 0.7969,
+   "bottomPadFrac": 0.1172
+  },
+  "scarecrow": {
+   "contentFracH": 0.9453,
+   "bottomPadFrac": 0.0156
+  },
+  "shared_gray_rock": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.0703
+  },
+  "shop_r1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "shop_r2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "shop_r3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "shore_stone": {
+   "contentFracH": 0.6875,
+   "bottomPadFrac": 0.0
+  },
+  "stump": {
+   "contentFracH": 0.6562,
+   "bottomPadFrac": 0.0312
+  },
+  "tanning_rack": {
+   "contentFracH": 0.8203,
+   "bottomPadFrac": 0.0703
+  },
+  "tavern_r1": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "tavern_r2": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "tavern_r3": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "tavern_sign": {
+   "contentFracH": 0.7812,
+   "bottomPadFrac": 0.0547
+  },
+  "tavern_table": {
+   "contentFracH": 0.8438,
+   "bottomPadFrac": 0.0234
+  },
+  "torch_standing": {
+   "contentFracH": 0.8984,
+   "bottomPadFrac": 0.0
+  },
+  "torch_wall": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.0391
+  },
+  "tree": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  },
+  "tuft": {
+   "contentFracH": 0.625,
+   "bottomPadFrac": 0.125
+  },
+  "weapon_rack": {
+   "contentFracH": 0.8594,
+   "bottomPadFrac": 0.0547
+  },
+  "wisp": {
+   "contentFracH": 1.0,
+   "bottomPadFrac": 0.0
+  }
+ }
+}
