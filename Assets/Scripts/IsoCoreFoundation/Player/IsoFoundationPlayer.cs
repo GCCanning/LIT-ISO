@@ -59,6 +59,7 @@ namespace IsoCore.Foundation
         {
             IsMoving = false;
             if (_world == null) return;
+            if (FoundationUiCoordinator.Active != null && FoundationUiCoordinator.Active.BlocksWorldInput) return;
 
             // Auto-eject if we somehow end up standing in a blocked cell (e.g. terrain
             // changed under us): walk toward the nearest walkable neighbour. Belt-and-
