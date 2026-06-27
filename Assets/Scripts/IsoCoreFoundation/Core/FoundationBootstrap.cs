@@ -46,6 +46,7 @@ namespace IsoCore.Foundation
         public FoundationInstanceSystem Instances { get; private set; }
         public FarmingSystem Farming { get; private set; }
         public MobSpawner MobSpawner { get; private set; }
+        public PlayerMelee Melee { get; private set; }
         public DayNightSystem DayNight { get; private set; }
         public FoundationCampingSystem Camping { get; private set; }
         public CraftingSystem Crafting { get; private set; }
@@ -228,7 +229,7 @@ namespace IsoCore.Foundation
             var spawnerGo = new GameObject("MobSpawner");
             spawnerGo.transform.SetParent(transform, false);
             MobSpawner = spawnerGo.AddComponent<MobSpawner>();
-            MobSpawner.Init(World, Content, config, Player, Progression?.Stats);
+            MobSpawner.Init(World, Content, config, Player, Progression?.Stats, Inventory);
 
             // Day/night clock.
             DayNight = gameObject.AddComponent<DayNightSystem>();
@@ -287,6 +288,10 @@ namespace IsoCore.Foundation
             Interaction = gameObject.AddComponent<PlayerInteraction>();
             Interaction.Init(Player, WorldController, Content, config, Inventory, Hotbar, Placement, Farming,
                 Storage, _cam, InteractionOverlay, Instances, DungeonPortals, heldTool, Camping);
+
+            // Player melee: dedicated-key swing that damages mobs in a forward arc.
+            Melee = gameObject.AddComponent<PlayerMelee>();
+            Melee.Init(Player, MobSpawner, Progression?.Stats, Hotbar, Content);
 
             // LitRPG progression hooks. Gameplay systems emit success events; this component
             // converts them into activity XP and starter quest progress.
