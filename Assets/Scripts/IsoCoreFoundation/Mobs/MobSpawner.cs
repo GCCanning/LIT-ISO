@@ -15,6 +15,7 @@ namespace IsoCore.Foundation
         FoundationConfig _cfg;
         IsoFoundationPlayer _player;
         FoundationPlayerStats _stats;
+        Inventory _inv;
         FoundationInstanceSystem _instances;
         FoundationCampingSystem _camping;
         Transform _mobParent;
@@ -26,11 +27,12 @@ namespace IsoCore.Foundation
         public event Action<MobDefinition> MobCalmed;
 
         public int Count => _mobs.Count;
+        public IReadOnlyList<Mob> ActiveMobs => _mobs;
 
         public void Init(IsoWorld world, FoundationContent content, FoundationConfig cfg, IsoFoundationPlayer player,
-            FoundationPlayerStats stats = null)
+            FoundationPlayerStats stats = null, Inventory inv = null)
         {
-            _world = world; _content = content; _cfg = cfg; _player = player; _stats = stats;
+            _world = world; _content = content; _cfg = cfg; _player = player; _stats = stats; _inv = inv;
             _mobParent = new GameObject("Mobs").transform;
             _mobParent.SetParent(transform, false);
             _timer = 1f;
@@ -100,6 +102,7 @@ namespace IsoCore.Foundation
             var mob = go.AddComponent<Mob>();
             mob.Init(def, _world, ground);
             mob.SetCombatContext(_player, _stats, aggressive);
+            mob.SetLootSink(_inv);
             mob.Defeated += HandleMobDefeated;
             mob.Calmed += HandleMobCalmed;
             _mobs.Add(mob);
