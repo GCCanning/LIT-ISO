@@ -14,6 +14,7 @@ namespace IsoCore.Foundation
 
         public event Action OnChanged;
         public int SlotCount => _slots.Length;
+        public FoundationContent Content => _content;
 
         public Inventory(int slotCount, FoundationContent content)
         {
