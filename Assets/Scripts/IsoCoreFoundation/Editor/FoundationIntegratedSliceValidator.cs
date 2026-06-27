@@ -1173,6 +1173,26 @@ namespace IsoCore.Foundation.EditorTools
                 PixelArtDungeonFloorAssetsPresent() &&
                 TileSpriteResolver.Resolve(content.Blocks.Get("dungeon_floor_1")) != null,
                 "Resources/Tiles/dungeon_floor_1..5");
+
+            // ---- Predator-plant combat content ----
+            var plant1 = content.Mobs.Get("predator_plant_1");
+            var plant2 = content.Mobs.Get("predator_plant_2");
+            var plant3 = content.Mobs.Get("predator_plant_3");
+            bool plantsCombatReady =
+                plant1 != null && plant2 != null && plant3 != null &&
+                plant1.maxHealth > 0f && plant1.attackDamage > 0f && plant1.aggroRadius > 0f &&
+                plant2.maxHealth > 0f && plant2.attackDamage > 0f && plant2.aggroRadius > 0f &&
+                plant3.maxHealth > 0f && plant3.attackDamage > 0f && plant3.aggroRadius > 0f &&
+                plant1.drops != null && plant1.drops.Length > 0 &&
+                plant2.xpReward > 0 && plant3.maxHealth > plant2.maxHealth; // tanky > fast
+            add("Predator plants are combat-ready (HP, attack, aggro, drops, XP, distinct stats)",
+                plantsCombatReady,
+                plant1 != null ? $"p1 hp{plant1.maxHealth} atk{plant1.attackDamage}, p2 hp{plant2.maxHealth}, p3 hp{plant3.maxHealth}" : "missing plant defs");
+            var forest = content.Biomes.Get("forest");
+            bool plantsSpawn = forest != null && forest.mobs != null && System.Array.Exists(forest.mobs,
+                m => m.mob != null && m.mob.id == "predator_plant_1");
+            add("Predator plants are wired into a biome spawn table",
+                plantsSpawn, "forest biome includes predator_plant_1");
             add("Dungeon generation is deterministic",
                 a.layoutSeed == b.layoutSeed &&
                 a.cells.Length == b.cells.Length &&
