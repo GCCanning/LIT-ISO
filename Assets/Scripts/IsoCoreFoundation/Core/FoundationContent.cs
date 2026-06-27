@@ -298,6 +298,12 @@ namespace IsoCore.Foundation
             var log = Node("log", new Color(0.42f, 0.29f, 0.16f), ToolType.Axe, false, 4, 0.4f,
                 new[] { new ItemDrop("wood", 2, 3) });
 
+            // ---- Predator-plant drops ----
+            Item("plant_fiber", new Color(0.45f, 0.65f, 0.30f), ItemCategory.Resource);
+            Item("thorn", new Color(0.55f, 0.30f, 0.35f), ItemCategory.Resource);
+            var sweetSap = Item("sweet_sap", new Color(0.85f, 0.70f, 0.30f), ItemCategory.Food);
+            sweetSap.foodRestore = 10;
+
             // ---- Mobs ----
             MobDefinition Mob(string id, Color col, MobBehavior beh, float speed, float wander, ItemDrop[] drops)
             {
@@ -320,6 +326,39 @@ namespace IsoCore.Foundation
             fox.threatTier = 2;
             fox.campWardIgnoreChance = 0.28f;
             fox.contactDamage = 6f;
+
+            // ---- Predator plants (combat enemies). Ambush predators: idle until the
+            // player enters aggroRadius, then chase (walk->run), telegraph + strike, and
+            // leash home if dragged too far. Distinct archetypes: bruiser / fast / tanky.
+            MobDefinition Plant(string id, string animKey, Color col, float size, float maxHp,
+                float atk, float walk, float run, float aggro, float range, float cd, float windup,
+                float knock, int tier, int xp, ItemDrop[] drops)
+            {
+                var m = New<MobDefinition>(id);
+                m.animationKey = animKey;
+                m.color = col; m.sizeUnits = size;
+                m.behaviour = MobBehavior.Passive;     // ambush: engages via aggroRadius, leashes home
+                m.maxHealth = maxHp; m.attackDamage = atk; m.contactDamage = 0f;
+                m.moveSpeed = walk; m.chaseSpeed = run; m.aggroRadius = aggro; m.leashRadius = aggro + 7f;
+                m.attackRange = range; m.attackCooldownSeconds = cd; m.attackWindupSeconds = windup;
+                m.knockbackStrength = knock; m.threatTier = tier; m.xpReward = xp;
+                m.campWardIgnoreChance = 0.30f; m.wanderRadius = 2.5f; m.repathSeconds = 3.5f;
+                m.drops = drops;
+                c.Mobs.Add(m); return m;
+            }
+
+            // Plant1 — bruiser: hits hard, moderate bulk and speed.
+            var plant1 = Plant("predator_plant_1", "Plant1", new Color(0.55f, 0.18f, 0.22f), 0.75f,
+                36f, 12f, 1.1f, 2.0f, 5.5f, 0.9f, 1.8f, 0.45f, 0.9f, 3, 18,
+                new[] { new ItemDrop("thorn", 1, 2), new ItemDrop("plant_fiber", 1, 2) });
+            // Plant2 — fast stalker: low HP, quick to close and strike.
+            var plant2 = Plant("predator_plant_2", "Plant2", new Color(0.30f, 0.62f, 0.32f), 0.6f,
+                22f, 7f, 1.8f, 3.4f, 7.0f, 0.7f, 1.1f, 0.25f, 0.5f, 2, 14,
+                new[] { new ItemDrop("plant_fiber", 1, 3), new ItemDrop("sweet_sap", 1, 1, 0.5f) });
+            // Plant3 — tanky warden: slow, very durable, heavy hits.
+            var plant3 = Plant("predator_plant_3", "Plant3", new Color(0.45f, 0.30f, 0.60f), 0.9f,
+                70f, 10f, 0.8f, 1.3f, 4.5f, 1.0f, 2.4f, 0.6f, 1.2f, 4, 26,
+                new[] { new ItemDrop("thorn", 1, 3), new ItemDrop("sweet_sap", 1, 2) });
 
             // ---- Crops ----
             void Crop(string id, Color young, Color ripe, int stages, float secs, float matureH, ItemDrop[] harvest)
@@ -350,10 +389,10 @@ namespace IsoCore.Foundation
 
             Biome("meadow", 0.55f, 0.55f, grassGroup, 1, 2,
                 new[] { NS(tree, 0.05f), NS(rock, 0.02f), NS(bush, 0.05f), NS(copperVein, 0.008f) },
-                new[] { MS(deer, 1f), MS(slime, 1f) }, new Color(0.4f, 0.7f, 0.4f));
+                new[] { MS(deer, 1f), MS(slime, 1f), MS(plant2, 0.4f) }, new Color(0.4f, 0.7f, 0.4f));
             Biome("forest", 0.45f, 0.85f, grassGroup, 1, 3,
                 new[] { NS(tree, 0.14f), NS(bush, 0.06f), NS(rock, 0.02f), NS(copperVein, 0.01f) },
-                new[] { MS(deer, 1f), MS(fox, 1f), MS(slime, 0.5f) }, new Color(0.25f, 0.55f, 0.30f));
+                new[] { MS(deer, 1f), MS(fox, 1f), MS(slime, 0.5f), MS(plant1, 0.5f), MS(plant2, 0.4f), MS(plant3, 0.3f) }, new Color(0.25f, 0.55f, 0.30f));
             Biome("desert", 0.88f, 0.15f, sandGroup, 1, 1,
                 new[] { NS(rock, 0.05f), NS(copperVein, 0.015f) },
                 new[] { MS(slime, 1f) }, new Color(0.85f, 0.78f, 0.45f));
