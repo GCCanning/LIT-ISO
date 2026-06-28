@@ -206,6 +206,11 @@ namespace IsoCore.Foundation
                 _pathLastGround = _ground;
             }
 
+            // Z triggers basic attack (Space = jump, LMB = move/interact, RMB = cam pan)
+            if (Input.GetKeyDown(KeyCode.Z))
+                TriggerBasicAttack();
+
+            TickAttack();
             Refresh();
         }
 
@@ -492,6 +497,56 @@ namespace IsoCore.Foundation
         }
 
         // ----------------------------------------------------------------- Blink (Flash Step)
+
+        // ---------------------------------------------------------------- basic attack
+
+        float _attackCooldownTimer = 0f;
+        const float AttackCooldown    = 0.5f;   // seconds between attacks
+        const float AttackRangeWorld  = 1.2f;   // world-units melee reach
+        const int   AttackBaseDamage  = 10;     // flat damage per hit
+
+        /// <summary>
+        /// Fires a melee strike in the player's facing direction. Damages every
+        /// SlimeEnemyController within AttackRangeWorld. Called by the HUD Attack button
+        /// and can also be called from keyboard input (Space).
+        /// </summary>
+        public void TriggerBasicAttack()
+        {
+            if (_attackCooldownTimer > 0f) return;
+            _attackCooldownTimer = AttackCooldown;
+
+            // Flash the sprite red briefly for feedback
+            if (_sr != null)
+            {
+                _sr.color = new Color(1f, 0.3f, 0.3f, 1f);
+                // Reset color after a short delay
+                _attackFlashTimer = 0.12f;
+            }
+
+            // Deal damage to all IDamageable components within melee range using a physics overlap
+            var hits = Physics2D.OverlapCircleAll((Vector2)transform.position, AttackRangeWorld);
+            foreach (var hit in hits)
+            {
+                var damageable = hit.GetComponent<IDamageable>();
+                if (damageable != null)
+                    damageable.TakeDamage(AttackBaseDamage);
+            }
+        }
+
+        float _attackFlashTimer = 0f;
+
+        void TickAttack()
+        {
+            if (_attackCooldownTimer > 0f)
+                _attackCooldownTimer -= Time.deltaTime;
+
+            if (_attackFlashTimer > 0f)
+            {
+                _attackFlashTimer -= Time.deltaTime;
+                if (_attackFlashTimer <= 0f && _sr != null)
+                    _sr.color = Color.white;
+            }
+        }
 
         /// <summary>
         /// Instant teleport along <paramref name="dir"/> for up to <paramref name="tiles"/> tiles,

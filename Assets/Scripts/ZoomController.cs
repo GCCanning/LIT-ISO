@@ -26,7 +26,7 @@ public class ZoomController : MonoBehaviour
 
     [Header("Zoom Range")]
     [Tooltip("Minimum orthographicSize (closest zoom-in).")]
-    public float minZoom = 3f;
+    public float minZoom = 1.5f;
 
     [Tooltip("Maximum orthographicSize (farthest zoom-out).")]
     public float maxZoom = 14f;

@@ -1,9 +1,10 @@
+using IsoCore.Foundation;
 using UnityEngine;
 using EthraClone.TrialWeek;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
-public class SlimeEnemyController : MonoBehaviour
+public class SlimeEnemyController : MonoBehaviour, IDamageable
 {
     public EnemyDefinition definition;
     public Transform target;

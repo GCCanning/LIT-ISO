@@ -257,7 +257,10 @@ namespace IsoCore.Foundation
             // Fill area (gold)
             var fillAreaGo = new GameObject("FillArea", typeof(RectTransform));
             fillAreaGo.transform.SetParent(trackGo.transform, false);
-            var fillAreaRt = fillAreaGo.AddComponent<RectTransform>();
+            // GameObject(..., typeof(RectTransform)) already created the RectTransform; a second
+            // AddComponent<RectTransform>() returns null (a GameObject can only hold one Transform),
+            // which caused a NullReferenceException on the next line. Use the existing one.
+            var fillAreaRt = (RectTransform)fillAreaGo.transform;
             fillAreaRt.anchorMin = Vector2.zero; fillAreaRt.anchorMax = Vector2.one;
             fillAreaRt.offsetMin = new Vector2(2f, 2f); fillAreaRt.offsetMax = new Vector2(-2f, -2f);
 

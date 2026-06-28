@@ -116,6 +116,7 @@ namespace LitIso.UI.InGame
         RectTransform _dayBandRoot;
         RectTransform _topRightRoot;
         RectTransform _abilityRoot;
+        RectTransform _attackBtnRoot;
         RectTransform _combatTextRoot;
         Text _selItemName;
         FoundationHudViewMode _hudMode = FoundationHudViewMode.Adventure;
@@ -267,6 +268,7 @@ namespace LitIso.UI.InGame
             BuildDayTimeBand(canvasGo.transform);
             BuildTopRight(canvasGo.transform);
             BuildAbilityBar(canvasGo.transform);
+            BuildAttackButton(canvasGo.transform);
             BuildHotbar(canvasGo.transform);
             BuildCombatText(canvasGo.transform);
             BuildInteractionPrompt(canvasGo.transform);
@@ -1081,6 +1083,83 @@ namespace LitIso.UI.InGame
                 var cor = cost.rectTransform; cor.anchorMin = Vector2.zero; cor.anchorMax = Vector2.one;
                 cor.offsetMin = new Vector2(0f, 2f); cor.offsetMax = new Vector2(-4f, 0f);
             }
+        }
+
+        // ------------------------------------------------------- attack button
+
+        // BOTTOM-CENTRE-RIGHT: a large 96×96 primary ATTACK button (SPACE / LMB).
+        // Sits to the right of the ability bar at the same bottom-left anchor band.
+        // Red-tinted frame with a sword icon placeholder and "SPACE" key chip.
+        // Pressing it calls PlayerAttack() on any IsoFoundationPlayer in the scene.
+        void BuildAttackButton(Transform parent)
+        {
+            const float size = 96f;
+            var root = NewRect("AttackButton", parent);
+            _attackBtnRoot = root;
+            // Anchored bottom-left, offset so it sits to the right of the 330px ability bar
+            root.anchorMin = root.anchorMax = new Vector2(0f, 0f);
+            root.pivot = new Vector2(0f, 0f);
+            root.anchoredPosition = new Vector2(28f + 330f + 16f, 34f);
+            root.sizeDelta = new Vector2(size, size);
+
+            // Hard shadow
+            var shadow = NewImage(root, "AtkShadow", null, LitIsoTheme.Hex("#060708"));
+            shadow.raycastTarget = false;
+            var shr = shadow.rectTransform;
+            shr.anchorMin = shr.anchorMax = new Vector2(0.5f, 0.5f); shr.pivot = new Vector2(0.5f, 0.5f);
+            shr.anchoredPosition = new Vector2(0f, -5f); shr.sizeDelta = new Vector2(size, size);
+
+            // Frame — red-bordered for primary attack clarity
+            var frame = NewImage(root, "AtkFrame", null, HudPanelInset);
+            HardBorder(frame.gameObject, LitIsoTheme.Hex("#d9425a"), 3f);
+            frame.raycastTarget = true;
+            var fr = frame.rectTransform;
+            fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one;
+            fr.offsetMin = Vector2.zero; fr.offsetMax = Vector2.zero;
+
+            // Sword icon placeholder (⚔ unicode, gold)
+            var icon = NewText(fr, "AtkIcon", "⚔", 38, TextAnchor.MiddleCenter);
+            LitIsoTheme.ApplyDisplay(icon, 38, LitIsoTheme.Gold);
+            icon.raycastTarget = false;
+            var ir = icon.rectTransform;
+            ir.anchorMin = Vector2.zero; ir.anchorMax = Vector2.one;
+            ir.offsetMin = new Vector2(0f, 12f); ir.offsetMax = new Vector2(0f, 0f);
+
+            // "ATTACK" label
+            var lbl = NewText(fr, "AtkLabel", "ATTACK", 9, TextAnchor.LowerCenter);
+            LitIsoTheme.ApplyDisplay(lbl, 9, LitIsoTheme.Hex("#d9425a"));
+            lbl.raycastTarget = false;
+            var lr = lbl.rectTransform;
+            lr.anchorMin = new Vector2(0f, 0f); lr.anchorMax = new Vector2(1f, 0f);
+            lr.pivot = new Vector2(0.5f, 0f);
+            lr.anchoredPosition = new Vector2(0f, 4f); lr.sizeDelta = new Vector2(0f, 16f);
+
+            // SPACE key chip (top-left)
+            var keyChip = NewImage(fr, "AtkKeyChip", null, LitIsoTheme.Hex("#1a1d23"));
+            HardBorder(keyChip.gameObject, LitIsoTheme.Base, 2f);
+            keyChip.raycastTarget = false;
+            var kcr = keyChip.rectTransform;
+            kcr.anchorMin = kcr.anchorMax = new Vector2(0f, 1f); kcr.pivot = new Vector2(0f, 1f);
+            kcr.anchoredPosition = new Vector2(-2f, 2f); kcr.sizeDelta = new Vector2(20f, 20f);
+            var keyT = NewText(kcr, "K", "Z", 8, TextAnchor.MiddleCenter);
+            LitIsoTheme.ApplyDisplay(keyT, 8, LitIsoTheme.ParchmentLit);
+            keyT.raycastTarget = false;
+            var ktr = keyT.rectTransform;
+            ktr.anchorMin = Vector2.zero; ktr.anchorMax = Vector2.one;
+            ktr.offsetMin = Vector2.zero; ktr.offsetMax = Vector2.zero;
+
+            // Button component — triggers PlayerAttack on the first IsoFoundationPlayer found
+            var btn = frame.gameObject.AddComponent<Button>();
+            ColorBlock cb = btn.colors;
+            cb.normalColor    = new Color(1f, 1f, 1f, 1f);
+            cb.highlightedColor = new Color(1f, 0.7f, 0.7f, 1f);
+            cb.pressedColor   = new Color(0.7f, 0.3f, 0.3f, 1f);
+            btn.colors = cb;
+            btn.onClick.AddListener(() =>
+            {
+                var player = UnityEngine.Object.FindFirstObjectByType<IsoFoundationPlayer>();
+                if (player != null) player.TriggerBasicAttack();
+            });
         }
 
         // ---------------------------------------------------- floating combat text

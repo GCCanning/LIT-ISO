@@ -44,7 +44,7 @@ public static class TimeAndZoomHUDSetup
             if (zoomCtrl == null)
             {
                 zoomCtrl = mainCam.gameObject.AddComponent<ZoomController>();
-                zoomCtrl.minZoom = 3f;
+                zoomCtrl.minZoom = 1.5f;
                 zoomCtrl.maxZoom = 14f;
                 zoomCtrl.defaultZoom = mainCam.orthographicSize;
                 Debug.Log("[TimeAndZoomHUD] Added ZoomController to Main Camera.");

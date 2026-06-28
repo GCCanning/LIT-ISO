@@ -131,6 +131,18 @@ namespace IsoCore.Foundation
             Block("snow2_12", "pl_snow2_blocks", new Color(0.82f, 0.86f, 0.91f), CollisionMode.Walkable);
             Block("snow2_14", "pl_snow2_blocks", new Color(0.80f, 0.84f, 0.90f), CollisionMode.Walkable);
 
+            // ---- New biome surface blocks (marsh / grotto / sunspool / badlands / frozenmountain) ----
+            var mud1         = Block("mud_1",         "mud_blocks",        new Color(0.32f, 0.26f, 0.20f), CollisionMode.Walkable);
+            var mud2         = Block("mud_2",         "mud_blocks",        new Color(0.28f, 0.22f, 0.17f), CollisionMode.Walkable);
+            var stoneFloor1  = Block("stone_floor_1", "stone_floor_blocks",new Color(0.50f, 0.52f, 0.55f), CollisionMode.Walkable);
+            var stoneFloor2  = Block("stone_floor_2", "stone_floor_blocks",new Color(0.44f, 0.46f, 0.50f), CollisionMode.Walkable);
+            var cinderFloor1 = Block("cinder_1",      "cinder_blocks",     new Color(0.28f, 0.24f, 0.22f), CollisionMode.Walkable);
+            var cinderFloor2 = Block("cinder_2",      "cinder_blocks",     new Color(0.32f, 0.27f, 0.24f), CollisionMode.Walkable);
+            var mossDark1    = Block("moss_dark_1",   "moss_blocks",       new Color(0.18f, 0.32f, 0.28f), CollisionMode.Walkable);
+            var mossDark2    = Block("moss_dark_2",   "moss_blocks",       new Color(0.15f, 0.28f, 0.25f), CollisionMode.Walkable);
+            var goldGrass1   = Block("gold_grass_1",  "gold_grass_blocks", new Color(0.78f, 0.68f, 0.28f), CollisionMode.Walkable);
+            var goldGrass2   = Block("gold_grass_2",  "gold_grass_blocks", new Color(0.72f, 0.62f, 0.24f), CollisionMode.Walkable);
+
             // ---- Block groups ----
             BlockGroupDefinition Group(string id, params BlockDefinition[] variants)
             {
@@ -145,6 +157,11 @@ namespace IsoCore.Foundation
             var forestGroup = Group("forest_blocks", forestFloor);
             Group("canopy_blocks", canopy1, canopy2, canopy3);
             var dungeonFloorGroup = Group("dungeon_floor_blocks", dungeonFloor1, dungeonFloor2, dungeonFloor3, dungeonFloor4, dungeonFloor5);
+            var mudGroup        = Group("mud_blocks",        mud1, mud2);
+            var stoneFloorGroup = Group("stone_floor_blocks",stoneFloor1, stoneFloor2);
+            var cinderGroup     = Group("cinder_blocks",     cinderFloor1, cinderFloor2);
+            var mossGroup       = Group("moss_blocks",       mossDark1, mossDark2);
+            var goldGrassGroup  = Group("gold_grass_blocks", goldGrass1, goldGrass2);
 
             // ---- Items ----
             ItemDefinition Item(string id, Color col, ItemCategory cat, int stack = 99)
@@ -382,6 +399,21 @@ namespace IsoCore.Foundation
             fox.threatTier = 2;
             fox.campWardIgnoreChance = 0.28f;
             fox.contactDamage = 6f;
+            var plant1 = Mob("plant1", new Color(0.35f, 0.70f, 0.30f), MobBehavior.Passive, 0.3f, 2f,
+                new[] { new ItemDrop("fiber", 1, 2) });
+            plant1.threatTier = 0;
+            plant1.campWardIgnoreChance = 0f;
+            plant1.contactDamage = 0f;
+            var plant2 = Mob("plant2", new Color(0.45f, 0.65f, 0.35f), MobBehavior.Passive, 0.4f, 2f,
+                new[] { new ItemDrop("fiber", 1, 2) });
+            plant2.threatTier = 0;
+            plant2.campWardIgnoreChance = 0f;
+            plant2.contactDamage = 0f;
+            var plant3 = Mob("plant3", new Color(0.25f, 0.55f, 0.45f), MobBehavior.Passive, 0.2f, 1.5f,
+                new[] { new ItemDrop("fiber", 2, 3) });
+            plant3.threatTier = 0;
+            plant3.campWardIgnoreChance = 0f;
+            plant3.contactDamage = 0f;
 
             // ---- Crops ----
             void Crop(string id, Color young, Color ripe, int stages, float secs, float matureH, ItemDrop[] harvest)
@@ -479,6 +511,27 @@ namespace IsoCore.Foundation
                 new[] { NS(rock, 0.14f) },
                 new[] { MS(deer, 0.2f) }, new Color(0.55f, 0.58f, 0.62f));
             mountainB.elevationGateMinHeight = 3;
+
+            // ── New BiomeSketch biomes ─────────────────────────────────────────
+            Biome("frozenmountain", 0.13f, 0.65f, snowGroup, 2, 4,
+                new[] { NS(rock, 0.06f), NS(pine, 0.03f), NS(copperVein, 0.01f) },
+                new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.60f, 0.65f, 0.72f));
+
+            Biome("marsh", 0.50f, 0.85f, mudGroup, 1, 1,
+                new[] { NS(bush, 0.08f), NS(flower, 0.04f), NS(log, 0.02f) },
+                new[] { MS(deer, 0.5f), MS(slime, 1f), MS(plant2, 0.6f) }, new Color(0.30f, 0.40f, 0.28f));
+
+            Biome("grotto", 0.30f, 0.80f, mossGroup, 1, 3,
+                new[] { NS(rock, 0.07f), NS(flower, 0.05f), NS(copperVein, 0.02f) },
+                new[] { MS(slime, 1f), MS(plant3, 0.4f) }, new Color(0.25f, 0.55f, 0.50f));
+
+            Biome("sunspool", 0.80f, 0.40f, goldGrassGroup, 1, 2,
+                new[] { NS(bush, 0.04f), NS(flower, 0.06f), NS(rock, 0.01f) },
+                new[] { MS(deer, 1f), MS(fox, 0.4f) }, new Color(0.85f, 0.75f, 0.30f));
+
+            Biome("badlands", 0.88f, 0.10f, cinderGroup, 1, 3,
+                new[] { NS(rock, 0.06f), NS(stump, 0.02f), NS(copperVein, 0.012f) },
+                new[] { MS(slime, 1f), MS(plant1, 0.5f) }, new Color(0.45f, 0.32f, 0.26f));
             // mergedBase from export (11) — fallback when height band not matched
             mountainB.surfaceBasePool = TPool(
                 ("pl_stoneel_01", 155f), ("pl_grass_01", 80f), ("snow2_07", 40f),
@@ -1142,6 +1195,16 @@ namespace IsoCore.Foundation
                 "Bring back proof from the old cellar before pests chew through the stores.");
             BoardEntry("board_south_path", "South Path Repair", "fixing_the_south_path", "dangerous_mob_sighting", 0, 4,
                 "Clear and mark the south path so visitors stop losing half a day in brambles.");
+
+            // Merge authored ItemDefinition assets from Resources/Items/ into the procedural
+            // registry. These SOs (iron_sword, iron_helm, leather_chest, …) carry equipSlot data
+            // the procedural tool list doesn't, and the equipment→visual pipeline looks them up by
+            // id (e.g. StarterLoadoutHook). Procedural ids win on conflict; silent if the folder is empty.
+            foreach (var authored in Resources.LoadAll<ItemDefinition>("Items"))
+            {
+                if (authored == null || string.IsNullOrEmpty(authored.id)) continue;
+                if (!c.Items.Has(authored.id)) c.Items.Add(authored);
+            }
 
             return c;
         }

@@ -1,30 +1,23 @@
 {
-  "schema": "litiso.worldgen.biome_suite.v1",
-  "_": "Authoring contract for biome-scale generation. Runtime authority remains footprint cell + integer height; this file only describes semantic rule intent.",
-  "biomeOrder": [
-    "meadow",
+  "schema": "litiso.worldgen.biome_suite.v2",
+  "_comment": "AUTHORITATIVE biome + world-generation contract. This file is the SINGLE source of truth: the runtime loads it live and generates ONLY the biomes, tiles, props, and mobs listed here. To add a biome, add an entry here (and run the asset import). Nothing tile/prop-wise generates outside this file.",
+  "_assets": "tile/decoration paths are relative to the PixelArt library (C:/Projects/PixelArt). The strict importer copies ONLY the files referenced here into Assets/Art/Biomes and the loader resolves them by basename.",
+  "_assignment": "Each cell has climate (temperature t, moisture m, elevation e), all 0..1. A biome matches when t/m/e all fall inside its climate box. On overlap, the first biome in 'priority' wins. If none match, 'fallbackBiome' is used.",
+  "fallbackBiome": "plains",
+  "priority": [
+    "frozenmountain",
+    "grotto",
+    "marsh",
+    "snow",
+    "badlands",
+    "sunspool",
     "forest",
-    "beach",
-    "mountain",
-    "snow"
+    "plains"
   ],
   "spawnZone": {
-    "radiusChunks": 2,
-    "forcedBiome": "meadow",
+    "forcedBiome": "plains",
     "heightPolicy": "flatten-core-ramp-edge",
-    "requiredClearCells": 160,
-    "allowedFeatures": [
-      "lone_plains_tree",
-      "flower_patch",
-      "long_grass_patch",
-      "plains_bush_patch",
-      "rock_outcrop",
-      "campsite"
-    ],
-    "blockedFeatures": [
-      "forest_grove",
-      "ore_copper"
-    ]
+    "requiredClearCells": 160
   },
   "globalPlacement": {
     "minimumWalkLaneWidthCells": 2,
@@ -36,130 +29,345 @@
     "occupancyPolicy": "reserve every prop footprint before placing the next prop"
   },
   "biomes": {
-    "meadow": {
-      "role": "starter-safe open terrain",
-      "surfaceFile": "biomes/meadow.json",
-      "density": {
-        "trees": 0.2,
-        "rocks": 0.1,
-        "grassTufts": 0.32,
-        "flowers": 0.18
+    "plains": {
+      "label": "Plains",
+      "kind": 1,
+      "isNew": false,
+      "role": "starter-safe open terrain (spawn biome + climate fallback)",
+      "climate": { "tMin": 0, "tMax": 1, "mMin": 0, "mMax": 0.58, "eMin": 0, "eMax": 1 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/Tilesets/plains/tile_0.png",
+        "flatGroundVariants": [ "../../../../PixelArt/Tilesets/plains/tile_4.png" ],
+        "raisedGround": "../../../../PixelArt/Tilesets/plains/tile_4.png",
+        "raisedGroundVariants": [ "../../../../PixelArt/Tilesets/plains/tile_6.png" ],
+        "midElevation": "../../../../PixelArt/Tilesets/plains/tile_2.png",
+        "peak": "../../../../PixelArt/Tilesets/plains/tile_2.png"
       },
-      "featureScale": {
-        "lone_plains_tree": 1.3,
-        "flower_patch": 1.3,
-        "long_grass_patch": 1.3,
-        "plains_bush_patch": 1.1,
-        "rock_outcrop": 0.7,
-        "campsite": 0.35
-      }
+      "decorations": {
+        "trees": [],
+        "groundCover": [
+          "../../../../PixelArt/Props/plains/plains_bush_v2/frame_1.png",
+          "../../../../PixelArt/Props/plains/plains_bush_v2/frame_0.png",
+          "../../../../PixelArt/Props/plains/plains_bush_v2/frame_2.png"
+        ],
+        "rocks": [
+          "../../../../PixelArt/Props/plains/plains_rock_v2/frame_1.png",
+          "../../../../PixelArt/Props/plains/plains_rock_v2/frame_2.png"
+        ]
+      },
+      "gen": {
+        "raisedTileThreshold": 0.78,
+        "heightNoiseScale": 0.04,
+        "forestNoiseScale": 0.06,
+        "forestThreshold": 0.62,
+        "treeDensityInForest": 0.26,
+        "groundCoverChance": 0.09,
+        "rockClusterThreshold": 0.76,
+        "rockChanceInCluster": 0.07,
+        "baseDecorationDensity": 0.07
+      },
+      "mobs": [
+        { "enemyId": "plant1", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "plant2", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "plant3", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+      ]
     },
     "forest": {
-      "role": "dense but traversable resource biome",
-      "surfaceFile": "biomes/forest.json",
-      "density": {
-        "trees": 0.55,
-        "underbrush": 0.4,
-        "rocks": 0.1,
-        "mushrooms": 0.1
+      "label": "Forest",
+      "kind": 7,
+      "isNew": false,
+      "climate": { "tMin": 0.3, "tMax": 0.8, "mMin": 0.4, "mMax": 1, "eMin": 0, "eMax": 0.65 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/Tilesets/plains/tile_3.png",
+        "flatGroundVariants": [ "../../../../PixelArt/Tilesets/plains/tile_8.png" ],
+        "raisedGround": "../../../../PixelArt/Tilesets/plains/tile_14.png",
+        "raisedGroundVariants": [ "../../../../PixelArt/Tilesets/plains/tile_12.png" ],
+        "midElevation": "../../../../PixelArt/Tilesets/plains/tile_13.png",
+        "peak": "../../../../PixelArt/Tilesets/plains/tile_2.png"
       },
-      "featureScale": {
-        "forest_grove": 1.4,
-        "forest_bush_patch": 1.3,
-        "clearing": 0.45,
-        "rock_outcrop": 0.45,
-        "stump_log_litter": 1.0,
-        "campsite": 0.25
+      "decorations": {
+        "trees": [
+          "../../../../PixelArt/Props/forest/forest_pine_young/frame_0.png",
+          "../../../../PixelArt/Props/plains/plains_tree_v2/frame_0.png"
+        ],
+        "groundCover": [
+          "../../../../PixelArt/Props/plains/plains_bush_v2/frame_1.png",
+          "../../../../PixelArt/Props/plains/plains_bush_v2/frame_0.png",
+          "../../../../PixelArt/Props/plains/plains_bush_v2/frame_2.png"
+        ],
+        "rocks": [
+          "../../../../PixelArt/Props/plains/plains_rock_v2/frame_1.png",
+          "../../../../PixelArt/Props/plains/plains_rock_v2/frame_2.png"
+        ]
       },
-      "negativeSpace": {
-        "clearingChancePerGrove": 0.18,
-        "minimumClearingRadiusCells": 3
-      }
+      "gen": {
+        "raisedTileThreshold": 0.6,
+        "heightNoiseScale": 0.06,
+        "forestNoiseScale": 0.05,
+        "forestThreshold": 0.5,
+        "treeDensityInForest": 0.45,
+        "groundCoverChance": 0.1,
+        "rockClusterThreshold": 0.75,
+        "rockChanceInCluster": 0.08,
+        "baseDecorationDensity": 0.1
+      },
+      "mobs": [
+        { "enemyId": "plant1", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "plant2", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "plant3", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+      ]
     },
-    "beach": {
-      "role": "shoreline and beach band between ocean and land",
-      "surfaceFile": "biomes/beach.json",
-      "density": {
-        "shoreRocks": 0.18,
-        "driftwood": 0.08,
-        "trees": 0.03
+    "badlands": {
+      "label": "Badlands",
+      "kind": 12,
+      "isNew": false,
+      "role": "hot, dry, hostile lowland (merged former 'desert' + 'badlands')",
+      "climate": { "tMin": 0.7, "tMax": 1, "mMin": 0, "mMax": 0.25, "eMin": 0, "eMax": 0.7 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_02.png",
+        "flatGroundVariants": [
+          "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_03.png",
+          "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_23.png"
+        ],
+        "raisedGround": "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_02.png",
+        "raisedGroundVariants": [
+          "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_10.png",
+          "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_11.png"
+        ],
+        "midElevation": "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_05.png",
+        "peak": "../../../../PixelArt/WorldAssets/badlands/badlands_cinder_01_31.png"
       },
-      "featureScale": {
-        "shore_rocks": 1.0,
-        "rock_outcrop": 0.25
+      "decorations": {
+        "trees": [],
+        "groundCover": [
+          "../../../../PixelArt/WorldAssets/badlands/badlands_bones.png",
+          "../../../../PixelArt/WorldAssets/badlands/badlands_bones_02.png",
+          "../../../../PixelArt/WorldAssets/badlands/badlands_dead_scrub_02.png"
+        ],
+        "rocks": []
       },
-      "waterEdgePolicy": "sand apron first, sparse shore props second, no buildings on wet band"
+      "gen": {
+        "raisedTileThreshold": 0.68,
+        "heightNoiseScale": 0.08,
+        "forestNoiseScale": 0.1,
+        "forestThreshold": 0.78,
+        "treeDensityInForest": 0.08,
+        "groundCoverChance": 0.02,
+        "rockClusterThreshold": 0.6,
+        "rockChanceInCluster": 0.18,
+        "baseDecorationDensity": 0.03
+      },
+      "mobs": [
+        { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+      ]
     },
-    "mountain": {
-      "role": "height-banded stone and ore biome",
-      "surfaceFile": "biomes/mountain.json",
-      "density": {
-        "rocks": 0.34,
-        "ores": 0.12,
-        "trees": 0.04
+    "frozenmountain": {
+      "label": "Frozen Mountain",
+      "kind": 3,
+      "isNew": false,
+      "role": "high-elevation cold; wins the cold band above the snowline",
+      "climate": { "tMin": 0, "tMax": 0.25, "mMin": 0.3, "mMax": 1, "eMin": 0.5, "eMax": 1 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/Tilesets/mountain_stone/tile_0.png",
+        "flatGroundVariants": [ "../../../../PixelArt/Tilesets/mountain_stone/tile_4.png" ],
+        "raisedGround": "../../../../PixelArt/Tilesets/mountain_stone/tile_0.png",
+        "raisedGroundVariants": [ "../../../../PixelArt/Tilesets/mountain_stone/tile_6.png" ],
+        "midElevation": "../../../../PixelArt/Tilesets/mountain_stone/tile_0.png",
+        "peak": "../../../../PixelArt/Tilesets/mountain_stone/tile_8.png"
       },
-      "featureScale": {
-        "rock_outcrop": 1.35,
-        "ore_copper": 1.0,
-        "lone_pine": 0.4
+      "decorations": {
+        "trees": [],
+        "groundCover": [],
+        "rocks": [
+          "../../../../PixelArt/WorldAssets/snow/snow_rock_00.png",
+          "../../../../PixelArt/WorldAssets/snow/snow_rock.png"
+        ]
       },
-      "heightBands": [
-        {
-          "range": [
-            3,
-            4
-          ],
-          "role": "mossy shoulder"
-        },
-        {
-          "range": [
-            4,
-            5
-          ],
-          "role": "scree and exposed stone"
-        },
-        {
-          "range": [
-            5,
-            7
-          ],
-          "role": "snowcap and ore"
-        }
+      "gen": {
+        "raisedTileThreshold": 0.5,
+        "heightNoiseScale": 0.04,
+        "forestNoiseScale": 0.07,
+        "forestThreshold": 0.65,
+        "treeDensityInForest": 0.2,
+        "groundCoverChance": 0.04,
+        "rockClusterThreshold": 0.6,
+        "rockChanceInCluster": 0.18,
+        "baseDecorationDensity": 0.05
+      },
+      "mobs": [
+        { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
       ]
     },
     "snow": {
-      "role": "cold sparse biome with frozen aprons",
-      "surfaceFile": "biomes/snow.json",
-      "density": {
-        "trees": 0.18,
-        "rocks": 0.1,
-        "grassTufts": 0.02
+      "label": "Snow",
+      "kind": 10,
+      "isNew": false,
+      "role": "cold lowland/mid below the snowline",
+      "climate": { "tMin": 0, "tMax": 0.2, "mMin": 0.1, "mMax": 0.6, "eMin": 0.2, "eMax": 0.75 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/WorldAssets/snow/snowdrift_11.png",
+        "flatGroundVariants": [
+          "../../../../PixelArt/WorldAssets/snow/snowdrift_29.png",
+          "../../../../PixelArt/WorldAssets/snow/ice_01_17.png"
+        ],
+        "raisedGround": "../../../../PixelArt/WorldAssets/snow/snowdrift_11.png",
+        "raisedGroundVariants": [
+          "../../../../PixelArt/WorldAssets/snow/snowdrift_28.png",
+          "../../../../PixelArt/WorldAssets/snow/ice_01_19.png"
+        ],
+        "midElevation": "../../../../PixelArt/WorldAssets/snow/snowdrift_12.png",
+        "peak": "../../../../PixelArt/WorldAssets/snow/snowdrift_17.png"
       },
-      "featureScale": {
-        "lone_pine": 0.8,
-        "rock_outcrop": 0.8
+      "decorations": {
+        "trees": [ "../../../../PixelArt/WorldAssets/snow/snow_pine_05.png" ],
+        "groundCover": [ "../../../../PixelArt/WorldAssets/snow/snow_bush_07.png" ],
+        "rocks": [
+          "../../../../PixelArt/WorldAssets/snow/snow_rock_00.png",
+          "../../../../PixelArt/WorldAssets/snow/snow_rock.png"
+        ]
       },
-      "transitionPolicy": "grass-through-snow tiles only in authored thaw bands"
-    }
-  },
-  "dungeons": {
-    "themeFile": "dungeon_themes.json",
-    "interiorTileFamilies": [
-      "dungeon_stone",
-      "interior",
-      "planks"
-    ],
-    "rule": "dungeon rooms use dungeon floor pools; building interiors use interior/planks; never use overworld grass/snow/beach surfaces inside void instances"
-  },
-  "elevation": {
-    "_": "Authoring intent for relief. Runtime authority is still integer height; these describe target frequency/visibility of elevation.",
-    "heightFrequency": 0.11,
-    "tierThresholds": {
-      "lowland": 0.52,
-      "upland": 0.66,
-      "highland": 0.78
+      "gen": {
+        "raisedTileThreshold": 0.55,
+        "heightNoiseScale": 0.05,
+        "forestNoiseScale": 0.07,
+        "forestThreshold": 0.6,
+        "treeDensityInForest": 0.25,
+        "groundCoverChance": 0.04,
+        "rockClusterThreshold": 0.65,
+        "rockChanceInCluster": 0.14,
+        "baseDecorationDensity": 0.05
+      },
+      "mobs": [
+        { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+      ]
     },
-    "maxHeight": 5,
-    "note": "More frequent + more visible height; lowered tier thresholds so land steps up sooner; taller cliffs on the coast (coast cliffs now reach h5)."
+    "marsh": {
+      "label": "Marsh",
+      "kind": 8,
+      "isNew": true,
+      "climate": { "tMin": 0.3, "tMax": 0.7, "mMin": 0.7, "mMax": 1, "eMin": 0, "eMax": 0.3 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/WorldAssets/marsh/marsh_mud_01_08.png",
+        "flatGroundVariants": [ "../../../../PixelArt/WorldAssets/marsh/marsh_mud_01_30.png" ],
+        "raisedGround": "../../../../PixelArt/WorldAssets/marsh/marsh_mud_01_14.png",
+        "raisedGroundVariants": [ "../../../../PixelArt/WorldAssets/marsh/marsh_mud_01_01.png" ],
+        "midElevation": "../../../../PixelArt/WorldAssets/marsh/marsh_mud_01_07.png",
+        "peak": "../../../../PixelArt/WorldAssets/marsh/marsh_grass_21.png"
+      },
+      "decorations": {
+        "trees": [ "../../../../PixelArt/WorldAssets/marsh/marsh_dead_snag_00.png" ],
+        "groundCover": [
+          "../../../../PixelArt/WorldAssets/marsh/marsh_dead_snag.png",
+          "../../../../PixelArt/WorldAssets/marsh/marsh_cattails.png"
+        ],
+        "rocks": []
+      },
+      "gen": {
+        "raisedTileThreshold": 0.45,
+        "heightNoiseScale": 0.04,
+        "forestNoiseScale": 0.06,
+        "forestThreshold": 0.58,
+        "treeDensityInForest": 0.2,
+        "groundCoverChance": 0.12,
+        "rockClusterThreshold": 0.8,
+        "rockChanceInCluster": 0.05,
+        "baseDecorationDensity": 0.12
+      },
+      "mobs": [
+        { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+      ]
+    },
+    "grotto": {
+      "label": "Grotto",
+      "kind": 9,
+      "isNew": true,
+      "climate": { "tMin": 0.1, "tMax": 0.5, "mMin": 0.6, "mMax": 1, "eMin": 0, "eMax": 0.35 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/WorldAssets/grotto/grotto_glowing_moss_09.png",
+        "flatGroundVariants": [ "../../../../PixelArt/WorldAssets/grotto/grotto_glowing_moss_01.png" ],
+        "raisedGround": "../../../../PixelArt/WorldAssets/grotto/grotto_glowing_moss_09.png",
+        "raisedGroundVariants": [ "../../../../PixelArt/WorldAssets/grotto/grotto_glowing_moss_23.png" ],
+        "midElevation": "../../../../PixelArt/WorldAssets/grotto/grotto_glowing_moss_09.png",
+        "peak": "../../../../PixelArt/WorldAssets/grotto/grotto_glowing_moss_25.png"
+      },
+      "decorations": {
+        "trees": [
+          "../../../../PixelArt/WorldAssets/grotto/grotto_glowcap_large_03.png",
+          "../../../../PixelArt/WorldAssets/grotto/grotto_glowcap_large_02.png"
+        ],
+        "groundCover": [],
+        "rocks": [
+          "../../../../PixelArt/WorldAssets/grotto/grotto_crystal_cluster_02.png",
+          "../../../../PixelArt/WorldAssets/grotto/grotto_crystal_vein_01_06.png",
+          "../../../../PixelArt/WorldAssets/grotto/grotto_glowlichen_01_01.png",
+          "../../../../PixelArt/WorldAssets/grotto/grotto_stalagmite.png",
+          "../../../../PixelArt/WorldAssets/grotto/grotto_stalagmite_00.png"
+        ]
+      },
+      "gen": {
+        "raisedTileThreshold": 0.5,
+        "heightNoiseScale": 0.08,
+        "forestNoiseScale": 0.09,
+        "forestThreshold": 0.65,
+        "treeDensityInForest": 0.15,
+        "groundCoverChance": 0.05,
+        "rockClusterThreshold": 0.55,
+        "rockChanceInCluster": 0.22,
+        "baseDecorationDensity": 0.06
+      },
+      "mobs": [
+        { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+      ]
+    },
+    "sunspool": {
+      "label": "Sunspool",
+      "kind": 11,
+      "isNew": true,
+      "climate": { "tMin": 0.6, "tMax": 1, "mMin": 0.2, "mMax": 0.6, "eMin": 0, "eMax": 0.55 },
+      "tiles": {
+        "flatGround": "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_04.png",
+        "flatGroundVariants": [ "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_02.png" ],
+        "raisedGround": "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_03.png",
+        "raisedGroundVariants": [
+          "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_01.png",
+          "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_08.png"
+        ],
+        "midElevation": "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_03.png",
+        "peak": "../../../../PixelArt/WorldAssets/sunspool/sunspool_gold_grass_01_08.png"
+      },
+      "decorations": {
+        "trees": [],
+        "groundCover": [
+          "../../../../PixelArt/WorldAssets/sunspool/sunspool_reeds_00.png",
+          "../../../../PixelArt/WorldAssets/sunspool/sunspool_haybale_02.png"
+        ],
+        "rocks": []
+      },
+      "gen": {
+        "raisedTileThreshold": 0.62,
+        "heightNoiseScale": 0.06,
+        "forestNoiseScale": 0.08,
+        "forestThreshold": 0.68,
+        "treeDensityInForest": 0.12,
+        "groundCoverChance": 0.07,
+        "rockClusterThreshold": 0.68,
+        "rockChanceInCluster": 0.1,
+        "baseDecorationDensity": 0.07
+      },
+      "mobs": []
+    }
   }
 }
