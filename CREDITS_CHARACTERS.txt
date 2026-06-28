@@ -518,3 +518,15 @@ Licenses: see each entry. CC-BY-SA 3.0: https://creativecommons.org/licenses/by-
     https://opengameart.org/content/lpc-medieval-fantasy-character-sprites
     https://opengameart.org/content/lpc-combat-armor-for-women
     http://opengameart.org/content/lpc-clothing-updates
+
+========================================================================
+PREDATOR PLANT MOBS  (predator_plant_1 / predator_plant_2 / predator_plant_3)
+========================================================================
+* Predator Plant mob sprites
+    by: CraftPix.net (2D Game Assets)
+    source: "Free Predator Plant Mobs Pixel Art Pack"
+    license: CraftPix Free License - attribution required
+    https://craftpix.net/freebies/free-predator-plant-mobs-pixel-art-pack/
+    https://craftpix.net/file-licenses/
+    used for: Assets/Resources/Decorations/mobs/predator_plant_*.png (render)
+              Assets/Art/Mobs/PredatorPlants/ (animation source sheets)

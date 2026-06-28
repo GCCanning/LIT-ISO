@@ -67,9 +67,9 @@
         "baseDecorationDensity": 0.07
       },
       "mobs": [
-        { "enemyId": "plant1", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
-        { "enemyId": "plant2", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
-        { "enemyId": "plant3", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
+        { "enemyId": "predator_plant_1", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "predator_plant_2", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "predator_plant_3", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
       ]
     },
     "forest": {
@@ -112,9 +112,9 @@
         "baseDecorationDensity": 0.1
       },
       "mobs": [
-        { "enemyId": "plant1", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
-        { "enemyId": "plant2", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
-        { "enemyId": "plant3", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "predator_plant_1", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "predator_plant_2", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
+        { "enemyId": "predator_plant_3", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
         { "enemyId": "slime_boss", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
         { "enemyId": "slime_common", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 },
         { "enemyId": "slime_rare", "weight": 1, "spawnChance": 0.01, "minHeight": 0, "maxHeight": 2 }
