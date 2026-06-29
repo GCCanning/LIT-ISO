@@ -1014,12 +1014,16 @@ namespace LitIso.UI.InGame
             var cr = caption.rectTransform; cr.anchorMin = new Vector2(0f, 1f); cr.anchorMax = new Vector2(1f, 1f); cr.pivot = new Vector2(0f, 1f);
             cr.offsetMin = new Vector2(0f, -16f); cr.offsetMax = new Vector2(0f, 0f);
 
+            // Honest labels for the default Q/E/R/F loadout (flash_step / mana_bolt /
+            // ember_spark / steady_strike) with their real costs. No fake cooldown/disabled
+            // states (the old hardcoded values showed F greyed-out as if on cooldown).
+            // NB: still static — does not yet track live reassignments from the X wheel.
             (string key, Color col, float iconA, int cdPct, string cd, string cost, Color costFg, Color border)[] abilities =
             {
-                ("Q", LitIsoTheme.Hex("#d9425a"), 1f,   0,  "",  "ST 10", LitIsoTheme.Green, LitIsoTheme.GoldDeep),
-                ("E", LitIsoTheme.Hex("#5f9ae8"), 1f,   0,  "",  "ST 8",  LitIsoTheme.Green, LitIsoTheme.GoldDeep),
-                ("R", LitIsoTheme.Hex("#9a6fe8"), 1f,   45, "3", "MP 12", LitIsoTheme.Hex("#5f9ae8"), LitIsoTheme.Base),
-                ("F", LitIsoTheme.Hex("#e8a03c"), 0.4f, 75, "8", "MP 15", LitIsoTheme.Red, LitIsoTheme.Base),
+                ("Q", LitIsoTheme.Hex("#7fd0e8"), 1f, 0, "", "ST 8",  LitIsoTheme.Green, LitIsoTheme.GoldDeep),
+                ("E", LitIsoTheme.Hex("#5f9ae8"), 1f, 0, "", "MP 9",  LitIsoTheme.Hex("#5f9ae8"), LitIsoTheme.Base),
+                ("R", LitIsoTheme.Hex("#e8a03c"), 1f, 0, "", "MP 12", LitIsoTheme.Hex("#e8a03c"), LitIsoTheme.Base),
+                ("F", LitIsoTheme.Hex("#d9425a"), 1f, 0, "", "ST 10", LitIsoTheme.Green, LitIsoTheme.GoldDeep),
             };
 
             const float cell = 70f, gap = 10f;

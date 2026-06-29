@@ -1167,6 +1167,15 @@ namespace IsoCore.Foundation
                 "A defensive spell. Stone affinity increases mitigation and ward duration.",
                 "Stone Skin settles over your guard.", "spellcraft", "warding");
 
+            // Flash Step — the dash/blink the player expects on the wheel. Cheap stamina,
+            // short cooldown, Blink delivery (see below) moves the player a few tiles.
+            Ability("flash_step", "Flash Step", FoundationAbilityKind.Skill,
+                FoundationAbilityResource.Stamina, FoundationAbilityElement.None,
+                FoundationProgressionActivity.Explore, 8, 1.3f, 1.0f, 3f, 5,
+                "", "gale",
+                "A burst of footwork that blinks you a few tiles in your aim direction.",
+                "Flash Step — the ground blurs past.", "evasion");
+
             // Wire each ability's delivery. Default is Melee, which the dispatcher did NOT
             // handle, so every ability fell through to a tiny smoke puff with no real effect.
             // Snare/buff systems aren't built yet, so restraint/buff spells use the closest
@@ -1179,6 +1188,8 @@ namespace IsoCore.Foundation
             Delivery("ember_spark",   FoundationAbilityDelivery.Projectile);
             Delivery("root_snare",    FoundationAbilityDelivery.Projectile);
             Delivery("stone_skin",    FoundationAbilityDelivery.SelfBuff);
+            Delivery("flash_step",    FoundationAbilityDelivery.Blink);
+            { var fs = c.Abilities.Get("flash_step"); if (fs != null) fs.dashTiles = 3f; }
 
             Class("trailblade", "Trailblade", FoundationClassRarity.Uncommon,
                 "A practical scout-fighter shaped by routes, tools, and first danger.",

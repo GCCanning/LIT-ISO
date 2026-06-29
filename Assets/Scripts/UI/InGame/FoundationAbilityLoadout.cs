@@ -16,8 +16,8 @@ namespace LitIso.UI.InGame
         // The abilities offered in the hold-X radial, and the Q/E/R/F defaults.
         // (These must be ids that actually exist in FoundationContent — flash_step /
         // mending_light did not, so those slots failed with "Unknown ability".)
-        static readonly string[] AllIds = { "steady_strike", "guard_step", "mana_bolt", "ember_spark", "root_snare", "stone_skin" };
-        static readonly string[] DefaultSlots = { "steady_strike", "mana_bolt", "ember_spark", "guard_step" };
+        static readonly string[] AllIds = { "flash_step", "steady_strike", "guard_step", "mana_bolt", "ember_spark", "root_snare", "stone_skin" };
+        static readonly string[] DefaultSlots = { "flash_step", "mana_bolt", "ember_spark", "steady_strike" };
 
         readonly FoundationBootstrap _boot;
         readonly string[] _slots = new string[4];
@@ -32,6 +32,11 @@ namespace LitIso.UI.InGame
                 string fallback = i < DefaultSlots.Length ? DefaultSlots[i] : null;
                 string saved = PlayerPrefs.GetString("ability.slot" + i, fallback);
                 _slots[i] = string.IsNullOrEmpty(saved) ? fallback : saved;
+                // Drop a stale/invalid persisted id (e.g. an ability that no longer exists,
+                // like the old flash_step/mending_light defaults) back to a real default so
+                // the slot is always castable.
+                if (System.Array.IndexOf(AllIds, _slots[i]) < 0)
+                    _slots[i] = fallback;
             }
         }
 
