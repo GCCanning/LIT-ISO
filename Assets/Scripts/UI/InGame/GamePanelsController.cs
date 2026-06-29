@@ -115,7 +115,9 @@ namespace LitIso.UI.InGame
             }
 
             var ui = FoundationUiCoordinator.Active;
-            if (ui != null && ui.InputConsumedThisFrame)
+            // Don't open a panel on top of another full-screen modal (chest/vendor/build/
+            // stations/quest board); only one modal is live at a time.
+            if (ui != null && (ui.InputConsumedThisFrame || ui.HasBlockingModalExcept("panels")))
                 return;
 
             if (Input.GetKeyDown(KeyCode.I)) OpenInventory();

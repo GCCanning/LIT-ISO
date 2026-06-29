@@ -63,8 +63,13 @@ namespace LitIso.UI.InGame
 
         void Update()
         {
-            if (Input.GetKeyDown(toggleKey)) Toggle();
-            else if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) Close();
+            var ui = IsoCore.Foundation.FoundationUiCoordinator.Active;
+            if (Input.GetKeyDown(toggleKey))
+            {
+                if (IsOpen) { Close(); ui?.ConsumeInputThisFrame(); }
+                else if (ui == null || ui.CanOpenModal("stationsHub")) { Open(); ui?.ConsumeInputThisFrame(); }
+            }
+            else if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) { Close(); ui?.ConsumeInputThisFrame(); }
         }
 
         void Toggle() { if (IsOpen) Close(); else Open(); }

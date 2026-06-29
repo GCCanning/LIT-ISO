@@ -209,6 +209,17 @@ namespace IsoCore.Foundation
             InputConsumedThisFrame = true;
         }
 
+        /// <summary>
+        /// Gate a self-toggling modal's OPEN. A modal may re-toggle itself, but must not
+        /// open on top of a different modal, and must respect a frame already consumed by
+        /// another handler. Satellite modals (chest/vendor/stations/build/questboard) call
+        /// this before opening so only one full-screen modal is ever live at once.
+        /// </summary>
+        public bool CanOpenModal(string id)
+        {
+            return !InputConsumedThisFrame && !HasBlockingModalExcept(id);
+        }
+
         public bool CanOpenPause()
         {
             return !InputConsumedThisFrame && !HasBlockingModal;

@@ -51,7 +51,11 @@ namespace LitIso.UI.InGame
         {
             // No global hotkey to open the shop — the vendor is reached only via a
             // merchant NPC (PlayerInteraction) or the Stations Hub. Esc still closes.
-            if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) Close();
+            if (IsOpen && Input.GetKeyDown(KeyCode.Escape))
+            {
+                Close();
+                IsoCore.Foundation.FoundationUiCoordinator.Active?.ConsumeInputThisFrame();
+            }
         }
 
         void Close()

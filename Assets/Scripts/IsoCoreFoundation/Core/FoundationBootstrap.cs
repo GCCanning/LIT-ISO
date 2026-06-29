@@ -38,7 +38,7 @@ namespace IsoCore.Foundation
         // Retired serialized field kept so older scenes deserialize without churn.
         [HideInInspector] public bool createImguiHud = false;
         public float cameraSize = 6f;
-        public float cameraMinSize = 6f;    // ISO-CORE zoom-in limit
+        public float cameraMinSize = 3.5f;  // zoom-in limit (was 6 == default size, so the player couldn't zoom IN at all; 3.5 lets the camera push closer to the action)
         public float cameraMaxSize = 30f;   // ISO-CORE zoom-out limit
         public float cameraZoomUnitsPerSecond = 5f;
         public float cameraZoomTapStep = 0.75f;
