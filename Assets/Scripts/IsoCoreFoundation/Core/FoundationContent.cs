@@ -1167,6 +1167,19 @@ namespace IsoCore.Foundation
                 "A defensive spell. Stone affinity increases mitigation and ward duration.",
                 "Stone Skin settles over your guard.", "spellcraft", "warding");
 
+            // Wire each ability's delivery. Default is Melee, which the dispatcher did NOT
+            // handle, so every ability fell through to a tiny smoke puff with no real effect.
+            // Snare/buff systems aren't built yet, so restraint/buff spells use the closest
+            // live delivery (Projectile / SelfBuff) so they at least fire and read on screen.
+            void Delivery(string id, FoundationAbilityDelivery d)
+            { var ab = c.Abilities.Get(id); if (ab != null) ab.delivery = d; }
+            Delivery("steady_strike", FoundationAbilityDelivery.Melee);
+            Delivery("guard_step",    FoundationAbilityDelivery.SelfBuff);
+            Delivery("mana_bolt",     FoundationAbilityDelivery.Projectile);
+            Delivery("ember_spark",   FoundationAbilityDelivery.Projectile);
+            Delivery("root_snare",    FoundationAbilityDelivery.Projectile);
+            Delivery("stone_skin",    FoundationAbilityDelivery.SelfBuff);
+
             Class("trailblade", "Trailblade", FoundationClassRarity.Uncommon,
                 "A practical scout-fighter shaped by routes, tools, and first danger.",
                 new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Combat, 2), W(TrialEvidenceCategory.Survival, 2) }, "gale", "stone");

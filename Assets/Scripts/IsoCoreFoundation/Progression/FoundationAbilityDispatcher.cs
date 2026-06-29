@@ -57,6 +57,29 @@ namespace IsoCore.Foundation
                     break;
                 }
 
+                case FoundationAbilityDelivery.Melee:
+                {
+                    // Weapon skill: a slash arc in the aim direction that damages every
+                    // IDamageable in reach.
+                    float dmg = Mathf.Max(1f, result.scaledPower * Mathf.Max(1f, ability.effectScale));
+                    float reach = Mathf.Max(0.8f, ability.range);
+                    Vector3 center = playerPos + (Vector3)(aim * (reach * 0.5f));
+                    WorldFx.Trail(playerPos + (Vector3)(aim * 0.25f),
+                                  playerPos + (Vector3)(aim * reach), color, puffs: 6, size: 0.17f);
+                    foreach (var h in Physics2D.OverlapCircleAll((Vector2)center, reach * 0.6f))
+                    {
+                        var d = h.GetComponent<IDamageable>();
+                        if (d != null) d.TakeDamage(Mathf.RoundToInt(dmg));
+                    }
+                    break;
+                }
+
+                case FoundationAbilityDelivery.SelfBuff:
+                    // Buff effect itself awaits the status system; show a clear self-cast burst.
+                    WorldFx.Smoke(playerPos, color, count: 18, size: 0.2f, radius: 0.28f, rise: 0.5f, life: 0.7f);
+                    FloatingText.Spawn(playerPos + Vector3.up * 0.7f, ability.displayName, color);
+                    break;
+
                 default:
                     // Bookkeeping-only abilities still get a small cast puff for feedback.
                     WorldFx.Smoke(playerPos, color, count: 8, size: 0.16f, radius: 0.12f, rise: 0.4f, life: 0.4f);

@@ -14,8 +14,10 @@ namespace LitIso.UI.InGame
     public sealed class FoundationAbilityLoadout : IAbilityLoadoutViewModel
     {
         // The abilities offered in the hold-X radial, and the Q/E/R/F defaults.
-        static readonly string[] AllIds = { "flash_step", "mana_bolt", "ember_spark", "mending_light" };
-        static readonly string[] DefaultSlots = { "flash_step", "mana_bolt", "ember_spark", "mending_light" };
+        // (These must be ids that actually exist in FoundationContent — flash_step /
+        // mending_light did not, so those slots failed with "Unknown ability".)
+        static readonly string[] AllIds = { "steady_strike", "guard_step", "mana_bolt", "ember_spark", "root_snare", "stone_skin" };
+        static readonly string[] DefaultSlots = { "steady_strike", "mana_bolt", "ember_spark", "guard_step" };
 
         readonly FoundationBootstrap _boot;
         readonly string[] _slots = new string[4];
