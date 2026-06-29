@@ -1,0 +1,650 @@
+fileFormatVersion: 2
+guid: 2f5c568ac3605dd4da81c70534cd9ccd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6324356131933082467
+    second: Plant2_Hurt_0
+  - first:
+      213: -1115069224832332689
+    second: Plant2_Hurt_1
+  - first:
+      213: 5221556804655499737
+    second: Plant2_Hurt_2
+  - first:
+      213: -5478802324990618580
+    second: Plant2_Hurt_3
+  - first:
+      213: 8965194040535574084
+    second: Plant2_Hurt_4
+  - first:
+      213: -3875940274600895297
+    second: Plant2_Hurt_5
+  - first:
+      213: 4734786641337858272
+    second: Plant2_Hurt_6
+  - first:
+      213: 1040153752288726065
+    second: Plant2_Hurt_7
+  - first:
+      213: -6090365538385407129
+    second: Plant2_Hurt_8
+  - first:
+      213: 3747726866369605410
+    second: Plant2_Hurt_9
+  - first:
+      213: -5879780551668048685
+    second: Plant2_Hurt_10
+  - first:
+      213: -5733280534222640209
+    second: Plant2_Hurt_11
+  - first:
+      213: -6438317749273673292
+    second: Plant2_Hurt_12
+  - first:
+      213: -7850095685139564021
+    second: Plant2_Hurt_13
+  - first:
+      213: 352643044858086912
+    second: Plant2_Hurt_14
+  - first:
+      213: -774887172677846181
+    second: Plant2_Hurt_15
+  - first:
+      213: 8628867306849572926
+    second: Plant2_Hurt_16
+  - first:
+      213: -8700518407343663337
+    second: Plant2_Hurt_17
+  - first:
+      213: 8550654567495087911
+    second: Plant2_Hurt_18
+  - first:
+      213: 7521917490630082542
+    second: Plant2_Hurt_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Plant2_Hurt_0
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 204
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3635fe4e460a4c750800000000000000
+      internalID: 6324356131933082467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_1
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 204
+        width: 37
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6c06e9a27a7680f0800000000000000
+      internalID: -1115069224832332689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_2
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 204
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d9c304bf32b67840800000000000000
+      internalID: 5221556804655499737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_3
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 204
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c249958305267f3b0800000000000000
+      internalID: -5478802324990618580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_4
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 204
+        width: 29
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4466290fa74ca6c70800000000000000
+      internalID: 8965194040535574084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_5
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 140
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbc98c91bd4e53ac0800000000000000
+      internalID: -3875940274600895297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_6
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 140
+        width: 37
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e835344d5755b140800000000000000
+      internalID: 4734786641337858272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_7
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 140
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13c85f4a35e5f6e00800000000000000
+      internalID: 1040153752288726065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_8
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 140
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 763d14c9fccaa7ba0800000000000000
+      internalID: -6090365538385407129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_9
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 140
+        width: 29
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22fe5298ab9920430800000000000000
+      internalID: 3747726866369605410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_10
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 76
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dc539c9db2d66ea0800000000000000
+      internalID: -5879780551668048685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_11
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 76
+        width: 38
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fab6ff7fabb4f60b0800000000000000
+      internalID: -5733280534222640209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_12
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 76
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b143736e1086a6a0800000000000000
+      internalID: -6438317749273673292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_13
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 76
+        width: 37
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0afd62e09bde0390800000000000000
+      internalID: -7850095685139564021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_14
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 76
+        width: 34
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 006474d1bf6d4e400800000000000000
+      internalID: 352643044858086912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_15
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 12
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5bb783d83c0f35f0800000000000000
+      internalID: -774887172677846181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_16
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 12
+        width: 38
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3810ce0915efb770800000000000000
+      internalID: 8628867306849572926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_17
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 12
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71798881b9c814780800000000000000
+      internalID: -8700518407343663337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_18
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 12
+        width: 37
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 727bd9c96070aa670800000000000000
+      internalID: 8550654567495087911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Plant2_Hurt_19
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 12
+        width: 34
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eefbdcada18336860800000000000000
+      internalID: 7521917490630082542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Plant2_Hurt_0: 6324356131933082467
+      Plant2_Hurt_1: -1115069224832332689
+      Plant2_Hurt_10: -5879780551668048685
+      Plant2_Hurt_11: -5733280534222640209
+      Plant2_Hurt_12: -6438317749273673292
+      Plant2_Hurt_13: -7850095685139564021
+      Plant2_Hurt_14: 352643044858086912
+      Plant2_Hurt_15: -774887172677846181
+      Plant2_Hurt_16: 8628867306849572926
+      Plant2_Hurt_17: -8700518407343663337
+      Plant2_Hurt_18: 8550654567495087911
+      Plant2_Hurt_19: 7521917490630082542
+      Plant2_Hurt_2: 5221556804655499737
+      Plant2_Hurt_3: -5478802324990618580
+      Plant2_Hurt_4: 8965194040535574084
+      Plant2_Hurt_5: -3875940274600895297
+      Plant2_Hurt_6: 4734786641337858272
+      Plant2_Hurt_7: 1040153752288726065
+      Plant2_Hurt_8: -6090365538385407129
+      Plant2_Hurt_9: 3747726866369605410
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

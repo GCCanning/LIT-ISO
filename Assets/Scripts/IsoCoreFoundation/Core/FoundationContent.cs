@@ -35,6 +35,13 @@ namespace IsoCore.Foundation
         public readonly GuildBoardEntryDatabase GuildBoardEntries = new();
         public readonly WorldEventDatabase WorldEvents = new();
 
+        /// <summary>Climate fallback biome id (code id, alias-resolved) from biome_suite.json.
+        /// Used by IsoTerrainSampler when no climate rectangle matches a cell.</summary>
+        public string fallbackBiomeId = "meadow";
+        /// <summary>True once biome_suite.json has been applied: SelectBiome then uses the
+        /// climate-rectangle + priority path. False = keep the original nearest-centroid path.</summary>
+        public bool biomeSuiteApplied = false;
+
         static T New<T>(string id) where T : FoundationDefinition
         {
             var def = ScriptableObject.CreateInstance<T>();
@@ -1237,6 +1244,12 @@ namespace IsoCore.Foundation
                 if (authored == null || string.IsNullOrEmpty(authored.id)) continue;
                 if (!c.Items.Has(authored.id)) c.Items.Add(authored);
             }
+
+            // biome_suite.json is the authority for the climate-selectable biome roster:
+            // it sets each listed biome's climate rectangle, priority, and mob list, and
+            // excludes everything else from climate selection. Safe no-op if the file is
+            // missing (SelectBiome then keeps its original nearest-centroid behaviour).
+            c.fallbackBiomeId = BiomeSuiteLoader.Apply(c.Biomes, c.Mobs, out c.biomeSuiteApplied);
 
             return c;
         }

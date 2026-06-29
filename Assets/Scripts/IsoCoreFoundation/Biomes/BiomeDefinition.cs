@@ -89,6 +89,9 @@ namespace IsoCore.Foundation
         public Vector2 temperatureRange = new Vector2(0f, 1f);
         [Tooltip("[mMin, mMax]. Mirrors <biome>.json climate.moistureRange.")]
         public Vector2 moistureRange = new Vector2(0f, 1f);
+        [Tooltip("[eMin, eMax]. Mirrors biome_suite.json climate.eMin/eMax. Cell elevation (0..1) " +
+                 "must fall inside this band for the climate-rectangle to match.")]
+        public Vector2 elevationRange = new Vector2(0f, 1f);
         [Tooltip("Tiebreaker when 2+ climate rectangles match the same (t,m): highest " +
                  "priority wins. beach/mountain use -1 (never win via the climate table; " +
                  "they're gated separately by SampleContinent).")]
@@ -159,6 +162,14 @@ namespace IsoCore.Foundation
             float dt = t - temperature, dm = m - moisture;
             return dt * dt + dm * dm;
         }
+
+        /// <summary>True when a climate point (t, m, e) all fall inside this biome's
+        /// climate rectangle. Primary SelectBiome test when the biome suite is applied;
+        /// climatePriority breaks ties between overlapping rectangles.</summary>
+        public bool MatchesClimate(float t, float m, float e) =>
+            t >= temperatureRange.x && t <= temperatureRange.y &&
+            m >= moistureRange.x && m <= moistureRange.y &&
+            e >= elevationRange.x && e <= elevationRange.y;
     }
 
     public class BiomeDatabase : Database<BiomeDefinition> { }

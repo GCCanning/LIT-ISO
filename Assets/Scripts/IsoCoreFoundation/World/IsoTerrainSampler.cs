@@ -17,6 +17,10 @@ namespace IsoCore.Foundation
         readonly int _meadowIndex;
         readonly int _beachIndex;
         readonly int _mountainIndex;
+        // Climate-rectangle selection (driven by biome_suite.json). When false we keep the
+        // original nearest-centroid SelectBiome so a missing/!applied suite is a safe no-op.
+        readonly bool _useBoxes;
+        readonly int _fallbackIndex;
 
         public IsoTerrainSampler(FoundationConfig cfg, FoundationContent content)
         {
@@ -27,12 +31,16 @@ namespace IsoCore.Foundation
             _meadowIndex = 0;
             _beachIndex = -1;
             _mountainIndex = -1;
+            _fallbackIndex = -1;
             for (int i = 0; i < _biomes.Count; i++)
             {
                 if (_biomes[i].id == "meadow") _meadowIndex = i;
                 else if (_biomes[i].id == "beach") _beachIndex = i;
                 else if (_biomes[i].id == "mountain") _mountainIndex = i;
+                if (_biomes[i].id == content.fallbackBiomeId) _fallbackIndex = i;
             }
+            if (_fallbackIndex < 0) _fallbackIndex = _meadowIndex;
+            _useBoxes = content.biomeSuiteApplied;
         }
 
         float Perlin(int wx, int wy, float freq, int saltX, int saltY)
@@ -309,7 +317,7 @@ namespace IsoCore.Foundation
             }
 
             // ---- land: climate picks the biome region; elevation steps the cliff height ----
-            int biomeIndex = SelectBiome(temp, moist);
+            int biomeIndex = SelectBiome(temp, moist, e);
             // Minecraft-style rule: beach/sand exists only against water (the beach ring
             // and river banks above). If climate picks "beach" for an interior cell,
             // it becomes meadow instead - no sand patches popping up inland.
@@ -640,17 +648,44 @@ namespace IsoCore.Foundation
             return default;
         }
 
-        int SelectBiome(float t, float m)
+        // Elevation-agnostic overload (flat/legacy world path). Uses a neutral mid
+        // elevation so elevation-banded biomes still resolve sensibly.
+        int SelectBiome(float t, float m) => SelectBiome(t, m, 0.5f);
+
+        /// <summary>
+        /// Picks a biome for a climate point. When biome_suite.json is applied, the
+        /// climate RECTANGLE + priority table is authoritative: among biomes whose
+        /// t/m/e rectangle contains the point, the highest climatePriority wins;
+        /// biomes with priority &lt; 0 (beach/mountain/dropped) never win here; if nothing
+        /// matches, the configured fallback biome is used. Without the suite it falls back
+        /// to the original nearest-centroid behaviour.
+        /// </summary>
+        int SelectBiome(float t, float m, float e)
         {
             if (_biomes.Count == 0) return 0;
-            int best = 0;
+
+            if (_useBoxes)
+            {
+                int best = -1, bestPri = int.MinValue;
+                for (int i = 0; i < _biomes.Count; i++)
+                {
+                    var b = _biomes[i];
+                    if (b.climatePriority < 0) continue;            // structural / dropped
+                    if (!b.MatchesClimate(t, m, e)) continue;
+                    if (b.climatePriority > bestPri) { bestPri = b.climatePriority; best = i; }
+                }
+                if (best >= 0) return best;
+                return _fallbackIndex >= 0 ? _fallbackIndex : 0;
+            }
+
+            int nb = 0;
             float bestDist = float.MaxValue;
             for (int i = 0; i < _biomes.Count; i++)
             {
                 float d = _biomes[i].ClimateDistance(t, m);
-                if (d < bestDist) { bestDist = d; best = i; }
+                if (d < bestDist) { bestDist = d; nb = i; }
             }
-            return best;
+            return nb;
         }
 
         public BiomeDefinition BiomeAt(int index) =>
