@@ -162,6 +162,10 @@ namespace IsoCore.Foundation
             }
         }
 
+        // Tracks block ids already warned about (missing tile sprite) so the log fires once
+        // per id, not per cell. Surfaces stray placeholder tiles instead of failing silently.
+        static readonly System.Collections.Generic.HashSet<string> _warnedMissingSprite = new();
+
         void Configure(SpriteRenderer sr, IsoWorld world, int wx, int wy)
         {
             var cell = world.GetCell(wx, wy);
@@ -187,6 +191,10 @@ namespace IsoCore.Foundation
             }
             else
             {
+                if (!string.IsNullOrEmpty(cell.SurfaceBlockId) && _warnedMissingSprite.Add(cell.SurfaceBlockId))
+                    Debug.LogWarning($"[WorldRenderer] No tile sprite for block '{cell.SurfaceBlockId}' " +
+                        $"(expected Resources/Tiles/{cell.SurfaceBlockId}.png) — rendering a placeholder cube. " +
+                        "This is the source of any stray placeholder tiles.");
                 sr.sprite = PlaceholderArt.Cube(col, levels);
             }
             sr.transform.position = IsoGrid.CellToWorld(wx, wy, cell.Height);

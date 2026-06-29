@@ -63,7 +63,9 @@ namespace IsoCore.Foundation
         public float decoRockChanceInCluster = 0.12f;
 
         [Header("Climate noise")]
-        public float climateFrequency = 0.02f;
+        // Lower frequency = larger, more coherent biome regions. 0.02 gave small patchy
+        // biomes; ~0.009 roughly doubles their linear size. (Worldgen — needs a NEW world.)
+        public float climateFrequency = 0.009f;
         public float heightFrequency = 0.06f;
 
         [Header("Continent world (non-flat)")]

@@ -317,7 +317,13 @@ namespace IsoCore.Foundation
             }
 
             // ---- land: climate picks the biome region; elevation steps the cliff height ----
-            int biomeIndex = SelectBiome(temp, moist, e);
+            // Biome selection uses a SMOOTH low-frequency climate-elevation (not the detailed
+            // terrain elevation e, which varies on every hill and made biomes flip into small
+            // patches). Smooth t/m/climateElev fields => large coherent biome regions with
+            // clean borders. Terrain HEIGHT/cliffs still use e (below) and the height>=3
+            // mountain override is unchanged.
+            float climateElev = Perlin(wx, wy, _cfg.climateFrequency, 17, 18);
+            int biomeIndex = SelectBiome(temp, moist, climateElev);
             // Minecraft-style rule: beach/sand exists only against water (the beach ring
             // and river banks above). If climate picks "beach" for an interior cell,
             // it becomes meadow instead - no sand patches popping up inland.
@@ -361,17 +367,10 @@ namespace IsoCore.Foundation
             // as trees so canopy clumps wrap the tree clusters. Leafy 029 dominates;
             // striped 027/028 are accents. Canopy cells carry no props - they ARE the
             // vegetation. Lowland only; crag tiers stay bare.
+            // Forest "canopy mass" tiles (canopy_1/2/3) were never imported as sprites, so
+            // these cells rendered as GREEN placeholder cubes. Forest now reads through its
+            // normal biome_suite tiles + tree props, so the canopy-tile override is disabled.
             bool canopyCell = false;
-            if (biome != null && biome.id == "forest" && height < 3)
-            {
-                float canopyN = Perlin(wx, wy, _cfg.decoForestFrequency, 21, 22);
-                if (canopyN > 0.72f)
-                {
-                    float cr = Hash01(wx, wy, 97);
-                    cell.SurfaceBlockId = cr < 0.70f ? "canopy_1" : (cr < 0.85f ? "canopy_2" : "canopy_3");
-                    canopyCell = true;
-                }
-            }
 
             // Clustered decoration (groves / outcrops / flower patches), reusing the
             // shared grouping logic so nothing scatters uniformly. Vegetation respects
