@@ -104,7 +104,7 @@ namespace LitIso.UI.InGame
             if (Input.GetKeyDown(toggleKey))
             {
                 if (IsOpen) { Close(); ui?.ConsumeInputThisFrame(); }
-                else if (ui == null || ui.CanOpenModal("questBoard")) { Open(); ui?.ConsumeInputThisFrame(); }
+                else if (ui != null && ui.CanOpenModal("questBoard")) { Open(); ui.ConsumeInputThisFrame(); }
             }
             else if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) { Close(); ui?.ConsumeInputThisFrame(); }
         }

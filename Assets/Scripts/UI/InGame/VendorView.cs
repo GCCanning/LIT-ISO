@@ -132,8 +132,7 @@ namespace LitIso.UI.InGame
             prc.anchoredPosition = new Vector2(-14f,0f); prc.sizeDelta = new Vector2(130f,0f);
 
             var btn = row.gameObject.AddComponent<Button>(); btn.targetGraphic = row;
-            string n = it.name;
-            btn.onClick.AddListener(() => Debug.Log($"[Vendor] {(buy ? "Buy" : "Sell")}: {n} (live shop binding pending)."));
+            btn.interactable = false; // live shop binding pending — render disabled, not a dead click
         }
 
         RectTransform BuildScroll(Transform parent, Vector2 offMin, Vector2 offMax)

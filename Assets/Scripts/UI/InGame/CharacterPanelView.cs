@@ -761,6 +761,7 @@ namespace LitIso.UI.InGame
 
             // EQUIP / DROP action buttons
             var equip = UiBuilder.NewButton(panel.transform, "EquipBtn", "button", "EQUIP", 13, LitIsoTheme.ButtonStyle.Gold);
+            equip.interactable = false; // equipment system not wired yet — render disabled instead of a silent no-op
             var eqr = equip.GetComponent<RectTransform>();
             eqr.anchorMin = new Vector2(0f, 0f); eqr.anchorMax = new Vector2(1f, 0f);
             eqr.pivot = new Vector2(0f, 0f);

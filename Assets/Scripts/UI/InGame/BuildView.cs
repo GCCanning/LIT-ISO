@@ -54,7 +54,7 @@ namespace LitIso.UI.InGame
             if (Input.GetKeyDown(toggleKey))
             {
                 if (IsOpen) { Close(); ui?.ConsumeInputThisFrame(); }
-                else if (ui == null || ui.CanOpenModal("build")) { Open(); ui?.ConsumeInputThisFrame(); }
+                else if (ui != null && ui.CanOpenModal("build")) { Open(); ui.ConsumeInputThisFrame(); }
             }
             else if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) { Close(); ui?.ConsumeInputThisFrame(); }
         }
@@ -137,8 +137,7 @@ namespace LitIso.UI.InGame
             cr2.anchoredPosition = new Vector2(0f,8f); cr2.sizeDelta = new Vector2(-8f,20f);
 
             var btn = cell.gameObject.AddComponent<Button>(); btn.targetGraphic = cell;
-            string n = it.name;
-            btn.onClick.AddListener(() => Debug.Log($"[Build] Place: {n} (live placement hook pending)."));
+            btn.interactable = false; // live placement hook pending — render disabled, not a dead click
         }
 
         RectTransform BuildGrid(Transform parent, Vector2 offMin, Vector2 offMax)

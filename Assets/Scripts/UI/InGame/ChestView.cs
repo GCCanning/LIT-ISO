@@ -55,7 +55,7 @@ namespace LitIso.UI.InGame
             if (Input.GetKeyDown(toggleKey))
             {
                 if (IsOpen) { Close(); ui?.ConsumeInputThisFrame(); }
-                else if (ui == null || ui.CanOpenModal("chest")) { Open(); ui?.ConsumeInputThisFrame(); }
+                else if (ui != null && ui.CanOpenModal("chest")) { Open(); ui.ConsumeInputThisFrame(); }
             }
             else if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) { Close(); ui?.ConsumeInputThisFrame(); }
         }
@@ -120,8 +120,7 @@ namespace LitIso.UI.InGame
             qr.offsetMin = new Vector2(0f,2f); qr.offsetMax = new Vector2(-6f,18f);
 
             var btn = cell.gameObject.AddComponent<Button>(); btn.targetGraphic = cell;
-            string n = s.name;
-            btn.onClick.AddListener(() => Debug.Log($"[Storage] {(inChest ? "Take" : "Store")}: {n} (live container binding pending)."));
+            btn.interactable = false; // live container binding pending — render disabled, not a dead click
         }
 
         RectTransform BuildGrid(Transform parent, Vector2 offMin, Vector2 offMax)

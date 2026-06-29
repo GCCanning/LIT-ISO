@@ -34,7 +34,12 @@ namespace LitIso.UI.InGame
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F3)) { if (IsOpen) Close(); else Open(); }
+            // F3 is a demo trigger only — gate it to live gameplay so it can't summon the
+            // death screen over the main menu (the real death flow calls Show() directly).
+            if (!Input.GetKeyDown(KeyCode.F3)) return;
+            var ui = IsoCore.Foundation.FoundationUiCoordinator.Active;
+            if (IsOpen) { Close(); ui?.ConsumeInputThisFrame(); }
+            else if (ui != null && ui.CanOpenModal("death")) { Open(); ui.ConsumeInputThisFrame(); }
         }
 
         void Close()
