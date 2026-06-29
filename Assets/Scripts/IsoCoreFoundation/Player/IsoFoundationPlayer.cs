@@ -216,12 +216,32 @@ namespace IsoCore.Foundation
 
         void StepMove(Vector2 delta)
         {
+            if (TryStep(delta)) return;
+            // Endpoint blocked at the full per-frame delta (the player is heading into a wall
+            // or corner). Instead of stopping dead in open space — the "sticky" feel — retry
+            // at progressively smaller magnitudes so the player glides right up to the wall
+            // and slides along it. Every accepted move still passes Walkable(), so this can
+            // never move into a blocked cell (no clipping); it only fills the gap that the
+            // single full-delta endpoint check used to leave.
+            for (int i = 0; i < 3; i++)
+            {
+                delta *= 0.5f;
+                if (delta.sqrMagnitude < 1e-6f) return;
+                if (TryStep(delta)) return;
+            }
+        }
+
+        /// <summary>One world-query move attempt: full diagonal, then X-only, then Y-only
+        /// (wall-slide). Returns true and commits _ground on the first walkable option.</summary>
+        bool TryStep(Vector2 delta)
+        {
             Vector2 xy = _ground + delta;
             Vector2 xOnly = new(_ground.x + delta.x, _ground.y);
             Vector2 yOnly = new(_ground.x, _ground.y + delta.y);
-            if (Walkable(xy)) _ground = xy;
-            else if (Walkable(xOnly)) _ground = xOnly;
-            else if (Walkable(yOnly)) _ground = yOnly;
+            if (Walkable(xy)) { _ground = xy; return true; }
+            if (Walkable(xOnly)) { _ground = xOnly; return true; }
+            if (Walkable(yOnly)) { _ground = yOnly; return true; }
+            return false;
         }
 
         // --------------------------------------------------------------- click-to-move (additive)
