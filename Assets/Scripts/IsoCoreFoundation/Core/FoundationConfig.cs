@@ -99,7 +99,7 @@ namespace IsoCore.Foundation
         [Tooltip("Frequency of the winding river band noise. Lower = longer, broader rivers.")]
         public float riverFrequency = 0.025f;
         [Tooltip("Half-width of a river in noise units — larger = wider rivers.")]
-        [Range(0f, 0.1f)] public float riverHalfWidth = 0.014f;
+        [Range(0f, 0.1f)] public float riverHalfWidth = 0.035f;   // wider rivers (was 0.014 — read as thin trickles)
         [Tooltip("Extra width past the water where the bank is sand/dirt.")]
         [Range(0f, 0.1f)] public float riverBankWidth = 0.012f;
         [Tooltip("Coordinate-warp amplitude (cells) that makes rivers meander instead of " +

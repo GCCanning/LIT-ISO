@@ -510,10 +510,17 @@ namespace IsoCore.Foundation
         /// SlimeEnemyController within AttackRangeWorld. Called by the HUD Attack button
         /// and can also be called from keyboard input (Space).
         /// </summary>
+        PlayerHeldTool _heldTool;
+
         public void TriggerBasicAttack()
         {
             if (_attackCooldownTimer > 0f) return;
             _attackCooldownTimer = AttackCooldown;
+
+            // Swing the held tool/weapon so the attack has an animation (no-op if the hand is
+            // empty — equip a weapon/tool to see the swing).
+            if (_heldTool == null) _heldTool = GetComponent<PlayerHeldTool>();
+            _heldTool?.Swing();
 
             // Flash the sprite red briefly for feedback
             if (_sr != null)

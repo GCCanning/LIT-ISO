@@ -285,7 +285,7 @@ namespace IsoCore.Foundation
                 landH = Mathf.Clamp(landH, 1, Mathf.Min(_cfg.maxHeight, 7));
                 cell.Height = (byte)(landH - 1);
                 cell.BiomeIndex = (byte)Mathf.Max(0, _beachIndex);
-                cell.SurfaceBlockId = "water";
+                cell.SurfaceBlockId = "water_deep";   // use the darker ocean tile for rivers (owner request)
                 cell.Water = true;
                 // Occasional foam-footed stone breaking the stream surface - LOWLAND
                 // rivers only (water props in an elevated channel read as misplaced).
