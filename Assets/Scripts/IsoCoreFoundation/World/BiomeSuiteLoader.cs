@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 
 namespace IsoCore.Foundation
@@ -35,12 +36,16 @@ namespace IsoCore.Foundation
         [Serializable] class RootJson { public string fallbackBiome; public string[] priority; }
         [Serializable] class ClimateJson { public float tMin, tMax = 1f, mMin, mMax = 1f, eMin, eMax = 1f; }
         [Serializable] class MobJson { public string enemyId; public float weight = 1f; public float spawnChance = 0.01f; public int minHeight; public int maxHeight; }
-        [Serializable] class BiomeJson { public ClimateJson climate; public MobJson[] mobs; }
+        [Serializable] class TilesJson { public string flatGround; public string[] flatGroundVariants; public string raisedGround; public string[] raisedGroundVariants; public string midElevation; public string peak; }
+        [Serializable] class BiomeJson { public ClimateJson climate; public TilesJson tiles; public MobJson[] mobs; }
+
+        const float MainTileWeight = 100f;
+        const float VariantTileWeight = 30f;
 
         /// <summary>Applies the suite. Returns the resolved fallback biome id (already
         /// alias-mapped to a code biome). On any failure returns "meadow" and leaves the
         /// database untouched; <paramref name="applied"/> reports whether boxes were set.</summary>
-        public static string Apply(BiomeDatabase biomes, MobDatabase mobs, out bool applied)
+        public static string Apply(BiomeDatabase biomes, MobDatabase mobs, BlockDatabase blocks, out bool applied)
         {
             applied = false;
             string fallback = "meadow";
@@ -118,6 +123,14 @@ namespace IsoCore.Foundation
                         }
                         biome.mobs = list.ToArray();
                     }
+
+                    // Tiles: register a walkable block per referenced PixelArt tile (sprite
+                    // loads from Resources/Tiles/<blockId>), then drive the biome's surface
+                    // pools by elevation band. Replaces the code-authored pools so ONLY the
+                    // suite's tiles render for this biome.
+                    if (bj.tiles != null)
+                        ApplyTiles(biome, jid, bj.tiles, blocks);
+
                     appliedCount++;
                 }
 
@@ -135,6 +148,73 @@ namespace IsoCore.Foundation
 
         static string Resolve(string jsonId) =>
             (jsonId != null && Alias.TryGetValue(jsonId, out var code)) ? code : jsonId;
+
+        /// <summary>Registers blocks for the biome's tiles and sets its per-height surface
+        /// pools (flat → h0/1, raised → h2/3, mid → h4/5, peak → h6/7). Empty bands inherit
+        /// the next-lower band so partial tile sets still render.</summary>
+        static void ApplyTiles(BiomeDefinition biome, string jid, TilesJson t, BlockDatabase blocks)
+        {
+            var flat   = Band(blocks, jid, t.flatGround,   t.flatGroundVariants);
+            var raised = Band(blocks, jid, t.raisedGround, t.raisedGroundVariants);
+            var mid    = Band(blocks, jid, t.midElevation, null);
+            var peak   = Band(blocks, jid, t.peak,         null);
+            if (flat.Length == 0) return;                 // nothing usable — keep code pools
+            if (raised.Length == 0) raised = flat;
+            if (mid.Length == 0)    mid = raised;
+            if (peak.Length == 0)   peak = mid;
+
+            biome.surfaceBands = new BiomeTilePoolEntry[8][];
+            biome.surfaceBands[0] = biome.surfaceBands[1] = flat;
+            biome.surfaceBands[2] = biome.surfaceBands[3] = raised;
+            biome.surfaceBands[4] = biome.surfaceBands[5] = mid;
+            biome.surfaceBands[6] = biome.surfaceBands[7] = peak;
+            biome.surfaceBasePool = flat;
+            biome.surfaceAccents = null;   // only the suite's tiles render
+            biome.accentRate = 0f;
+        }
+
+        static BiomeTilePoolEntry[] Band(BlockDatabase blocks, string jid, string main, string[] variants)
+        {
+            var list = new List<BiomeTilePoolEntry>();
+            if (!string.IsNullOrEmpty(main))
+            {
+                RegisterTile(blocks, jid, main);
+                list.Add(new BiomeTilePoolEntry(BlockId(jid, main), MainTileWeight));
+            }
+            if (variants != null)
+                foreach (var v in variants)
+                    if (!string.IsNullOrEmpty(v))
+                    {
+                        RegisterTile(blocks, jid, v);
+                        list.Add(new BiomeTilePoolEntry(BlockId(jid, v), VariantTileWeight));
+                    }
+            return list.ToArray();
+        }
+
+        static void RegisterTile(BlockDatabase blocks, string jid, string path)
+        {
+            string id = BlockId(jid, path);
+            if (blocks.Has(id)) return;
+            var blk = ScriptableObject.CreateInstance<BlockDefinition>();
+            blk.id = id; blk.name = id; blk.displayName = id;
+            blk.collision = CollisionMode.Walkable;
+            blocks.Add(blk);
+        }
+
+        /// <summary>Deterministic block id for a biome tile. MUST match the import script
+        /// (scratchpad/import_biome_tiles.py): "bt_&lt;jsonBiomeId&gt;_&lt;fileBasename&gt;",
+        /// non-alphanumerics replaced with '_'. The PNG lives at Resources/Tiles/&lt;id&gt;.</summary>
+        static string BlockId(string biomeJsonId, string path)
+        {
+            string baseName = Path.GetFileNameWithoutExtension(path);
+            var sb = new StringBuilder("bt_").Append(biomeJsonId).Append('_').Append(baseName);
+            for (int i = 0; i < sb.Length; i++)
+            {
+                char ch = sb[i];
+                if (!(char.IsLetterOrDigit(ch) || ch == '_')) sb[i] = '_';
+            }
+            return sb.ToString();
+        }
 
         /// <summary>Slices the top-level properties of the "biomes" object into
         /// id -> object-json. Brace-counts only (the file's string values never contain

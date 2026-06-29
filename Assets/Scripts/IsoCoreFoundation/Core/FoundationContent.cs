@@ -1249,7 +1249,7 @@ namespace IsoCore.Foundation
             // it sets each listed biome's climate rectangle, priority, and mob list, and
             // excludes everything else from climate selection. Safe no-op if the file is
             // missing (SelectBiome then keeps its original nearest-centroid behaviour).
-            c.fallbackBiomeId = BiomeSuiteLoader.Apply(c.Biomes, c.Mobs, out c.biomeSuiteApplied);
+            c.fallbackBiomeId = BiomeSuiteLoader.Apply(c.Biomes, c.Mobs, c.Blocks, out c.biomeSuiteApplied);
 
             return c;
         }
