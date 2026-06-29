@@ -522,6 +522,16 @@ namespace IsoCore.Foundation
             if (_heldTool == null) _heldTool = GetComponent<PlayerHeldTool>();
             _heldTool?.Swing();
 
+            // Always-visible slash arc in the facing direction, so the attack reads even
+            // bare-handed / without a hotbar tool selected.
+            Vector3 facing = new Vector3(MoveDir.x, MoveDir.y, 0f);
+            if (facing.sqrMagnitude < 0.0001f) facing = Vector3.down;
+            facing.Normalize();
+            WorldFx.Trail(
+                transform.position + facing * 0.25f,
+                transform.position + facing * AttackRangeWorld,
+                new Color(1f, 0.96f, 0.72f, 0.9f), puffs: 6, size: 0.16f);
+
             // Flash the sprite red briefly for feedback
             if (_sr != null)
             {
