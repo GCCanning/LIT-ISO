@@ -42,9 +42,14 @@ namespace LitIso.UI.InGame
         /// </summary>
         public void SetStationFilter(StationType? station)
         {
+            // Always rebuild (so the first open is never empty), but only raise Changed when
+            // the filter actually changed. DrawCrafting() calls this on every Refresh; raising
+            // Changed unconditionally re-entered Refresh -> DrawCrafting -> here forever
+            // (uncatchable StackOverflowException). Refresh also has a re-entrancy guard.
+            bool changed = _filterStation != station;
             _filterStation = station;
             BuildVisible();
-            Changed?.Invoke();
+            if (changed) Changed?.Invoke();
         }
 
         /// <summary>Stable display order: station group (Hand first), then display name.</summary>

@@ -323,9 +323,19 @@ namespace LitIso.UI.InGame
             }
         }
 
+        bool _refreshing;
+
         void Refresh()
         {
             if (_body == null || !IsOpen) return;
+            // Re-entrancy guard: a draw method that raises a Changed event (e.g. DrawCrafting
+            // -> SetStationFilter) must not recursively re-enter Refresh. Unbounded recursion
+            // throws an UNCATCHABLE StackOverflowException that wedges Unity's player loop, so
+            // input, abilities and attacks stop responding.
+            if (_refreshing) return;
+            _refreshing = true;
+            try
+            {
             ClearBodyChildren();
             // slot widgets are about to be destroyed; the context menu would
             // point at stale data, so dismiss it (a drag survives — DrawInventory
@@ -367,6 +377,8 @@ namespace LitIso.UI.InGame
                 UiBuilder.FitText(err);
                 UiBuilder.Stretch(err.rectTransform, 8f);
             }
+            }
+            finally { _refreshing = false; }
         }
 
         void ClearBodyChildren()
