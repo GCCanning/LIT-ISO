@@ -547,17 +547,19 @@ namespace IsoCore.Foundation
             Vector3 facing = new Vector3(MoveDir.x, MoveDir.y, 0f);
             if (facing.sqrMagnitude < 0.0001f) facing = Vector3.down;
             facing.Normalize();
+            // Prominent slash arc so the basic attack always reads as a swing, even
+            // bare-handed / with no hotbar tool selected (the held-tool swing only shows
+            // when an actual tool is held).
             WorldFx.Trail(
-                transform.position + facing * 0.25f,
-                transform.position + facing * AttackRangeWorld,
-                new Color(1f, 0.96f, 0.72f, 0.9f), puffs: 6, size: 0.16f);
+                transform.position + facing * 0.2f,
+                transform.position + facing * (AttackRangeWorld + 0.15f),
+                new Color(1f, 0.97f, 0.78f, 0.95f), puffs: 10, size: 0.22f);
 
-            // Flash the sprite red briefly for feedback
+            // Flash the sprite white-hot briefly for feedback (longer so it actually registers).
             if (_sr != null)
             {
-                _sr.color = new Color(1f, 0.3f, 0.3f, 1f);
-                // Reset color after a short delay
-                _attackFlashTimer = 0.12f;
+                _sr.color = new Color(1f, 0.85f, 0.6f, 1f);
+                _attackFlashTimer = 0.16f;
             }
 
             // Deal damage to all IDamageable components within melee range using a physics overlap

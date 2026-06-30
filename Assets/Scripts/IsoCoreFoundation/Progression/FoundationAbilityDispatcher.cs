@@ -33,6 +33,13 @@ namespace IsoCore.Foundation
             Vector2 aim = AimDir(playerPos);
             Color color = ElementColor(ability.element);
 
+            // Instant cast feedback at the caster's hands, in the aim direction, so the cast
+            // reads the MOMENT the key is pressed — the projectile/effect can travel or land
+            // afterward, but the player visibly "casts" now instead of the effect appearing
+            // first with no caster animation.
+            WorldFx.Smoke(playerPos + (Vector3)(aim * 0.32f), color,
+                count: 7, size: 0.14f, radius: 0.1f, rise: 0.35f, life: 0.28f);
+
             switch (ability.delivery)
             {
                 case FoundationAbilityDelivery.Blink:
