@@ -76,7 +76,21 @@ namespace IsoCore.Foundation
         public bool IsBlocked(int wx, int wy) => GetCell(wx, wy).Blocked;
         public bool IsWalkable(int wx, int wy) => !GetCell(wx, wy).Blocked;
         // Props (resource nodes / placeables) are hard blockers; terrain edges are not.
-        public bool IsPropBlocked(int wx, int wy) { var c = GetCell(wx, wy); return c.NodeBlocks || c.OccupantBlocks; }
+        public bool IsPropBlocked(int wx, int wy)
+        {
+            var c = GetCell(wx, wy);
+            if (c.OccupantBlocks) return true;
+            // Re-derive node blocking from the LIVE definition (not the baked NodeBlocks flag)
+            // so a blocksMovement change — e.g. low ground cover (flowers/tufts/bushes) made
+            // walk-through — applies to existing worlds too, and tiny decor never acts as an
+            // invisible wall on otherwise flat ground.
+            if (!string.IsNullOrEmpty(c.NodeId) && _content != null)
+            {
+                var node = _content.Nodes.Get(c.NodeId);
+                if (node != null) return node.blocksMovement;
+            }
+            return c.NodeBlocks;
+        }
         public int GetBiomeIndex(int wx, int wy) => GetCell(wx, wy).BiomeIndex;
         public BiomeDefinition GetBiome(int wx, int wy) => _sampler.BiomeAt(GetCell(wx, wy).BiomeIndex);
 

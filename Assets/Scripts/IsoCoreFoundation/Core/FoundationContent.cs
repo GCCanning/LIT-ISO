@@ -384,6 +384,16 @@ namespace IsoCore.Foundation
             var tulip = Node("flower_tulip", new Color(0.80f, 0.40f, 0.70f), ToolType.None, false, 2, 0.3f,
                 new[] { new ItemDrop("fiber", 1, 1) });
 
+            // ResourceNodeDefinition.blocksMovement DEFAULTS TO TRUE, so without these overrides
+            // even low ground cover blocked the player — you'd catch on near-invisible flowers/
+            // tufts/bushes while walking on otherwise flat ground ("hitting things that aren't
+            // there"). Low decor is walk-through; only substantial props (tree/pine/rock/stump/
+            // log/copper_vein/shore_stone) keep blocking.
+            bush.blocksMovement = false;
+            flower.blocksMovement = false;
+            tuft.blocksMovement = false;
+            tulip.blocksMovement = false;
+
             // ---- Mobs ----
             MobDefinition Mob(string id, Color col, MobBehavior beh, float speed, float wander, ItemDrop[] drops)
             {
