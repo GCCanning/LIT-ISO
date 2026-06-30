@@ -40,6 +40,16 @@ namespace IsoCore.Foundation
             WorldFx.Smoke(playerPos + (Vector3)(aim * 0.32f), color,
                 count: 7, size: 0.14f, radius: 0.1f, rise: 0.35f, life: 0.28f);
 
+            // Drive the LPC body animation to match the ability. Blink (flash_step) plays NO
+            // sword swing — the dash itself is the motion.
+            string bodyAnim = ability.delivery switch
+            {
+                FoundationAbilityDelivery.Melee => "slash",
+                FoundationAbilityDelivery.Blink => null,
+                _ => "spellcast",
+            };
+            if (bodyAnim != null) _player.PlayBodyAnim(bodyAnim);
+
             switch (ability.delivery)
             {
                 case FoundationAbilityDelivery.Blink:

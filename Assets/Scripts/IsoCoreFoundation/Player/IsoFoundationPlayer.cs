@@ -531,11 +531,26 @@ namespace IsoCore.Foundation
         /// and can also be called from keyboard input (Space).
         /// </summary>
         PlayerHeldTool _heldTool;
+        ICharacterActionAnimator _bodyAnim;
+        bool _bodyAnimResolved;
+
+        /// <summary>Plays a one-shot body animation (slash / spellcast / thrust / hurt) on the
+        /// layered LPC animator if present. No-op on the placeholder animator. Resolved lazily
+        /// because the LPC animator is attached after spawn by LayeredCharacterPlayerHook.</summary>
+        public void PlayBodyAnim(string animId)
+        {
+            if (!_bodyAnimResolved) { _bodyAnim = GetComponent<ICharacterActionAnimator>(); _bodyAnimResolved = _bodyAnim != null; }
+            _bodyAnim?.PlayActionAnim(animId);
+        }
 
         public void TriggerBasicAttack()
         {
             if (_attackCooldownTimer > 0f) return;
             _attackCooldownTimer = AttackCooldown;
+
+            // LPC sideways sword slash on the character body (no-op if the placeholder
+            // animator is active).
+            PlayBodyAnim("slash");
 
             // Swing the held tool/weapon so the attack has an animation (no-op if the hand is
             // empty — equip a weapon/tool to see the swing).

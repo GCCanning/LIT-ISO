@@ -18,7 +18,7 @@ namespace LitIso.CharacterCreator
     /// (via LayeredCharacterPlayerHook) so the created character is what renders.
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
-    public class LayeredCharacterAnimator : MonoBehaviour
+    public class LayeredCharacterAnimator : MonoBehaviour, IsoCore.Foundation.ICharacterActionAnimator
     {
         [Tooltip("Load saved appearance and bake on Awake.")]
         public bool autoLoadSavedAppearance = true;
@@ -129,6 +129,9 @@ namespace LitIso.CharacterCreator
                 default: _row = s_idxW; _flip = true; break; // East mirror
             }
         }
+
+        /// <summary>ICharacterActionAnimator — lets Foundation combat code drive body anims.</summary>
+        public void PlayActionAnim(string animId) => PlayOneShot(animId);
 
         public void PlayOneShot(string animId, System.Action onComplete = null)
         {
