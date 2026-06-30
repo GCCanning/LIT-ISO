@@ -437,17 +437,17 @@ namespace IsoCore.Foundation
             var predPlant1 = Mob("predator_plant_1", new Color(0.55f, 0.75f, 0.30f), MobBehavior.Hostile, 0.5f, 2.5f,
                 new[] { new ItemDrop("fiber", 1, 2) });
             predPlant1.threatTier = 1; predPlant1.maxHealth = 24f; predPlant1.contactDamage = 6f;
-            predPlant1.meleeDamage = 6f; predPlant1.campWardIgnoreChance = 0.2f; predPlant1.sizeUnits = 0.7f;
+            predPlant1.meleeDamage = 6f; predPlant1.campWardIgnoreChance = 0.2f; predPlant1.sizeUnits = 0.9f;
             predPlant1.decorationSprite = "mobs/predator_plant_1";
             var predPlant2 = Mob("predator_plant_2", new Color(0.40f, 0.70f, 0.35f), MobBehavior.Hostile, 0.6f, 2.5f,
                 new[] { new ItemDrop("fiber", 1, 3) });
             predPlant2.threatTier = 2; predPlant2.maxHealth = 36f; predPlant2.contactDamage = 9f;
-            predPlant2.meleeDamage = 9f; predPlant2.campWardIgnoreChance = 0.25f; predPlant2.sizeUnits = 0.75f;
+            predPlant2.meleeDamage = 9f; predPlant2.campWardIgnoreChance = 0.25f; predPlant2.sizeUnits = 0.95f;
             predPlant2.decorationSprite = "mobs/predator_plant_2";
             var predPlant3 = Mob("predator_plant_3", new Color(0.70f, 0.45f, 0.25f), MobBehavior.Hostile, 0.45f, 2.5f,
                 new[] { new ItemDrop("fiber", 2, 4) });
             predPlant3.threatTier = 3; predPlant3.maxHealth = 60f; predPlant3.contactDamage = 13f;
-            predPlant3.meleeDamage = 13f; predPlant3.campWardIgnoreChance = 0.3f; predPlant3.sizeUnits = 0.85f;
+            predPlant3.meleeDamage = 13f; predPlant3.campWardIgnoreChance = 0.3f; predPlant3.sizeUnits = 1.05f;
             predPlant3.decorationSprite = "mobs/predator_plant_3";
 
             // ---- Slime variants (ported from legacy Assets/World/Enemies/Enemy_Slime_*) ----

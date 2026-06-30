@@ -174,6 +174,9 @@ namespace IsoCore.Foundation
             // Resources/Characters/<id>/ (frames named "<id>-idle-0", "<id>-move-0", ...).
             if (def != null && (def.id == "bandit" || def.id.StartsWith("adventurer_", System.StringComparison.Ordinal)))
             { folder = "Characters/" + def.id; prefix = def.id; }
+            // Predator plants ship sliced idle/move frames in Resources/Characters/<id>/.
+            if (def != null && def.id.StartsWith("predator_plant_", System.StringComparison.Ordinal))
+            { folder = "Characters/" + def.id; prefix = def.id; }
             if (folder == null) { _animated = false; return; }
 
             _idle = LoadFrames(folder, prefix, "idle", 4);
