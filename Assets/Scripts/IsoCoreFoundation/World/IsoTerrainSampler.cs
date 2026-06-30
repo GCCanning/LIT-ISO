@@ -369,9 +369,9 @@ namespace IsoCore.Foundation
             // samples (E then S).
             if (_useBoxes && biome != null && height < 3)
             {
-                const int band = 2;
-                int other = BiomeIndexAt(wx + band, wy);
-                if (other == biomeIndex) other = BiomeIndexAt(wx, wy + band);
+                const int blendBand = 2;
+                int other = BiomeIndexAt(wx + blendBand, wy);
+                if (other == biomeIndex) other = BiomeIndexAt(wx, wy + blendBand);
                 if (other != biomeIndex && other >= 0 && other < _biomes.Count &&
                     _biomes[other].climatePriority >= 0 && Hash01(wx, wy, 41) < 0.22f)
                 {
