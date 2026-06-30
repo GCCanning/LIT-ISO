@@ -362,6 +362,23 @@ namespace IsoCore.Foundation
             cell.SurfaceBlockId = SurfaceVariant(biome, wx, wy, "dirt", height);
             cell.Water = false;
 
+            // Subtle border blend (thin 2-cell band, dithered — NOT a fuzzy gradient): if a
+            // cell a couple of tiles away in x or y belongs to a different climate biome,
+            // occasionally borrow one of that neighbour's flat tiles so the seam softens into
+            // a clean transition instead of a hard line. Lowland only; two cheap neighbour
+            // samples (E then S).
+            if (_useBoxes && biome != null && height < 3)
+            {
+                const int band = 2;
+                int other = BiomeIndexAt(wx + band, wy);
+                if (other == biomeIndex) other = BiomeIndexAt(wx, wy + band);
+                if (other != biomeIndex && other >= 0 && other < _biomes.Count &&
+                    _biomes[other].climatePriority >= 0 && Hash01(wx, wy, 41) < 0.22f)
+                {
+                    cell.SurfaceBlockId = SurfaceVariant(_biomes[other], wx, wy, cell.SurfaceBlockId, height);
+                }
+            }
+
             // Forest interiors: dense hedge/canopy blocks tile into forest MASS (the
             // pack's design - these are terrain, not props). Uses the same grove noise
             // as trees so canopy clumps wrap the tree clusters. Leafy 029 dominates;
@@ -685,6 +702,17 @@ namespace IsoCore.Foundation
                 if (d < bestDist) { bestDist = d; nb = i; }
             }
             return nb;
+        }
+
+        /// <summary>Biome index at a cell using the same smooth climate fields as the land
+        /// SelectBiome (temp salt 1/2, moist 3/4, climate-elevation 17/18). Used by the
+        /// border blend to find the neighbouring biome across a seam.</summary>
+        int BiomeIndexAt(int wx, int wy)
+        {
+            float t = Perlin(wx, wy, _cfg.climateFrequency, 1, 2);
+            float m = Perlin(wx, wy, _cfg.climateFrequency, 3, 4);
+            float ce = Perlin(wx, wy, _cfg.climateFrequency, 17, 18);
+            return SelectBiome(t, m, ce);
         }
 
         public BiomeDefinition BiomeAt(int index) =>
