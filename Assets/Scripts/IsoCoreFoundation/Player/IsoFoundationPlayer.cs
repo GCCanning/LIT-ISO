@@ -126,10 +126,11 @@ namespace IsoCore.Foundation
             var dir = new Vector2(ix, iy);
             bool hasInput = dir.sqrMagnitude >= 0.0001f;
 
-            // ---- click-to-move (additive) -------------------------------------------------
-            // A left-click onto a walkable cell builds an A* path from our current cell.
-            // Keyboard always wins: any WASD input below clears the path before steering.
-            TryHandleClick();
+            // ---- click-to-move DISABLED (owner direction) --------------------------------
+            // Left-click is now the basic attack (+ primary tool/item use via PlayerInteraction);
+            // movement is WASD only. Right-click interacts. TryHandleClick() is left in the file
+            // in case click-to-move is wanted again.
+            // TryHandleClick();
             if (hasInput)
             {
                 _path = null;   // manual override: drop any active path, behave exactly as before
@@ -206,9 +207,14 @@ namespace IsoCore.Foundation
                 _pathLastGround = _ground;
             }
 
-            // Z triggers basic attack (Space = jump, LMB = move/interact, RMB = cam pan)
-            if (Input.GetKeyDown(KeyCode.Z))
-                TriggerBasicAttack();
+            // Left-click is the basic attack (LPC sideways sword slash); Z kept as a fallback.
+            // Skip when the pointer is over UI so menu clicks don't swing.
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Z))
+            {
+                var es = UnityEngine.EventSystems.EventSystem.current;
+                if (es == null || !es.IsPointerOverGameObject())
+                    TriggerBasicAttack();
+            }
 
             TickAttack();
             Refresh();
