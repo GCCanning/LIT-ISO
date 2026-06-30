@@ -37,6 +37,7 @@ namespace LitIso.UI.InGame
         // LitRPG rule: the player always sees the numbers.
         string HealthText { get; }
         string ManaText   { get; }
+        string HotbarRowText { get; }
         event Action Changed;     // raise when any of the above changes
     }
 
@@ -61,6 +62,7 @@ namespace LitIso.UI.InGame
         public int Level => 3;
         public string HealthText => "82 / 110";
         public string ManaText   => "35 / 60";
+        public string HotbarRowText => "";
         public event Action Changed; // never raised by the placeholder
         public void Raise() => Changed?.Invoke();
     }
@@ -119,6 +121,7 @@ namespace LitIso.UI.InGame
         RectTransform _attackBtnRoot;
         RectTransform _combatTextRoot;
         Text _selItemName;
+        Text _hotbarRowText;
         FoundationHudViewMode _hudMode = FoundationHudViewMode.Adventure;
 
         // Slot widget refs (for cheap per-frame updates without rebuilding).
@@ -484,6 +487,15 @@ namespace LitIso.UI.InGame
             sr.pivot = new Vector2(0.5f, 1f);
             sr.anchoredPosition = new Vector2(0f, 0f);
             sr.sizeDelta = new Vector2(0f, 22f);
+
+            _hotbarRowText = NewText(col, "HotbarRow", "", 13, TextAnchor.MiddleRight);
+            LitIsoTheme.ApplyBody(_hotbarRowText, 13, LitIsoTheme.WarmTan);
+            _hotbarRowText.raycastTarget = false;
+            var rr = _hotbarRowText.rectTransform;
+            rr.anchorMin = new Vector2(0f, 1f); rr.anchorMax = new Vector2(1f, 1f);
+            rr.pivot = new Vector2(1f, 1f);
+            rr.anchoredPosition = new Vector2(0f, -22f);
+            rr.sizeDelta = new Vector2(0f, 18f);
 
             // Row container holding the slots.
             var row = NewRect("Row", col);
@@ -1515,6 +1527,13 @@ namespace LitIso.UI.InGame
 
             if (_selItemName != null && _selItemName.text != selName)
                 _selItemName.text = selName;
+
+            if (_hotbarRowText != null)
+            {
+                string rowText = _model.HotbarRowText ?? "";
+                if (_hotbarRowText.text != rowText)
+                    _hotbarRowText.text = rowText;
+            }
         }
 
         // ----------------------------------------------- live cluster polling

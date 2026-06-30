@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LIT-ISO Party Builder</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;background:#111318;color:#dde3ec;
+  font-family:Segoe UI,Arial,sans-serif;height:100vh;overflow:hidden;
+}
+button,select,input,textarea{font:inherit}
+button,select,input{
+  background:#222832;color:#dde3ec;border:1px solid #3b4658;
+  border-radius:6px;padding:7px 9px;
+}
+button{cursor:pointer}
+button:hover{border-color:#b9924c}
+button.on{background:#4a371d;border-color:#e0ad55;color:#ffe0a2}
+#app{height:100vh;display:grid;grid-template-columns:360px minmax(520px,1fr) 360px;min-width:980px}
+#left,#right{background:#191d25;border-color:#2a303c;overflow:auto}
+#left{border-right:1px solid #2a303c}
+#right{border-left:1px solid #2a303c}
+.panel{padding:14px}
+h1,h2,h3{margin:0;color:#f2d38f;letter-spacing:0}
+h1{font-size:18px}
+h2{font-size:13px;margin-bottom:8px}
+h3{font-size:12px;margin:14px 0 7px;color:#9db7d8;text-transform:uppercase}
+.sub{font-size:12px;color:#8792a3;line-height:1.45;margin-top:5px}
+.mood{
+  display:inline-block;margin-top:8px;color:#f1c46f;text-decoration:none;
+  font-size:12px;border-bottom:1px solid #6d5430;
+}
+#partyTabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.role{
+  display:flex;gap:9px;align-items:center;text-align:left;padding:8px;
+  background:#222832;border:1px solid #303848;border-radius:7px;color:#dce3ee;
+}
+.role.on{background:#3a2e20;border-color:#e0ad55}
+.mini{width:42px;height:42px;background:#12151b;border:1px solid #303848;border-radius:5px;image-rendering:pixelated}
+.role>span{min-width:0}
+.rname{display:block;font-size:12px;font-weight:700}
+.rmeta{display:block;font-size:10px;color:#8694a8;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.field{display:grid;gap:5px;margin:10px 0}
+.field label{font-size:11px;color:#8fa1b8}
+.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.seg{display:flex;gap:5px}
+.seg button{min-width:42px;padding:6px 8px}
+#categoryTabs{display:flex;gap:5px;flex-wrap:wrap;margin:12px 0}
+#categoryTabs button{font-size:11px;padding:6px 8px}
+#options{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.opt{
+  min-height:35px;text-align:left;font-size:12px;overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;
+}
+.opt.missing{opacity:.42;border-style:dashed}
+#stageWrap{height:100vh;display:flex;flex-direction:column;min-width:0}
+#topbar{
+  flex:0 0 auto;padding:11px 14px;background:#181c23;border-bottom:1px solid #2a303c;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+#topbar .title{font-size:14px;font-weight:700;color:#f2d38f}
+#topbar .actions{display:flex;gap:7px}
+#scenePane{flex:1;min-height:0;display:grid;place-items:center;padding:16px;background:#0e1014}
+#sceneFrame{
+  width:min(100%,1080px);aspect-ratio:16/9;background:#07090d;
+  border:1px solid #2e3746;border-radius:8px;box-shadow:0 16px 50px rgba(0,0,0,.55);
+  position:relative;overflow:hidden;
+}
+#scene{width:100%;height:100%;display:block;image-rendering:pixelated}
+#sceneHint{
+  position:absolute;left:12px;bottom:10px;color:#8694a8;font-size:11px;
+  background:rgba(8,10,14,.72);border:1px solid rgba(100,116,139,.35);
+  border-radius:5px;padding:5px 7px;
+}
+#strip{
+  flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  padding:12px 14px;background:#151920;border-top:1px solid #2a303c;
+}
+.card{
+  background:#1e2430;border:1px solid #303848;border-radius:7px;padding:9px;
+  display:flex;align-items:center;gap:10px;min-width:0;
+}
+.card.on{border-color:#e0ad55;background:#2a241c}
+.preview{
+  width:70px;height:70px;background:#10141b;border:1px solid #303848;border-radius:6px;
+  image-rendering:pixelated;flex:0 0 auto;
+}
+.cbody{min-width:0}
+.clabel{display:block;font-size:12px;color:#f4d58f;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmeta{display:block;font-size:10px;color:#8792a3;margin-top:3px}
+.warn{font-size:10px;color:#e69b5a;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#right textarea{
+  width:100%;min-height:180px;resize:vertical;background:#11151b;color:#dfe6f1;
+  border:1px solid #303848;border-radius:7px;padding:9px;font:11px Consolas,monospace;
+}
+#recipeActions{display:flex;gap:7px;margin:8px 0 12px}
+#status{font-size:11px;color:#8fa1b8;line-height:1.45;min-height:32px}
+.pill{
+  display:inline-block;margin:3px 4px 0 0;padding:3px 6px;border-radius:999px;
+  background:#222832;border:1px solid #303848;color:#9fb2cc;font-size:10px;
+}
+.compact{font-size:11px;color:#8792a3;line-height:1.45}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="left">
+    <div class="panel">
+      <h1>Party Builder</h1>
+      <div class="sub">Curated local LPC-style builder for the campfire main-screen pass.</div>
+      <a class="mood" href="https://easy-peasy.ai/ai-image-generator/images/dark-forest-camping-pixel-art" target="_blank" rel="noreferrer">Mood anchor</a>
+      <div id="partyTabs"></div>
+
+      <h3>Identity</h3>
+      <div class="field">
+        <label>Name</label>
+        <input id="nameInput" type="text" maxlength="24">
+      </div>
+      <div class="row">
+        <div class="seg" id="sexBtns"></div>
+        <div class="seg" id="dirBtns"></div>
+      </div>
+
+      <h3>Layers</h3>
+      <div id="categoryTabs"></div>
+      <div id="options"></div>
+    </div>
+  </aside>
+
+  <main id="stageWrap">
+    <div id="topbar">
+      <div>
+        <div class="title">Night Campfire Party Composition</div>
+        <div class="sub">Use this as the local staging reference before generating the final PixelLab main-screen art.</div>
+      </div>
+      <div class="actions">
+        <button id="playBtn">Pause</button>
+        <button id="downloadScene">PNG</button>
+      </div>
+    </div>
+    <section id="scenePane">
+      <div id="sceneFrame">
+        <canvas id="scene" width="960" height="540"></canvas>
+        <div id="sceneHint">Menu-safe dark space is reserved on the left.</div>
+      </div>
+    </section>
+    <section id="strip"></section>
+  </main>
+
+  <aside id="right">
+    <div class="panel">
+      <h2>Export</h2>
+      <div class="compact">The JSON below is the handoff recipe for the four party members. The final menu art should keep these roles and silhouettes, but be redrawn/generated in the LIT-ISO PixelLab isometric style.</div>
+      <div id="recipeActions">
+        <button id="copyJson">Copy JSON</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+      <textarea id="exportJson" spellcheck="false"></textarea>
+
+      <h3>Prompt Notes</h3>
+      <div id="promptNotes" class="compact"></div>
+      <h3>Layer Status</h3>
+      <div id="status"></div>
+    </div>
+  </aside>
+</div>
+
+<script src="character_party_builder_data.js"></script>
+<script src="nav.js"></script>
+<script>
+(function(){
+  var DATA = window.LITISO_CHARACTER_PARTY_DATA;
+  var storageKey = "litiso-party-builder-v1";
+  var state = loadState();
+  var active = 0;
+  var activeSlot = "body";
+  var frame = 1;
+  var playing = true;
+  var imageCache = {};
+  var missing = {};
+
+  var el = {
+    tabs: document.getElementById("partyTabs"),
+    name: document.getElementById("nameInput"),
+    sex: document.getElementById("sexBtns"),
+    dir: document.getElementById("dirBtns"),
+    categories: document.getElementById("categoryTabs"),
+    options: document.getElementById("options"),
+    strip: document.getElementById("strip"),
+    scene: document.getElementById("scene"),
+    exportJson: document.getElementById("exportJson"),
+    status: document.getElementById("status"),
+    promptNotes: document.getElementById("promptNotes")
+  };
+  var ctx = el.scene.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+
+  function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  function loadState(){
+    try {
+      var saved = localStorage.getItem(storageKey);
+      if(saved) return JSON.parse(saved);
+    } catch(e) {}
+    return { party: clone(DATA.party) };
+  }
+
+  function saveState(){
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  }
+
+  function current(){ return state.party[active]; }
+
+  function findSlot(slotId){
+    return DATA.slots.find(function(s){ return s.id === slotId; });
+  }
+
+  function pathFor(layerId, sex){
+    return DATA.assetRoot + "/" + layerId + "/" + sex + ".png.bytes";
+  }
+
+  function loadLayer(layerId, sex){
+    if(!layerId) return Promise.resolve(null);
+    var key = layerId + "|" + sex;
+    if(imageCache[key]) return imageCache[key];
+    imageCache[key] = new Promise(function(resolve){
+      var img = new Image();
+      img.onload = function(){ resolve(img); };
+      img.onerror = function(){
+        var altSex = sex === "male" ? "female" : "male";
+        var alt = new Image();
+        alt.onload = function(){ resolve(alt); };
+        alt.onerror = function(){
+          missing[layerId] = true;
+          resolve(null);
+        };
+        alt.src = pathFor(layerId, altSex);
+      };
+      img.src = pathFor(layerId, sex);
+    });
+    return imageCache[key];
+  }
+
+  function drawLayer(targetCtx, img, direction, frameIndex, dx, dy, scale){
+    var row = DATA.rows[direction] == null ? DATA.rows.S : DATA.rows[direction];
+    var sx = (frameIndex % DATA.frames) * DATA.frameSize;
+    var sy = row * DATA.frameSize;
+    targetCtx.drawImage(img, sx, sy, DATA.frameSize, DATA.frameSize, dx, dy, DATA.frameSize * scale, DATA.frameSize * scale);
+  }
+
+  async function drawCharacter(targetCtx, character, x, y, scale, frameIndex){
+    var ordered = DATA.drawOrder.map(function(slot){ return character.selections[slot]; }).filter(Boolean);
+    for(var i=0;i<ordered.length;i++){
+      var img = await loadLayer(ordered[i], character.sex);
+      if(img) drawLayer(targetCtx, img, character.direction || "S", frameIndex, x, y, scale);
+    }
+  }
+
+  async function drawPreview(canvas, character){
+    var pctx = canvas.getContext("2d");
+    pctx.imageSmoothingEnabled = false;
+    pctx.clearRect(0,0,canvas.width,canvas.height);
+    pctx.fillStyle = "#10141b";
+    pctx.fillRect(0,0,canvas.width,canvas.height);
+    await drawCharacter(pctx, character, 2, 2, 1, frame);
+  }
+
+  function drawTent(x,y,w,h,color){
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x + w * .5, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(250,210,130,.25)";
+    ctx.stroke();
+    ctx.fillStyle = "rgba(20,18,18,.7)";
+    ctx.beginPath();
+    ctx.moveTo(x + w * .44, y + h);
+    ctx.lineTo(x + w * .52, y + h * .42);
+    ctx.lineTo(x + w * .62, y + h);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  async function drawScene(){
+    ctx.clearRect(0,0,960,540);
+    var grd = ctx.createLinearGradient(0,0,0,540);
+    grd.addColorStop(0,"#0b1020");
+    grd.addColorStop(.55,"#111928");
+    grd.addColorStop(1,"#17181b");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,960,540);
+
+    ctx.fillStyle = "#0a0d14";
+    ctx.fillRect(0,0,315,540);
+    ctx.fillStyle = "rgba(255,205,112,.06)";
+    ctx.beginPath();
+    ctx.ellipse(560,310,260,115,0,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = "#1d2a24";
+    for(var i=0;i<18;i++){
+      var tx = 320 + i*42;
+      var th = 58 + (i%5)*18;
+      ctx.beginPath();
+      ctx.moveTo(tx, 118 + th);
+      ctx.lineTo(tx + 28, 58 + (i%4)*12);
+      ctx.lineTo(tx + 56, 118 + th);
+      ctx.closePath();
+      ctx.fill();
+    }
+    drawTent(646,196,150,82,"#544734");
+    drawTent(765,225,118,68,"#3e4a3a");
+    drawTent(442,205,120,72,"#4a3d32");
+
+    ctx.fillStyle = "#443326";
+    ctx.fillRect(522,322,108,12);
+    ctx.fillStyle = "#685136";
+    ctx.fillRect(540,304,56,14);
+    ctx.fillStyle = "#1a1511";
+    ctx.fillRect(554,284,30,26);
+    ctx.strokeStyle = "#a8733c";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(569,284,18,0,Math.PI,true);
+    ctx.stroke();
+
+    ctx.fillStyle = "#ffb347";
+    ctx.beginPath();
+    ctx.ellipse(568,336,54,26,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = "#f35f34";
+    ctx.beginPath();
+    ctx.moveTo(552,338);
+    ctx.lineTo(570,292);
+    ctx.lineTo(590,338);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#ffd178";
+    ctx.beginPath();
+    ctx.moveTo(561,339);
+    ctx.lineTo(571,305);
+    ctx.lineTo(580,339);
+    ctx.closePath();
+    ctx.fill();
+
+    var poses = [
+      { i:0, x:462, y:318, s:1.75 },
+      { i:1, x:602, y:310, s:1.75 },
+      { i:2, x:538, y:238, s:1.75 },
+      { i:3, x:664, y:260, s:1.75 }
+    ];
+    for(var p=0;p<poses.length;p++){
+      var pose = poses[p];
+      await drawCharacter(ctx, state.party[pose.i], pose.x, pose.y, pose.s, frame);
+    }
+
+    ctx.fillStyle = "rgba(255,230,155,.32)";
+    ctx.beginPath();
+    ctx.ellipse(568,360,210,58,0,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  function renderTabs(){
+    el.tabs.innerHTML = "";
+    state.party.forEach(function(ch, index){
+      var btn = document.createElement("button");
+      btn.className = "role" + (index === active ? " on" : "");
+      btn.innerHTML = '<canvas class="mini" width="64" height="64"></canvas><span><span class="rname"></span><span class="rmeta"></span></span>';
+      btn.querySelector(".rname").textContent = ch.label;
+      btn.querySelector(".rmeta").textContent = ch.name + " · " + ch.sex;
+      btn.onclick = function(){ active = index; renderAll(); };
+      el.tabs.appendChild(btn);
+      drawPreview(btn.querySelector("canvas"), ch);
+    });
+  }
+
+  function renderIdentity(){
+    var ch = current();
+    el.name.value = ch.name || "";
+    el.name.oninput = function(){
+      current().name = el.name.value;
+      saveState();
+      renderCards();
+      renderExport();
+    };
+
+    el.sex.innerHTML = "";
+    ["male","female"].forEach(function(sex){
+      var b = document.createElement("button");
+      b.textContent = sex === "male" ? "Male" : "Female";
+      b.className = ch.sex === sex ? "on" : "";
+      b.onclick = function(){ ch.sex = sex; saveState(); renderAll(); };
+      el.sex.appendChild(b);
+    });
+
+    el.dir.innerHTML = "";
+    ["S","E","N","W"].forEach(function(dir){
+      var b = document.createElement("button");
+      b.textContent = dir;
+      b.className = ch.direction === dir ? "on" : "";
+      b.onclick = function(){ ch.direction = dir; saveState(); renderAll(); };
+      el.dir.appendChild(b);
+    });
+  }
+
+  function renderCategories(){
+    el.categories.innerHTML = "";
+    DATA.slots.forEach(function(slot){
+      var b = document.createElement("button");
+      b.textContent = slot.label;
+      b.className = activeSlot === slot.id ? "on" : "";
+      b.onclick = function(){ activeSlot = slot.id; renderOptions(); };
+      el.categories.appendChild(b);
+    });
+  }
+
+  function renderOptions(){
+    var slot = findSlot(activeSlot);
+    var ch = current();
+    el.options.innerHTML = "";
+    slot.options.forEach(function(opt){
+      var b = document.createElement("button");
+      b.className = "opt" + (ch.selections[slot.id] === opt.id ? " on" : "");
+      b.textContent = opt.label;
+      b.title = opt.id || "None";
+      b.onclick = function(){
+        ch.selections[slot.id] = opt.id;
+        saveState();
+        renderAll();
+      };
+      el.options.appendChild(b);
+    });
+  }
+
+  function renderCards(){
+    el.strip.innerHTML = "";
+    state.party.forEach(function(ch, index){
+      var card = document.createElement("button");
+      card.className = "card" + (index === active ? " on" : "");
+      card.innerHTML = '<canvas class="preview" width="68" height="68"></canvas><span class="cbody"><span class="clabel"></span><span class="cmeta"></span><span class="warn"></span></span>';
+      card.querySelector(".clabel").textContent = ch.name || ch.label;
+      card.querySelector(".cmeta").textContent = ch.label + " · " + ch.sex + " · " + Object.values(ch.selections).filter(Boolean).length + " layers";
+      card.onclick = function(){ active = index; renderAll(); };
+      el.strip.appendChild(card);
+      drawPreview(card.querySelector("canvas"), ch);
+    });
+  }
+
+  function renderExport(){
+    var payload = {
+      concept: "standard dungeon party resting around a campfire at night with tents, cooking food, drinks, and warm firelight",
+      moodAnchor: "https://easy-peasy.ai/ai-image-generator/images/dark-forest-camping-pixel-art",
+      style: "LIT-ISO PixelLab isometric pixel art, original assets, no copied external art",
+      party: state.party
+    };
+    el.exportJson.value = JSON.stringify(payload, null, 2);
+    el.promptNotes.innerHTML = [
+      '<span class="pill">night campfire</span>',
+      '<span class="pill">four class silhouettes</span>',
+      '<span class="pill">tents + cooking pot</span>',
+      '<span class="pill">warm fire / cool forest</span>',
+      '<span class="pill">left menu-safe space</span>',
+      '<span class="pill">PixelLab isometric redraw</span>'
+    ].join("");
+  }
+
+  function renderStatus(){
+    var keys = Object.keys(missing);
+    el.status.textContent = keys.length ? ("Missing or unreadable layers: " + keys.join(", ")) : "All loaded layers are available or will use same-slot sex fallback when needed.";
+  }
+
+  async function renderSceneAndStatus(){
+    await drawScene();
+    renderStatus();
+  }
+
+  function renderAll(){
+    renderTabs();
+    renderIdentity();
+    renderCategories();
+    renderOptions();
+    renderCards();
+    renderExport();
+    renderSceneAndStatus();
+  }
+
+  document.getElementById("playBtn").onclick = function(){
+    playing = !playing;
+    this.textContent = playing ? "Pause" : "Play";
+  };
+
+  document.getElementById("downloadScene").onclick = function(){
+    var link = document.createElement("a");
+    link.download = "litiso_campfire_party_reference.png";
+    link.href = el.scene.toDataURL("image/png");
+    link.click();
+  };
+
+  document.getElementById("copyJson").onclick = function(){
+    el.exportJson.select();
+    document.execCommand("copy");
+  };
+
+  document.getElementById("resetBtn").onclick = function(){
+    state = { party: clone(DATA.party) };
+    saveState();
+    active = 0;
+    activeSlot = "body";
+    renderAll();
+  };
+
+  setInterval(function(){
+    if(!playing) return;
+    frame = (frame + 1) % DATA.frames;
+    renderTabs();
+    renderCards();
+    renderSceneAndStatus();
+  }, 180);
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

@@ -48,3 +48,5 @@ One-time per machine (enables smart scene merge):
 ```
 git config merge.unityyamlmerge.driver '"<UnityPath>/Tools/UnityYAMLMerge" merge -p %O %A %B %A'
 ```
+
+## Imported Claude Cowork project instructions

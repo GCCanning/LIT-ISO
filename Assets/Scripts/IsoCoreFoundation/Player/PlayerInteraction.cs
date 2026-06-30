@@ -189,8 +189,19 @@ namespace IsoCore.Foundation
                 if (Input.GetKeyDown(KeyCode.Alpha1 + i)) { _hotbar.Select(i); SfxManager.Play("ui_click", 0.6f); }
 
             float scroll = Input.mouseScrollDelta.y;
-            if (scroll > 0.01f) _hotbar.Step(-1);
-            else if (scroll < -0.01f) _hotbar.Step(1);
+            if (Mathf.Abs(scroll) > 0.01f)
+            {
+                bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                if (shift)
+                {
+                    _hotbar.StepRow(scroll > 0.01f ? -1 : 1);
+                    SfxManager.Play("ui_click", 0.45f);
+                }
+                else
+                {
+                    _hotbar.Step(scroll > 0.01f ? -1 : 1);
+                }
+            }
         }
 
         (ToolType type, int tier) SelectedToolInfo()
@@ -569,7 +580,7 @@ namespace IsoCore.Foundation
                 def.toolType != nodeDef.requiredTool)
                 loss += 1;
 
-            if (_inv.DamageSlot(_hotbar.Selected, loss))
+            if (_inv.DamageSlot(_hotbar.SelectedInventoryIndex, loss))
             {
                 Flash($"{def.Display} broke");
                 return true;
@@ -586,7 +597,7 @@ namespace IsoCore.Foundation
             if (def == null || !def.HasDurability) return false;
 
             if (message == "Tilled soil" && def.toolType == ToolType.Hoe &&
-                _inv.DamageSlot(_hotbar.Selected, Mathf.Max(1, def.durabilityLossPerUse)))
+                _inv.DamageSlot(_hotbar.SelectedInventoryIndex, Mathf.Max(1, def.durabilityLossPerUse)))
             {
                 Flash($"{def.Display} broke");
                 return true;

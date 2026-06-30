@@ -524,6 +524,7 @@ namespace IsoCore.Foundation
                 inventorySlots = Inventory != null ? Inventory.SnapshotSlots() : Array.Empty<ItemStack>(),
                 equipment = Equipment != null ? Equipment.CaptureState() : null,
                 hotbarSelected = Hotbar != null ? Hotbar.Selected : 0,
+                hotbarRow = Hotbar != null ? Hotbar.ActiveRow : 0,
                 progression = Progression != null ? Progression.CaptureState() : null,
                 qol = QoL != null ? QoL.CaptureState() : null,
                 modifiedCells = World != null ? World.SnapshotModifiedCells() : Array.Empty<FoundationSavedCell>(),
@@ -557,7 +558,7 @@ namespace IsoCore.Foundation
             // the loadout re-applies the equipped bonuses and re-raises EquipmentChanged so the
             // visual layer re-bakes the restored gear).
             Equipment?.RestoreState(data.equipment);
-            if (Hotbar != null) Hotbar.Select(data.hotbarSelected);
+            if (Hotbar != null) Hotbar.SetSelection(data.hotbarSelected, data.hotbarRow);
             QoL?.RestoreState(data.qol);
 
             World?.ResetModifiedCells();
@@ -804,8 +805,10 @@ namespace IsoCore.Foundation
                 return;
 
             // Scroll-wheel zoom, clamped to the ISO-CORE range (no modifier needed).
+            // Shift+wheel is reserved for hotbar row cycling.
             float scroll = Input.mouseScrollDelta.y;
-            if (Mathf.Abs(scroll) > 0.01f)
+            bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            if (!shift && Mathf.Abs(scroll) > 0.01f)
             {
                 if (_pixelPerfectCamera != null && _pixelPerfectCamera.enabled) _pixelPerfectCamera.enabled = false;
                 _cam.orthographicSize = Mathf.Clamp(_cam.orthographicSize - scroll * cameraScrollStep, cameraMinSize, cameraMaxSize);

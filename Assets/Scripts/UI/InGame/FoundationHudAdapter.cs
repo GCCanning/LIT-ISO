@@ -42,11 +42,13 @@ namespace LitIso.UI.InGame
         void OnChanged() => Changed?.Invoke();
 
         public int SlotCount => _hotbar?.Size ?? 0;
+        public string HotbarRowText => _hotbar != null && _hotbar.RowCount > 1
+            ? $"Row {_hotbar.ActiveRow + 1}/{_hotbar.RowCount}" : "";
 
         public HudSlot GetSlot(int i)
         {
             if (_inv == null) return default;
-            var st = _inv.GetSlot(i);
+            var st = _hotbar != null ? _hotbar.GetVisibleStack(i) : _inv.GetSlot(i);
             string itemId = st.itemId;
             bool empty = string.IsNullOrEmpty(itemId);
 

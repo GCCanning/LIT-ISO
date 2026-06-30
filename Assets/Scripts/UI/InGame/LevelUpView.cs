@@ -76,6 +76,7 @@ namespace LitIso.UI.InGame
 
             _canvas = UiBuilder.NewCanvas(transform, "LevelUpCanvas", 240);
             IsoCore.Foundation.FoundationUiCoordinator.Active?.SetModalOpen("levelUp", true);
+            IsoCore.Foundation.SfxManager.Play("level_up", 0.9f, 0.03f);
 
             var root = UiBuilder.NewRect("Root", _canvas.transform);
             UiBuilder.Stretch(root);

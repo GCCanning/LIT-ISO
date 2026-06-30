@@ -9,6 +9,7 @@
     { f:'biome_preview.html',        n:'Biome Preview + Editor', d:'Generate & tune each biome' },
     { f:'settlement_editor.html',    n:'Settlement Editor',      d:'Villages / towns / cities' },
     { f:'interior_editor.html',      n:'Interior Editor',        d:'Tavern / guild / library interiors' },
+    { f:'character_party_builder.html', n:'Party Builder',       d:'Clean LPC-style party lineup for key art' },
     { f:'bridge_format_preview.html',n:'Bridge Preview',         d:'Bridge format comparison' },
     { f:'index.html',                n:'Biome Sketch (freehand)',d:'Hand-paint vignettes' },
     { f:'variant_lab.html',          n:'Tile Variant Lab',       d:'Tile variants + blends' },

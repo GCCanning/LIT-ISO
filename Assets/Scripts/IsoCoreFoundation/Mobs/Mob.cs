@@ -169,7 +169,11 @@ namespace IsoCore.Foundation
         void LoadAnimation(MobDefinition def)
         {
             string folder = null, prefix = null;
-            if (def != null && def.id == "slime") { folder = "Enemies/Slime/Individual Sprites"; prefix = "slime"; }
+            // Base slime + the biome variants (slime_common/rare/boss) all share the slime
+            // frames (single-direction blob; no directional rows). Without this the variants
+            // rendered as static coloured blobs.
+            if (def != null && (def.id == "slime" || def.id.StartsWith("slime_", System.StringComparison.Ordinal)))
+            { folder = "Enemies/Slime/Individual Sprites"; prefix = "slime"; }
             // Humanoid NPCs animate from character-creator sheets dropped into
             // Resources/Characters/<id>/ (frames named "<id>-idle-0", "<id>-move-0", ...).
             if (def != null && (def.id == "bandit" || def.id.StartsWith("adventurer_", System.StringComparison.Ordinal)))
@@ -297,8 +301,14 @@ namespace IsoCore.Foundation
             if (_hp <= 0f)
             {
                 _resolved = true;
-                SfxManager.Play("hit", 0.6f);
+                string mobId = _def != null ? _def.id : "";
+                SfxManager.PlayAtBest($"mob_{mobId}_death", "hit", transform.position, 0.65f);
                 Destroy(gameObject); // the spawner prunes destroyed mobs; no player credit for NPC kills
+            }
+            else
+            {
+                string mobId = _def != null ? _def.id : "";
+                SfxManager.PlayAtBest($"mob_{mobId}_hurt", "hit", transform.position, 0.45f);
             }
         }
 
@@ -318,7 +328,7 @@ namespace IsoCore.Foundation
             _stats.Damage(damage);
             FloatingText.Spawn(_player.transform.position + Vector3.up * 0.75f,
                 $"-{Mathf.CeilToInt(damage)} HP", new Color(1f, 0.35f, 0.25f));
-            SfxManager.Play("hit", 0.75f);
+            SfxManager.PlayAt("hit", _player.transform.position, 0.75f);
         }
 
         // Phase 3: occasional NPC ability cast, gated by a per-mob cooldown. NPCs have no

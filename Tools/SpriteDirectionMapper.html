@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Sprite Direction Mapper — LIT-ISO</title>
+<style>
+  :root{--bg:#16161a;--panel:#1f1f25;--line:#34343d;--txt:#e9e9ec;--mut:#9a9aa2;--accent:#5a8de8;--ok:#4caf6a;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--txt);padding:24px;line-height:1.4}
+  h1{font-size:20px;margin:0 0 4px}
+  p.sub{color:var(--mut);margin:0 0 18px;font-size:14px;max-width:760px}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px}
+  .controls label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+  .controls input{font:inherit;background:#101015;border:1px solid var(--line);color:var(--txt);border-radius:7px;padding:7px 9px;width:120px}
+  #drop{border:2px dashed var(--line);border-radius:10px;padding:26px;text-align:center;color:var(--mut);cursor:pointer;margin-bottom:18px;transition:.15s}
+  #drop.drag{border-color:var(--accent);color:var(--txt);background:rgba(90,141,232,.07)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;align-items:center}
+  .card .rl{align-self:flex-start;font-size:12px;color:var(--mut)}
+  .card canvas{image-rendering:pixelated;width:128px;height:128px;background:#0c0c10;border-radius:8px}
+  .dirs{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%}
+  .dirs button{font:inherit;font-size:12px;padding:8px 4px;border-radius:7px;border:1px solid var(--line);background:#101015;color:var(--txt);cursor:pointer}
+  .dirs button small{display:block;color:var(--mut);font-size:10px}
+  .dirs button.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+  .dirs button.sel small{color:#dfe9ff}
+  .card input.anim{font:inherit;font-size:12px;width:100%;background:#101015;border:1px solid var(--line);color:var(--txt);border-radius:7px;padding:6px 8px}
+  .foot{position:sticky;bottom:0;margin-top:20px;display:flex;gap:12px;align-items:center;background:var(--bg);padding:14px 0}
+  #out{flex:1;font-family:ui-monospace,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--mut);white-space:pre-wrap;min-height:40px}
+  #copy{font:inherit;font-weight:600;font-size:14px;padding:10px 16px;border:none;border-radius:8px;background:var(--ok);color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+  <h1>Sprite Direction Mapper</h1>
+  <p class="sub">Drop a spritesheet (or click to choose), set the frame size, then click the direction each <b>row</b> faces. Hit <b>Copy</b> and paste the result back to Claude. Works for any sheet — rows are usually directions, columns are animation frames.</p>
+
+  <div class="controls">
+    <label>Frame width (px)<input id="fw" type="number" value="64" min="1"/></label>
+    <label>Frame height (px)<input id="fh" type="number" value="64" min="1"/></label>
+    <label>Preview frame (column)<input id="col" type="number" value="2" min="0"/></label>
+    <span id="info" style="color:var(--mut);font-size:13px"></span>
+  </div>
+
+  <div id="drop">Drop a PNG spritesheet here, or click to choose a file</div>
+  <input id="file" type="file" accept="image/png,image/*" style="display:none"/>
+
+  <div class="grid" id="rows"></div>
+
+  <div class="foot">
+    <div id="out">Mapping will appear here.</div>
+    <button id="copy">Copy mapping</button>
+  </div>
+
+<script>
+(function(){
+  var img=null, picks={}, anims={};
+  var fw=document.getElementById('fw'), fh=document.getElementById('fh'), col=document.getElementById('col');
+  var drop=document.getElementById('drop'), file=document.getElementById('file');
+  var rows=document.getElementById('rows'), out=document.getElementById('out'), info=document.getElementById('info');
+  var DIRS=[['up','▲ Up','back / north'],['down','▼ Down','front / south'],['left','◀ Left','west'],['right','Right ▶','east']];
+
+  drop.addEventListener('click',function(){file.click()});
+  drop.addEventListener('dragover',function(e){e.preventDefault();drop.classList.add('drag')});
+  drop.addEventListener('dragleave',function(){drop.classList.remove('drag')});
+  drop.addEventListener('drop',function(e){e.preventDefault();drop.classList.remove('drag');if(e.dataTransfer.files[0])load(e.dataTransfer.files[0])});
+  file.addEventListener('change',function(){if(file.files[0])load(file.files[0])});
+  [fw,fh,col].forEach(function(el){el.addEventListener('change',render)});
+
+  function load(f){
+    var r=new FileReader();
+    r.onload=function(){var i=new Image();i.onload=function(){img=i;picks={};anims={};render()};i.src=r.result};
+    r.readAsDataURL(f);
+  }
+  function render(){
+    rows.innerHTML='';
+    if(!img)return;
+    var w=+fw.value||64,h=+fh.value||64,c=Math.max(0,+col.value||0);
+    var nrows=Math.max(1,Math.round(img.height/h)), ncols=Math.max(1,Math.round(img.width/w));
+    info.textContent=img.width+'×'+img.height+'px  →  '+nrows+' rows × '+ncols+' cols';
+    var cc=Math.min(c,ncols-1);
+    for(var r=0;r<nrows;r++){
+      (function(r){
+        var card=document.createElement('div');card.className='card';
+        var rl=document.createElement('div');rl.className='rl';rl.textContent='Row '+r;card.appendChild(rl);
+        var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,cc*w,r*h,w,h,0,0,w,h);
+        card.appendChild(cv);
+        var dd=document.createElement('div');dd.className='dirs';
+        DIRS.forEach(function(d){
+          var b=document.createElement('button');b.innerHTML=d[1]+'<small>'+d[2]+'</small>';
+          b.onclick=function(){dd.querySelectorAll('button').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');picks[r]=d[0];update()};
+          dd.appendChild(b);
+        });
+        card.appendChild(dd);
+        var ai=document.createElement('input');ai.className='anim';ai.placeholder='(optional) animation name';
+        ai.oninput=function(){anims[r]=ai.value;update()};
+        card.appendChild(ai);
+        rows.appendChild(card);
+      })(r);
+    }
+    update();
+  }
+  function update(){
+    var nrows=rows.children.length, parts=[];
+    for(var r=0;r<nrows;r++){var s='row'+r+'='+(picks[r]||'?');if(anims[r])s+=' ('+anims[r]+')';parts.push(s);}
+    out.textContent='rows='+nrows+', frameSize='+ (fw.value)+'x'+(fh.value)+'  |  '+parts.join(', ');
+  }
+  document.getElementById('copy').addEventListener('click',function(){
+    navigator.clipboard.writeText(out.textContent).then(function(){
+      var b=document.getElementById('copy');var t=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=t},1200);
+    });
+  });
+})();
+</script>
+</body>
+</html>

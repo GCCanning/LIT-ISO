@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "project": "LIT-ISO",
+  "style_contract": {
+    "source": "PixelLab",
+    "summary": "Crisp isometric pixel-art dark fantasy UI and scene assets. Deep navy-charcoal panels, antique brass accents, readable slots and tabs, no baked text, no copyrighted style imitation.",
+    "component_rules": [
+      "transparent background for UI components",
+      "no text baked into sprites",
+      "point-filtered pixel edges",
+      "9-slice friendly borders for panels, buttons, tabs, and slots",
+      "full-screen backgrounds may include environment art but must reserve readable negative space"
+    ]
+  },
+  "runtime_paths": {
+    "menu": "Assets/Resources/UI/Menu",
+    "in_game": "Assets/Resources/UI/InGame",
+    "class_selection": "Assets/Resources/UI/ClassSelection",
+    "loading": "Assets/Resources/UI/Loading",
+    "audio_sfx": "Assets/Resources/Audio/SFX",
+    "audio_biome_ambient": "Assets/Resources/Audio/Ambient/Biome"
+  },
+  "screen_backgrounds": [
+    {
+      "id": "main_menu",
+      "target": "Assets/Resources/UI/Menu/background.png",
+      "size": "1920x1080",
+      "prompt_role": "campfire, tavern, portal, playable world signal, left-side negative space for menu"
+    },
+    {
+      "id": "loading_default",
+      "target": "Assets/Resources/UI/Loading/background_default.png",
+      "size": "1920x1080",
+      "prompt_role": "travel transition art with camp path, faint System glyphs, readable bottom progress area"
+    },
+    {
+      "id": "class_selection",
+      "target": "Assets/Resources/UI/ClassSelection/background.png",
+      "size": "1920x1080",
+      "prompt_role": "cosmic System void, floating player silhouette, class-offer ceremony"
+    },
+    {
+      "id": "character_creation",
+      "target": "Assets/Resources/UI/Menu/background_character_creation.png",
+      "size": "1920x1080",
+      "prompt_role": "Stardew-clean character setup space, player preview area, System void mood"
+    },
+    {
+      "id": "world_creation",
+      "target": "Assets/Resources/UI/Menu/background_world_creation.png",
+      "size": "1920x1080",
+      "prompt_role": "isometric map table, seed/world setup mood, readable center-left panel area"
+    },
+    {
+      "id": "death_respawn",
+      "target": "Assets/Resources/UI/Loading/background_death_respawn.png",
+      "size": "1920x1080",
+      "prompt_role": "quiet campfire respawn atmosphere, dark edges, no gore"
+    }
+  ],
+  "ui_components": [
+    "logo",
+    "panel",
+    "panel_parchment",
+    "panel_wood",
+    "button",
+    "button_hover",
+    "button_pressed",
+    "button_disabled",
+    "tab_idle",
+    "tab_active",
+    "slot",
+    "slot_selected",
+    "slot_locked",
+    "slot_favorite",
+    "equipment_slot_head",
+    "equipment_slot_chest",
+    "equipment_slot_legs",
+    "equipment_slot_feet",
+    "equipment_slot_hands",
+    "equipment_slot_weapon",
+    "equipment_slot_offhand",
+    "equipment_slot_accessory",
+    "hotbar_bg",
+    "hotbar_row_pip",
+    "bar_track",
+    "bar_health_fill",
+    "bar_mana_fill",
+    "bar_stamina_fill",
+    "bar_xp_fill",
+    "ability_slot",
+    "ability_slot_ready",
+    "ability_slot_cooldown",
+    "ability_wheel_ring",
+    "ability_wheel_segment",
+    "quest_tracker",
+    "minimap_frame",
+    "tooltip",
+    "context_menu",
+    "scroll_track",
+    "scroll_handle",
+    "toggle_on",
+    "toggle_off",
+    "dropdown",
+    "badge_blank",
+    "rank_badge_frame",
+    "map_pin_player",
+    "map_pin_quest",
+    "map_pin_camp",
+    "map_pin_dungeon",
+    "map_pin_town",
+    "weather_clear",
+    "weather_rain",
+    "weather_snow",
+    "weather_wind",
+    "weather_mist"
+  ],
+  "audio_keys": {
+    "existing": [
+      "chop",
+      "craft",
+      "footstep",
+      "harvest",
+      "mine",
+      "pickup",
+      "place",
+      "ui_click"
+    ],
+    "needed_first_pass": [
+      "ui_hover",
+      "ui_tab",
+      "ui_open",
+      "ui_close",
+      "ui_error",
+      "ui_assign",
+      "footstep_grass_01",
+      "footstep_grass_02",
+      "footstep_dirt_01",
+      "footstep_stone_01",
+      "footstep_wood_01",
+      "footstep_snow_01",
+      "player_land",
+      "player_hurt",
+      "mob_idle_small",
+      "mob_alert",
+      "mob_hurt",
+      "mob_death",
+      "ability_cast",
+      "ability_impact",
+      "level_up",
+      "rank_up",
+      "skill_unlock",
+      "quest_complete",
+      "system_message",
+      "weather_rain_loop",
+      "weather_wind_gust",
+      "weather_thunder",
+      "campfire_loop"
+    ]
+  },
+  "hotbar_target": {
+    "visible_slots": 9,
+    "row_model": "visible slot maps to inventory[activeRow * visibleSlots + visibleIndex]",
+    "inputs": [
+      "number keys select visible slot",
+      "mouse wheel cycles selected slot",
+      "shift + mouse wheel cycles hotbar row",
+      "inventory tab highlights exposed row"
+    ],
+    "save_fields": [
+      "hotbarSelectedVisibleSlot",
+      "hotbarActiveRow"
+    ]
+  },
+  "ability_wheel_target": {
+    "quick_slots": ["Q", "E", "R", "F"],
+    "open_input": "hold X",
+    "behaviors": [
+      "flick and release to cast",
+      "drag learned ability onto quick slot to assign",
+      "show cooldown and cost state",
+      "group learned abilities by element",
+      "support keyboard/mouse now and controller later"
+    ]
+  }
+}
