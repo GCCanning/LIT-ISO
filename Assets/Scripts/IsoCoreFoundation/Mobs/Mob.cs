@@ -105,7 +105,7 @@ namespace IsoCore.Foundation
                 }
                 else _sr.sprite = PlaceholderArt.Blob(JitterColor(def.color), def.sizeUnits);
             }
-            FoundationDepthPolish.Attach(gameObject, fadeWhenOccluding: false, castLongShadow: false,
+            FoundationDepthPolish.Attach(gameObject, fadeWhenOccluding: false, castLongShadow: true,
                 contactScale: Mathf.Clamp(def.sizeUnits, 0.45f, 1.2f), contactAlpha: 0.24f);
 
             PickTarget();
@@ -138,6 +138,12 @@ namespace IsoCore.Foundation
             _nightDamageMul = damageMul > 0f ? damageMul : 1f;
             _nightSpeedMul = speedMul > 0f ? speedMul : 1f;
             _nightAggroMul = aggroMul > 0f ? aggroMul : 1f;
+            // Night hunters must be READABLE as more dangerous, not just numerically
+            // buffed (reference-integration pass, 2026-07-02): a warm blood-tinged cast
+            // multiplies over the shared day/night ambient so empowered mobs stand out
+            // against the cool night palette at a glance.
+            if (_sr != null)
+                _sr.color = new Color(1.0f, 0.72f, 0.70f, 1f);
         }
 
         /// <summary>Distance-from-spawn scaling: bumps level, HP and damage so enemies further

@@ -16,11 +16,14 @@ namespace IsoCore.Foundation
         FoundationConfig _cfg;
 
         PlaceableInstance _activeCamp;
+        CampfireWardRing _wardRing;
         float _recheckTimer;
         float _recoveryTimer;
         float _messageTimer;
         bool _lastAtCamp;
         bool _lastNightFatigue;
+        bool _wasDusk;
+        bool _wasNight;
 
         const float RecheckInterval = 0.25f;
         const float RecoveryTickSeconds = 1f;
@@ -89,6 +92,67 @@ namespace IsoCore.Foundation
 
             if (_messageTimer > 0f)
                 _messageTimer -= Time.deltaTime;
+
+            UpdatePhaseWarnings();
+            UpdateWardRing();
+        }
+
+        /// <summary>
+        /// Day/night rhythm readability (reference-integration pass, 2026-07-02): the
+        /// approach of night is announced BEFORE it becomes dangerous, so daytime is
+        /// visibly "preparation time" and night pressure never feels arbitrary.
+        /// These transition messages bypass the anti-spam window — they fire once per
+        /// cycle and are the survival loop's most important cues.
+        /// </summary>
+        void UpdatePhaseWarnings()
+        {
+            if (_dayNight == null)
+                return;
+
+            bool dusk = _dayNight.time >= 0.68f && _dayNight.time < 0.80f;
+            if (dusk && !_wasDusk)
+            {
+                _progression?.SystemFeed.Queue(SystemMessageChannel.Warning,
+                    "Dusk falls. Night hunters wake soon — reach a campfire ward or keep your weapon close.",
+                    "camping", 2);
+                _overlay?.Tutorial("Dusk falls. Night hunters wake soon — reach a campfire ward.", 5f);
+            }
+            _wasDusk = dusk;
+
+            bool night = _dayNight.IsNight;
+            if (night && !_wasNight)
+            {
+                _progression?.SystemFeed.Queue(SystemMessageChannel.Warning,
+                    AtCampsite
+                        ? "Night has fallen. The fire ward holds — stay inside its light."
+                        : "Night has fallen. The hunt begins. Firelight is safety.",
+                    "camping", 2);
+            }
+            _wasNight = night;
+        }
+
+        /// <summary>
+        /// Keeps the pooled ward-radius ring on the active camp, fading in from dusk so
+        /// the safe ground is something the player can see rather than remember.
+        /// </summary>
+        void UpdateWardRing()
+        {
+            if (!AtCampsite || _dayNight == null)
+            {
+                _wardRing?.Hide();
+                return;
+            }
+
+            float visibility = Mathf.InverseLerp(0.30f, 0.55f, _dayNight.NightFactor);
+            if (visibility <= 0f)
+            {
+                _wardRing?.Hide();
+                return;
+            }
+
+            if (_wardRing == null)
+                _wardRing = CampfireWardRing.Create(transform);
+            _wardRing.Show(_activeCamp.transform.position, ActiveCampRadius, visibility);
         }
 
         void RefreshActiveCamp()

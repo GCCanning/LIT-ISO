@@ -58,6 +58,24 @@ namespace IsoCore.Foundation
             return char.ToUpper(s[0]) + s.Substring(1);
         }
 
+        static TerrainSubstrate SubstrateForGroup(string groupId)
+        {
+            if (string.IsNullOrEmpty(groupId)) return TerrainSubstrate.Organic;
+            if (groupId.Contains("water")) return TerrainSubstrate.Water;
+            if (groupId.Contains("constructed") || groupId.Contains("path") ||
+                groupId == "floor_blocks" || groupId.Contains("dungeon_floor"))
+                return TerrainSubstrate.Constructed;
+            if (groupId.Contains("gold_grass")) return TerrainSubstrate.GoldenGrass;
+            if (groupId.Contains("moss")) return TerrainSubstrate.Moss;
+            if (groupId.Contains("mud")) return TerrainSubstrate.Mud;
+            if (groupId.Contains("snow")) return TerrainSubstrate.Snow;
+            if (groupId.Contains("sand")) return TerrainSubstrate.Sand;
+            if (groupId.Contains("stone")) return TerrainSubstrate.Stone;
+            if (groupId.Contains("cinder") || groupId.Contains("badlands") ||
+                groupId.Contains("dirt")) return TerrainSubstrate.Cinder;
+            return TerrainSubstrate.Organic;
+        }
+
         public static FoundationContent BuildDefault()
         {
             var c = new FoundationContent();
@@ -67,6 +85,7 @@ namespace IsoCore.Foundation
             {
                 var b = New<BlockDefinition>(id);
                 b.groupId = group; b.color = col; b.collision = mode;
+                b.substrate = SubstrateForGroup(group);
                 c.Blocks.Add(b); return b;
             }
 
@@ -383,6 +402,12 @@ namespace IsoCore.Foundation
                 new[] { new ItemDrop("fiber", 1, 2) });
             var tulip = Node("flower_tulip", new Color(0.80f, 0.40f, 0.70f), ToolType.None, false, 2, 0.3f,
                 new[] { new ItemDrop("fiber", 1, 1) });
+            var cactus = Node("cactus", new Color(0.42f, 0.62f, 0.28f), ToolType.Axe, false, 5, 1.1f,
+                new[] { new ItemDrop("fiber", 1, 3) });
+            cactus.visualId = "cactus_tall";
+            var deadScrub = Node("dead_scrub", new Color(0.48f, 0.38f, 0.22f), ToolType.None, false, 2, 0.45f,
+                new[] { new ItemDrop("fiber", 1, 2) });
+            deadScrub.visualId = "plains_dry_bush";
 
             // ResourceNodeDefinition.blocksMovement DEFAULTS TO TRUE, so without these overrides
             // even low ground cover blocked the player — you'd catch on near-invisible flowers/
@@ -393,6 +418,7 @@ namespace IsoCore.Foundation
             flower.blocksMovement = false;
             tuft.blocksMovement = false;
             tulip.blocksMovement = false;
+            deadScrub.blocksMovement = false;
 
             // ---- Mobs ----
             MobDefinition Mob(string id, Color col, MobBehavior beh, float speed, float wander, ItemDrop[] drops)
@@ -490,6 +516,28 @@ namespace IsoCore.Foundation
             BiomeNodeSpawn NS(ResourceNodeDefinition n, float chance) =>
                 new BiomeNodeSpawn { node = n, chancePerCell = chance };
             BiomeMobSpawn MS(MobDefinition m, float w) => new BiomeMobSpawn { mob = m, weight = w };
+            BiomePropProfile Props(
+                TerrainSubstrate vegetation,
+                TerrainSubstrate geology,
+                int maxTreeHeight = 2,
+                int maxGroundHeight = 2,
+                float treeThreshold = 0.52f,
+                float coverThreshold = 0.46f,
+                float geologyThreshold = 0.64f,
+                float nearWaterMultiplier = 1f,
+                int edgeClearance = 1) =>
+                new()
+                {
+                    vegetationSubstrates = vegetation,
+                    geologySubstrates = geology,
+                    maxTreeHeight = maxTreeHeight,
+                    maxGroundCoverHeight = maxGroundHeight,
+                    treePatchThreshold = treeThreshold,
+                    groundCoverPatchThreshold = coverThreshold,
+                    geologyPatchThreshold = geologyThreshold,
+                    nearWaterVegetationMultiplier = nearWaterMultiplier,
+                    blockingPropEdgeClearance = edgeClearance
+                };
 
             // ── Weighted tile-pool helper ──────────────────────────────────────────
             BiomeTilePoolEntry[] TPool(params (string id, float w)[] entries)
@@ -508,6 +556,10 @@ namespace IsoCore.Foundation
             meadowB.surfaceBasePool = TPool(("pl_meado_01", 330f), ("pl_meadow_02", 168f), ("pl_grass_01", 102f));
             meadowB.surfaceAccents  = TPool(("pl_grass_02", 6f), ("pl_reddirt_02Cracked", 4f), ("pl_forestgrass_02", 3f));
             meadowB.accentRate      = 0.08f;
+            meadowB.propProfile = Props(
+                TerrainSubstrate.Organic,
+                TerrainSubstrate.Organic | TerrainSubstrate.Stone,
+                treeThreshold: 0.62f, coverThreshold: 0.50f, geologyThreshold: 0.74f);
 
             var forestB = Biome("forest", 0.45f, 0.85f, forestGroup, 1, 6,
                 new[] { NS(tree, 0.14f), NS(bush, 0.06f), NS(rock, 0.02f), NS(copperVein, 0.01f),
@@ -516,6 +568,10 @@ namespace IsoCore.Foundation
             forestB.surfaceBasePool = TPool(("pl_grass_01", 175f), ("pl_grass_02", 140f), ("pl_forestgrass_02", 105f));
             forestB.surfaceAccents  = TPool(("pl_meado_01", 6f), ("pl_reddirt_02Cracked", 5f), ("pl_meadow_02", 4f));
             forestB.accentRate      = 0.10f;
+            forestB.propProfile = Props(
+                TerrainSubstrate.Organic | TerrainSubstrate.Moss,
+                TerrainSubstrate.Organic | TerrainSubstrate.Moss | TerrainSubstrate.Stone,
+                treeThreshold: 0.46f, coverThreshold: 0.42f, geologyThreshold: 0.70f);
 
             // Desert: pl_sandd_01 dominant — warm cracked sand floor with sparse accents.
             var desertB = Biome("desert", 0.88f, 0.15f, badlandsGroup, 1, 5,
@@ -524,6 +580,10 @@ namespace IsoCore.Foundation
             desertB.surfaceBasePool = TPool(("pl_sandd_01", 360f), ("pl_reddirt_02Cracked", 12f));
             desertB.surfaceAccents  = TPool(("pl_reddirt_02Cracked", 5f));
             desertB.accentRate      = 0.06f;
+            desertB.propProfile = Props(
+                TerrainSubstrate.Cinder | TerrainSubstrate.Sand,
+                TerrainSubstrate.Cinder | TerrainSubstrate.Sand | TerrainSubstrate.Stone,
+                maxTreeHeight: 1, treeThreshold: 0.68f, coverThreshold: 0.62f, geologyThreshold: 0.56f);
 
             // Beach: narrow coastal strip using PixelLab sand atlas tiles.
             var beachB = Biome("beach", 0.70f, 0.45f, sandGroup, 1, 1,
@@ -532,6 +592,10 @@ namespace IsoCore.Foundation
             beachB.surfaceBasePool = TPool(("sand_03", 20f), ("sand_01", 20f), ("sand_06", 20f), ("sand_11", 20f));
             beachB.surfaceAccents  = TPool(("sand_13", 4f));
             beachB.accentRate      = 0.05f;
+            beachB.propProfile = Props(
+                TerrainSubstrate.None,
+                TerrainSubstrate.Sand | TerrainSubstrate.Water,
+                maxTreeHeight: 0, maxGroundHeight: 0, geologyThreshold: 0.72f);
 
             // Snow/Taiga: pine-heavy forest on snowy ground.
             var snowB = Biome("snow", 0.12f, 0.45f, snowGroup, 1, 3,
@@ -544,6 +608,10 @@ namespace IsoCore.Foundation
                 ("snow2_08", 20f), ("snow2_10", 20f), ("snow2_02", 20f), ("snow2_14", 1f));
             snowB.surfaceAccents  = null;
             snowB.accentRate      = 0f;
+            snowB.propProfile = Props(
+                TerrainSubstrate.Snow,
+                TerrainSubstrate.Snow | TerrainSubstrate.Stone,
+                treeThreshold: 0.58f, coverThreshold: 0.56f, geologyThreshold: 0.62f);
             // Height bands from export (12): soft snow throughout, subtle variants per tier
             snowB.surfaceBands = new BiomeTilePoolEntry[8][];
             snowB.surfaceBands[0] = TPool(("pl_snoww_01", 60f), ("pl_snoww_02", 28f));
@@ -557,30 +625,55 @@ namespace IsoCore.Foundation
 
             // Mountain: elevation-gated (height >= 3) — overrides climate biome.
             var mountainB = Biome("mountain", 0.30f, 0.30f, badlandsGroup, 3, 6,
-                new[] { NS(rock, 0.14f) },
+                new[] { NS(rock, 0.14f), NS(copperVein, 0.018f) },
                 new[] { MS(deer, 0.2f) }, new Color(0.55f, 0.58f, 0.62f));
             mountainB.elevationGateMinHeight = 3;
+            mountainB.propProfile = Props(
+                TerrainSubstrate.None,
+                TerrainSubstrate.Stone | TerrainSubstrate.Snow,
+                maxTreeHeight: 0, maxGroundHeight: 0, geologyThreshold: 0.52f, edgeClearance: 1);
 
             // ── New BiomeSketch biomes ─────────────────────────────────────────
-            Biome("frozenmountain", 0.13f, 0.65f, snowGroup, 2, 4,
-                new[] { NS(rock, 0.06f), NS(pine, 0.03f), NS(copperVein, 0.01f) },
+            var frozenMountainB = Biome("frozenmountain", 0.13f, 0.65f, snowGroup, 2, 4,
+                new[] { NS(rock, 0.06f), NS(copperVein, 0.01f) },
                 new[] { MS(fox, 0.5f), MS(slime, 1f) }, new Color(0.60f, 0.65f, 0.72f));
+            frozenMountainB.propProfile = Props(
+                TerrainSubstrate.None,
+                TerrainSubstrate.Snow | TerrainSubstrate.Stone,
+                maxTreeHeight: 0, maxGroundHeight: 0, geologyThreshold: 0.56f, edgeClearance: 1);
 
-            Biome("marsh", 0.50f, 0.85f, mudGroup, 1, 1,
+            var marshB = Biome("marsh", 0.50f, 0.85f, mudGroup, 1, 1,
                 new[] { NS(bush, 0.08f), NS(flower, 0.04f), NS(log, 0.02f) },
                 new[] { MS(deer, 0.5f), MS(slime, 1f), MS(plant2, 0.6f) }, new Color(0.30f, 0.40f, 0.28f));
+            marshB.propProfile = Props(
+                TerrainSubstrate.Mud | TerrainSubstrate.Moss,
+                TerrainSubstrate.None,
+                maxTreeHeight: 1, maxGroundHeight: 1, treeThreshold: 0.58f,
+                coverThreshold: 0.36f, nearWaterMultiplier: 1.8f);
 
-            Biome("grotto", 0.30f, 0.80f, mossGroup, 1, 3,
+            var grottoB = Biome("grotto", 0.30f, 0.80f, mossGroup, 1, 3,
                 new[] { NS(rock, 0.07f), NS(flower, 0.05f), NS(copperVein, 0.02f) },
                 new[] { MS(slime, 1f), MS(plant3, 0.4f) }, new Color(0.25f, 0.55f, 0.50f));
+            grottoB.propProfile = Props(
+                TerrainSubstrate.Moss,
+                TerrainSubstrate.Moss | TerrainSubstrate.Stone,
+                maxTreeHeight: 0, maxGroundHeight: 2, coverThreshold: 0.42f, geologyThreshold: 0.46f);
 
-            Biome("sunspool", 0.80f, 0.40f, goldGrassGroup, 1, 2,
-                new[] { NS(bush, 0.04f), NS(flower, 0.06f), NS(rock, 0.01f) },
+            var sunspoolB = Biome("sunspool", 0.80f, 0.40f, goldGrassGroup, 1, 2,
+                new[] { NS(bush, 0.04f), NS(flower, 0.06f) },
                 new[] { MS(deer, 1f), MS(fox, 0.4f) }, new Color(0.85f, 0.75f, 0.30f));
+            sunspoolB.propProfile = Props(
+                TerrainSubstrate.GoldenGrass,
+                TerrainSubstrate.None,
+                maxTreeHeight: 0, maxGroundHeight: 2, coverThreshold: 0.44f);
 
-            Biome("badlands", 0.88f, 0.10f, cinderGroup, 1, 3,
-                new[] { NS(rock, 0.06f), NS(stump, 0.02f), NS(copperVein, 0.012f) },
+            var badlandsB = Biome("badlands", 0.88f, 0.10f, cinderGroup, 1, 3,
+                new[] { NS(cactus, 0.025f), NS(deadScrub, 0.035f), NS(rock, 0.06f), NS(copperVein, 0.012f) },
                 new[] { MS(slime, 1f), MS(plant1, 0.5f) }, new Color(0.45f, 0.32f, 0.26f));
+            badlandsB.propProfile = Props(
+                TerrainSubstrate.Cinder | TerrainSubstrate.Sand,
+                TerrainSubstrate.Cinder | TerrainSubstrate.Stone,
+                maxTreeHeight: 2, treeThreshold: 0.66f, coverThreshold: 0.60f, geologyThreshold: 0.54f);
             // mergedBase from export (11) — fallback when height band not matched
             mountainB.surfaceBasePool = TPool(
                 ("pl_stoneel_01", 155f), ("pl_grass_01", 80f), ("snow2_07", 40f),
@@ -1049,6 +1142,12 @@ namespace IsoCore.Foundation
                 new[] { X(FoundationXpChannel.SkillMastery, "foraging", 3), X(FoundationXpChannel.Character, "character", 1) },
                 new[] { T("trail_cook", 1) },
                 new[] { A("root", 2), A("hearth", 1) });
+            Evidence("biome_discovered", "Region Discovered",
+                "Entry recorded: a new region charted. The System notes your reach.",
+                new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Survival, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "exploration", 4), X(FoundationXpChannel.Character, "character", 2) },
+                new FoundationTitleProgressGrant[0],
+                new FoundationAffinityGrant[0]);
             Evidence("craft_workbench", "Craft Workbench",
                 "Entry recorded: first station made. Crafting identity rises.",
                 new[] { W(TrialEvidenceCategory.Crafting, 3), W(TrialEvidenceCategory.Building, 2) },

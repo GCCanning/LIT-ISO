@@ -65,6 +65,7 @@ namespace IsoCore.Foundation
         public MobSpawner MobSpawner { get; private set; }
         public DayNightSystem DayNight { get; private set; }
         public FoundationCampingSystem Camping { get; private set; }
+        public FoundationBiomeDiscovery BiomeDiscovery { get; private set; }
         public FoundationDeathSystem Death { get; private set; }
         public CraftingSystem Crafting { get; private set; }
         public FoundationProgression Progression { get; private set; }
@@ -219,7 +220,7 @@ namespace IsoCore.Foundation
             // can't be referenced from this assembly (IsoCore.Foundation). It hooks
             // itself onto the player via the Ready event instead — see
             // LayeredCharacterPlayerHook.cs.
-            FoundationDepthPolish.Attach(playerGo, fadeWhenOccluding: false, castLongShadow: false,
+            FoundationDepthPolish.Attach(playerGo, fadeWhenOccluding: false, castLongShadow: true,
                 contactScale: 0.72f, contactAlpha: 0.32f);
             _playerT = playerGo.transform;
 
@@ -276,7 +277,7 @@ namespace IsoCore.Foundation
             // effect + VFX (blink / projectile / heal). The ability wheel VM casts through
             // Abilities.TryUseAbility, then calls AbilityDispatcher.Execute.
             AbilityDispatcher = new FoundationAbilityDispatcher();
-            AbilityDispatcher.Init(Player, MobSpawner, Content, Progression?.Stats);
+            AbilityDispatcher.Init(Player, MobSpawner, Content, Progression?.Stats, config.abilityVfxEnabled);
 
             // Day/night clock.
             DayNight = gameObject.AddComponent<DayNightSystem>();
@@ -346,6 +347,16 @@ namespace IsoCore.Foundation
             var weather = weatherGo.AddComponent<FoundationWeatherVisuals>();
             weather.Init(DayNight, _cam, World, Player, Instances, config.seed);
 
+            var atmosphereGo = new GameObject("FoundationAtmosphereOverlay");
+            atmosphereGo.transform.SetParent(transform, false);
+            atmosphereGo.AddComponent<FoundationAtmosphereOverlay>()
+                .Init(DayNight, _cam, World, Player, Instances, weather);
+
+            // Biome discovery journal: first-visit toasts + Trial evidence + the live
+            // biome name the HUD phase band reads (reference-integration pass, 2026-07-02).
+            BiomeDiscovery = gameObject.AddComponent<FoundationBiomeDiscovery>();
+            BiomeDiscovery.Init(World, Player, Progression, InteractionOverlay, Instances);
+
             // The old IMGUI FoundationHUD backup is intentionally not created.
             // uGUI is the canonical runtime UI; GameHudInitializer spawns it when Ready fires.
 
@@ -394,6 +405,16 @@ namespace IsoCore.Foundation
                 config = new FoundationConfig();
             config.viewRadiusChunks = Mathf.Max(3, config.viewRadiusChunks);
             config.moveSpeed = Mathf.Clamp(config.moveSpeed <= 0f ? 2.8f : config.moveSpeed, 1.5f, 2.8f);
+            // Older scenes serialize the pre-expansion values. Keep the standard world
+            // on the larger continent/starter-biome baseline without rewriting scene YAML.
+            config.continentFrequency = Mathf.Min(
+                config.continentFrequency > 0f ? config.continentFrequency : 0.0025f,
+                0.0025f);
+            config.continentSpawnLandRadius = Mathf.Max(config.continentSpawnLandRadius, 96f);
+            config.climateFrequency = Mathf.Max(config.climateFrequency, 0.0065f);
+            config.guaranteeStarterBiomes = true;
+            config.starterBiomeRingRadius = Mathf.Max(config.starterBiomeRingRadius, 58f);
+            config.starterBiomePatchRadius = Mathf.Max(config.starterBiomePatchRadius, 13f);
 
             // The standard play/test world uses the continent generator (oceans, beaches,
             // biome regions, multi-step cliffs, rivers). The CreationInstance showroom
@@ -538,6 +559,7 @@ namespace IsoCore.Foundation
                 dayNightTime = DayNight != null ? DayNight.time : 0.30f,
                 mobs = MobSpawner != null ? MobSpawner.SnapshotMobs() : Array.Empty<FoundationSavedMob>(),
                 regionShifts = Progression != null ? ToArray(Progression.RegionShifts) : Array.Empty<string>(),
+                discoveredBiomes = BiomeDiscovery != null ? BiomeDiscovery.Snapshot() : Array.Empty<string>(),
             };
         }
 
@@ -581,6 +603,8 @@ namespace IsoCore.Foundation
             MapOverlay?.RestoreExploredCells(data.exploredMapCells);
             DayNight?.SetTime(data.dayNightTime);
             MobSpawner?.RestoreMobs(data.mobs);
+            // Pre-v13 saves carry no journal (null) → Restore starts one fresh.
+            BiomeDiscovery?.Restore(data.discoveredBiomes);
 
             if (Player != null)
                 Player.SetGround(new Vector2(data.player.groundX, data.player.groundY));
@@ -754,6 +778,7 @@ namespace IsoCore.Foundation
         }
 
         Vector3 _camVel;
+        Vector2 _lastImpactOffset;
         bool _camPanning;
         Vector3 _panGrabWorld;
         [SerializeField] float cameraFollowSmoothTime = 0.15f;
@@ -767,6 +792,12 @@ namespace IsoCore.Foundation
         {
             HandleCameraZoom();
             Crafting?.Tick(Time.deltaTime);
+
+            if (_cam != null && _lastImpactOffset.sqrMagnitude > 0f)
+            {
+                _cam.transform.position -= (Vector3)_lastImpactOffset;
+                _lastImpactOffset = Vector2.zero;
+            }
 
             if (_cam != null && _playerT != null)
             {
@@ -796,6 +827,12 @@ namespace IsoCore.Foundation
                     var target = new Vector3(tx, ty, -10f);
                     _cam.transform.position = Vector3.SmoothDamp(pos, target, ref _camVel, cameraFollowSmoothTime);
                 }
+            }
+
+            if (_cam != null)
+            {
+                _lastImpactOffset = FoundationImpactFeedback.Tick(Time.unscaledDeltaTime);
+                _cam.transform.position += (Vector3)_lastImpactOffset;
             }
         }
 

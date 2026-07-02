@@ -9,7 +9,10 @@ namespace IsoCore.Foundation
     [Serializable]
     public class FoundationSaveData
     {
-        public const int CurrentVersion = 12;
+        // v13 (2026-07-02): + discoveredBiomes (biome-discovery journal). Older saves
+        // load with the field null → treated as an empty journal (see
+        // FoundationBiomeDiscovery.Restore); no other migration required.
+        public const int CurrentVersion = 13;
 
         public int version = CurrentVersion;
         public string savedUtc;
@@ -36,6 +39,7 @@ namespace IsoCore.Foundation
         public float dayNightTime;
         public FoundationSavedMob[] mobs;
         public string[] regionShifts;
+        public string[] discoveredBiomes;
 
         public FoundationSaveMetadata ToMetadata()
         {

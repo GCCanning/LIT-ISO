@@ -1563,10 +1563,28 @@ namespace LitIso.UI.InGame
             if (_phaseText != null)
             {
                 string phase = _clockVm.PhaseLabel ?? "";
-                string shown = string.IsNullOrEmpty(phase) ? "Emberfall Woods" : phase + " · Emberfall Woods";
-                if (shown != _lastPhase) { _lastPhase = shown; _phaseText.text = shown; }
+                // Live biome from the Foundation discovery journal; the design-sample
+                // name only remains as the pre-bind placeholder.
+                string biome = FoundationBiomeDiscovery.ActiveBiomeDisplay;
+                if (string.IsNullOrEmpty(biome)) biome = "Emberfall Woods";
+                string shown = string.IsNullOrEmpty(phase) ? biome : phase + " · " + biome;
+                if (shown != _lastPhase)
+                {
+                    _lastPhase = shown;
+                    _phaseText.text = shown;
+                    // Phase-coloured band: day parchment, dawn gold, dusk amber and a
+                    // danger red at night — the day/night rhythm is readable from the
+                    // HUD alone (Romestead-informed hierarchy; original styling).
+                    _phaseText.color =
+                        phase == "Night" ? NightDangerCol :
+                        phase == "Dusk" ? HungerCol :
+                        phase == "Dawn" ? XpCol :
+                        TextCol;
+                }
             }
         }
+
+        static readonly Color NightDangerCol = LitIsoTheme.Hex("#e06767");
 
         void RefreshDayChip()
         {
