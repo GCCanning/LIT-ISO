@@ -13,10 +13,17 @@ namespace IsoCore.Foundation
     {
         readonly FoundationConfig _cfg;
         readonly IReadOnlyList<BiomeDefinition> _biomes;
+        readonly BlockDatabase _blocks;
         readonly uint _seedHash;
         readonly int _meadowIndex;
         readonly int _beachIndex;
         readonly int _mountainIndex;
+        static readonly string[] StarterBiomeIds =
+        {
+            "forest", "marsh", "grotto", "sunspool",
+            "badlands", "snow", "frozenmountain", "mountain"
+        };
+        readonly int[] _starterBiomeIndices;
         // Climate-rectangle selection (driven by biome_suite.json). When false we keep the
         // original nearest-centroid SelectBiome so a missing/!applied suite is a safe no-op.
         readonly bool _useBoxes;
@@ -26,18 +33,25 @@ namespace IsoCore.Foundation
         {
             _cfg = cfg;
             _biomes = content.Biomes.All;
+            _blocks = content.Blocks;
             _seedHash = (uint)(cfg.seed * 2654435761u + 0x9e3779b9u);
 
             _meadowIndex = 0;
             _beachIndex = -1;
             _mountainIndex = -1;
             _fallbackIndex = -1;
+            _starterBiomeIndices = new int[StarterBiomeIds.Length];
+            for (int i = 0; i < _starterBiomeIndices.Length; i++)
+                _starterBiomeIndices[i] = -1;
             for (int i = 0; i < _biomes.Count; i++)
             {
                 if (_biomes[i].id == "meadow") _meadowIndex = i;
                 else if (_biomes[i].id == "beach") _beachIndex = i;
                 else if (_biomes[i].id == "mountain") _mountainIndex = i;
                 if (_biomes[i].id == content.fallbackBiomeId) _fallbackIndex = i;
+                for (int starter = 0; starter < StarterBiomeIds.Length; starter++)
+                    if (_biomes[i].id == StarterBiomeIds[starter])
+                        _starterBiomeIndices[starter] = i;
             }
             if (_fallbackIndex < 0) _fallbackIndex = _meadowIndex;
             _useBoxes = content.biomeSuiteApplied;
@@ -122,7 +136,7 @@ namespace IsoCore.Foundation
                     if (dClearing > _cfg.spawnClearingRadius)
                     {
                         var picked = PickClusteredDecoration(wx, wy, meadow,
-                            Mathf.Clamp01(_cfg.flatWorldDecorationDensity));
+                            Mathf.Clamp01(_cfg.flatWorldDecorationDensity), gHeight, surfaceId);
                         if (picked.node != null)
                         {
                             cell.NodeId = picked.node.id;
@@ -227,12 +241,14 @@ namespace IsoCore.Foundation
 
             float temp = Perlin(wx, wy, _cfg.climateFrequency, 1, 2);
             float moist = Perlin(wx, wy, _cfg.climateFrequency, 3, 4);
+            bool inStarterPatch = TrySelectStarterBiome(wx, wy, out int starterBiomeIndex);
+            bool starterMountain = inStarterPatch && starterBiomeIndex == _mountainIndex;
 
             // ---- ocean: one seamless navy field (the light family's edge highlights
             //      read as a grid when tiled - it stays reserved for rivers), with
             //      rulebook texture: speckled variants <= 15%, wave swells on the rim
             //      band, and foam-footed shore stones hugging the land edge ----
-            if (e < _cfg.continentShoreLevel)
+            if (!inStarterPatch && e < _cfg.continentShoreLevel)
             {
                 bool deep = e < _cfg.continentDeepLevel;
                 cell.Height = 0;
@@ -270,8 +286,8 @@ namespace IsoCore.Foundation
             // Rivers never carve through the spawn apron - water is impassable, so a
             // stream ringing the clearing would wall the player in at minute zero.
             bool outsideApron = clearing > _cfg.spawnClearingRadius + 6;
-            bool isRiver = belowRidge && outsideApron && riverDist < _cfg.riverHalfWidth;
-            bool isBank = belowRidge && !isRiver && riverDist < (_cfg.riverHalfWidth + _cfg.riverBankWidth);
+            bool isRiver = !inStarterPatch && belowRidge && outsideApron && riverDist < _cfg.riverHalfWidth;
+            bool isBank = !inStarterPatch && belowRidge && !isRiver && riverDist < (_cfg.riverHalfWidth + _cfg.riverBankWidth);
 
             if (isRiver)
             {
@@ -298,7 +314,7 @@ namespace IsoCore.Foundation
             }
 
             // ---- beach ring (coast band just above the shore) and river banks: sand ----
-            bool isBeach = e < _cfg.continentBeachLevel;
+            bool isBeach = !inStarterPatch && e < _cfg.continentBeachLevel;
             if (isBeach || isBank)
             {
                 var beachB = (_beachIndex >= 0 && _beachIndex < _biomes.Count) ? _biomes[_beachIndex] : null;
@@ -307,8 +323,8 @@ namespace IsoCore.Foundation
                 cell.SurfaceBlockId = SurfaceVariant(beachB, wx, wy, "sand_1", 1);
                 cell.Water = false;
                 // Sand carries only sparse rock outcrops — no trees/bushes on a beach.
-                var beachRock = PickRockOutcrop(wx, wy, beachB);
-                if (beachRock.node != null)
+                var beachRock = PickClusteredDecoration(wx, wy, beachB, 0.5f, 0, cell.SurfaceBlockId);
+                if (beachRock.node != null && HasStableNodeGround(wx, wy, 0, beachRock.node, beachB))
                 {
                     cell.NodeId = beachRock.node.id;
                     cell.NodeBlocks = beachRock.node.blocksMovement;
@@ -324,6 +340,8 @@ namespace IsoCore.Foundation
             // mountain override is unchanged.
             float climateElev = Perlin(wx, wy, _cfg.climateFrequency, 17, 18);
             int biomeIndex = SelectBiome(temp, moist, climateElev);
+            if (inStarterPatch)
+                biomeIndex = starterBiomeIndex;
             // Minecraft-style rule: beach/sand exists only against water (the beach ring
             // and river banks above). If climate picks "beach" for an interior cell,
             // it becomes meadow instead - no sand patches popping up inland.
@@ -349,9 +367,14 @@ namespace IsoCore.Foundation
                 int cap = Mathf.Clamp(_cfg.spawnHeight, 0, 7) + pastClearing / 2;
                 if (height > cap) height = cap;
             }
+            // The tour patches must remain readable even when a seed puts a ridge through
+            // the ring. Climate patches stay traversable; the dedicated mountain patch is
+            // raised to a proper rocky tier.
+            if (inStarterPatch)
+                height = starterMountain ? Mathf.Max(3, height) : Mathf.Min(2, height);
             // Mountain elevation gate (after apron clamp): height >= 3 overrides the
             // climate biome so peaks always look rocky regardless of temp/moisture.
-            if (height >= 3 && _mountainIndex >= 0)
+            if (!inStarterPatch && height >= 3 && _mountainIndex >= 0)
             {
                 biomeIndex = _mountainIndex;
                 biome = _biomes[_mountainIndex];
@@ -360,6 +383,7 @@ namespace IsoCore.Foundation
             cell.Height = (byte)height;
             cell.BiomeIndex = (byte)biomeIndex;
             cell.SurfaceBlockId = SurfaceVariant(biome, wx, wy, "dirt", height);
+            string nativeSurfaceBlockId = cell.SurfaceBlockId;
             cell.Water = false;
 
             // Subtle border blend (thin 2-cell band, dithered — NOT a fuzzy gradient): if a
@@ -396,38 +420,16 @@ namespace IsoCore.Foundation
             // over the stone face below.
             if (!canopyCell && biome != null && biome.nodes != null)
             {
-                if (height >= 3)
+                // Evaluate the tile the player will actually see after biome-edge blending.
+                // A snow-biome rock must not be approved against hidden snow metadata when
+                // the rendered transition tile is organic plains ground.
+                var picked = PickClusteredDecoration(wx, wy, biome, 1f, height, cell.SurfaceBlockId);
+                if (picked.node != null && HasStableNodeGround(wx, wy, height, picked.node, biome))
                 {
-                    // Bare crag: rock outcrops only - no trees/bushes on stone.
-                    var crag = PickRockOutcrop(wx, wy, biome);
-                    if (crag.node != null)
-                    {
-                        cell.NodeId = crag.node.id;
-                        cell.NodeBlocks = crag.node.blocksMovement;
-                    }
-                }
-                else
-                {
-                    var picked = PickClusteredDecoration(wx, wy, biome, 1f);
-                    if (picked.node != null &&
-                        (picked.node.id == "tree" || picked.node.id == "pine"))
-                    {
-                        // Cliff-lip check (lazy: only when a tree was actually rolled,
-                        // so the extra neighbour sampling stays rare). A neighbour one
-                        // or more steps down means this is a ledge - swap the tree for
-                        // a bush so the lip still reads vegetated, never overhanging.
-                        bool lip = ContinentTier(wx + 1, wy) < height ||
-                                   ContinentTier(wx - 1, wy) < height ||
-                                   ContinentTier(wx, wy + 1) < height ||
-                                   ContinentTier(wx, wy - 1) < height;
-                        if (lip)
-                            picked = FindArtNode(biome, "bush");
-                    }
-                    if (picked.node != null)
-                    {
-                        cell.NodeId = picked.node.id;
-                        cell.NodeBlocks = picked.node.blocksMovement;
-                    }
+                    cell.NodeId = picked.node.id;
+                    cell.NodeBlocks = picked.node.blocksMovement;
+                    if (!IsGeologyNode(picked.node.id))
+                        cell.SurfaceBlockId = nativeSurfaceBlockId;
                 }
             }
 
@@ -478,8 +480,91 @@ namespace IsoCore.Foundation
             if (e > _cfg.continentTier5Level) h = 5;
             if (e > _cfg.continentTier6Level) h = 6;
             if (e > _cfg.continentTier7Level) h = 7;
-            return Mathf.Clamp(h, 0, Mathf.Min(_cfg.maxHeight, 7));
+            h = Mathf.Clamp(h, 0, Mathf.Min(_cfg.maxHeight, 7));
+            int pastClearing = clearing - _cfg.spawnClearingRadius;
+            if (pastClearing > 0 && pastClearing <= 8)
+                h = Mathf.Min(h, Mathf.Clamp(_cfg.spawnHeight, 0, 7) + pastClearing / 2);
+            return h;
         }
+
+        bool TrySelectStarterBiome(int wx, int wy, out int biomeIndex)
+        {
+            biomeIndex = -1;
+            if (!_cfg.guaranteeStarterBiomes || _starterBiomeIndices.Length == 0)
+                return false;
+
+            float ring = Mathf.Max(
+                _cfg.starterBiomeRingRadius,
+                _cfg.spawnClearingRadius + _cfg.starterBiomePatchRadius + 4f);
+            float patchRadius = Mathf.Max(4f, _cfg.starterBiomePatchRadius);
+            float rotation = (_seedHash & 1023u) / 1024f * Mathf.PI * 2f;
+            for (int i = 0; i < _starterBiomeIndices.Length; i++)
+            {
+                int candidate = _starterBiomeIndices[i];
+                if (candidate < 0) continue;
+                float angle = rotation + i * Mathf.PI * 2f / _starterBiomeIndices.Length;
+                float cx = Mathf.Cos(angle) * ring;
+                float cy = Mathf.Sin(angle) * ring;
+                float distance = Vector2.Distance(new Vector2(wx, wy), new Vector2(cx, cy));
+                float edgeWarp = (Perlin(wx, wy, 0.045f, 111 + i * 2, 112 + i * 2) - 0.5f)
+                                 * 2f * Mathf.Max(0f, _cfg.starterBiomeEdgeWarp);
+                if (distance <= patchRadius + edgeWarp)
+                {
+                    biomeIndex = candidate;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool HasStableNodeGround(int wx, int wy, int height, ResourceNodeDefinition node,
+            BiomeDefinition biome)
+        {
+            if (node == null) return false;
+            bool needsClearance = node.blocksMovement ||
+                                  node.FootprintWidth > 1 ||
+                                  node.FootprintHeight > 1 ||
+                                  node.widthUnits > 0.9f ||
+                                  node.heightUnits > 0.9f;
+            if (!needsClearance) return true;
+
+            int clearance = Mathf.Max(1, biome?.propProfile?.blockingPropEdgeClearance ?? 1);
+            for (int dy = -clearance; dy <= clearance; dy++)
+            {
+                for (int dx = -clearance; dx <= clearance; dx++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+                    int nx = wx + dx;
+                    int ny = wy + dy;
+                    if (IsContinentWater(nx, ny) || ContinentTier(nx, ny) != height)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        bool IsContinentWater(int wx, int wy)
+        {
+            int clearing = Mathf.Max(Mathf.Abs(wx), Mathf.Abs(wy));
+            if (clearing <= _cfg.spawnClearingRadius)
+                return false;
+
+            float e = ContinentElevation(wx, wy);
+            if (e < _cfg.continentShoreLevel)
+                return true;
+
+            float warpX = wx + (Perlin(wx, wy, _cfg.riverWarpFrequency, 51, 52) - 0.5f)
+                          * 2f * _cfg.riverWarpAmplitude;
+            float warpY = wy + (Perlin(wx, wy, _cfg.riverWarpFrequency, 53, 54) - 0.5f)
+                          * 2f * _cfg.riverWarpAmplitude;
+            float riverDist = Mathf.Abs(PerlinF(warpX, warpY, _cfg.riverFrequency, 55, 56) - 0.5f);
+            return e < _cfg.riverMaxElevation &&
+                   clearing > _cfg.spawnClearingRadius + 6 &&
+                   riverDist < _cfg.riverHalfWidth;
+        }
+
+        static bool IsGeologyNode(string nodeId) =>
+            nodeId == "rock" || nodeId == "copper_vein" || nodeId == "shore_stone";
 
         /// <summary>Picks a surface-block id. Priority order: accent clump →
         /// surfaceBands[height] (height-specific pool) → surfaceBasePool → surfaceGroup → fallback.</summary>
@@ -518,23 +603,6 @@ namespace IsoCore.Foundation
             return fallback;
         }
 
-        /// <summary>Rolls a biome's resource-node spawn table for one cell (first hit wins),
-        /// used for sparse coastal dressing. No-op when the biome has no nodes.</summary>
-        void TryPlaceBiomeNode(ref IsoCell cell, BiomeDefinition biome, int wx, int wy)
-        {
-            if (biome == null || biome.nodes == null) return;
-            foreach (var ns in biome.nodes)
-            {
-                if (ns.node == null) continue;
-                if (Hash01(wx, wy, 11 + ns.node.id.Length) < ns.chancePerCell)
-                {
-                    cell.NodeId = ns.node.id;
-                    cell.NodeBlocks = ns.node.blocksMovement;
-                    return;
-                }
-            }
-        }
-
         /// <summary>
         /// Chooses a decoration for a cell using noise-driven GROUPING rather than uniform
         /// random scatter:
@@ -545,123 +613,100 @@ namespace IsoCore.Foundation
         /// Returns the chosen node (or default with node == null for an empty cell). Only
         /// considers nodes that have art in Resources/Decorations so placeholders never spawn.
         /// </summary>
-        BiomeNodeSpawn PickClusteredDecoration(int wx, int wy, BiomeDefinition biome, float density)
+        BiomeNodeSpawn PickClusteredDecoration(int wx, int wy, BiomeDefinition biome,
+            float density, int height, string surfaceBlockId)
         {
-            // 1. Trees — forest groves via low-frequency noise. Inside a grove a cell may be
-            //    a regular tree or (for variety) a pine; near grove edges an occasional stump
-            //    suggests old logging.
-            var tree = FindArtNode(biome, "tree");
-            var pine = FindArtNode(biome, "pine");
-            if (tree.node != null || pine.node != null)
-            {
-                float forest = Perlin(wx, wy, _cfg.decoForestFrequency, 21, 22);
-                if (forest > _cfg.decoForestThreshold)
-                {
-                    float depth = Mathf.InverseLerp(_cfg.decoForestThreshold, 1f, forest);
-                    float chance = _cfg.decoTreeDensityInForest * (0.35f + 0.65f * depth) * density;
-                    if (Hash01(wx, wy, 71) < chance)
-                    {
-                        // Pine appears as a minority species; otherwise a normal tree.
-                        bool wantPine = pine.node != null && Hash01(wx, wy, 72) < 0.35f;
-                        if (wantPine) return pine;
-                        if (tree.node != null) return tree;
-                        return pine; // only pine available in this biome
-                    }
-                    // Rare stump on grove ground (thinned-out look).
-                    var stumpN = FindArtNode(biome, "stump");
-                    if (stumpN.node != null && Hash01(wx, wy, 73) < 0.02f * density) return stumpN;
-                    var logN = FindArtNode(biome, "log");
-                    if (logN.node != null && Hash01(wx, wy, 74) < 0.015f * density) return logN;
-                }
-            }
+            if (biome?.nodes == null || biome.propProfile == null)
+                return default;
 
-            // 2. Bushes — shrubbery BANDS like the reference boards: dense undergrowth
-            //    ribbons via mid-frequency noise (grove edges, waterside pockets), with
-            //    the original light scatter elsewhere so bushes never vanish entirely.
-            var bush = FindArtNode(biome, "bush");
-            if (bush.node != null)
+            var surface = _blocks.Get(surfaceBlockId);
+            TerrainSubstrate substrate = surface != null ? surface.substrate : TerrainSubstrate.None;
+            var profile = biome.propProfile;
+            bool nearWater = profile.nearWaterVegetationMultiplier > 1.001f &&
+                             HasWaterWithin(wx, wy, 2);
+
+            foreach (var spawn in biome.nodes)
             {
-                float bandN = Perlin(wx, wy, _cfg.decoForestFrequency * 1.4f, 61, 62);
-                float chance = _cfg.decoBushChance * density;
-                if (bandN > 0.60f)
-                    chance *= 3.5f + 2.5f * Mathf.InverseLerp(0.60f, 1f, bandN);
+                var node = spawn.node;
+                if (node == null || DecorationSpriteResolver.Resolve(node) == null)
+                    continue;
+
+                int category = PropCategory(node.id);
+                TerrainSubstrate allowed = category == 2
+                    ? profile.geologySubstrates
+                    : profile.vegetationSubstrates;
+                if ((allowed & substrate) == 0)
+                    continue;
+
+                float frequency;
+                float threshold;
+                if (category == 2)
+                {
+                    if (height < profile.minGeologyHeight || height > profile.maxGeologyHeight)
+                        continue;
+                    frequency = profile.geologyPatchFrequency;
+                    threshold = profile.geologyPatchThreshold;
+                }
+                else if (category == 1)
+                {
+                    if (height > profile.maxTreeHeight)
+                        continue;
+                    frequency = profile.treePatchFrequency;
+                    threshold = profile.treePatchThreshold;
+                }
                 else
-                    chance *= 0.25f; // open ground: rare strays only - bands carry the shrubbery
-                if (Hash01(wx, wy, 81) < chance)
-                    return bush;
-            }
-
-            // 2b. Flowers — gentle ground-cover patches via mid-frequency noise so they
-            //     form little meadows rather than uniform speckle. Tulip clusters appear
-            //     as a minority species inside the same patches (pack flower variant).
-            var flower = FindArtNode(biome, "flower");
-            var tulip = FindArtNode(biome, "flower_tulip");
-            if (flower.node != null || tulip.node != null)
-            {
-                float patch = Perlin(wx, wy, _cfg.decoForestFrequency * 2.3f, 41, 42);
-                if (patch > 0.5f && Hash01(wx, wy, 82) < 0.10f * density)
                 {
-                    if (tulip.node != null && (flower.node == null || Hash01(wx, wy, 83) < 0.35f))
-                        return tulip;
-                    if (flower.node != null) return flower;
+                    if (height > profile.maxGroundCoverHeight)
+                        continue;
+                    frequency = profile.groundCoverPatchFrequency;
+                    threshold = profile.groundCoverPatchThreshold;
                 }
-            }
 
-            // 2c. Grass tufts — light open-ground scatter (pack prop), the soft filler
-            //     between bush bands and flower patches.
-            var tuftN = FindArtNode(biome, "tuft");
-            if (tuftN.node != null && Hash01(wx, wy, 84) < 0.05f * density)
-                return tuftN;
+                int salt = StableSalt(node.id);
+                float group = Perlin(wx, wy, Mathf.Max(0.001f, frequency),
+                    121 + salt % 211, 337 + salt % 197);
+                if (group < threshold)
+                    continue;
 
-            // 3. Rocks — rare clumps where a separate coarse noise peaks. Copper veins
-            //    ride the same outcrop clusters as a minority roll (~1 in 6 rock hits)
-            //    so ore reads as part of a rock formation, never a lone speckle.
-            var rock = FindArtNode(biome, "rock");
-            if (rock.node != null)
-            {
-                float rockNoise = Perlin(wx, wy, _cfg.decoForestFrequency * 1.7f, 31, 32);
-                if (rockNoise > _cfg.decoRockClusterThreshold &&
-                    Hash01(wx, wy, 91) < _cfg.decoRockChanceInCluster * density)
-                {
-                    var copper = FindArtNode(biome, "copper_vein");
-                    if (copper.node != null && Hash01(wx, wy, 93) < 0.16f)
-                        return copper;
-                    return rock;
-                }
+                float depth = Mathf.InverseLerp(threshold, 1f, group);
+                float chance = Mathf.Max(0f, spawn.chancePerCell) * density *
+                               Mathf.Lerp(0.45f, 1.8f, depth);
+                if (category != 2 && nearWater)
+                    chance *= profile.nearWaterVegetationMultiplier;
+
+                if (Hash01(wx, wy, 557 + salt % 997) < Mathf.Clamp01(chance))
+                    return spawn;
             }
 
             return default;
         }
 
-        /// <summary>Rock-only decoration for sand cells (beach ring, river banks):
-        /// rare coarse-noise outcrop clumps, no vegetation — coasts read as mostly
-        /// clean sand with occasional stone. Mirrors the rock branch of
-        /// PickClusteredDecoration but at half density and with its own noise salts
-        /// so beach outcrops don't correlate with inland ones.</summary>
-        BiomeNodeSpawn PickRockOutcrop(int wx, int wy, BiomeDefinition biome)
+        static int PropCategory(string nodeId)
         {
-            if (biome == null) return default;
-            var rock = FindArtNode(biome, "rock");
-            if (rock.node == null) return default;
-            float rockNoise = Perlin(wx, wy, _cfg.decoForestFrequency * 1.7f, 33, 34);
-            if (rockNoise > _cfg.decoRockClusterThreshold &&
-                Hash01(wx, wy, 92) < _cfg.decoRockChanceInCluster * 0.5f)
-                return rock;
-            return default;
+            if (IsGeologyNode(nodeId)) return 2;
+            if (nodeId == "tree" || nodeId == "pine" || nodeId == "cactus" ||
+                nodeId == "log" || nodeId == "stump") return 1;
+            return 0;
         }
 
-        /// <summary>Finds a biome node by id, but only if it has art in Resources/Decorations
-        /// (otherwise it would render as an ugly placeholder box). Result is cached by the resolver.</summary>
-        BiomeNodeSpawn FindArtNode(BiomeDefinition biome, string id)
+        static int StableSalt(string value)
         {
-            if (biome.nodes == null) return default;
-            foreach (var ns in biome.nodes)
+            unchecked
             {
-                if (ns.node == null || ns.node.id != id) continue;
-                if (DecorationSpriteResolver.Resolve(id) == null) return default;
-                return ns;
+                int hash = 17;
+                for (int i = 0; i < value.Length; i++)
+                    hash = hash * 31 + value[i];
+                return hash & 0x7fffffff;
             }
-            return default;
+        }
+
+        bool HasWaterWithin(int wx, int wy, int radius)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+                for (int dx = -radius; dx <= radius; dx++)
+                    if ((dx != 0 || dy != 0) && IsContinentWater(wx + dx, wy + dy))
+                        return true;
+            return false;
         }
 
         // Elevation-agnostic overload (flat/legacy world path). Uses a neutral mid
@@ -709,6 +754,8 @@ namespace IsoCore.Foundation
         /// border blend to find the neighbouring biome across a seam.</summary>
         int BiomeIndexAt(int wx, int wy)
         {
+            if (TrySelectStarterBiome(wx, wy, out int starterBiomeIndex))
+                return starterBiomeIndex;
             float t = Perlin(wx, wy, _cfg.climateFrequency, 1, 2);
             float m = Perlin(wx, wy, _cfg.climateFrequency, 3, 4);
             float ce = Perlin(wx, wy, _cfg.climateFrequency, 17, 18);

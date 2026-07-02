@@ -525,7 +525,11 @@ namespace IsoCore.Foundation
 
             bool toolBroke = false;
             if (node.RemainingHits < beforeHits)
+            {
+                _player?.PlayBodyAnim("slash");
+                _heldTool?.Swing();
                 toolBroke = OnHarvestHitSucceeded(node.Def);
+            }
             if (depleted) ResourceHarvested?.Invoke(node.Def, granted);
             if (depleted && _heldHarvestTarget == node)
                 _heldHarvestTarget = null;

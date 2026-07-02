@@ -17,6 +17,32 @@ namespace IsoCore.Foundation
         public float weight;
     }
 
+    [Serializable]
+    public class BiomePropProfile
+    {
+        [Header("Substrate")]
+        public TerrainSubstrate vegetationSubstrates = TerrainSubstrate.Organic;
+        public TerrainSubstrate geologySubstrates = TerrainSubstrate.Natural;
+
+        [Header("Elevation")]
+        public int maxTreeHeight = 2;
+        public int maxGroundCoverHeight = 2;
+        public int minGeologyHeight = 0;
+        public int maxGeologyHeight = 7;
+
+        [Header("Natural grouping")]
+        public float treePatchFrequency = 0.05f;
+        [Range(0f, 1f)] public float treePatchThreshold = 0.52f;
+        public float groundCoverPatchFrequency = 0.10f;
+        [Range(0f, 1f)] public float groundCoverPatchThreshold = 0.46f;
+        public float geologyPatchFrequency = 0.08f;
+        [Range(0f, 1f)] public float geologyPatchThreshold = 0.64f;
+
+        [Header("Site modifiers")]
+        [Min(1f)] public float nearWaterVegetationMultiplier = 1f;
+        [Range(0, 3)] public int blockingPropEdgeClearance = 1;
+    }
+
     /// <summary>One weighted tile entry in a surface base/accent pool (Phase 1 B2/B3).</summary>
     [Serializable]
     public struct BiomeTilePoolEntry
@@ -153,6 +179,8 @@ namespace IsoCore.Foundation
         [Header("Spawn rules")]
         public BiomeNodeSpawn[] nodes;
         public BiomeMobSpawn[] mobs;
+        [Tooltip("Substrate, elevation, clustering, and edge rules evaluated before node chance.")]
+        public BiomePropProfile propProfile = new();
 
         [Header("Debug")]
         public Color debugTint = Color.white;

@@ -1,0 +1,780 @@
+fileFormatVersion: 2
+guid: 87f8dc619d9a4dd4497649545a55b655
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4980045351153106427
+    second: magic_wind_0
+  - first:
+      213: -8082356555302026454
+    second: magic_wind_1
+  - first:
+      213: -3052258542220399006
+    second: magic_wind_2
+  - first:
+      213: 8834290066256331280
+    second: magic_wind_3
+  - first:
+      213: -6554014572472781434
+    second: magic_wind_4
+  - first:
+      213: -3995654136380793580
+    second: magic_wind_5
+  - first:
+      213: -5304605339852764785
+    second: magic_wind_6
+  - first:
+      213: 3764196757961294401
+    second: magic_wind_7
+  - first:
+      213: -7808537659428581992
+    second: magic_wind_8
+  - first:
+      213: -924297741829525907
+    second: magic_wind_9
+  - first:
+      213: -3654831150381021801
+    second: magic_wind_10
+  - first:
+      213: 8810093024461138247
+    second: magic_wind_11
+  - first:
+      213: -1706327369822404423
+    second: magic_wind_12
+  - first:
+      213: 7240037934432874727
+    second: magic_wind_13
+  - first:
+      213: -186711033824947899
+    second: magic_wind_14
+  - first:
+      213: 7308219011879850298
+    second: magic_wind_15
+  - first:
+      213: 2968944464798181178
+    second: magic_wind_16
+  - first:
+      213: -3244607764093774345
+    second: magic_wind_17
+  - first:
+      213: -4078530651666499582
+    second: magic_wind_18
+  - first:
+      213: -1769799769406243552
+    second: magic_wind_19
+  - first:
+      213: -6370690054000291562
+    second: magic_wind_20
+  - first:
+      213: 5499301711351739521
+    second: magic_wind_21
+  - first:
+      213: 260824452184683910
+    second: magic_wind_22
+  - first:
+      213: 185154458265256626
+    second: magic_wind_23
+  - first:
+      213: 8043670200594414692
+    second: magic_wind_24
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: magic_wind_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 24
+        width: 186
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5020f27732353eab0800000000000000
+      internalID: -4980045351153106427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_1
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 6
+        width: 332
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a234c2df883b5df80800000000000000
+      internalID: -8082356555302026454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_2
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 13
+        width: 639
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26e2d44070334a5d0800000000000000
+      internalID: -3052258542220399006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_3
+      rect:
+        serializedVersion: 2
+        x: 1161
+        y: 0
+        width: 321
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01288f95204b99a70800000000000000
+      internalID: 8834290066256331280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_4
+      rect:
+        serializedVersion: 2
+        x: 1484
+        y: 4
+        width: 315
+        height: 176
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 685b60398767b05a0800000000000000
+      internalID: -6554014572472781434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_5
+      rect:
+        serializedVersion: 2
+        x: 1797
+        y: 7
+        width: 700
+        height: 173
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41dd3bb9bb59c88c0800000000000000
+      internalID: -3995654136380793580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_6
+      rect:
+        serializedVersion: 2
+        x: 2505
+        y: 8
+        width: 319
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f898f646c814266b0800000000000000
+      internalID: -5304605339852764785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_7
+      rect:
+        serializedVersion: 2
+        x: 2832
+        y: 5
+        width: 498
+        height: 175
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 142c5fef10d1d3430800000000000000
+      internalID: 3764196757961294401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_8
+      rect:
+        serializedVersion: 2
+        x: 3334
+        y: 0
+        width: 782
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89dcf72ce5082a390800000000000000
+      internalID: -7808537659428581992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_9
+      rect:
+        serializedVersion: 2
+        x: 3753
+        y: 33
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6e2e87d91c3c23f0800000000000000
+      internalID: -924297741829525907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_10
+      rect:
+        serializedVersion: 2
+        x: 4118
+        y: 3
+        width: 1084
+        height: 175
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 795c18fce6e674dc0800000000000000
+      internalID: -3654831150381021801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_11
+      rect:
+        serializedVersion: 2
+        x: 5203
+        y: 0
+        width: 1376
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74927298decb34a70800000000000000
+      internalID: 8810093024461138247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_12
+      rect:
+        serializedVersion: 2
+        x: 6580
+        y: 0
+        width: 631
+        height: 171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b085333c48e158e0800000000000000
+      internalID: -1706327369822404423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_13
+      rect:
+        serializedVersion: 2
+        x: 7201
+        y: 18
+        width: 225
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e0793a5428c97460800000000000000
+      internalID: 7240037934432874727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_14
+      rect:
+        serializedVersion: 2
+        x: 7430
+        y: 5
+        width: 333
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 541d731dd4ba86df0800000000000000
+      internalID: -186711033824947899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_15
+      rect:
+        serializedVersion: 2
+        x: 7767
+        y: 0
+        width: 1650
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a31dadf78720c6560800000000000000
+      internalID: 7308219011879850298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_16
+      rect:
+        serializedVersion: 2
+        x: 9419
+        y: 0
+        width: 681
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a376826b24fc33920800000000000000
+      internalID: 2968944464798181178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_17
+      rect:
+        serializedVersion: 2
+        x: 10096
+        y: 0
+        width: 124
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f557b1ed66d8f2d0800000000000000
+      internalID: -3244607764093774345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_18
+      rect:
+        serializedVersion: 2
+        x: 10224
+        y: 0
+        width: 1057
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20830e53bf52667c0800000000000000
+      internalID: -4078530651666499582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_19
+      rect:
+        serializedVersion: 2
+        x: 11282
+        y: 6
+        width: 441
+        height: 171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02df8fc8c786077e0800000000000000
+      internalID: -1769799769406243552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_20
+      rect:
+        serializedVersion: 2
+        x: 11727
+        y: 0
+        width: 957
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 611d2353623c697a0800000000000000
+      internalID: -6370690054000291562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_21
+      rect:
+        serializedVersion: 2
+        x: 11964
+        y: 34
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18471d915c1715c40800000000000000
+      internalID: 5499301711351739521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_22
+      rect:
+        serializedVersion: 2
+        x: 12683
+        y: 0
+        width: 1459
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68534351572ae9300800000000000000
+      internalID: 260824452184683910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_23
+      rect:
+        serializedVersion: 2
+        x: 14145
+        y: 146
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b20b71bffcc19200800000000000000
+      internalID: 185154458265256626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: magic_wind_24
+      rect:
+        serializedVersion: 2
+        x: 14153
+        y: 0
+        width: 1207
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46c33d42e6bd0af60800000000000000
+      internalID: 8043670200594414692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      magic_wind_0: -4980045351153106427
+      magic_wind_1: -8082356555302026454
+      magic_wind_10: -3654831150381021801
+      magic_wind_11: 8810093024461138247
+      magic_wind_12: -1706327369822404423
+      magic_wind_13: 7240037934432874727
+      magic_wind_14: -186711033824947899
+      magic_wind_15: 7308219011879850298
+      magic_wind_16: 2968944464798181178
+      magic_wind_17: -3244607764093774345
+      magic_wind_18: -4078530651666499582
+      magic_wind_19: -1769799769406243552
+      magic_wind_2: -3052258542220399006
+      magic_wind_20: -6370690054000291562
+      magic_wind_21: 5499301711351739521
+      magic_wind_22: 260824452184683910
+      magic_wind_23: 185154458265256626
+      magic_wind_24: 8043670200594414692
+      magic_wind_3: 8834290066256331280
+      magic_wind_4: -6554014572472781434
+      magic_wind_5: -3995654136380793580
+      magic_wind_6: -5304605339852764785
+      magic_wind_7: 3764196757961294401
+      magic_wind_8: -7808537659428581992
+      magic_wind_9: -924297741829525907
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -76,7 +76,7 @@ namespace IsoCore.Foundation
         public bool continentWorld = true;
         [Tooltip("Frequency of the base landmass elevation noise. Lower = larger " +
                  "continents and oceans; higher = broken, islandy terrain.")]
-        public float continentFrequency = 0.0045f;
+        public float continentFrequency = 0.0025f;
         [Tooltip("Elevation below this is deep ocean (water).")]
         [Range(0f, 1f)] public float continentDeepLevel = 0.34f;
         [Tooltip("Elevation below this (but above deep) is shallow coastal water.")]
@@ -96,7 +96,16 @@ namespace IsoCore.Foundation
                  "solid land, fading to 0 over continentSpawnLandRadius cells.")]
         [Range(0f, 1f)] public float continentSpawnLandBias = 0.34f;
         [Tooltip("Radius (cells) over which the spawn land bias fades to zero.")]
-        public float continentSpawnLandRadius = 48f;
+        public float continentSpawnLandRadius = 96f;
+        [Header("Starter biome tour")]
+        [Tooltip("Guarantees one organic patch of each normal land biome around the starter clearing.")]
+        public bool guaranteeStarterBiomes = true;
+        [Tooltip("Distance in cells from the origin to the centre of the starter biome patches.")]
+        public float starterBiomeRingRadius = 58f;
+        [Tooltip("Base radius in cells of each starter biome patch.")]
+        public float starterBiomePatchRadius = 13f;
+        [Tooltip("Noise warp in cells applied to starter biome patch edges.")]
+        public float starterBiomeEdgeWarp = 4f;
         [Header("Continent rivers")]
         [Tooltip("Frequency of the winding river band noise. Lower = longer, broader rivers.")]
         public float riverFrequency = 0.025f;
@@ -117,6 +126,8 @@ namespace IsoCore.Foundation
         [Tooltip("Add a Pixel Perfect Camera so the pixel-art tiles stay crisp and the " +
                  "grid does not shimmer as the player moves.")]
         public bool pixelPerfect = true;
+        [Tooltip("Temporary presentation gate. Gameplay, projectiles, damage, healing, and body animations remain active.")]
+        public bool abilityVfxEnabled = false;
 
         [Header("Player")]
         public float moveSpeed = 2.8f;

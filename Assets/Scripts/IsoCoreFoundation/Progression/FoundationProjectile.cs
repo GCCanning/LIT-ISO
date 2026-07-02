@@ -14,9 +14,11 @@ namespace IsoCore.Foundation
         float _speed, _rangeLeft, _damage, _hitRadius, _trailTimer;
         Color _color;
         MobSpawner _mobs;
+        bool _visualEffectsEnabled;
 
         public void Init(Vector3 start, Vector2 dir, float speed, float range, float damage,
-                         Color color, MobSpawner mobs, float hitRadius = 0.55f)
+                         Color color, MobSpawner mobs, float hitRadius = 0.55f,
+                         bool visualEffectsEnabled = false)
         {
             transform.position = new Vector3(start.x, start.y, 0f);
             _dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector2.down;
@@ -26,6 +28,7 @@ namespace IsoCore.Foundation
             _color = color;
             _mobs = mobs;
             _hitRadius = hitRadius;
+            _visualEffectsEnabled = visualEffectsEnabled;
 
             var sr = gameObject.AddComponent<SpriteRenderer>();
             sr.sprite = PlaceholderArt.Box(color, 0.28f, 0.28f);
@@ -44,7 +47,7 @@ namespace IsoCore.Foundation
 
             // Light trailing puff.
             _trailTimer -= dt;
-            if (_trailTimer <= 0f)
+            if (_visualEffectsEnabled && _trailTimer <= 0f)
             {
                 _trailTimer = 0.04f;
                 WorldFx.Smoke(transform.position, _color, count: 3, size: 0.1f, radius: 0.05f, rise: 0.1f, life: 0.25f);
@@ -57,8 +60,11 @@ namespace IsoCore.Foundation
 
         void Impact()
         {
-            WorldFx.Debris(transform.position, _color, count: 10, size: 0.08f, speed: 2.4f);
-            WorldFx.Smoke(transform.position, _color, count: 8, size: 0.16f, radius: 0.12f, rise: 0.3f, life: 0.4f);
+            if (_visualEffectsEnabled)
+            {
+                WorldFx.Debris(transform.position, _color, count: 10, size: 0.08f, speed: 2.4f);
+                WorldFx.Smoke(transform.position, _color, count: 8, size: 0.16f, radius: 0.12f, rise: 0.3f, life: 0.4f);
+            }
             Destroy(gameObject);
         }
     }

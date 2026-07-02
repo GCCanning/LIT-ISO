@@ -110,6 +110,8 @@ namespace IsoCore.Foundation
             Vector3 fxOrigin = transform.position + Vector3.up * (Def.heightUnits * 0.5f);
             WorldFx.Debris(fxOrigin, DebrisColor(), 6);
             SfxManager.Play(HitSfxKey());
+            if (Application.isPlaying)
+                FoundationImpactFeedback.Pulse(0.65f);
 
             if (_remainingHits > 0)
             {

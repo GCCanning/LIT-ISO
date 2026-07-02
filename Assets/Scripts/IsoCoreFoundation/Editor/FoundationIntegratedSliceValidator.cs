@@ -42,6 +42,40 @@ namespace IsoCore.Foundation.EditorTools
             RunInternal(false);
         }
 
+        public static void RunBiomeEcology()
+        {
+            var checks = new List<Check>();
+            AddCheck add = (name, pass, detail) =>
+                checks.Add(new Check { name = name, pass = pass, detail = detail });
+
+            try
+            {
+                ValidateContinentBiomeCoverage(add, FoundationContent.BuildDefault());
+            }
+            catch (Exception ex)
+            {
+                add("Biome ecology validator completed without exception", false, ex.ToString());
+            }
+
+            int failed = 0;
+            var failureDetails = new StringBuilder();
+            foreach (var check in checks)
+            {
+                if (check.pass) continue;
+                failed++;
+                if (failureDetails.Length > 0) failureDetails.Append("; ");
+                failureDetails.Append(check.name).Append(": ").Append(check.detail);
+            }
+
+            string summary = $"[FoundationIntegratedSliceValidator.BiomeEcology] {checks.Count - failed}/{checks.Count} checks passed.";
+            if (failed > 0)
+                summary += $" Failures: {failureDetails}";
+            if (failed > 0)
+                throw new Exception(summary);
+
+            Debug.Log(summary);
+        }
+
         static void RunInternal(bool writeReport)
         {
             var checks = new List<Check>();
@@ -172,7 +206,15 @@ namespace IsoCore.Foundation.EditorTools
             string depthPath = "Assets/Scripts/IsoCoreFoundation/World/FoundationDepthPolish.cs";
             string contactShadowPath = "Assets/Scripts/IsoCoreFoundation/World/FoundationContactShadow.cs";
             string weatherPath = "Assets/Scripts/IsoCoreFoundation/World/FoundationWeatherVisuals.cs";
+            string atmospherePath = "Assets/Scripts/IsoCoreFoundation/World/FoundationAtmosphereOverlay.cs";
+            string atmosphereShaderPath = "Assets/Shaders/AtmosphereStrip.shader";
+            string sunShadowPath = "Assets/Scripts/IsoCoreFoundation/World/DecorationShadow.cs";
+            string sunShadowShaderPath = "Assets/Shaders/ProjectedSpriteShadow.shader";
             string ambientPath = "Assets/Scripts/IsoCoreFoundation/World/AmbientLightController.cs";
+            string dayNightPath = "Assets/Scripts/IsoCoreFoundation/Core/DayNightSystem.cs";
+            string playerPath = "Assets/Scripts/IsoCoreFoundation/Player/IsoFoundationPlayer.cs";
+            string abilityDispatcherPath = "Assets/Scripts/IsoCoreFoundation/Progression/FoundationAbilityDispatcher.cs";
+            string layeredAnimatorPath = "Assets/Scripts/UI/CharacterCreator/LayeredCharacterAnimator.cs";
             string uiBuilderPath = "Assets/Scripts/UI/InGame/UiBuilder.cs";
             string placeablePath = "Assets/Scripts/IsoCoreFoundation/Building/PlaceableInstance.cs";
             string mobPath = "Assets/Scripts/IsoCoreFoundation/Mobs/Mob.cs";
@@ -209,7 +251,15 @@ namespace IsoCore.Foundation.EditorTools
             string depth = File.Exists(depthPath) ? File.ReadAllText(depthPath) : "";
             string contact = File.Exists(contactShadowPath) ? File.ReadAllText(contactShadowPath) : "";
             string weather = File.Exists(weatherPath) ? File.ReadAllText(weatherPath) : "";
+            string atmosphere = File.Exists(atmospherePath) ? File.ReadAllText(atmospherePath) : "";
+            string atmosphereShader = File.Exists(atmosphereShaderPath) ? File.ReadAllText(atmosphereShaderPath) : "";
+            string sunShadow = File.Exists(sunShadowPath) ? File.ReadAllText(sunShadowPath) : "";
+            string sunShadowShader = File.Exists(sunShadowShaderPath) ? File.ReadAllText(sunShadowShaderPath) : "";
             string ambient = File.Exists(ambientPath) ? File.ReadAllText(ambientPath) : "";
+            string dayNight = File.Exists(dayNightPath) ? File.ReadAllText(dayNightPath) : "";
+            string player = File.Exists(playerPath) ? File.ReadAllText(playerPath) : "";
+            string abilityDispatcher = File.Exists(abilityDispatcherPath) ? File.ReadAllText(abilityDispatcherPath) : "";
+            string layeredAnimator = File.Exists(layeredAnimatorPath) ? File.ReadAllText(layeredAnimatorPath) : "";
             string uiBuilder = File.Exists(uiBuilderPath) ? File.ReadAllText(uiBuilderPath) : "";
             string placeable = File.Exists(placeablePath) ? File.ReadAllText(placeablePath) : "";
             string mob = File.Exists(mobPath) ? File.ReadAllText(mobPath) : "";
@@ -358,6 +408,40 @@ namespace IsoCore.Foundation.EditorTools
                 ambient.Contains("ApplyWeather") &&
                 ambient.Contains("FoundationWeatherVisuals.Active"),
                 $"{weatherPath} / {ambientPath}");
+            add("Biome atmosphere overlays are wired with authored strips",
+                bootstrap.Contains("FoundationAtmosphereOverlay") &&
+                weather.Contains("WeatherWeights.ForBiome") &&
+                weather.Contains("case \"frozenmountain\"") &&
+                atmosphere.Contains("ResolveTargets") &&
+                atmosphere.Contains("VFX/Atmosphere/Alenia/") &&
+                atmosphereShader.Contains("LIT-ISO/AtmosphereStrip") &&
+                File.Exists("Assets/Resources/VFX/Atmosphere/Alenia/rain.png") &&
+                File.Exists("Assets/Resources/VFX/Atmosphere/Alenia/snow.png") &&
+                File.Exists("Assets/Resources/VFX/Atmosphere/Alenia/wind.png") &&
+                File.Exists("Assets/Resources/VFX/Atmosphere/Alenia/LICENSE_AND_README.txt"),
+                $"{atmospherePath} / {atmosphereShaderPath} / Resources/VFX/Atmosphere/Alenia");
+            add("Ability VFX can be disabled without disabling ability gameplay",
+                config.Contains("public bool abilityVfxEnabled = false") &&
+                abilityDispatcher.Contains("_visualEffectsEnabled") &&
+                abilityDispatcher.Contains("visualEffectsEnabled: _visualEffectsEnabled") &&
+                player.Contains("bool showVfx = true"),
+                $"{configPath} / {abilityDispatcherPath} / {playerPath}");
+            add("Combat animation remains responsive while stationary and under repeated input",
+                player.IndexOf("TickAttack();", StringComparison.Ordinal) <
+                    player.IndexOf("_moveSpeedCurrent <= 0.001f", StringComparison.Ordinal) &&
+                interaction.Contains("_player?.PlayBodyAnim(\"slash\")") &&
+                layeredAnimator.Contains("if (_activeAnim == animId)") &&
+                layeredAnimator.Contains("_queuedOneShot"),
+                $"{playerPath} / {interactionPath} / {layeredAnimatorPath}");
+            add("Sun shadows use celestial direction and the shared silhouette shader",
+                dayNight.Contains("ShadowGroundDirection") &&
+                dayNight.Contains("CelestialElevation01") &&
+                sunShadow.Contains("ProjectedSpriteShadow") &&
+                sunShadow.Contains("_shadow.transform.rotation") &&
+                sunShadowShader.Contains("IsoCore/ProjectedSpriteShadow") &&
+                bootstrap.Contains("castLongShadow: true") &&
+                mob.Contains("castLongShadow: true"),
+                $"{dayNightPath} / {sunShadowPath} / {sunShadowShaderPath}");
             add("uGUI text readability has default shadow and pixel-perfect canvases",
                 uiBuilder.Contains("ApplyTextReadability") &&
                 uiBuilder.Contains("Shadow") &&
@@ -927,6 +1011,7 @@ namespace IsoCore.Foundation.EditorTools
         static void ValidateWorldContracts(AddCheck add)
         {
             var content = FoundationContent.BuildDefault();
+            ValidateContinentBiomeCoverage(add, content);
             var cfg = new FoundationConfig { seed = FoundationBootstrap.SeedStringToInt(TestSeed) };
             var world = new IsoWorld(new IsoTerrainSampler(cfg, content), content, cfg.chunkSize);
 
@@ -1012,6 +1097,117 @@ namespace IsoCore.Foundation.EditorTools
             ValidateCrafting(add, content);
             ValidateFarmingData(add, content);
             ValidateProgressionContracts(add, content);
+        }
+
+        static void ValidateContinentBiomeCoverage(AddCheck add, FoundationContent content)
+        {
+            var cfg = new FoundationConfig
+            {
+                seed = FoundationBootstrap.SeedStringToInt(TestSeed),
+                flatWorld = false,
+                continentWorld = true
+            };
+            var sampler = new IsoTerrainSampler(cfg, content);
+            var found = new HashSet<string>();
+            for (int y = -84; y <= 84; y += 2)
+            for (int x = -84; x <= 84; x += 2)
+            {
+                var cell = sampler.Sample(x, y);
+                var biome = sampler.BiomeAt(cell.BiomeIndex);
+                if (biome != null)
+                    found.Add(biome.id);
+            }
+
+            string[] expectedStarterBiomes =
+            {
+                "meadow", "forest", "marsh", "grotto", "sunspool",
+                "badlands", "snow", "frozenmountain", "mountain"
+            };
+            var missing = new List<string>();
+            foreach (string id in expectedStarterBiomes)
+                if (!found.Contains(id))
+                    missing.Add(id);
+            add("Starter continent exposes every land biome in the tour ring",
+                missing.Count == 0,
+                missing.Count == 0 ? string.Join(", ", expectedStarterBiomes) : "missing: " + string.Join(", ", missing));
+
+            add("Expanded continent defaults are active",
+                cfg.continentFrequency <= 0.0025f &&
+                cfg.continentSpawnLandRadius >= 96f &&
+                cfg.guaranteeStarterBiomes,
+                $"frequency {cfg.continentFrequency:0.####}, spawn land radius {cfg.continentSpawnLandRadius:0}");
+
+            var frozen = content.Biomes.Get("frozenmountain");
+            var sunspool = content.Biomes.Get("sunspool");
+            var mountain = content.Biomes.Get("mountain");
+            add("Biome prop tables match authored ecology",
+                !BiomeHasNode(frozen, "pine") &&
+                !BiomeHasNode(sunspool, "rock") &&
+                BiomeHasNode(mountain, "copper_vein"),
+                "frozenmountain:no pine; sunspool:no rock; mountain:copper");
+
+            int sampledProps = 0;
+            int ecologyViolations = 0;
+            string firstViolation = "";
+            for (int y = -96; y <= 96; y++)
+            for (int x = -96; x <= 96; x++)
+            {
+                var cell = sampler.Sample(x, y);
+                if (!cell.HasNode) continue;
+                sampledProps++;
+
+                var node = content.Nodes.Get(cell.NodeId);
+                var biome = sampler.BiomeAt(cell.BiomeIndex);
+                var block = content.Blocks.Get(cell.SurfaceBlockId);
+                var profile = biome?.propProfile;
+                if (node == null || profile == null || block == null)
+                {
+                    ecologyViolations++;
+                    if (firstViolation.Length == 0)
+                        firstViolation = $"{cell.NodeId}@{x},{y}: missing definition/profile/surface";
+                    continue;
+                }
+
+                bool geology = IsGeologyNodeForValidation(node.id);
+                TerrainSubstrate allowed = geology
+                    ? profile.geologySubstrates
+                    : profile.vegetationSubstrates;
+                bool valid = (allowed & block.substrate) != 0;
+                if (geology)
+                    valid &= cell.Height >= profile.minGeologyHeight &&
+                             cell.Height <= profile.maxGeologyHeight;
+                else if (IsTallVegetationForValidation(node.id))
+                    valid &= cell.Height <= profile.maxTreeHeight;
+                else
+                    valid &= cell.Height <= profile.maxGroundCoverHeight;
+
+                if (!valid)
+                {
+                    ecologyViolations++;
+                    if (firstViolation.Length == 0)
+                        firstViolation = $"{node.id}@{x},{y}: {biome.id}/{cell.SurfaceBlockId}/{block.substrate}/h{cell.Height}";
+                }
+            }
+            add("Generated props obey biome substrate and elevation rules",
+                sampledProps > 0 && ecologyViolations == 0,
+                ecologyViolations == 0 ? $"{sampledProps} props sampled" : firstViolation);
+        }
+
+        static bool IsGeologyNodeForValidation(string nodeId) =>
+            nodeId == "rock" || nodeId == "copper_vein" || nodeId == "shore_stone";
+
+        static bool IsTallVegetationForValidation(string nodeId) =>
+            nodeId == "tree" || nodeId == "pine" || nodeId == "cactus" ||
+            nodeId == "log" || nodeId == "stump";
+
+        static bool BiomeHasNode(BiomeDefinition biome, string nodeId)
+        {
+            if (biome == null || biome.nodes == null)
+                return false;
+            foreach (var spawn in biome.nodes)
+                if (spawn.node != null && spawn.node.id == nodeId)
+                    return true;
+            return false;
         }
 
         static readonly Vector2Int InvalidCell = new(int.MinValue, int.MinValue);

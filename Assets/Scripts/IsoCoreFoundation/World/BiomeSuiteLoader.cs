@@ -198,6 +198,17 @@ namespace IsoCore.Foundation
             var blk = ScriptableObject.CreateInstance<BlockDefinition>();
             blk.id = id; blk.name = id; blk.displayName = id;
             blk.collision = CollisionMode.Walkable;
+            blk.groupId = "suite_" + jid;
+            blk.substrate = jid switch
+            {
+                "marsh" => TerrainSubstrate.Mud,
+                "grotto" => TerrainSubstrate.Moss,
+                "sunspool" => TerrainSubstrate.GoldenGrass,
+                "badlands" => TerrainSubstrate.Cinder,
+                "snow" => TerrainSubstrate.Snow,
+                "frozenmountain" => TerrainSubstrate.Snow,
+                _ => TerrainSubstrate.Organic
+            };
             blocks.Add(blk);
         }
 

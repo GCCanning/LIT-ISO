@@ -1,0 +1,12 @@
+LIT-ISO VFX credits
+
+* Atmospheric overlay textures (Assets/Resources/VFX/Atmosphere/Alenia/)
+    "20 Pixel Art Atmospheric VFX Pack" by Alenia Studios (KXLT)
+    license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+             https://creativecommons.org/licenses/by/4.0/
+    Additional terms from Alenia Studios: no redistribution/resale of the assets
+    as standalone files; no use for training generative AI models.
+    Full license text: Assets/Resources/VFX/Atmosphere/Alenia/LICENSE_AND_README.txt
+
+This attribution must ship with any distributed build that includes these textures
+(e.g. include this file, or list Alenia Studios in the in-game credits screen).

@@ -1,0 +1,8008 @@
+fileFormatVersion: 2
+guid: db1ea23647dc07645915c33029c12e47
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3893646742570179221
+    second: rain_splash_0
+  - first:
+      213: -805690867965974408
+    second: rain_splash_1
+  - first:
+      213: -367824598983273593
+    second: rain_splash_2
+  - first:
+      213: -3743613002214451917
+    second: rain_splash_3
+  - first:
+      213: 3216018655110522325
+    second: rain_splash_4
+  - first:
+      213: 1232549482339526847
+    second: rain_splash_5
+  - first:
+      213: 2910231690596218255
+    second: rain_splash_6
+  - first:
+      213: -8888003225055917962
+    second: rain_splash_7
+  - first:
+      213: 1506891812824112913
+    second: rain_splash_8
+  - first:
+      213: 6753312978599825475
+    second: rain_splash_9
+  - first:
+      213: 1225008445062442893
+    second: rain_splash_10
+  - first:
+      213: -2785253495078829284
+    second: rain_splash_11
+  - first:
+      213: -2994374830007254733
+    second: rain_splash_12
+  - first:
+      213: 7480558596783838902
+    second: rain_splash_13
+  - first:
+      213: 938277350445743906
+    second: rain_splash_14
+  - first:
+      213: -3859275042375329604
+    second: rain_splash_15
+  - first:
+      213: -1282858074671210624
+    second: rain_splash_16
+  - first:
+      213: 4608696084647672875
+    second: rain_splash_17
+  - first:
+      213: -956469279920000815
+    second: rain_splash_18
+  - first:
+      213: 6364278942664747584
+    second: rain_splash_19
+  - first:
+      213: -3205294559923503859
+    second: rain_splash_20
+  - first:
+      213: -635596212740628811
+    second: rain_splash_21
+  - first:
+      213: -3955517267766886258
+    second: rain_splash_22
+  - first:
+      213: -6746636984618612432
+    second: rain_splash_23
+  - first:
+      213: 7923462280743461467
+    second: rain_splash_24
+  - first:
+      213: -5518996244611078552
+    second: rain_splash_25
+  - first:
+      213: 7203600260569329613
+    second: rain_splash_26
+  - first:
+      213: -2307281064325410160
+    second: rain_splash_27
+  - first:
+      213: 3650069638453444143
+    second: rain_splash_28
+  - first:
+      213: -763123232916514506
+    second: rain_splash_29
+  - first:
+      213: 459733656300258188
+    second: rain_splash_30
+  - first:
+      213: 1436205291886299251
+    second: rain_splash_31
+  - first:
+      213: -7461693715967662522
+    second: rain_splash_32
+  - first:
+      213: -4770026570565328438
+    second: rain_splash_33
+  - first:
+      213: 7194107937749116812
+    second: rain_splash_34
+  - first:
+      213: -4083900400146275533
+    second: rain_splash_35
+  - first:
+      213: 3149673924225732366
+    second: rain_splash_36
+  - first:
+      213: -2349398148478360809
+    second: rain_splash_37
+  - first:
+      213: -7678446904901615017
+    second: rain_splash_38
+  - first:
+      213: 6048442130471897177
+    second: rain_splash_39
+  - first:
+      213: -8683351387259537535
+    second: rain_splash_40
+  - first:
+      213: 6669844524503532869
+    second: rain_splash_41
+  - first:
+      213: -3760757092102500975
+    second: rain_splash_42
+  - first:
+      213: -8062987705130597717
+    second: rain_splash_43
+  - first:
+      213: 6209702742820259430
+    second: rain_splash_44
+  - first:
+      213: -5079218628890289299
+    second: rain_splash_45
+  - first:
+      213: 5038253885321955168
+    second: rain_splash_46
+  - first:
+      213: -1562614025947463497
+    second: rain_splash_47
+  - first:
+      213: 3928849729821305511
+    second: rain_splash_48
+  - first:
+      213: -8744554279986432898
+    second: rain_splash_49
+  - first:
+      213: 2971740567291744705
+    second: rain_splash_50
+  - first:
+      213: -5145558517574249538
+    second: rain_splash_51
+  - first:
+      213: 6262421929817787689
+    second: rain_splash_52
+  - first:
+      213: 2003258193531470962
+    second: rain_splash_53
+  - first:
+      213: 4654157391529114298
+    second: rain_splash_54
+  - first:
+      213: 2257987389194219603
+    second: rain_splash_55
+  - first:
+      213: 592438926843034839
+    second: rain_splash_56
+  - first:
+      213: 6493198928950829835
+    second: rain_splash_57
+  - first:
+      213: 7555461987965920726
+    second: rain_splash_58
+  - first:
+      213: 4855157320912966243
+    second: rain_splash_59
+  - first:
+      213: -457577390498699040
+    second: rain_splash_60
+  - first:
+      213: -5703219676779167277
+    second: rain_splash_61
+  - first:
+      213: -4075461678954747325
+    second: rain_splash_62
+  - first:
+      213: 1086430281004555256
+    second: rain_splash_63
+  - first:
+      213: 5524305827589872782
+    second: rain_splash_64
+  - first:
+      213: 8599103427525229152
+    second: rain_splash_65
+  - first:
+      213: -7712119383958604988
+    second: rain_splash_66
+  - first:
+      213: 2132551064977118408
+    second: rain_splash_67
+  - first:
+      213: 5851315374028446744
+    second: rain_splash_68
+  - first:
+      213: -8194980186817797589
+    second: rain_splash_69
+  - first:
+      213: 2389433510025623588
+    second: rain_splash_70
+  - first:
+      213: 7393973259882172454
+    second: rain_splash_71
+  - first:
+      213: 6883531041476512023
+    second: rain_splash_72
+  - first:
+      213: 8456420218453032425
+    second: rain_splash_73
+  - first:
+      213: 3130533008958448403
+    second: rain_splash_74
+  - first:
+      213: 2839505137943348807
+    second: rain_splash_75
+  - first:
+      213: 4568610242194446543
+    second: rain_splash_76
+  - first:
+      213: -4870989493524050279
+    second: rain_splash_77
+  - first:
+      213: -3804224482488081897
+    second: rain_splash_78
+  - first:
+      213: 2165370048766333223
+    second: rain_splash_79
+  - first:
+      213: -7848789411926823529
+    second: rain_splash_80
+  - first:
+      213: -1292726424824863115
+    second: rain_splash_81
+  - first:
+      213: -5311575803025650036
+    second: rain_splash_82
+  - first:
+      213: 4456491499638499265
+    second: rain_splash_83
+  - first:
+      213: -7719375944343382413
+    second: rain_splash_84
+  - first:
+      213: -5145348194897444537
+    second: rain_splash_85
+  - first:
+      213: -8134877822915188894
+    second: rain_splash_86
+  - first:
+      213: 9101342754842591635
+    second: rain_splash_87
+  - first:
+      213: 6233296923785921974
+    second: rain_splash_88
+  - first:
+      213: -3593734251525661698
+    second: rain_splash_89
+  - first:
+      213: 6564259055480815549
+    second: rain_splash_90
+  - first:
+      213: -2138573795718520126
+    second: rain_splash_91
+  - first:
+      213: 1839377157046753878
+    second: rain_splash_92
+  - first:
+      213: -3413653602889685826
+    second: rain_splash_93
+  - first:
+      213: -1653425481720194787
+    second: rain_splash_94
+  - first:
+      213: -844084896318106286
+    second: rain_splash_95
+  - first:
+      213: -4625411778562780616
+    second: rain_splash_96
+  - first:
+      213: 301879778682619430
+    second: rain_splash_97
+  - first:
+      213: -6344263354363459075
+    second: rain_splash_98
+  - first:
+      213: -8195255372869544719
+    second: rain_splash_99
+  - first:
+      213: 7880856233977365740
+    second: rain_splash_100
+  - first:
+      213: 2591761742386351326
+    second: rain_splash_101
+  - first:
+      213: 2901409634681222163
+    second: rain_splash_102
+  - first:
+      213: -2663374494958627502
+    second: rain_splash_103
+  - first:
+      213: -2008068624472991112
+    second: rain_splash_104
+  - first:
+      213: -1834843686872233831
+    second: rain_splash_105
+  - first:
+      213: -7618665851428299515
+    second: rain_splash_106
+  - first:
+      213: 3717532958460070132
+    second: rain_splash_107
+  - first:
+      213: -5593318287437130417
+    second: rain_splash_108
+  - first:
+      213: 6654293888840023180
+    second: rain_splash_109
+  - first:
+      213: 5131360808516877593
+    second: rain_splash_110
+  - first:
+      213: -6276368587037223730
+    second: rain_splash_111
+  - first:
+      213: 8408754987981677908
+    second: rain_splash_112
+  - first:
+      213: 6584880498079434985
+    second: rain_splash_113
+  - first:
+      213: -2028250105940198048
+    second: rain_splash_114
+  - first:
+      213: 1743527464279323872
+    second: rain_splash_115
+  - first:
+      213: -1413808883213493484
+    second: rain_splash_116
+  - first:
+      213: -2260209505589594753
+    second: rain_splash_117
+  - first:
+      213: 3000485368143716826
+    second: rain_splash_118
+  - first:
+      213: 6681648590572602078
+    second: rain_splash_119
+  - first:
+      213: 2230396940873154600
+    second: rain_splash_120
+  - first:
+      213: 5419210033554917592
+    second: rain_splash_121
+  - first:
+      213: -950744655997193459
+    second: rain_splash_122
+  - first:
+      213: -2437697416303891366
+    second: rain_splash_123
+  - first:
+      213: 6666010974843189972
+    second: rain_splash_124
+  - first:
+      213: 1641790348475836764
+    second: rain_splash_125
+  - first:
+      213: -8959365517558061600
+    second: rain_splash_126
+  - first:
+      213: -3851855879369278965
+    second: rain_splash_127
+  - first:
+      213: -6892271976004000315
+    second: rain_splash_128
+  - first:
+      213: 7765056844118701945
+    second: rain_splash_129
+  - first:
+      213: 9053380793484572571
+    second: rain_splash_130
+  - first:
+      213: -3500060710498051666
+    second: rain_splash_131
+  - first:
+      213: 1257003295125315858
+    second: rain_splash_132
+  - first:
+      213: -1669935061386145018
+    second: rain_splash_133
+  - first:
+      213: -2598926724169803946
+    second: rain_splash_134
+  - first:
+      213: -8676875743495335747
+    second: rain_splash_135
+  - first:
+      213: 8386846929476365086
+    second: rain_splash_136
+  - first:
+      213: -5622175853365638629
+    second: rain_splash_137
+  - first:
+      213: 5854147842713329541
+    second: rain_splash_138
+  - first:
+      213: -6403918496254392151
+    second: rain_splash_139
+  - first:
+      213: -4794720062788515565
+    second: rain_splash_140
+  - first:
+      213: 330403347669923910
+    second: rain_splash_141
+  - first:
+      213: 2975486202458422674
+    second: rain_splash_142
+  - first:
+      213: 7847422462964170503
+    second: rain_splash_143
+  - first:
+      213: 2998018323313426639
+    second: rain_splash_144
+  - first:
+      213: -8042955265619030746
+    second: rain_splash_145
+  - first:
+      213: -610372712101507634
+    second: rain_splash_146
+  - first:
+      213: -8432029148127797321
+    second: rain_splash_147
+  - first:
+      213: 2858322209649945073
+    second: rain_splash_148
+  - first:
+      213: 446297575666483552
+    second: rain_splash_149
+  - first:
+      213: 1342022688663113211
+    second: rain_splash_150
+  - first:
+      213: -3320088889303988227
+    second: rain_splash_151
+  - first:
+      213: 6537255838102880922
+    second: rain_splash_152
+  - first:
+      213: -3698726904728201974
+    second: rain_splash_153
+  - first:
+      213: 2458976486209597832
+    second: rain_splash_154
+  - first:
+      213: 6129326678836220395
+    second: rain_splash_155
+  - first:
+      213: -2766004289975742615
+    second: rain_splash_156
+  - first:
+      213: 1339979352465618256
+    second: rain_splash_157
+  - first:
+      213: -5261924066375675112
+    second: rain_splash_158
+  - first:
+      213: -3491323365785132234
+    second: rain_splash_159
+  - first:
+      213: 1964630503521216589
+    second: rain_splash_160
+  - first:
+      213: -8655666694940091971
+    second: rain_splash_161
+  - first:
+      213: -7032391613406725412
+    second: rain_splash_162
+  - first:
+      213: -7036769431099753143
+    second: rain_splash_163
+  - first:
+      213: -4419256873382930935
+    second: rain_splash_164
+  - first:
+      213: 3481959263372149389
+    second: rain_splash_165
+  - first:
+      213: 434503151321927211
+    second: rain_splash_166
+  - first:
+      213: 2210817962314603358
+    second: rain_splash_167
+  - first:
+      213: 8513100879946596446
+    second: rain_splash_168
+  - first:
+      213: -1717859006381153987
+    second: rain_splash_169
+  - first:
+      213: -4237385408018015999
+    second: rain_splash_170
+  - first:
+      213: -8365957602562795274
+    second: rain_splash_171
+  - first:
+      213: 2462167118433041567
+    second: rain_splash_172
+  - first:
+      213: -3170927292724246414
+    second: rain_splash_173
+  - first:
+      213: -2937090100037690202
+    second: rain_splash_174
+  - first:
+      213: 5849113113054339852
+    second: rain_splash_175
+  - first:
+      213: -5654680110948914061
+    second: rain_splash_176
+  - first:
+      213: -5482325305775344955
+    second: rain_splash_177
+  - first:
+      213: -5402190023559658214
+    second: rain_splash_178
+  - first:
+      213: -5226578011303914916
+    second: rain_splash_179
+  - first:
+      213: 2809601395914580247
+    second: rain_splash_180
+  - first:
+      213: 2055674612644240622
+    second: rain_splash_181
+  - first:
+      213: 5687653105544851885
+    second: rain_splash_182
+  - first:
+      213: 5699797941376305681
+    second: rain_splash_183
+  - first:
+      213: 5241177565046495551
+    second: rain_splash_184
+  - first:
+      213: -5586667613039915622
+    second: rain_splash_185
+  - first:
+      213: 1281441425548863399
+    second: rain_splash_186
+  - first:
+      213: 7088398557342028572
+    second: rain_splash_187
+  - first:
+      213: 897981999810144506
+    second: rain_splash_188
+  - first:
+      213: 7575366759848719619
+    second: rain_splash_189
+  - first:
+      213: -5620809348710874976
+    second: rain_splash_190
+  - first:
+      213: -5859415237913066700
+    second: rain_splash_191
+  - first:
+      213: -3942071029595460911
+    second: rain_splash_192
+  - first:
+      213: -4810162410564784992
+    second: rain_splash_193
+  - first:
+      213: -6180072854127758216
+    second: rain_splash_194
+  - first:
+      213: -1467238873194720673
+    second: rain_splash_195
+  - first:
+      213: 3668444443873124553
+    second: rain_splash_196
+  - first:
+      213: 7110997435407934254
+    second: rain_splash_197
+  - first:
+      213: -6037656931541364354
+    second: rain_splash_198
+  - first:
+      213: -3914230813760673901
+    second: rain_splash_199
+  - first:
+      213: 6210546275470952618
+    second: rain_splash_200
+  - first:
+      213: -5426098396976299403
+    second: rain_splash_201
+  - first:
+      213: 1715340883849579036
+    second: rain_splash_202
+  - first:
+      213: -4796401127420928952
+    second: rain_splash_203
+  - first:
+      213: -1590882662205111810
+    second: rain_splash_204
+  - first:
+      213: -6008627839861152184
+    second: rain_splash_205
+  - first:
+      213: 3249227719716562183
+    second: rain_splash_206
+  - first:
+      213: -1317832217374344194
+    second: rain_splash_207
+  - first:
+      213: -1684611386838831440
+    second: rain_splash_208
+  - first:
+      213: -3074822400073664026
+    second: rain_splash_209
+  - first:
+      213: 7954001126102794736
+    second: rain_splash_210
+  - first:
+      213: -8257439103100800709
+    second: rain_splash_211
+  - first:
+      213: 2199064150938892626
+    second: rain_splash_212
+  - first:
+      213: -427259129707246015
+    second: rain_splash_213
+  - first:
+      213: -4935127569662746478
+    second: rain_splash_214
+  - first:
+      213: -4896003626247723696
+    second: rain_splash_215
+  - first:
+      213: -3218421872731860174
+    second: rain_splash_216
+  - first:
+      213: -8183156406455749248
+    second: rain_splash_217
+  - first:
+      213: 49081045121660754
+    second: rain_splash_218
+  - first:
+      213: 7880629748646099214
+    second: rain_splash_219
+  - first:
+      213: -669681464380790654
+    second: rain_splash_220
+  - first:
+      213: 8231210734811857259
+    second: rain_splash_221
+  - first:
+      213: 3344640247648865671
+    second: rain_splash_222
+  - first:
+      213: 3317364061786786992
+    second: rain_splash_223
+  - first:
+      213: 711634145700645863
+    second: rain_splash_224
+  - first:
+      213: 4956191344720436554
+    second: rain_splash_225
+  - first:
+      213: 2114456767407188399
+    second: rain_splash_226
+  - first:
+      213: -5315841473369303965
+    second: rain_splash_227
+  - first:
+      213: -5730647622707436541
+    second: rain_splash_228
+  - first:
+      213: -1167882598855142724
+    second: rain_splash_229
+  - first:
+      213: -7729694373624741019
+    second: rain_splash_230
+  - first:
+      213: -1906456886183020813
+    second: rain_splash_231
+  - first:
+      213: -5630701951899424121
+    second: rain_splash_232
+  - first:
+      213: 5082370500041083711
+    second: rain_splash_233
+  - first:
+      213: 8499579550306792569
+    second: rain_splash_234
+  - first:
+      213: 4536461463507932565
+    second: rain_splash_235
+  - first:
+      213: -1090078031841329360
+    second: rain_splash_236
+  - first:
+      213: -9003989518665847758
+    second: rain_splash_237
+  - first:
+      213: 8942712037098698630
+    second: rain_splash_238
+  - first:
+      213: -8472610126689624445
+    second: rain_splash_239
+  - first:
+      213: 8882058558698256918
+    second: rain_splash_240
+  - first:
+      213: 3786723942302321851
+    second: rain_splash_241
+  - first:
+      213: -2283603621153403889
+    second: rain_splash_242
+  - first:
+      213: 7755936013856387083
+    second: rain_splash_243
+  - first:
+      213: 7846025063450621167
+    second: rain_splash_244
+  - first:
+      213: 2555282519136211148
+    second: rain_splash_245
+  - first:
+      213: 8233704351297506927
+    second: rain_splash_246
+  - first:
+      213: 624050675724990510
+    second: rain_splash_247
+  - first:
+      213: -4052534015189573582
+    second: rain_splash_248
+  - first:
+      213: 71126279968132141
+    second: rain_splash_249
+  - first:
+      213: 258390675750080797
+    second: rain_splash_250
+  - first:
+      213: 7094884647709394329
+    second: rain_splash_251
+  - first:
+      213: 4938134159915305776
+    second: rain_splash_252
+  - first:
+      213: -8263934551750244399
+    second: rain_splash_253
+  - first:
+      213: 7696172533265802275
+    second: rain_splash_254
+  - first:
+      213: -7406880621060858533
+    second: rain_splash_255
+  - first:
+      213: -4849398663200884303
+    second: rain_splash_256
+  - first:
+      213: 5705028851483619542
+    second: rain_splash_257
+  - first:
+      213: 7676938719265251586
+    second: rain_splash_258
+  - first:
+      213: 4000621812152227433
+    second: rain_splash_259
+  - first:
+      213: 3343692913320432933
+    second: rain_splash_260
+  - first:
+      213: 5865168459620141202
+    second: rain_splash_261
+  - first:
+      213: -3658108952967960920
+    second: rain_splash_262
+  - first:
+      213: -6433965625538271294
+    second: rain_splash_263
+  - first:
+      213: -386815188108841938
+    second: rain_splash_264
+  - first:
+      213: 7559247291365794365
+    second: rain_splash_265
+  - first:
+      213: -5304699081633242577
+    second: rain_splash_266
+  - first:
+      213: -1565236494928246614
+    second: rain_splash_267
+  - first:
+      213: 7351463298419338243
+    second: rain_splash_268
+  - first:
+      213: -6567812167246977048
+    second: rain_splash_269
+  - first:
+      213: -2160396628334757392
+    second: rain_splash_270
+  - first:
+      213: 7709922358357975228
+    second: rain_splash_271
+  - first:
+      213: -7068952996637306430
+    second: rain_splash_272
+  - first:
+      213: -2149961690778137485
+    second: rain_splash_273
+  - first:
+      213: -6496841568440214111
+    second: rain_splash_274
+  - first:
+      213: 8607741352048188273
+    second: rain_splash_275
+  - first:
+      213: -735841374225496535
+    second: rain_splash_276
+  - first:
+      213: 290912600654035493
+    second: rain_splash_277
+  - first:
+      213: 2312564068355778715
+    second: rain_splash_278
+  - first:
+      213: 5617253185296368449
+    second: rain_splash_279
+  - first:
+      213: -2937364479031130589
+    second: rain_splash_280
+  - first:
+      213: -8727399540511493759
+    second: rain_splash_281
+  - first:
+      213: 5381674051729461056
+    second: rain_splash_282
+  - first:
+      213: 8061694076102829232
+    second: rain_splash_283
+  - first:
+      213: -5232773222042619722
+    second: rain_splash_284
+  - first:
+      213: -3452075774075044863
+    second: rain_splash_285
+  - first:
+      213: 5505298407676332211
+    second: rain_splash_286
+  - first:
+      213: 6436446789603299631
+    second: rain_splash_287
+  - first:
+      213: -5144820590590818646
+    second: rain_splash_288
+  - first:
+      213: -31684509517336088
+    second: rain_splash_289
+  - first:
+      213: 4905657210195912586
+    second: rain_splash_290
+  - first:
+      213: 7276237567534383509
+    second: rain_splash_291
+  - first:
+      213: 2930189307853634318
+    second: rain_splash_292
+  - first:
+      213: -2556469294093336265
+    second: rain_splash_293
+  - first:
+      213: 5725725298923503168
+    second: rain_splash_294
+  - first:
+      213: -7068231617185425782
+    second: rain_splash_295
+  - first:
+      213: 1210291779911717790
+    second: rain_splash_296
+  - first:
+      213: -4208228349426369435
+    second: rain_splash_297
+  - first:
+      213: -5064663121752654512
+    second: rain_splash_298
+  - first:
+      213: 6496840119831235906
+    second: rain_splash_299
+  - first:
+      213: 8594544080346447410
+    second: rain_splash_300
+  - first:
+      213: -8149761483582434343
+    second: rain_splash_301
+  - first:
+      213: 785906919479980025
+    second: rain_splash_302
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rain_splash_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 16
+        width: 233
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59a90cb3513090630800000000000000
+      internalID: 3893646742570179221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_1
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 878ac10ac6c91d4f0800000000000000
+      internalID: -805690867965974408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_2
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78393fdd97935eaf0800000000000000
+      internalID: -367824598983273593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_3
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 335597a1fc30c0cc0800000000000000
+      internalID: -3743613002214451917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_4
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d564e87de791ac20800000000000000
+      internalID: 3216018655110522325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_5
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 17
+        width: 186
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb860fe4935ea1110800000000000000
+      internalID: 1232549482339526847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_6
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 16
+        width: 21
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f857214bd48336820800000000000000
+      internalID: 2910231690596218255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_7
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 17
+        width: 230
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6780400582877a480800000000000000
+      internalID: -8888003225055917962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_8
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 16
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11f5352be1e89e410800000000000000
+      internalID: 1506891812824112913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_9
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 17
+        width: 237
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3405a7a9f5698bd50800000000000000
+      internalID: 6753312978599825475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_10
+      rect:
+        serializedVersion: 2
+        x: 707
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8fecceb0ba100110800000000000000
+      internalID: 1225008445062442893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_11
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 17
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c13496004bac859d0800000000000000
+      internalID: -2785253495078829284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_12
+      rect:
+        serializedVersion: 2
+        x: 885
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3310c0df4f7d176d0800000000000000
+      internalID: -2994374830007254733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_13
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 15
+        width: 335
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b69bcaf86840d760800000000000000
+      internalID: 7480558596783838902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_14
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22ffc1e674e650d00800000000000000
+      internalID: 938277350445743906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_15
+      rect:
+        serializedVersion: 2
+        x: 1041
+        y: 15
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb810b8dbc9117ac0800000000000000
+      internalID: -3859275042375329604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_16
+      rect:
+        serializedVersion: 2
+        x: 1204
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08f1bf1c06f523ee0800000000000000
+      internalID: -1282858074671210624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_17
+      rect:
+        serializedVersion: 2
+        x: 1281
+        y: 17
+        width: 312
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2c782bcba065ff30800000000000000
+      internalID: 4608696084647672875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_18
+      rect:
+        serializedVersion: 2
+        x: 1327
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d07bcbe140f9b2f0800000000000000
+      internalID: -956469279920000815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_19
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 17
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04ae70d9af5725850800000000000000
+      internalID: 6364278942664747584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_20
+      rect:
+        serializedVersion: 2
+        x: 1361
+        y: 16
+        width: 20
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0d744384918483d0800000000000000
+      internalID: -3205294559923503859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_21
+      rect:
+        serializedVersion: 2
+        x: 1384
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bed20fac98ed27f0800000000000000
+      internalID: -635596212740628811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_22
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 17
+        width: 453
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e80c4df800e2b19c0800000000000000
+      internalID: -3955517267766886258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_23
+      rect:
+        serializedVersion: 2
+        x: 1646
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0398b4f58612f52a0800000000000000
+      internalID: -6746636984618612432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_24
+      rect:
+        serializedVersion: 2
+        x: 1663
+        y: 17
+        width: 14
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b52abeac6fac5fd60800000000000000
+      internalID: 7923462280743461467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_25
+      rect:
+        serializedVersion: 2
+        x: 1690
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 866ed3b08269863b0800000000000000
+      internalID: -5518996244611078552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_26
+      rect:
+        serializedVersion: 2
+        x: 1982
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcf652b454458f360800000000000000
+      internalID: 7203600260569329613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_27
+      rect:
+        serializedVersion: 2
+        x: 2005
+        y: 17
+        width: 28
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09216e3b814eaffd0800000000000000
+      internalID: -2307281064325410160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_28
+      rect:
+        serializedVersion: 2
+        x: 2062
+        y: 17
+        width: 632
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2eb47d4ff6a7a230800000000000000
+      internalID: 3650069638453444143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_29
+      rect:
+        serializedVersion: 2
+        x: 2104
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 639d92e7677d865f0800000000000000
+      internalID: -763123232916514506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_30
+      rect:
+        serializedVersion: 2
+        x: 2284
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c83811b135d416600800000000000000
+      internalID: 459733656300258188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_31
+      rect:
+        serializedVersion: 2
+        x: 2301
+        y: 16
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3784b678a1d6ee310800000000000000
+      internalID: 1436205291886299251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_32
+      rect:
+        serializedVersion: 2
+        x: 2323
+        y: 17
+        width: 31
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 646abfc591db27890800000000000000
+      internalID: -7461693715967662522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_33
+      rect:
+        serializedVersion: 2
+        x: 2548
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac167445b167dcdb0800000000000000
+      internalID: -4770026570565328438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_34
+      rect:
+        serializedVersion: 2
+        x: 2603
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c87aa59ad0b96d360800000000000000
+      internalID: 7194107937749116812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_35
+      rect:
+        serializedVersion: 2
+        x: 2621
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 333a43739321357c0800000000000000
+      internalID: -4083900400146275533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_36
+      rect:
+        serializedVersion: 2
+        x: 2642
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0f09c31fb3e5bb20800000000000000
+      internalID: 3149673924225732366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_37
+      rect:
+        serializedVersion: 2
+        x: 2702
+        y: 16
+        width: 312
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 713acf3e4d2456fd0800000000000000
+      internalID: -2349398148478360809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_38
+      rect:
+        serializedVersion: 2
+        x: 2736
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75244aed83da07590800000000000000
+      internalID: -7678446904901615017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_39
+      rect:
+        serializedVersion: 2
+        x: 2742
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 958c847521260f350800000000000000
+      internalID: 6048442130471897177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_40
+      rect:
+        serializedVersion: 2
+        x: 2940
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 187ff7e6be98e7780800000000000000
+      internalID: -8683351387259537535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_41
+      rect:
+        serializedVersion: 2
+        x: 2961
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5450e16b14c009c50800000000000000
+      internalID: 6669844524503532869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_42
+      rect:
+        serializedVersion: 2
+        x: 3022
+        y: 17
+        width: 312
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19d03be995b1fcbc0800000000000000
+      internalID: -3760757092102500975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_43
+      rect:
+        serializedVersion: 2
+        x: 3055
+        y: 17
+        width: 18
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba24957d6638a1090800000000000000
+      internalID: -8062987705130597717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_44
+      rect:
+        serializedVersion: 2
+        x: 3280
+        y: 17
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66602928ebb4d2650800000000000000
+      internalID: 6209702742820259430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_45
+      rect:
+        serializedVersion: 2
+        x: 3300
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6b9270619df289b0800000000000000
+      internalID: -5079218628890289299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_46
+      rect:
+        serializedVersion: 2
+        x: 3342
+        y: 15
+        width: 404
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 067c8d207397be540800000000000000
+      internalID: 5038253885321955168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_47
+      rect:
+        serializedVersion: 2
+        x: 3374
+        y: 17
+        width: 21
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b0cb5e82da705ae0800000000000000
+      internalID: -1562614025947463497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_48
+      rect:
+        serializedVersion: 2
+        x: 3396
+        y: 18
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aa63e96304168630800000000000000
+      internalID: 3928849729821305511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_49
+      rect:
+        serializedVersion: 2
+        x: 3500
+        y: 17
+        width: 18
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e747946863a15a680800000000000000
+      internalID: -8744554279986432898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_50
+      rect:
+        serializedVersion: 2
+        x: 3600
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c1da0e0d4ebd3920800000000000000
+      internalID: 2971740567291744705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_51
+      rect:
+        serializedVersion: 2
+        x: 3693
+        y: 16
+        width: 23
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb350056acd4798b0800000000000000
+      internalID: -5145558517574249538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_52
+      rect:
+        serializedVersion: 2
+        x: 3745
+        y: 18
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92dc760c09798e650800000000000000
+      internalID: 6262421929817787689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_53
+      rect:
+        serializedVersion: 2
+        x: 3761
+        y: 17
+        width: 305
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27485da96b00dcb10800000000000000
+      internalID: 2003258193531470962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_54
+      rect:
+        serializedVersion: 2
+        x: 3819
+        y: 17
+        width: 20
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abaf9d22d73e69040800000000000000
+      internalID: 4654157391529114298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_55
+      rect:
+        serializedVersion: 2
+        x: 4011
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350bb30319bf55f10800000000000000
+      internalID: 2257987389194219603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_56
+      rect:
+        serializedVersion: 2
+        x: 4034
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dcb799a014c83800800000000000000
+      internalID: 592438926843034839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_57
+      rect:
+        serializedVersion: 2
+        x: 4064
+        y: 18
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b03af00060a7c1a50800000000000000
+      internalID: 6493198928950829835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_58
+      rect:
+        serializedVersion: 2
+        x: 4081
+        y: 17
+        width: 305
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d5eca2c5a46ad860800000000000000
+      internalID: 7555461987965920726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_59
+      rect:
+        serializedVersion: 2
+        x: 4124
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36297a11cdbf06340800000000000000
+      internalID: 4855157320912966243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_60
+      rect:
+        serializedVersion: 2
+        x: 4138
+        y: 16
+        width: 22
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e82316a9cb56a9f0800000000000000
+      internalID: -457577390498699040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_61
+      rect:
+        serializedVersion: 2
+        x: 4185
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d14f81cbe71ad0b0800000000000000
+      internalID: -5703219676779167277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_62
+      rect:
+        serializedVersion: 2
+        x: 4257
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34a6f2a123d0177c0800000000000000
+      internalID: -4075461678954747325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_63
+      rect:
+        serializedVersion: 2
+        x: 4312
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fb118c9596c31f00800000000000000
+      internalID: 1086430281004555256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_64
+      rect:
+        serializedVersion: 2
+        x: 4330
+        y: 16
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8c5d1491e64aac40800000000000000
+      internalID: 5524305827589872782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_65
+      rect:
+        serializedVersion: 2
+        x: 4353
+        y: 17
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06a3c70e107265770800000000000000
+      internalID: 8599103427525229152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_66
+      rect:
+        serializedVersion: 2
+        x: 4369
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4433eb5e74c09f490800000000000000
+      internalID: -7712119383958604988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_67
+      rect:
+        serializedVersion: 2
+        x: 4383
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c4975515e7589d10800000000000000
+      internalID: 2132551064977118408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_68
+      rect:
+        serializedVersion: 2
+        x: 4401
+        y: 17
+        width: 305
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81c5fb1c45c043150800000000000000
+      internalID: 5851315374028446744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_69
+      rect:
+        serializedVersion: 2
+        x: 4457
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b226c5f50f4954e80800000000000000
+      internalID: -8194980186817797589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_70
+      rect:
+        serializedVersion: 2
+        x: 4492
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 428fd7b1e19f82120800000000000000
+      internalID: 2389433510025623588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_71
+      rect:
+        serializedVersion: 2
+        x: 4576
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6209302418bac9660800000000000000
+      internalID: 7393973259882172454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_72
+      rect:
+        serializedVersion: 2
+        x: 4620
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 719059ff207378f50800000000000000
+      internalID: 6883531041476512023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_73
+      rect:
+        serializedVersion: 2
+        x: 4672
+        y: 17
+        width: 15
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9edf258726d3b5570800000000000000
+      internalID: 8456420218453032425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_74
+      rect:
+        serializedVersion: 2
+        x: 4702
+        y: 17
+        width: 17
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3136a947f23e17b20800000000000000
+      internalID: 3130533008958448403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_75
+      rect:
+        serializedVersion: 2
+        x: 4721
+        y: 16
+        width: 378
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 746820de0e2f76720800000000000000
+      internalID: 2839505137943348807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_76
+      rect:
+        serializedVersion: 2
+        x: 4762
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc8163b4fc6f66f30800000000000000
+      internalID: 4568610242194446543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_77
+      rect:
+        serializedVersion: 2
+        x: 4776
+        y: 16
+        width: 17
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99ec6ddfcd4c66cb0800000000000000
+      internalID: -4870989493524050279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_78
+      rect:
+        serializedVersion: 2
+        x: 4822
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71224732dfda43bc0800000000000000
+      internalID: -3804224482488081897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_79
+      rect:
+        serializedVersion: 2
+        x: 4876
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 721dcf33690fc0e10800000000000000
+      internalID: 2165370048766333223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_80
+      rect:
+        serializedVersion: 2
+        x: 4895
+        y: 16
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79d21415d9f731390800000000000000
+      internalID: -7848789411926823529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_81
+      rect:
+        serializedVersion: 2
+        x: 4939
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 576ad807a205f0ee0800000000000000
+      internalID: -1292726424824863115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_82
+      rect:
+        serializedVersion: 2
+        x: 4950
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8e8817f2fd7946b0800000000000000
+      internalID: -5311575803025650036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_83
+      rect:
+        serializedVersion: 2
+        x: 5007
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c7208c4863a8dd30800000000000000
+      internalID: 4456491499638499265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_84
+      rect:
+        serializedVersion: 2
+        x: 5021
+        y: 17
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37697b54a744fd490800000000000000
+      internalID: -7719375944343382413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_85
+      rect:
+        serializedVersion: 2
+        x: 5048
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 741c075f31d0898b0800000000000000
+      internalID: -5145348194897444537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_86
+      rect:
+        serializedVersion: 2
+        x: 5081
+        y: 17
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 267efe178bb1b1f80800000000000000
+      internalID: -8134877822915188894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_87
+      rect:
+        serializedVersion: 2
+        x: 5096
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 391c779b3077e4e70800000000000000
+      internalID: 9101342754842591635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_88
+      rect:
+        serializedVersion: 2
+        x: 5107
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b58bc9d68e118650800000000000000
+      internalID: 6233296923785921974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_89
+      rect:
+        serializedVersion: 2
+        x: 5114
+        y: 18
+        width: 232
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efb98a81dbd702ec0800000000000000
+      internalID: -3593734251525661698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_90
+      rect:
+        serializedVersion: 2
+        x: 5130
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbf339ff4dee81b50800000000000000
+      internalID: 6564259055480815549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_91
+      rect:
+        serializedVersion: 2
+        x: 5141
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c22d34a6724252e0800000000000000
+      internalID: -2138573795718520126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_92
+      rect:
+        serializedVersion: 2
+        x: 5196
+        y: 17
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65a5db567c7c68910800000000000000
+      internalID: 1839377157046753878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_93
+      rect:
+        serializedVersion: 2
+        x: 5269
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb4278d622440a0d0800000000000000
+      internalID: -3413653602889685826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_94
+      rect:
+        serializedVersion: 2
+        x: 5319
+        y: 17
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d191d7bd84add09e0800000000000000
+      internalID: -1653425481720194787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_95
+      rect:
+        serializedVersion: 2
+        x: 5340
+        y: 16
+        width: 21
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 255dfaa42453944f0800000000000000
+      internalID: -844084896318106286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_96
+      rect:
+        serializedVersion: 2
+        x: 5361
+        y: 17
+        width: 460
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8329bde6e7c3fcfb0800000000000000
+      internalID: -4625411778562780616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_97
+      rect:
+        serializedVersion: 2
+        x: 5367
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 626404d2f0e703400800000000000000
+      internalID: 301879778682619430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_98
+      rect:
+        serializedVersion: 2
+        x: 5400
+        y: 17
+        width: 14
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df943a1b716a4f7a0800000000000000
+      internalID: -6344263354363459075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_99
+      rect:
+        serializedVersion: 2
+        x: 5449
+        y: 17
+        width: 27
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f4df70a8aa944e80800000000000000
+      internalID: -8195255372869544719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_100
+      rect:
+        serializedVersion: 2
+        x: 5515
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce4c4208dfc6e5d60800000000000000
+      internalID: 7880856233977365740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_101
+      rect:
+        serializedVersion: 2
+        x: 5569
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edcc26da299c7f320800000000000000
+      internalID: 2591761742386351326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_102
+      rect:
+        serializedVersion: 2
+        x: 5577
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 314f11fb0b0e34820800000000000000
+      internalID: 2901409634681222163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_103
+      rect:
+        serializedVersion: 2
+        x: 5588
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 255d72c020bc90bd0800000000000000
+      internalID: -2663374494958627502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_104
+      rect:
+        serializedVersion: 2
+        x: 5638
+        y: 17
+        width: 22
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87a1ea9a938e124e0800000000000000
+      internalID: -2008068624472991112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_105
+      rect:
+        serializedVersion: 2
+        x: 5686
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 998cc9163635986e0800000000000000
+      internalID: -1834843686872233831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_106
+      rect:
+        serializedVersion: 2
+        x: 5719
+        y: 16
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50d973706cf054690800000000000000
+      internalID: -7618665851428299515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_107
+      rect:
+        serializedVersion: 2
+        x: 5734
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f8c1d58784579330800000000000000
+      internalID: 3717532958460070132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_108
+      rect:
+        serializedVersion: 2
+        x: 5745
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f451d99f6aa8062b0800000000000000
+      internalID: -5593318287437130417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_109
+      rect:
+        serializedVersion: 2
+        x: 5767
+        y: 17
+        width: 17
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8cbc53390dc85c50800000000000000
+      internalID: 6654293888840023180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_110
+      rect:
+        serializedVersion: 2
+        x: 5829
+        y: 16
+        width: 312
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d720ed771463740800000000000000
+      internalID: 5131360808516877593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_111
+      rect:
+        serializedVersion: 2
+        x: 5834
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec4d932160cd5e8a0800000000000000
+      internalID: -6276368587037223730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_112
+      rect:
+        serializedVersion: 2
+        x: 5885
+        y: 18
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45521fd2c16e1b470800000000000000
+      internalID: 8408754987981677908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_113
+      rect:
+        serializedVersion: 2
+        x: 5896
+        y: 16
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e80c60cce1326b50800000000000000
+      internalID: 6584880498079434985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_114
+      rect:
+        serializedVersion: 2
+        x: 5925
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06d39c756453ad3e0800000000000000
+      internalID: -2028250105940198048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_115
+      rect:
+        serializedVersion: 2
+        x: 5981
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e4b18cbdf0423810800000000000000
+      internalID: 1743527464279323872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_116
+      rect:
+        serializedVersion: 2
+        x: 6005
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41b94c7bf44216ce0800000000000000
+      internalID: -1413808883213493484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_117
+      rect:
+        serializedVersion: 2
+        x: 6052
+        y: 17
+        width: 26
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f75fe550e6f12a0e0800000000000000
+      internalID: -2260209505589594753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_118
+      rect:
+        serializedVersion: 2
+        x: 6086
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad1a6f98b8dd3a920800000000000000
+      internalID: 3000485368143716826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_119
+      rect:
+        serializedVersion: 2
+        x: 6118
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed2c1130efbf9bc50800000000000000
+      internalID: 6681648590572602078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_120
+      rect:
+        serializedVersion: 2
+        x: 6149
+        y: 15
+        width: 303
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 820ccd85336f3fe10800000000000000
+      internalID: 2230396940873154600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_121
+      rect:
+        serializedVersion: 2
+        x: 6204
+        y: 17
+        width: 27
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d8064530d6e43b40800000000000000
+      internalID: 5419210033554917592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_122
+      rect:
+        serializedVersion: 2
+        x: 6244
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d03bf2bc5c64ec2f0800000000000000
+      internalID: -950744655997193459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_123
+      rect:
+        serializedVersion: 2
+        x: 6300
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5ca1578d1f8b2ed0800000000000000
+      internalID: -2437697416303891366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_124
+      rect:
+        serializedVersion: 2
+        x: 6321
+        y: 17
+        width: 17
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4da3260e9ad628c50800000000000000
+      internalID: 6666010974843189972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_125
+      rect:
+        serializedVersion: 2
+        x: 6360
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5921949f9fc8c610800000000000000
+      internalID: 1641790348475836764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_126
+      rect:
+        serializedVersion: 2
+        x: 6371
+        y: 17
+        width: 28
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e56111d780f9a380800000000000000
+      internalID: -8959365517558061600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_127
+      rect:
+        serializedVersion: 2
+        x: 6458
+        y: 16
+        width: 213
+        height: 159
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0ab1385c757b8ac0800000000000000
+      internalID: -3851855879369278965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_128
+      rect:
+        serializedVersion: 2
+        x: 6523
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c5e6e6972bb950a0800000000000000
+      internalID: -6892271976004000315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_129
+      rect:
+        serializedVersion: 2
+        x: 6563
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97739660f0603cb60800000000000000
+      internalID: 7765056844118701945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_130
+      rect:
+        serializedVersion: 2
+        x: 6679
+        y: 16
+        width: 40
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b97fdf36dd114ad70800000000000000
+      internalID: 9053380793484572571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_131
+      rect:
+        serializedVersion: 2
+        x: 6692
+        y: 17
+        width: 137
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea95672f3594d6fc0800000000000000
+      internalID: -3500060710498051666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_132
+      rect:
+        serializedVersion: 2
+        x: 6724
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 211a07746d5c17110800000000000000
+      internalID: 1257003295125315858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_133
+      rect:
+        serializedVersion: 2
+        x: 6756
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 603db1cc8e233d8e0800000000000000
+      internalID: -1669935061386145018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_134
+      rect:
+        serializedVersion: 2
+        x: 6836
+        y: 18
+        width: 313
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 657d6900ae1ceebd0800000000000000
+      internalID: -2598926724169803946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_135
+      rect:
+        serializedVersion: 2
+        x: 6841
+        y: 17
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db0d1ccbb7b859780800000000000000
+      internalID: -8676875743495335747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_136
+      rect:
+        serializedVersion: 2
+        x: 6882
+        y: 16
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ba301d8d0146470800000000000000
+      internalID: 8386846929476365086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_137
+      rect:
+        serializedVersion: 2
+        x: 6911
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1acc5359d40af1b0800000000000000
+      internalID: -5622175853365638629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_138
+      rect:
+        serializedVersion: 2
+        x: 6938
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f1c83427c1e3150800000000000000
+      internalID: 5854147842713329541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_139
+      rect:
+        serializedVersion: 2
+        x: 6959
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a8043c9e06b027a0800000000000000
+      internalID: -6403918496254392151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_140
+      rect:
+        serializedVersion: 2
+        x: 6998
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3194d04a18bb57db0800000000000000
+      internalID: -4794720062788515565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_141
+      rect:
+        serializedVersion: 2
+        x: 7039
+        y: 17
+        width: 17
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 648377a1814d59400800000000000000
+      internalID: 330403347669923910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_142
+      rect:
+        serializedVersion: 2
+        x: 7075
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29d3c93bfec0b4920800000000000000
+      internalID: 2975486202458422674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_143
+      rect:
+        serializedVersion: 2
+        x: 7124
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70f76631725a7ec60800000000000000
+      internalID: 7847422462964170503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_144
+      rect:
+        serializedVersion: 2
+        x: 7152
+        y: 17
+        width: 22
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc08537e7c91b9920800000000000000
+      internalID: 2998018323313426639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_145
+      rect:
+        serializedVersion: 2
+        x: 7165
+        y: 17
+        width: 232
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62d8b60accea16090800000000000000
+      internalID: -8042955265619030746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_146
+      rect:
+        serializedVersion: 2
+        x: 7230
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecd099290458787f0800000000000000
+      internalID: -610372712101507634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_147
+      rect:
+        serializedVersion: 2
+        x: 7257
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bf5a122a2a6bfa80800000000000000
+      internalID: -8432029148127797321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_148
+      rect:
+        serializedVersion: 2
+        x: 7278
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f96bc7d7eccaa720800000000000000
+      internalID: 2858322209649945073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_149
+      rect:
+        serializedVersion: 2
+        x: 7390
+        y: 17
+        width: 25
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06108bdc741913600800000000000000
+      internalID: 446297575666483552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_150
+      rect:
+        serializedVersion: 2
+        x: 7429
+        y: 18
+        width: 288
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfd87466682df9210800000000000000
+      internalID: 1342022688663113211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_151
+      rect:
+        serializedVersion: 2
+        x: 7471
+        y: 18
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df7805aeebcace1d0800000000000000
+      internalID: -3320088889303988227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_152
+      rect:
+        serializedVersion: 2
+        x: 7479
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9288f38c8ff8ba50800000000000000
+      internalID: 6537255838102880922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_153
+      rect:
+        serializedVersion: 2
+        x: 7549
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a05de721a7b7bacc0800000000000000
+      internalID: -3698726904728201974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_154
+      rect:
+        serializedVersion: 2
+        x: 7576
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 881bf83061a002220800000000000000
+      internalID: 2458976486209597832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_155
+      rect:
+        serializedVersion: 2
+        x: 7597
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be19b5cc32ebf0550800000000000000
+      internalID: 6129326678836220395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_156
+      rect:
+        serializedVersion: 2
+        x: 7624
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96f0ac0d0cd2d99d0800000000000000
+      internalID: -2766004289975742615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_157
+      rect:
+        serializedVersion: 2
+        x: 7679
+        y: 16
+        width: 19
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 055321e1f10989210800000000000000
+      internalID: 1339979352465618256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_158
+      rect:
+        serializedVersion: 2
+        x: 7709
+        y: 16
+        width: 32
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8135994c0f3e9f6b0800000000000000
+      internalID: -5261924066375675112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_159
+      rect:
+        serializedVersion: 2
+        x: 7749
+        y: 18
+        width: 148
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6332b5a85e35c8fc0800000000000000
+      internalID: -3491323365785132234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_160
+      rect:
+        serializedVersion: 2
+        x: 7762
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d48674da805c34b10800000000000000
+      internalID: 1964630503521216589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_161
+      rect:
+        serializedVersion: 2
+        x: 7790
+        y: 16
+        width: 26
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db99ae92005e0e780800000000000000
+      internalID: -8655666694940091971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_162
+      rect:
+        serializedVersion: 2
+        x: 7825
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdab479361de76e90800000000000000
+      internalID: -7032391613406725412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_163
+      rect:
+        serializedVersion: 2
+        x: 7916
+        y: 16
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94db8fc1c7f585e90800000000000000
+      internalID: -7036769431099753143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_164
+      rect:
+        serializedVersion: 2
+        x: 7921
+        y: 17
+        width: 296
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9069ec2b945aba2c0800000000000000
+      internalID: -4419256873382930935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_165
+      rect:
+        serializedVersion: 2
+        x: 7942
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d828da77087625030800000000000000
+      internalID: 3481959263372149389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_166
+      rect:
+        serializedVersion: 2
+        x: 7969
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2ec454605aa70600800000000000000
+      internalID: 434503151321927211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_167
+      rect:
+        serializedVersion: 2
+        x: 7999
+        y: 17
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5b90da29376eae10800000000000000
+      internalID: 2210817962314603358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_168
+      rect:
+        serializedVersion: 2
+        x: 8028
+        y: 17
+        width: 14
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e50484e552c942670800000000000000
+      internalID: 8513100879946596446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_169
+      rect:
+        serializedVersion: 2
+        x: 8041
+        y: 17
+        width: 21
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d312276d550f828e0800000000000000
+      internalID: -1717859006381153987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_170
+      rect:
+        serializedVersion: 2
+        x: 8081
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10999aa0c68c135c0800000000000000
+      internalID: -4237385408018015999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_171
+      rect:
+        serializedVersion: 2
+        x: 8094
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f8144d92e526eb80800000000000000
+      internalID: -8365957602562795274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_172
+      rect:
+        serializedVersion: 2
+        x: 8241
+        y: 17
+        width: 296
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9c39d7f2ff5b2220800000000000000
+      internalID: 2462167118433041567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_173
+      rect:
+        serializedVersion: 2
+        x: 8261
+        y: 17
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27884947d6a9ef3d0800000000000000
+      internalID: -3170927292724246414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_174
+      rect:
+        serializedVersion: 2
+        x: 8319
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6acdfe98d1c5d37d0800000000000000
+      internalID: -2937090100037690202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_175
+      rect:
+        serializedVersion: 2
+        x: 8347
+        y: 16
+        width: 36
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c03eeaae2693c2150800000000000000
+      internalID: 5849113113054339852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_176
+      rect:
+        serializedVersion: 2
+        x: 8427
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37c6c6c166a8681b0800000000000000
+      internalID: -5654680110948914061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_177
+      rect:
+        serializedVersion: 2
+        x: 8463
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c230265e2edae3b0800000000000000
+      internalID: -5482325305775344955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_178
+      rect:
+        serializedVersion: 2
+        x: 8499
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a15419cabc09705b0800000000000000
+      internalID: -5402190023559658214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_179
+      rect:
+        serializedVersion: 2
+        x: 8561
+        y: 17
+        width: 296
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c52dc558df67777b0800000000000000
+      internalID: -5226578011303914916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_180
+      rect:
+        serializedVersion: 2
+        x: 8580
+        y: 16
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7112eeb6595bdf620800000000000000
+      internalID: 2809601395914580247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_181
+      rect:
+        serializedVersion: 2
+        x: 8607
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eecd2743b29378c10800000000000000
+      internalID: 2055674612644240622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_182
+      rect:
+        serializedVersion: 2
+        x: 8639
+        y: 16
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da1f5a17d5a9eee40800000000000000
+      internalID: 5687653105544851885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_183
+      rect:
+        serializedVersion: 2
+        x: 8694
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11acc336700c91f40800000000000000
+      internalID: 5699797941376305681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_184
+      rect:
+        serializedVersion: 2
+        x: 8718
+        y: 16
+        width: 26
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f39d759f9376cb840800000000000000
+      internalID: 5241177565046495551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_185
+      rect:
+        serializedVersion: 2
+        x: 8746
+        y: 17
+        width: 18
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9d8396c76b2872b0800000000000000
+      internalID: -5586667613039915622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_186
+      rect:
+        serializedVersion: 2
+        x: 8782
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a76f4aef2898c110800000000000000
+      internalID: 1281441425548863399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_187
+      rect:
+        serializedVersion: 2
+        x: 8881
+        y: 15
+        width: 296
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1353c49eec0f5260800000000000000
+      internalID: 7088398557342028572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_188
+      rect:
+        serializedVersion: 2
+        x: 8909
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af8e0610fd5467c00800000000000000
+      internalID: 897981999810144506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_189
+      rect:
+        serializedVersion: 2
+        x: 8926
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 305b51c9eeb112960800000000000000
+      internalID: 7575366759848719619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_190
+      rect:
+        serializedVersion: 2
+        x: 8966
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a0c4eb7dafdef1b0800000000000000
+      internalID: -5620809348710874976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_191
+      rect:
+        serializedVersion: 2
+        x: 9013
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4334ea8b2ec2faea0800000000000000
+      internalID: -5859415237913066700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_192
+      rect:
+        serializedVersion: 2
+        x: 9051
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1daaa99d843fa49c0800000000000000
+      internalID: -3942071029595460911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_193
+      rect:
+        serializedVersion: 2
+        x: 9065
+        y: 16
+        width: 20
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ac695ed5cede3db0800000000000000
+      internalID: -4810162410564784992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_194
+      rect:
+        serializedVersion: 2
+        x: 9101
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8743eab8b78fb3aa0800000000000000
+      internalID: -6180072854127758216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_195
+      rect:
+        serializedVersion: 2
+        x: 9137
+        y: 17
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f529592c40253abe0800000000000000
+      internalID: -1467238873194720673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_196
+      rect:
+        serializedVersion: 2
+        x: 9201
+        y: 17
+        width: 296
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0205319cee8e230800000000000000
+      internalID: 3668444443873124553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_197
+      rect:
+        serializedVersion: 2
+        x: 9228
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e232438ed765fa260800000000000000
+      internalID: 7110997435407934254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_198
+      rect:
+        serializedVersion: 2
+        x: 9245
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e715dc7720fe53ca0800000000000000
+      internalID: -6037656931541364354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_199
+      rect:
+        serializedVersion: 2
+        x: 9310
+        y: 16
+        width: 36
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39728e830dbdda9c0800000000000000
+      internalID: -3914230813760673901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_200
+      rect:
+        serializedVersion: 2
+        x: 9370
+        y: 16
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa84292ceea403650800000000000000
+      internalID: 6210546275470952618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_201
+      rect:
+        serializedVersion: 2
+        x: 9521
+        y: 16
+        width: 296
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57249e3b140a2b4b0800000000000000
+      internalID: -5426098396976299403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_202
+      rect:
+        serializedVersion: 2
+        x: 9547
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1a0f82127d1ec710800000000000000
+      internalID: 1715340883849579036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_203
+      rect:
+        serializedVersion: 2
+        x: 9604
+        y: 17
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84cdac74692cf6db0800000000000000
+      internalID: -4796401127420928952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_204
+      rect:
+        serializedVersion: 2
+        x: 9775
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef1cfe7c5ac0ce9e0800000000000000
+      internalID: -1590882662205111810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_205
+      rect:
+        serializedVersion: 2
+        x: 9841
+        y: 16
+        width: 335
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 846ad8190d01d9ca0800000000000000
+      internalID: -6008627839861152184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_206
+      rect:
+        serializedVersion: 2
+        x: 9866
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 705ee0c5563971d20800000000000000
+      internalID: 3249227719716562183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_207
+      rect:
+        serializedVersion: 2
+        x: 10093
+        y: 16
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efb36d9949e16bde0800000000000000
+      internalID: -1317832217374344194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_208
+      rect:
+        serializedVersion: 2
+        x: 10185
+        y: 16
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bea4ee7ede0f98e0800000000000000
+      internalID: -1684611386838831440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_209
+      rect:
+        serializedVersion: 2
+        x: 10206
+        y: 17
+        width: 568
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e9f13871590455d0800000000000000
+      internalID: -3074822400073664026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_210
+      rect:
+        serializedVersion: 2
+        x: 10242
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f10a60d1e9426e60800000000000000
+      internalID: 7954001126102794736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_211
+      rect:
+        serializedVersion: 2
+        x: 10491
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b31b141b2eea76d80800000000000000
+      internalID: -8257439103100800709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_212
+      rect:
+        serializedVersion: 2
+        x: 10563
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2593203b135a48e10800000000000000
+      internalID: 2199064150938892626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_213
+      rect:
+        serializedVersion: 2
+        x: 10735
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14ec1c2d512121af0800000000000000
+      internalID: -427259129707246015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_214
+      rect:
+        serializedVersion: 2
+        x: 10770
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 290e3017f97e28bb0800000000000000
+      internalID: -4935127569662746478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_215
+      rect:
+        serializedVersion: 2
+        x: 10801
+        y: 18
+        width: 17
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 055ea7e54a6ed0cb0800000000000000
+      internalID: -4896003626247723696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_216
+      rect:
+        serializedVersion: 2
+        x: 10846
+        y: 17
+        width: 86
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2335872db5ed553d0800000000000000
+      internalID: -3218421872731860174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_217
+      rect:
+        serializedVersion: 2
+        x: 10854
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0853eb3ca969f6e80800000000000000
+      internalID: -8183156406455749248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_218
+      rect:
+        serializedVersion: 2
+        x: 10949
+        y: 16
+        width: 145
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2577ea353fe5ea000800000000000000
+      internalID: 49081045121660754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_219
+      rect:
+        serializedVersion: 2
+        x: 11022
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e093d66c00f9d5d60800000000000000
+      internalID: 7880629748646099214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_220
+      rect:
+        serializedVersion: 2
+        x: 11089
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2886bea9140d4b6f0800000000000000
+      internalID: -669681464380790654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_221
+      rect:
+        serializedVersion: 2
+        x: 11120
+        y: 17
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b61c7df6d822b3270800000000000000
+      internalID: 8231210734811857259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_222
+      rect:
+        serializedVersion: 2
+        x: 11165
+        y: 18
+        width: 156
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78dc596a59c8a6e20800000000000000
+      internalID: 3344640247648865671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_223
+      rect:
+        serializedVersion: 2
+        x: 11201
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bcc27db905a90e20800000000000000
+      internalID: 3317364061786786992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_224
+      rect:
+        serializedVersion: 2
+        x: 11341
+        y: 16
+        width: 300
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eb86803c7b30e900800000000000000
+      internalID: 711634145700645863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_225
+      rect:
+        serializedVersion: 2
+        x: 11408
+        y: 17
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4d5decd4cde7c440800000000000000
+      internalID: 4956191344720436554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_226
+      rect:
+        serializedVersion: 2
+        x: 11439
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa9e9322a3f085d10800000000000000
+      internalID: 2114456767407188399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_227
+      rect:
+        serializedVersion: 2
+        x: 11448
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 364988138565a36b0800000000000000
+      internalID: -5315841473369303965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_228
+      rect:
+        serializedVersion: 2
+        x: 11492
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30426937956a870b0800000000000000
+      internalID: -5730647622707436541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_229
+      rect:
+        serializedVersion: 2
+        x: 11611
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb211ebc6f8dacfe0800000000000000
+      internalID: -1167882598855142724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_230
+      rect:
+        serializedVersion: 2
+        x: 11660
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56303cdbbeb9ab490800000000000000
+      internalID: -7729694373624741019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_231
+      rect:
+        serializedVersion: 2
+        x: 11662
+        y: 17
+        width: 619
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f6b6771097ea85e0800000000000000
+      internalID: -1906456886183020813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_232
+      rect:
+        serializedVersion: 2
+        x: 11727
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78aafe0586abbd1b0800000000000000
+      internalID: -5630701951899424121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_233
+      rect:
+        serializedVersion: 2
+        x: 11767
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3b8fdfca05388640800000000000000
+      internalID: 5082370500041083711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_234
+      rect:
+        serializedVersion: 2
+        x: 11811
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 974f53c719294f570800000000000000
+      internalID: 8499579550306792569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_235
+      rect:
+        serializedVersion: 2
+        x: 11855
+        y: 17
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59593a57aafb4fe30800000000000000
+      internalID: 4536461463507932565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_236
+      rect:
+        serializedVersion: 2
+        x: 11979
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03ff3a63ec34fd0f0800000000000000
+      internalID: -1090078031841329360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_237
+      rect:
+        serializedVersion: 2
+        x: 12076
+        y: 16
+        width: 26
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23ce49aec376b0380800000000000000
+      internalID: -9003989518665847758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_238
+      rect:
+        serializedVersion: 2
+        x: 12130
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 687b0eb9735ea1c70800000000000000
+      internalID: 8942712037098698630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_239
+      rect:
+        serializedVersion: 2
+        x: 12168
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38e9946cafd3b6a80800000000000000
+      internalID: -8472610126689624445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_240
+      rect:
+        serializedVersion: 2
+        x: 12174
+        y: 17
+        width: 13
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61a7d613339634b70800000000000000
+      internalID: 8882058558698256918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_241
+      rect:
+        serializedVersion: 2
+        x: 12248
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbc8563dc552d8430800000000000000
+      internalID: 3786723942302321851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_242
+      rect:
+        serializedVersion: 2
+        x: 12298
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0c0b590b920f40e0800000000000000
+      internalID: -2283603621153403889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_243
+      rect:
+        serializedVersion: 2
+        x: 12302
+        y: 16
+        width: 182
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b00b19e36be92ab60800000000000000
+      internalID: 7755936013856387083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_244
+      rect:
+        serializedVersion: 2
+        x: 12395
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe439c5a93ea2ec60800000000000000
+      internalID: 7846025063450621167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_245
+      rect:
+        serializedVersion: 2
+        x: 12448
+        y: 16
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc011e5a9ef267320800000000000000
+      internalID: 2555282519136211148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_246
+      rect:
+        serializedVersion: 2
+        x: 12472
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6e0da4cb7ef34270800000000000000
+      internalID: 8233704351297506927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_247
+      rect:
+        serializedVersion: 2
+        x: 12487
+        y: 17
+        width: 21
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e283e6088c219a800800000000000000
+      internalID: 624050675724990510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_248
+      rect:
+        serializedVersion: 2
+        x: 12503
+        y: 15
+        width: 418
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2302070d8c182c7c0800000000000000
+      internalID: -4052534015189573582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_249
+      rect:
+        serializedVersion: 2
+        x: 12617
+        y: 16
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2c02bb89f0bcf000800000000000000
+      internalID: 71126279968132141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_250
+      rect:
+        serializedVersion: 2
+        x: 12680
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d115b5953fcf59300800000000000000
+      internalID: 258390675750080797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_251
+      rect:
+        serializedVersion: 2
+        x: 12688
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 995471d2ff7167260800000000000000
+      internalID: 7094884647709394329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_252
+      rect:
+        serializedVersion: 2
+        x: 12714
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03b49f6ead6c78440800000000000000
+      internalID: 4938134159915305776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_253
+      rect:
+        serializedVersion: 2
+        x: 12806
+        y: 16
+        width: 23
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d789d33f4b905d80800000000000000
+      internalID: -8263934551750244399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_254
+      rect:
+        serializedVersion: 2
+        x: 12883
+        y: 17
+        width: 19
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3242d67942c4eca60800000000000000
+      internalID: 7696172533265802275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_255
+      rect:
+        serializedVersion: 2
+        x: 12904
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5d51f78159753990800000000000000
+      internalID: -7406880621060858533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_256
+      rect:
+        serializedVersion: 2
+        x: 12942
+        y: 16
+        width: 182
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b938a9eb9973bcb0800000000000000
+      internalID: -4849398663200884303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_257
+      rect:
+        serializedVersion: 2
+        x: 13109
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d0390e83855c2f40800000000000000
+      internalID: 5705028851483619542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_258
+      rect:
+        serializedVersion: 2
+        x: 13125
+        y: 16
+        width: 22
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2016f3c4717f98a60800000000000000
+      internalID: 7676938719265251586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_259
+      rect:
+        serializedVersion: 2
+        x: 13143
+        y: 16
+        width: 301
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 966530a8750158730800000000000000
+      internalID: 4000621812152227433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_260
+      rect:
+        serializedVersion: 2
+        x: 13317
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52594703dfe276e20800000000000000
+      internalID: 3343692913320432933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_261
+      rect:
+        serializedVersion: 2
+        x: 13428
+        y: 17
+        width: 13
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 298cb7793a3456150800000000000000
+      internalID: 5865168459620141202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_262
+      rect:
+        serializedVersion: 2
+        x: 13443
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a62bace949cb3dc0800000000000000
+      internalID: -3658108952967960920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_263
+      rect:
+        serializedVersion: 2
+        x: 13463
+        y: 18
+        width: 301
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c7a7b82a56f5b6a0800000000000000
+      internalID: -6433965625538271294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_264
+      rect:
+        serializedVersion: 2
+        x: 13520
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2ceb07c2a1c1aaf0800000000000000
+      internalID: -386815188108841938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_265
+      rect:
+        serializedVersion: 2
+        x: 13541
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3221336c57d7e860800000000000000
+      internalID: 7559247291365794365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_266
+      rect:
+        serializedVersion: 2
+        x: 13595
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f22e8ee6a4ce166b0800000000000000
+      internalID: -5304699081633242577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_267
+      rect:
+        serializedVersion: 2
+        x: 13629
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa8035a63b9274ae0800000000000000
+      internalID: -1565236494928246614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_268
+      rect:
+        serializedVersion: 2
+        x: 13636
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30c2b919be4a50660800000000000000
+      internalID: 7351463298419338243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_269
+      rect:
+        serializedVersion: 2
+        x: 13703
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e761c3b1a17ad4a0800000000000000
+      internalID: -6567812167246977048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_270
+      rect:
+        serializedVersion: 2
+        x: 13747
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f9b72a76bab402e0800000000000000
+      internalID: -2160396628334757392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_271
+      rect:
+        serializedVersion: 2
+        x: 13762
+        y: 16
+        width: 18
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb0e4c739852ffa60800000000000000
+      internalID: 7709922358357975228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_272
+      rect:
+        serializedVersion: 2
+        x: 13783
+        y: 16
+        width: 531
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c11085d3b806ed90800000000000000
+      internalID: -7068952996637306430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_273
+      rect:
+        serializedVersion: 2
+        x: 13839
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37c8874bb3dc922e0800000000000000
+      internalID: -2149961690778137485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_274
+      rect:
+        serializedVersion: 2
+        x: 13860
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ad1127e30596d5a0800000000000000
+      internalID: -6496841568440214111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_275
+      rect:
+        serializedVersion: 2
+        x: 13882
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17bd5476727d47770800000000000000
+      internalID: 8607741352048188273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_276
+      rect:
+        serializedVersion: 2
+        x: 13914
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92601463b24c9c5f0800000000000000
+      internalID: -735841374225496535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_277
+      rect:
+        serializedVersion: 2
+        x: 13926
+        y: 18
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a3bae0877890400800000000000000
+      internalID: 290912600654035493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_278
+      rect:
+        serializedVersion: 2
+        x: 13948
+        y: 17
+        width: 23
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b98ada684c0e71020800000000000000
+      internalID: 2312564068355778715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_279
+      rect:
+        serializedVersion: 2
+        x: 14066
+        y: 16
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1438503b20e74fd40800000000000000
+      internalID: 5617253185296368449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_280
+      rect:
+        serializedVersion: 2
+        x: 14179
+        y: 17
+        width: 16
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 326cf73b1926c37d0800000000000000
+      internalID: -2937364479031130589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_281
+      rect:
+        serializedVersion: 2
+        x: 14194
+        y: 17
+        width: 17
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 181b7ee8b5c02e680800000000000000
+      internalID: -8727399540511493759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_282
+      rect:
+        serializedVersion: 2
+        x: 14233
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04f8546690c8faa40800000000000000
+      internalID: 5381674051729461056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_283
+      rect:
+        serializedVersion: 2
+        x: 14245
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b4eafdac04e0ef60800000000000000
+      internalID: 8061694076102829232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_284
+      rect:
+        serializedVersion: 2
+        x: 14267
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b039fd9a747167b0800000000000000
+      internalID: -5232773222042619722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_285
+      rect:
+        serializedVersion: 2
+        x: 14341
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10c76849f53c710d0800000000000000
+      internalID: -3452075774075044863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_286
+      rect:
+        serializedVersion: 2
+        x: 14352
+        y: 18
+        width: 282
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b84214cbbfb66c40800000000000000
+      internalID: 5505298407676332211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_287
+      rect:
+        serializedVersion: 2
+        x: 14493
+        y: 16
+        width: 39
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f21120ed04ad25950800000000000000
+      internalID: 6436446789603299631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_288
+      rect:
+        serializedVersion: 2
+        x: 14552
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa608b86eece998b0800000000000000
+      internalID: -5144820590590818646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_289
+      rect:
+        serializedVersion: 2
+        x: 14586
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e136514b1f6f8ff0800000000000000
+      internalID: -31684509517336088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_290
+      rect:
+        serializedVersion: 2
+        x: 14660
+        y: 17
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a87af8bcd35641440800000000000000
+      internalID: 4905657210195912586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_291
+      rect:
+        serializedVersion: 2
+        x: 14672
+        y: 18
+        width: 262
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5914d3a34836af460800000000000000
+      internalID: 7276237567534383509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_292
+      rect:
+        serializedVersion: 2
+        x: 14811
+        y: 17
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0b734396af1aa820800000000000000
+      internalID: 2930189307853634318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_293
+      rect:
+        serializedVersion: 2
+        x: 14832
+        y: 17
+        width: 21
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7318f56c8b8958cd0800000000000000
+      internalID: -2556469294093336265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_294
+      rect:
+        serializedVersion: 2
+        x: 14871
+        y: 17
+        width: 24
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04e7dcbb2dcd57f40800000000000000
+      internalID: 5725725298923503168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_295
+      rect:
+        serializedVersion: 2
+        x: 14902
+        y: 17
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a865a731bc898ed90800000000000000
+      internalID: -7068231617185425782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_296
+      rect:
+        serializedVersion: 2
+        x: 14943
+        y: 17
+        width: 311
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e93963026f1dbc010800000000000000
+      internalID: 1210291779911717790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_297
+      rect:
+        serializedVersion: 2
+        x: 15059
+        y: 17
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56c76b2cc9e5995c0800000000000000
+      internalID: -4208228349426369435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_298
+      rect:
+        serializedVersion: 2
+        x: 15071
+        y: 18
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05d79e879b3b6b9b0800000000000000
+      internalID: -5064663121752654512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_299
+      rect:
+        serializedVersion: 2
+        x: 15127
+        y: 17
+        width: 17
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24d0c01daa9692a50800000000000000
+      internalID: 6496840119831235906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_300
+      rect:
+        serializedVersion: 2
+        x: 15150
+        y: 16
+        width: 24
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23e7c732e44f54770800000000000000
+      internalID: 8594544080346447410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_301
+      rect:
+        serializedVersion: 2
+        x: 15190
+        y: 16
+        width: 26
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d398e62c1b36ee80800000000000000
+      internalID: -8149761483582434343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rain_splash_302
+      rect:
+        serializedVersion: 2
+        x: 15263
+        y: 18
+        width: 90
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ff202aed2a18ea00800000000000000
+      internalID: 785906919479980025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      rain_splash_0: 3893646742570179221
+      rain_splash_1: -805690867965974408
+      rain_splash_10: 1225008445062442893
+      rain_splash_100: 7880856233977365740
+      rain_splash_101: 2591761742386351326
+      rain_splash_102: 2901409634681222163
+      rain_splash_103: -2663374494958627502
+      rain_splash_104: -2008068624472991112
+      rain_splash_105: -1834843686872233831
+      rain_splash_106: -7618665851428299515
+      rain_splash_107: 3717532958460070132
+      rain_splash_108: -5593318287437130417
+      rain_splash_109: 6654293888840023180
+      rain_splash_11: -2785253495078829284
+      rain_splash_110: 5131360808516877593
+      rain_splash_111: -6276368587037223730
+      rain_splash_112: 8408754987981677908
+      rain_splash_113: 6584880498079434985
+      rain_splash_114: -2028250105940198048
+      rain_splash_115: 1743527464279323872
+      rain_splash_116: -1413808883213493484
+      rain_splash_117: -2260209505589594753
+      rain_splash_118: 3000485368143716826
+      rain_splash_119: 6681648590572602078
+      rain_splash_12: -2994374830007254733
+      rain_splash_120: 2230396940873154600
+      rain_splash_121: 5419210033554917592
+      rain_splash_122: -950744655997193459
+      rain_splash_123: -2437697416303891366
+      rain_splash_124: 6666010974843189972
+      rain_splash_125: 1641790348475836764
+      rain_splash_126: -8959365517558061600
+      rain_splash_127: -3851855879369278965
+      rain_splash_128: -6892271976004000315
+      rain_splash_129: 7765056844118701945
+      rain_splash_13: 7480558596783838902
+      rain_splash_130: 9053380793484572571
+      rain_splash_131: -3500060710498051666
+      rain_splash_132: 1257003295125315858
+      rain_splash_133: -1669935061386145018
+      rain_splash_134: -2598926724169803946
+      rain_splash_135: -8676875743495335747
+      rain_splash_136: 8386846929476365086
+      rain_splash_137: -5622175853365638629
+      rain_splash_138: 5854147842713329541
+      rain_splash_139: -6403918496254392151
+      rain_splash_14: 938277350445743906
+      rain_splash_140: -4794720062788515565
+      rain_splash_141: 330403347669923910
+      rain_splash_142: 2975486202458422674
+      rain_splash_143: 7847422462964170503
+      rain_splash_144: 2998018323313426639
+      rain_splash_145: -8042955265619030746
+      rain_splash_146: -610372712101507634
+      rain_splash_147: -8432029148127797321
+      rain_splash_148: 2858322209649945073
+      rain_splash_149: 446297575666483552
+      rain_splash_15: -3859275042375329604
+      rain_splash_150: 1342022688663113211
+      rain_splash_151: -3320088889303988227
+      rain_splash_152: 6537255838102880922
+      rain_splash_153: -3698726904728201974
+      rain_splash_154: 2458976486209597832
+      rain_splash_155: 6129326678836220395
+      rain_splash_156: -2766004289975742615
+      rain_splash_157: 1339979352465618256
+      rain_splash_158: -5261924066375675112
+      rain_splash_159: -3491323365785132234
+      rain_splash_16: -1282858074671210624
+      rain_splash_160: 1964630503521216589
+      rain_splash_161: -8655666694940091971
+      rain_splash_162: -7032391613406725412
+      rain_splash_163: -7036769431099753143
+      rain_splash_164: -4419256873382930935
+      rain_splash_165: 3481959263372149389
+      rain_splash_166: 434503151321927211
+      rain_splash_167: 2210817962314603358
+      rain_splash_168: 8513100879946596446
+      rain_splash_169: -1717859006381153987
+      rain_splash_17: 4608696084647672875
+      rain_splash_170: -4237385408018015999
+      rain_splash_171: -8365957602562795274
+      rain_splash_172: 2462167118433041567
+      rain_splash_173: -3170927292724246414
+      rain_splash_174: -2937090100037690202
+      rain_splash_175: 5849113113054339852
+      rain_splash_176: -5654680110948914061
+      rain_splash_177: -5482325305775344955
+      rain_splash_178: -5402190023559658214
+      rain_splash_179: -5226578011303914916
+      rain_splash_18: -956469279920000815
+      rain_splash_180: 2809601395914580247
+      rain_splash_181: 2055674612644240622
+      rain_splash_182: 5687653105544851885
+      rain_splash_183: 5699797941376305681
+      rain_splash_184: 5241177565046495551
+      rain_splash_185: -5586667613039915622
+      rain_splash_186: 1281441425548863399
+      rain_splash_187: 7088398557342028572
+      rain_splash_188: 897981999810144506
+      rain_splash_189: 7575366759848719619
+      rain_splash_19: 6364278942664747584
+      rain_splash_190: -5620809348710874976
+      rain_splash_191: -5859415237913066700
+      rain_splash_192: -3942071029595460911
+      rain_splash_193: -4810162410564784992
+      rain_splash_194: -6180072854127758216
+      rain_splash_195: -1467238873194720673
+      rain_splash_196: 3668444443873124553
+      rain_splash_197: 7110997435407934254
+      rain_splash_198: -6037656931541364354
+      rain_splash_199: -3914230813760673901
+      rain_splash_2: -367824598983273593
+      rain_splash_20: -3205294559923503859
+      rain_splash_200: 6210546275470952618
+      rain_splash_201: -5426098396976299403
+      rain_splash_202: 1715340883849579036
+      rain_splash_203: -4796401127420928952
+      rain_splash_204: -1590882662205111810
+      rain_splash_205: -6008627839861152184
+      rain_splash_206: 3249227719716562183
+      rain_splash_207: -1317832217374344194
+      rain_splash_208: -1684611386838831440
+      rain_splash_209: -3074822400073664026
+      rain_splash_21: -635596212740628811
+      rain_splash_210: 7954001126102794736
+      rain_splash_211: -8257439103100800709
+      rain_splash_212: 2199064150938892626
+      rain_splash_213: -427259129707246015
+      rain_splash_214: -4935127569662746478
+      rain_splash_215: -4896003626247723696
+      rain_splash_216: -3218421872731860174
+      rain_splash_217: -8183156406455749248
+      rain_splash_218: 49081045121660754
+      rain_splash_219: 7880629748646099214
+      rain_splash_22: -3955517267766886258
+      rain_splash_220: -669681464380790654
+      rain_splash_221: 8231210734811857259
+      rain_splash_222: 3344640247648865671
+      rain_splash_223: 3317364061786786992
+      rain_splash_224: 711634145700645863
+      rain_splash_225: 4956191344720436554
+      rain_splash_226: 2114456767407188399
+      rain_splash_227: -5315841473369303965
+      rain_splash_228: -5730647622707436541
+      rain_splash_229: -1167882598855142724
+      rain_splash_23: -6746636984618612432
+      rain_splash_230: -7729694373624741019
+      rain_splash_231: -1906456886183020813
+      rain_splash_232: -5630701951899424121
+      rain_splash_233: 5082370500041083711
+      rain_splash_234: 8499579550306792569
+      rain_splash_235: 4536461463507932565
+      rain_splash_236: -1090078031841329360
+      rain_splash_237: -9003989518665847758
+      rain_splash_238: 8942712037098698630
+      rain_splash_239: -8472610126689624445
+      rain_splash_24: 7923462280743461467
+      rain_splash_240: 8882058558698256918
+      rain_splash_241: 3786723942302321851
+      rain_splash_242: -2283603621153403889
+      rain_splash_243: 7755936013856387083
+      rain_splash_244: 7846025063450621167
+      rain_splash_245: 2555282519136211148
+      rain_splash_246: 8233704351297506927
+      rain_splash_247: 624050675724990510
+      rain_splash_248: -4052534015189573582
+      rain_splash_249: 71126279968132141
+      rain_splash_25: -5518996244611078552
+      rain_splash_250: 258390675750080797
+      rain_splash_251: 7094884647709394329
+      rain_splash_252: 4938134159915305776
+      rain_splash_253: -8263934551750244399
+      rain_splash_254: 7696172533265802275
+      rain_splash_255: -7406880621060858533
+      rain_splash_256: -4849398663200884303
+      rain_splash_257: 5705028851483619542
+      rain_splash_258: 7676938719265251586
+      rain_splash_259: 4000621812152227433
+      rain_splash_26: 7203600260569329613
+      rain_splash_260: 3343692913320432933
+      rain_splash_261: 5865168459620141202
+      rain_splash_262: -3658108952967960920
+      rain_splash_263: -6433965625538271294
+      rain_splash_264: -386815188108841938
+      rain_splash_265: 7559247291365794365
+      rain_splash_266: -5304699081633242577
+      rain_splash_267: -1565236494928246614
+      rain_splash_268: 7351463298419338243
+      rain_splash_269: -6567812167246977048
+      rain_splash_27: -2307281064325410160
+      rain_splash_270: -2160396628334757392
+      rain_splash_271: 7709922358357975228
+      rain_splash_272: -7068952996637306430
+      rain_splash_273: -2149961690778137485
+      rain_splash_274: -6496841568440214111
+      rain_splash_275: 8607741352048188273
+      rain_splash_276: -735841374225496535
+      rain_splash_277: 290912600654035493
+      rain_splash_278: 2312564068355778715
+      rain_splash_279: 5617253185296368449
+      rain_splash_28: 3650069638453444143
+      rain_splash_280: -2937364479031130589
+      rain_splash_281: -8727399540511493759
+      rain_splash_282: 5381674051729461056
+      rain_splash_283: 8061694076102829232
+      rain_splash_284: -5232773222042619722
+      rain_splash_285: -3452075774075044863
+      rain_splash_286: 5505298407676332211
+      rain_splash_287: 6436446789603299631
+      rain_splash_288: -5144820590590818646
+      rain_splash_289: -31684509517336088
+      rain_splash_29: -763123232916514506
+      rain_splash_290: 4905657210195912586
+      rain_splash_291: 7276237567534383509
+      rain_splash_292: 2930189307853634318
+      rain_splash_293: -2556469294093336265
+      rain_splash_294: 5725725298923503168
+      rain_splash_295: -7068231617185425782
+      rain_splash_296: 1210291779911717790
+      rain_splash_297: -4208228349426369435
+      rain_splash_298: -5064663121752654512
+      rain_splash_299: 6496840119831235906
+      rain_splash_3: -3743613002214451917
+      rain_splash_30: 459733656300258188
+      rain_splash_300: 8594544080346447410
+      rain_splash_301: -8149761483582434343
+      rain_splash_302: 785906919479980025
+      rain_splash_31: 1436205291886299251
+      rain_splash_32: -7461693715967662522
+      rain_splash_33: -4770026570565328438
+      rain_splash_34: 7194107937749116812
+      rain_splash_35: -4083900400146275533
+      rain_splash_36: 3149673924225732366
+      rain_splash_37: -2349398148478360809
+      rain_splash_38: -7678446904901615017
+      rain_splash_39: 6048442130471897177
+      rain_splash_4: 3216018655110522325
+      rain_splash_40: -8683351387259537535
+      rain_splash_41: 6669844524503532869
+      rain_splash_42: -3760757092102500975
+      rain_splash_43: -8062987705130597717
+      rain_splash_44: 6209702742820259430
+      rain_splash_45: -5079218628890289299
+      rain_splash_46: 5038253885321955168
+      rain_splash_47: -1562614025947463497
+      rain_splash_48: 3928849729821305511
+      rain_splash_49: -8744554279986432898
+      rain_splash_5: 1232549482339526847
+      rain_splash_50: 2971740567291744705
+      rain_splash_51: -5145558517574249538
+      rain_splash_52: 6262421929817787689
+      rain_splash_53: 2003258193531470962
+      rain_splash_54: 4654157391529114298
+      rain_splash_55: 2257987389194219603
+      rain_splash_56: 592438926843034839
+      rain_splash_57: 6493198928950829835
+      rain_splash_58: 7555461987965920726
+      rain_splash_59: 4855157320912966243
+      rain_splash_6: 2910231690596218255
+      rain_splash_60: -457577390498699040
+      rain_splash_61: -5703219676779167277
+      rain_splash_62: -4075461678954747325
+      rain_splash_63: 1086430281004555256
+      rain_splash_64: 5524305827589872782
+      rain_splash_65: 8599103427525229152
+      rain_splash_66: -7712119383958604988
+      rain_splash_67: 2132551064977118408
+      rain_splash_68: 5851315374028446744
+      rain_splash_69: -8194980186817797589
+      rain_splash_7: -8888003225055917962
+      rain_splash_70: 2389433510025623588
+      rain_splash_71: 7393973259882172454
+      rain_splash_72: 6883531041476512023
+      rain_splash_73: 8456420218453032425
+      rain_splash_74: 3130533008958448403
+      rain_splash_75: 2839505137943348807
+      rain_splash_76: 4568610242194446543
+      rain_splash_77: -4870989493524050279
+      rain_splash_78: -3804224482488081897
+      rain_splash_79: 2165370048766333223
+      rain_splash_8: 1506891812824112913
+      rain_splash_80: -7848789411926823529
+      rain_splash_81: -1292726424824863115
+      rain_splash_82: -5311575803025650036
+      rain_splash_83: 4456491499638499265
+      rain_splash_84: -7719375944343382413
+      rain_splash_85: -5145348194897444537
+      rain_splash_86: -8134877822915188894
+      rain_splash_87: 9101342754842591635
+      rain_splash_88: 6233296923785921974
+      rain_splash_89: -3593734251525661698
+      rain_splash_9: 6753312978599825475
+      rain_splash_90: 6564259055480815549
+      rain_splash_91: -2138573795718520126
+      rain_splash_92: 1839377157046753878
+      rain_splash_93: -3413653602889685826
+      rain_splash_94: -1653425481720194787
+      rain_splash_95: -844084896318106286
+      rain_splash_96: -4625411778562780616
+      rain_splash_97: 301879778682619430
+      rain_splash_98: -6344263354363459075
+      rain_splash_99: -8195255372869544719
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

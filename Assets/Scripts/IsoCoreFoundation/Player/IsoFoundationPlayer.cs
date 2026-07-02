@@ -183,6 +183,15 @@ namespace IsoCore.Foundation
                 if (dir.sqrMagnitude > 1f) dir.Normalize();
                 MoveDir = dir;
             }
+            // Combat input and recovery must tick even while standing still.
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Z))
+            {
+                var es = UnityEngine.EventSystems.EventSystem.current;
+                if (es == null || !es.IsPointerOverGameObject())
+                    TriggerBasicAttack();
+            }
+            TickAttack();
+
             // Fully stopped: idle (UpdateJump already handled any in-place hop visual).
             if (_moveSpeedCurrent <= 0.001f) { IsMoving = false; IsSprinting = false; return; }
             IsMoving = hasInput;
@@ -207,16 +216,6 @@ namespace IsoCore.Foundation
                 _pathLastGround = _ground;
             }
 
-            // Left-click is the basic attack (LPC sideways sword slash); Z kept as a fallback.
-            // Skip when the pointer is over UI so menu clicks don't swing.
-            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Z))
-            {
-                var es = UnityEngine.EventSystems.EventSystem.current;
-                if (es == null || !es.IsPointerOverGameObject())
-                    TriggerBasicAttack();
-            }
-
-            TickAttack();
             Refresh();
         }
 
@@ -584,13 +583,27 @@ namespace IsoCore.Foundation
             }
 
             // Deal damage to all IDamageable components within melee range using a physics overlap
+            bool hitAnything = false;
             var hits = Physics2D.OverlapCircleAll((Vector2)transform.position, AttackRangeWorld);
             foreach (var hit in hits)
             {
-                var damageable = hit.GetComponent<IDamageable>();
+                var damageable = hit.GetComponentInParent<IDamageable>();
                 if (damageable != null)
+                {
                     damageable.TakeDamage(AttackBaseDamage);
+                    hitAnything = true;
+                    continue;
+                }
+
+                var mob = hit.GetComponentInParent<Mob>();
+                if (mob != null)
+                {
+                    mob.TakeMobDamage(AttackBaseDamage);
+                    hitAnything = true;
+                }
             }
+            if (hitAnything)
+                FoundationImpactFeedback.Pulse(1f);
         }
 
         float _attackFlashTimer = 0f;
@@ -614,7 +627,7 @@ namespace IsoCore.Foundation
         /// a cliff walking couldn't). Leaves a smoke burst at the takeoff feet and a trailing
         /// streak to the landing point. Driven by the ability system (FoundationAbilityDispatcher).
         /// </summary>
-        public void Blink(Vector2 dir, float tiles)
+        public void Blink(Vector2 dir, float tiles, bool showVfx = true)
         {
             if (_world == null) return;
             if (dir.sqrMagnitude < 0.0001f) dir = MoveDir;
@@ -640,12 +653,14 @@ namespace IsoCore.Foundation
             }
 
             // Always puff at the feet so a blocked blink still reads.
-            WorldFx.Smoke(startWorld, FlashSmokeColor, count: 16, size: 0.2f, radius: 0.18f, rise: 0.7f, life: 0.55f);
+            if (showVfx)
+                WorldFx.Smoke(startWorld, FlashSmokeColor, count: 16, size: 0.2f, radius: 0.18f, rise: 0.7f, life: 0.55f);
             if ((pos - start).sqrMagnitude < 0.02f * 0.02f) return;
 
             _ground = pos;
             Refresh();
-            WorldFx.Trail(startWorld, transform.position, FlashSmokeColor, puffs: 6, size: 0.14f);
+            if (showVfx)
+                WorldFx.Trail(startWorld, transform.position, FlashSmokeColor, puffs: 6, size: 0.14f);
         }
 
         void Refresh()

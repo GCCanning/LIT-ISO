@@ -49,6 +49,8 @@ namespace LitIso.CharacterCreator
         int _oneShotFrame;
         float _oneShotTimer;
         System.Action _onOneShotComplete;
+        string _queuedOneShot;
+        System.Action _queuedOneShotComplete;
 
         // Cached rowOrder indices (resolved once from the catalog).
         static int s_idxN = -2, s_idxW, s_idxS, s_idxE;
@@ -88,6 +90,8 @@ namespace LitIso.CharacterCreator
             _oneShotFrame = 0;
             _oneShotTimer = 0f;
             _onOneShotComplete = null;
+            _queuedOneShot = null;
+            _queuedOneShotComplete = null;
             ShowIdle();
         }
 
@@ -135,6 +139,16 @@ namespace LitIso.CharacterCreator
 
         public void PlayOneShot(string animId, System.Action onComplete = null)
         {
+            if (IsPlayingOneShot)
+            {
+                // Repeated held input should not restart frame zero. A different
+                // action waits for the next clean one-shot boundary.
+                if (_activeAnim == animId)
+                    return;
+                _queuedOneShot = animId;
+                _queuedOneShotComplete = onComplete;
+                return;
+            }
             var baked = GetBake(animId);
             if (baked == null) { onComplete?.Invoke(); return; }
             _activeAnim = animId;
@@ -149,6 +163,8 @@ namespace LitIso.CharacterCreator
             if (_activeAnim == WalkAnim) return;
             _activeAnim = WalkAnim;
             _onOneShotComplete = null;
+            _queuedOneShot = null;
+            _queuedOneShotComplete = null;
             ShowIdle();
         }
 
@@ -208,6 +224,17 @@ namespace LitIso.CharacterCreator
                 {
                     var cb = _onOneShotComplete;
                     _onOneShotComplete = null;
+                    if (!string.IsNullOrEmpty(_queuedOneShot))
+                    {
+                        string queued = _queuedOneShot;
+                        var queuedComplete = _queuedOneShotComplete;
+                        _queuedOneShot = null;
+                        _queuedOneShotComplete = null;
+                        _activeAnim = WalkAnim;
+                        cb?.Invoke();
+                        PlayOneShot(queued, queuedComplete);
+                        return;
+                    }
                     _activeAnim = WalkAnim;
                     _walkFrame = 0;
                     _timer = 0f;

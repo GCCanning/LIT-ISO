@@ -1,0 +1,754 @@
+fileFormatVersion: 2
+guid: 68f108bf9ae0c7c43b242706408dc76a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 9092853574063506074
+    second: caustics_0
+  - first:
+      213: 1986731659619891162
+    second: caustics_1
+  - first:
+      213: -1458847553836679320
+    second: caustics_2
+  - first:
+      213: 1201452976828581825
+    second: caustics_3
+  - first:
+      213: 7490513241404348329
+    second: caustics_4
+  - first:
+      213: -3351965434009391507
+    second: caustics_5
+  - first:
+      213: 1777232806881140855
+    second: caustics_6
+  - first:
+      213: -1929015961660099158
+    second: caustics_7
+  - first:
+      213: 7562073439543509051
+    second: caustics_8
+  - first:
+      213: -5635099376825003413
+    second: caustics_9
+  - first:
+      213: -443413479857012283
+    second: caustics_10
+  - first:
+      213: 1900580163579284921
+    second: caustics_11
+  - first:
+      213: -1723899648896125888
+    second: caustics_12
+  - first:
+      213: 442727735349503585
+    second: caustics_13
+  - first:
+      213: -6663475629263752254
+    second: caustics_14
+  - first:
+      213: -594126829144477144
+    second: caustics_15
+  - first:
+      213: 6168140552140248602
+    second: caustics_16
+  - first:
+      213: -3811836629270748600
+    second: caustics_17
+  - first:
+      213: 1834859648517983432
+    second: caustics_18
+  - first:
+      213: 2016627177777430186
+    second: caustics_19
+  - first:
+      213: 2891718281369076879
+    second: caustics_20
+  - first:
+      213: 1209139713513392618
+    second: caustics_21
+  - first:
+      213: -329573503077870273
+    second: caustics_22
+  - first:
+      213: 1989209474678222938
+    second: caustics_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: caustics_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1917
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9242bc462e403e70800000000000000
+      internalID: 9092853574063506074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_1
+      rect:
+        serializedVersion: 2
+        x: 1867
+        y: 0
+        width: 2294
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad77aa31be9429b10800000000000000
+      internalID: 1986731659619891162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_2
+      rect:
+        serializedVersion: 2
+        x: 4135
+        y: 0
+        width: 2774
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86ffd1c01e121cbe0800000000000000
+      internalID: -1458847553836679320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_3
+      rect:
+        serializedVersion: 2
+        x: 6899
+        y: 0
+        width: 790
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c7043aed1b6ca010800000000000000
+      internalID: 1201452976828581825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_4
+      rect:
+        serializedVersion: 2
+        x: 7587
+        y: 0
+        width: 426
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a7144b4b16a3f760800000000000000
+      internalID: 7490513241404348329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_5
+      rect:
+        serializedVersion: 2
+        x: 7891
+        y: 0
+        width: 290
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6e6b7e723d6b71d0800000000000000
+      internalID: -3351965434009391507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_6
+      rect:
+        serializedVersion: 2
+        x: 8171
+        y: 55
+        width: 162
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 770225952dff9a810800000000000000
+      internalID: 1777232806881140855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_7
+      rect:
+        serializedVersion: 2
+        x: 8275
+        y: 0
+        width: 222
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa5f0370432ca35e0800000000000000
+      internalID: -1929015961660099158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_8
+      rect:
+        serializedVersion: 2
+        x: 8487
+        y: 0
+        width: 326
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3048694ab1e1f860800000000000000
+      internalID: 7562073439543509051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_9
+      rect:
+        serializedVersion: 2
+        x: 8803
+        y: 0
+        width: 1922
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b62125a09fa1cc1b0800000000000000
+      internalID: -5635099376825003413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_10
+      rect:
+        serializedVersion: 2
+        x: 10667
+        y: 123
+        width: 62
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c1c0841acda8d9f0800000000000000
+      internalID: -443413479857012283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_11
+      rect:
+        serializedVersion: 2
+        x: 10707
+        y: 0
+        width: 334
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd0c4dc697306a10800000000000000
+      internalID: 1900580163579284921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_12
+      rect:
+        serializedVersion: 2
+        x: 10987
+        y: 123
+        width: 58
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0443027276a7318e0800000000000000
+      internalID: -1723899648896125888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_13
+      rect:
+        serializedVersion: 2
+        x: 11027
+        y: 151
+        width: 38
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16668b59782e42600800000000000000
+      internalID: 442727735349503585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_14
+      rect:
+        serializedVersion: 2
+        x: 11047
+        y: 0
+        width: 322
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c3f24448349683a0800000000000000
+      internalID: -6663475629263752254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_15
+      rect:
+        serializedVersion: 2
+        x: 11351
+        y: 159
+        width: 54
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8227055fbcc31c7f0800000000000000
+      internalID: -594126829144477144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_16
+      rect:
+        serializedVersion: 2
+        x: 11367
+        y: 0
+        width: 318
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a165007e623a99550800000000000000
+      internalID: 6168140552140248602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_17
+      rect:
+        serializedVersion: 2
+        x: 11671
+        y: 0
+        width: 3538
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 842ae7a18c2a91bc0800000000000000
+      internalID: -3811836629270748600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_18
+      rect:
+        serializedVersion: 2
+        x: 15199
+        y: 0
+        width: 161
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cccc9af02bb67910800000000000000
+      internalID: 1834859648517983432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_19
+      rect:
+        serializedVersion: 2
+        x: 11043
+        y: 143
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aae72dfcbbf7cfb10800000000000000
+      internalID: 2016627177777430186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_20
+      rect:
+        serializedVersion: 2
+        x: 11027
+        y: 107
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f84c187b472712820800000000000000
+      internalID: 2891718281369076879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_21
+      rect:
+        serializedVersion: 2
+        x: 6763
+        y: 0
+        width: 190
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae988c3c92ab7c010800000000000000
+      internalID: 1209139713513392618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_22
+      rect:
+        serializedVersion: 2
+        x: 8183
+        y: 15
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3599a525ae1d6bf0800000000000000
+      internalID: -329573503077870273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: caustics_23
+      rect:
+        serializedVersion: 2
+        x: 8203
+        y: 0
+        width: 106
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a50790a5a771b9b10800000000000000
+      internalID: 1989209474678222938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      caustics_0: 9092853574063506074
+      caustics_1: 1986731659619891162
+      caustics_10: -443413479857012283
+      caustics_11: 1900580163579284921
+      caustics_12: -1723899648896125888
+      caustics_13: 442727735349503585
+      caustics_14: -6663475629263752254
+      caustics_15: -594126829144477144
+      caustics_16: 6168140552140248602
+      caustics_17: -3811836629270748600
+      caustics_18: 1834859648517983432
+      caustics_19: 2016627177777430186
+      caustics_2: -1458847553836679320
+      caustics_20: 2891718281369076879
+      caustics_21: 1209139713513392618
+      caustics_22: -329573503077870273
+      caustics_23: 1989209474678222938
+      caustics_3: 1201452976828581825
+      caustics_4: 7490513241404348329
+      caustics_5: -3351965434009391507
+      caustics_6: 1777232806881140855
+      caustics_7: -1929015961660099158
+      caustics_8: 7562073439543509051
+      caustics_9: -5635099376825003413
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

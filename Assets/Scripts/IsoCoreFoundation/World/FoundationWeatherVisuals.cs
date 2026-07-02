@@ -26,6 +26,8 @@ namespace IsoCore.Foundation
         /// <summary>0..1 breeze strength for WindSway, scaled by current mood + blend.</summary>
         public float WindStrength { get; private set; }
         public string Label => Mood.ToString();
+        public string CurrentBiomeId => CurrentBiome()?.id;
+        public bool AuthoredOverlaysActive { get; set; }
 
         DayNightSystem _dayNight;
         Camera _camera;
@@ -45,6 +47,8 @@ namespace IsoCore.Foundation
         FoundationWeatherMood _targetMood;
         float _moodBlend;
         float _nextMoodTime;
+        string _lastBiomeId;
+        int _weatherCycle;
 
         public void Init(DayNightSystem dayNight, Camera camera, IsoWorld world,
             IsoFoundationPlayer player, FoundationInstanceSystem instances, int seed)
@@ -143,7 +147,8 @@ namespace IsoCore.Foundation
                 _shape.scale = new Vector3(halfW * 2.1f, halfH * 2.2f, 1f);
             }
 
-            if (Time.time >= _nextMoodTime)
+            string biomeId = CurrentBiomeId;
+            if (biomeId != _lastBiomeId || Time.time >= _nextMoodTime)
                 ChooseMood(false);
 
             bool inside = _instances != null && _instances.IsInsideInstance;
@@ -172,10 +177,11 @@ namespace IsoCore.Foundation
         // AmbientLightController already reads) toward white for a quick flash — no new render path.
         void UpdateLightningFlash()
         {
-            if (Mood == FoundationWeatherMood.Drizzle && _moodBlend > 0.6f && Time.time >= _nextFlashTime)
+            if (Mood == FoundationWeatherMood.Drizzle && SupportsLightning(CurrentBiomeId) &&
+                _moodBlend > 0.6f && Time.time >= _nextFlashTime)
             {
                 _flash = 1f;
-                _nextFlashTime = Time.time + Random.Range(8f, 18f);
+                _nextFlashTime = Time.time + Random.Range(15f, 30f);
             }
             if (_flash <= 0f) return;
             _flash = Mathf.MoveTowards(_flash, 0f, Time.deltaTime * 5.5f);
@@ -187,44 +193,17 @@ namespace IsoCore.Foundation
         {
             var biome = CurrentBiome();
             string biomeId = biome != null ? biome.id : null;
+            _lastBiomeId = biomeId;
 
-            // Biome-driven mapping (originally the Ring-of-Biomes showcase mapping,
-            // generalized to ALL worlds — task #25/#26 wired this up but it was only
-            // ever reachable via seed 240611, which the normal launch flow never uses,
-            // so players never saw it). Snow/mountain/forest get an immediate,
-            // reliable per-biome weather mood, rechecked every 1.5s so walking between
-            // biomes swaps weather promptly. Other biomes (meadow/beach/desert/etc.)
-            // fall through to the slower noise-based climate reroll below for variety.
-            if (TryMoodForBiomeId(biomeId, out var mappedMood))
-            {
-                _nextMoodTime = Time.time + 1.5f;
-                _targetMood = mappedMood;
+            var weights = WeatherWeights.ForBiome(biomeId, biome);
+            float sampleX = (_seed * 0.0137f) + (_weatherCycle * 0.731f);
+            float sampleY = StableHash(biomeId) * 0.00017f + (_weatherCycle * 0.193f);
+            float roll = Mathf.PerlinNoise(sampleX, sampleY);
+            _targetMood = weights.Pick(roll);
+            _weatherCycle++;
 
-                if (instant)
-                {
-                    Mood = _targetMood;
-                    _moodBlend = Mood == FoundationWeatherMood.Clear ? 0f : 1f;
-                    ApplyMood(Mood, _moodBlend);
-                }
-                return;
-            }
-
-            _nextMoodTime = Time.time + 38f + Mathf.Abs(_seed % 23);
-            float temp = biome != null ? biome.temperature : 0.55f;
-            float moisture = biome != null ? biome.moisture : 0.45f;
-            float night = _dayNight != null ? _dayNight.NightFactor : 0f;
-            float n = Mathf.PerlinNoise(_seed * 0.013f, Time.time * 0.008f + _seed * 0.0017f);
-
-            if (temp < 0.34f && moisture < 0.30f && n > 0.30f)
-                _targetMood = FoundationWeatherMood.Wind;
-            else if (temp < 0.34f && n > 0.35f)
-                _targetMood = FoundationWeatherMood.Snow;
-            else if (moisture > 0.56f && n > 0.42f)
-                _targetMood = FoundationWeatherMood.Drizzle;
-            else if ((moisture > 0.48f || night > 0.72f) && n > 0.62f)
-                _targetMood = FoundationWeatherMood.Mist;
-            else
-                _targetMood = FoundationWeatherMood.Clear;
+            float durationNoise = Mathf.PerlinNoise(sampleX + 19.1f, sampleY + 7.7f);
+            _nextMoodTime = Time.time + Mathf.Lerp(45f, 90f, durationNoise);
 
             if (instant)
             {
@@ -234,22 +213,22 @@ namespace IsoCore.Foundation
             }
         }
 
-        /// <summary>
-        /// Per-biome immediate weather mapping (originally the Ring-of-Biomes
-        /// showcase mapping, now used in all worlds):
-        ///   snow -> Snow (snowfall), mountain -> Wind (dust/wind streaks),
-        ///   forest -> Mist (light fog/leaf haze).
-        /// Other biomes (meadow, beach, desert, etc.) return false so the caller
-        /// falls back to the slower climate/noise-based reroll.
-        /// </summary>
-        static bool TryMoodForBiomeId(string biomeId, out FoundationWeatherMood mood)
+        static bool SupportsLightning(string biomeId)
         {
-            switch (biomeId)
+            return biomeId == "marsh" || biomeId == "beach" ||
+                   biomeId == "mountain" || biomeId == "badlands";
+        }
+
+        static int StableHash(string value)
+        {
+            unchecked
             {
-                case "snow": mood = FoundationWeatherMood.Snow; return true;
-                case "mountain": mood = FoundationWeatherMood.Wind; return true;
-                case "forest": mood = FoundationWeatherMood.Mist; return true;
-                default: mood = FoundationWeatherMood.Clear; return false;
+                int hash = 17;
+                if (value == null)
+                    return hash;
+                for (int i = 0; i < value.Length; i++)
+                    hash = hash * 31 + value[i];
+                return hash;
             }
         }
 
@@ -318,6 +297,64 @@ namespace IsoCore.Foundation
                     AmbientDimming = Mathf.MoveTowards(AmbientDimming, 0f, Time.deltaTime * 0.25f);
                     AmbientTint = Color.white;
                     break;
+            }
+
+            if (AuthoredOverlaysActive)
+                _emission.rateOverTime = 0f;
+        }
+
+        struct WeatherWeights
+        {
+            readonly float _clear;
+            readonly float _mist;
+            readonly float _drizzle;
+            readonly float _snow;
+            readonly float _wind;
+
+            WeatherWeights(float clear, float mist, float drizzle, float snow, float wind)
+            {
+                _clear = clear;
+                _mist = mist;
+                _drizzle = drizzle;
+                _snow = snow;
+                _wind = wind;
+            }
+
+            public FoundationWeatherMood Pick(float roll)
+            {
+                float total = _clear + _mist + _drizzle + _snow + _wind;
+                float cursor = Mathf.Clamp01(roll) * total;
+                if ((cursor -= _clear) <= 0f) return FoundationWeatherMood.Clear;
+                if ((cursor -= _mist) <= 0f) return FoundationWeatherMood.Mist;
+                if ((cursor -= _drizzle) <= 0f) return FoundationWeatherMood.Drizzle;
+                if ((cursor -= _snow) <= 0f) return FoundationWeatherMood.Snow;
+                return FoundationWeatherMood.Wind;
+            }
+
+            public static WeatherWeights ForBiome(string biomeId, BiomeDefinition biome)
+            {
+                switch (biomeId)
+                {
+                    case "meadow": return new WeatherWeights(0.52f, 0.08f, 0.25f, 0f, 0.15f);
+                    case "forest": return new WeatherWeights(0.36f, 0.24f, 0.28f, 0f, 0.12f);
+                    case "marsh": return new WeatherWeights(0.20f, 0.30f, 0.42f, 0f, 0.08f);
+                    case "grotto": return new WeatherWeights(0.10f, 0.80f, 0f, 0f, 0.10f);
+                    case "sunspool": return new WeatherWeights(0.45f, 0f, 0.05f, 0f, 0.50f);
+                    case "badlands": return new WeatherWeights(0.45f, 0f, 0.10f, 0f, 0.45f);
+                    case "snow": return new WeatherWeights(0.35f, 0f, 0f, 0.50f, 0.15f);
+                    case "frozenmountain": return new WeatherWeights(0.15f, 0f, 0f, 0.55f, 0.30f);
+                    case "beach": return new WeatherWeights(0.38f, 0.12f, 0.25f, 0f, 0.25f);
+                    case "mountain": return new WeatherWeights(0.20f, 0.05f, 0.20f, 0f, 0.55f);
+                }
+
+                float moisture = biome != null ? biome.moisture : 0.45f;
+                float temperature = biome != null ? biome.temperature : 0.55f;
+                float snow = temperature < 0.34f ? 0.30f : 0f;
+                float drizzle = temperature >= 0.34f ? moisture * 0.30f : 0f;
+                float mist = moisture * 0.15f;
+                float wind = Mathf.Clamp01(0.25f - moisture * 0.10f);
+                return new WeatherWeights(Mathf.Max(0.20f, 1f - mist - drizzle - snow - wind),
+                    mist, drizzle, snow, wind);
             }
         }
     }

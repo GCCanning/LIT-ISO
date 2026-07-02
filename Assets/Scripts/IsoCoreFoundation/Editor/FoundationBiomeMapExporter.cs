@@ -9,19 +9,19 @@ namespace IsoCore.Foundation.EditorTools
 {
     /// <summary>
     /// Bakes a detailed, per-tile flyover window from the live Foundation sampler.
-    /// The export is centered on world origin and covers +/-500 tiles in each direction.
+    /// The export is centered on world origin and covers +/-1000 tiles in each direction.
     /// It writes JSON plus a file:// friendly JS wrapper for Tools/BiomeSketch.
     /// </summary>
     public static class FoundationBiomeMapExporter
     {
-        const int Radius = 500;      // tiles from origin in each direction
-        const int Step = 1;          // sample every tile for game-like flyover inspection
+        const int Radius = 1000;     // tiles from origin in each direction
+        const int Step = 2;          // same export cost while covering the expanded continent
         const int MinRegion = 64;    // ignore tiny biome islands in marker labels
 
-        [MenuItem("Tools/LIT-ISO/ISO-Core Foundation/Export Biome Flyover (500 tiles)", priority = 57)]
+        [MenuItem("Tools/LIT-ISO/ISO-Core Foundation/Export Biome Flyover (1000 tiles)", priority = 57)]
         public static void ExportFromFoundationMenu() => Export();
 
-        [MenuItem("Tools/LIT-ISO/Export Biome Flyover (500 tiles)", priority = 60)]
+        [MenuItem("Tools/LIT-ISO/Export Biome Flyover (1000 tiles)", priority = 60)]
         public static void ExportFromLitIsoMenu() => Export();
 
         public static void Export()

@@ -42,6 +42,12 @@ namespace IsoCore.Foundation
         /// <summary>Unit vector pointing TOWARD the light source (sun or moon).</summary>
         public Vector2 LightFromDir => ArcDir(BodyProgress);
 
+        /// <summary>0 at the horizon and 1 at the top of the active sun/moon arc.</summary>
+        public float CelestialElevation01 => Mathf.Sin(BodyProgress * Mathf.PI);
+
+        /// <summary>Screen-plane direction in which a ground shadow falls.</summary>
+        public Vector2 ShadowGroundDirection => -LightFromDir;
+
         /// <summary>Light strength of the active body: sun up to 1, moon up to moonStrength.</summary>
         public float LightIntensity
         {
