@@ -1,5 +1,22 @@
 # Playtest review tasks — 2026-07-02 (owner-approved work order)
 
+## FOLLOW-UP — 2026-07-03 session (footage 23:42 review + owner requests)
+- [x] Footage regressions: coords-value text invisible (uGUI vertical Truncate), static
+      status-FX chip mock removed, snow coverage unified (checkerboard), firefly particles
+      had no texture (hard green quads). `5b01d8047`
+- [x] WORKING MINIMAP: FoundationMapOverlay renders a live MiniTexture (1 texel = 1 explored
+      cell, N up, dungeon-aware); HUD map frame shows it via RawImage; decorative map mocks
+      and the overlapping IMGUI mini window removed. `25420cf23` (+owner `a892d9d17`)
+- [x] Item icons: Shikashi's Fantasy Icons Pack v2 (CC-BY, credited) → all 20 icon-less
+      items via Tools/UIKits/shikashi_items_build.py. `e58c56561`
+      ⚠ 20 new PNGs untracked — Windows: `git add Assets/Resources/Items/*.png` + commit.
+- [x] Skin pass 2: vitals panel/bars, ability chips, ATTACK button on the Kenney dark-wood
+      skin (procedural fallbacks kept). `ba6894f27` (+owner `cee82d42a`)
+- [x] Character creator review + fixes: no exit besides CONFIRM (added BACK/ESC cancel that
+      returns to the menu), HSV sliders snapped mid-drag, baked texture leak. `c9ac57927`
+      Still open (noted, not fixed): creator predates the dark-wood skin (flat LitIsoTheme
+      styling); RESET reverts to last save rather than defaults; SP bar has no skin sprite.
+
 ## STATUS — executed 2026-07-02, branch `feat/playtest-0702-fixes` (off `feat/biome-asset-wiring` @ 0de22597a)
 - [x] 1 FloatingText — root cause was a STATIC screen-space design mock in GameUIController
       (BuildCombatText: "-12"/"+40 XP"/"FIRE TRAP!" at fixed screen %). Removed. The world-space
@@ -134,25 +151,4 @@ already exist — see `_DROP_INGAME_UI_HERE.md`), fix hierarchy per the UI hando
 Owner must approve the chosen pack's look before the batch restyle.
 
 ## 9a. APPROVED (owner, 2026-07-02): Kenney kit + dark-wood adventurer palette
-Owner approved proceeding with the Kenney skin. Locked palette (recolour Kenney's
-greyscale 9-slice panels with this — they're designed for tinting):
-- panel wood (dark walnut): `#3E2A1C`;  panel inset / slot wells: `#2A1B10`
-- trim / borders (aged brass): `#C9A24B`;  selected slot: `#E8C468`
-- text (parchment): `#E8DCC0`;  dim text: `#A89878`
-- accents: ember `#D96A2E` (warnings/night), HP `#C94F44`, MP `#4F7FC9`,
-  stamina `#6FA65A`, XP gold `#E8C468`
-Steps: owner downloads (agent cannot fetch binaries):
-1. kenney.nl/assets/ui-pack  and  kenney.nl/assets/fantasy-ui-borders  (both CC0, ~2-5 MB zips)
-2. Unzip into `Tools/UIKits/Kenney/` (staging — NOT Assets/; gitignore it until curated)
-3. Agent then: pick panel/slot/bar/button pieces → recolour to the palette above (PIL batch
-   script in Tools/UIKits/) → export to `Assets/Resources/UI/InGame/` skin slots (see
-   `_DROP_INGAME_UI_HERE.md`) + commit PNGs via LFS with .metas → HUD auto-loads them.
-   Add "Kenney.nl (CC0)" to CREDITS_VFX.txt (not required, but polite).
-
-## Sequencing
-1 → 2 → 3+4 (one HUD session) → 5 → 6 → 7 (audit table first, then batch PPU) → 8 → 9.
-Verify each in a REAL BUILD (F10-record before/after for comparison); commit per item;
-never to main; update this doc's checkboxes.
-
-## Explicitly deferred by owner
-- Dungeon portal sparseness / hint-gating (A4) — HOLD until called.
+Owner approved proceeding with the K
