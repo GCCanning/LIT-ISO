@@ -50,6 +50,10 @@ namespace IsoCore.Foundation
         // room floors as tier scales up.
         static readonly string[] HazardBlocks = { "lava", "fire_trap" };
 
+        // World-cell Chebyshev radius around the origin that must stay hazard-free
+        // (spawn clearing + apron; see IsoTerrainSampler spawn safety guard).
+        const int SpawnSafeRadius = 24;
+
         // Sentinel surface block for cells outside the room/corridor + wall-ring
         // layout. Solid for collision but excluded from renderCells, so it never
         // draws — true empty space around the dungeon footprint.
@@ -344,7 +348,12 @@ namespace IsoCore.Foundation
                 if (walkable)
                 {
                     var local = new Vector2Int(lx, ly);
-                    if (hazardCells.Contains(local))
+                    // Spawn safety (playtest 2026-07-02, task #2): never stamp a hazard
+                    // surface within the world-spawn safe zone, even if a dungeon build
+                    // ever overlaps the origin (origins live at 60000+ today; guard is
+                    // defense-in-depth against future relocation).
+                    bool inSpawnSafeZone = Mathf.Max(Mathf.Abs(x), Mathf.Abs(y)) <= SpawnSafeRadius;
+                    if (hazardCells.Contains(local) && !inSpawnSafeZone)
                     {
                         surfaceBlockId = HazardBlock(x, y);
                         underBlockId = DungeonFloorBlock(tier, x, y, lx, ly);
@@ -557,26 +566,4 @@ namespace IsoCore.Foundation
                     kind = FoundationDungeonRoomKind.Junction,
                     label = "Junction",
                     x = renderMin.x + center.x,
-                    y = renderMin.y + center.y,
-                    width = Mathf.Max(3, rooms[i].width / 2),
-                    height = Mathf.Max(3, rooms[i].height / 2),
-                });
-            }
-        }
-
-        static int Hash(int seed, string id, int x, int y, int tier)
-        {
-            unchecked
-            {
-                int h = seed;
-                h = h * 397 ^ x;
-                h = h * 397 ^ y;
-                h = h * 397 ^ tier;
-                if (!string.IsNullOrEmpty(id))
-                    for (int i = 0; i < id.Length; i++)
-                        h = h * 31 + id[i];
-                return h;
-            }
-        }
-    }
-}
+            

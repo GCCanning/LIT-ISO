@@ -52,7 +52,9 @@ namespace IsoCore.Foundation
         // mirroring WeatherManager.OutdoorDamageRoutine.
         const float HazardTickInterval = 1f;
         const int HazardDamagePerTick = 8;
-        static readonly System.Collections.Generic.HashSet<string> HazardSurfaceBlocks = new() { "lava", "fire_trap" };
+        // Public: single source of truth for hazard surfaces — worldgen guards
+        // (IsoTerrainSampler, FoundationDungeonGenerator) reference this set too.
+        public static readonly System.Collections.Generic.HashSet<string> HazardSurfaceBlocks = new() { "lava", "fire_trap" };
         float _hazardTimer;
 
         // ---- Blink (Flash Step) ----
@@ -718,8 +720,4 @@ namespace IsoCore.Foundation
             // Ease visual height between integer cell levels so stepping a cliff doesn't
             // pop; sorting still uses the true integer _height.
             _visualHeight = Mathf.MoveTowards(_visualHeight, _height, Time.deltaTime * 8f);
-            transform.position = new Vector3(_ground.x, _ground.y + _visualHeight * IsoGrid.HeightStep + lift, 0f);
-            _sr.sortingOrder = IsoGrid.SortingOrder(c.x, c.y, _height, IsoGrid.LayerActor);
-        }
-    }
-}
+            transform.position = new Vector3(_ground.x
