@@ -334,8 +334,10 @@ namespace IsoCore.Foundation
                 new RecipeIngredient("stone", 10),
                 new RecipeIngredient("fiber", 8)
             };
+            // Scale audit 2026-07-02 (#7): buildings read 1.7-1.8x player; owner target
+            // is 2.5-4x at the eave.
             var tavernBuilding = Placeable("tavern_building", new Color(0.66f, 0.40f, 0.22f), true,
-                InteractionKind.Entrance, StationType.None, "tavern_building_item", 1.9f);
+                InteractionKind.Entrance, StationType.None, "tavern_building_item", 3.2f);
             tavernBuilding.entranceLabel = "Enter";
             tavernBuilding.destinationId = "tavern_common_room";
             tavernBuilding.destinationDisplayName = "Tavern";
@@ -355,7 +357,7 @@ namespace IsoCore.Foundation
                 new RecipeIngredient("fiber", 6)
             };
             var libraryBuilding = Placeable("library_building", new Color(0.60f, 0.58f, 0.52f), true,
-                InteractionKind.Entrance, StationType.None, "library_building_item", 2.0f);
+                InteractionKind.Entrance, StationType.None, "library_building_item", 3.4f);
             libraryBuilding.entranceLabel = "Enter";
             libraryBuilding.destinationId = "library_archive";
             libraryBuilding.destinationDisplayName = "Library";
@@ -375,7 +377,9 @@ namespace IsoCore.Foundation
                 c.Nodes.Add(n); return n;
             }
             // Axe/pickaxe preferred (faster) but hand-harvestable; ore veins REQUIRE a pickaxe.
-            var tree = Node("tree", new Color(0.18f, 0.40f, 0.18f), ToolType.Axe, false, 7, 1.5f,
+            // Scale audit 2026-07-02 (#7, owner rule "player = 6ft = 1.1u"): canopy trees
+            // were 1.36x player ("6-foot trees" in the footage). Target 2.8-3.8u.
+            var tree = Node("tree", new Color(0.18f, 0.40f, 0.18f), ToolType.Axe, false, 7, 3.0f,
                 new[] { new ItemDrop("wood", 2, 4) });
             var rock = Node("rock", new Color(0.50f, 0.50f, 0.53f), ToolType.Pickaxe, false, 6, 0.9f,
                 new[] { new ItemDrop("stone", 2, 3) });
@@ -385,7 +389,7 @@ namespace IsoCore.Foundation
                 new[] { new ItemDrop("copper_ore", 1, 2), new ItemDrop("stone", 0, 1, 0.5f) });
             // Extra flora for visual variety (art in Resources/Decorations). Pine = a second
             // tree species for groves; flower = ambient ground cover; stump/log = low woody bits.
-            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 7, 1.5f,
+            var pine = Node("pine", new Color(0.16f, 0.34f, 0.22f), ToolType.Axe, false, 7, 3.2f,
                 new[] { new ItemDrop("wood", 2, 4) });
             var flower = Node("flower", new Color(0.70f, 0.55f, 0.20f), ToolType.None, false, 2, 0.3f,
                 new[] { new ItemDrop("fiber", 1, 1) });
@@ -402,10 +406,10 @@ namespace IsoCore.Foundation
                 new[] { new ItemDrop("fiber", 1, 2) });
             var tulip = Node("flower_tulip", new Color(0.80f, 0.40f, 0.70f), ToolType.None, false, 2, 0.3f,
                 new[] { new ItemDrop("fiber", 1, 1) });
-            var cactus = Node("cactus", new Color(0.42f, 0.62f, 0.28f), ToolType.Axe, false, 5, 1.1f,
+            var cactus = Node("cactus", new Color(0.42f, 0.62f, 0.28f), ToolType.Axe, false, 5, 1.5f,
                 new[] { new ItemDrop("fiber", 1, 3) });
             cactus.visualId = "cactus_tall";
-            var deadScrub = Node("dead_scrub", new Color(0.48f, 0.38f, 0.22f), ToolType.None, false, 2, 0.45f,
+            var deadScrub = Node("dead_scrub", new Color(0.48f, 0.38f, 0.22f), ToolType.None, false, 2, 0.6f,
                 new[] { new ItemDrop("fiber", 1, 2) });
             deadScrub.visualId = "plains_dry_bush";
 
@@ -1388,7 +1392,3 @@ namespace IsoCore.Foundation
                 if (!c.Items.Has(authored.id)) c.Items.Add(authored);
             }
 
-            // biome_suite.json is the authority for the climate-selectable biome roster:
-            // it sets each listed biome's climate rectangle, priority, and mob list, and
-            // excludes everything else from climate selection. Safe no-op if the file is
-            // missing (SelectB
