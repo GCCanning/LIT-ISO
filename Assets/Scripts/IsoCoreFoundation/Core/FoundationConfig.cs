@@ -128,6 +128,9 @@ namespace IsoCore.Foundation
         public bool pixelPerfect = true;
         [Tooltip("Temporary presentation gate. Gameplay, projectiles, damage, healing, and body animations remain active.")]
         public bool abilityVfxEnabled = false;
+        [Tooltip("Temporary presentation gate for the basic-attack slash arc + sprite flash, " +
+                 "so raw body/tool animations can be reviewed. Damage is unaffected.")]
+        public bool attackVfxEnabled = false;
 
         [Header("Player")]
         public float moveSpeed = 2.8f;
@@ -141,7 +144,7 @@ namespace IsoCore.Foundation
         public int maxWalkStepHeight = 1;
         [Tooltip("Horizontal tile range of a directional leap jump (hold direction + Space). " +
                  "0 disables leaping.")]
-        public float jumpLeapTiles = 2f;
+        public float jumpLeapTiles = 3f;
         [Tooltip("How far (in world units) the player's collision point may overlap a blocked " +
                  "cell before being pushed back. Lets the player hug walls smoothly.")]
         public float wallCollisionInset = 0.22f;

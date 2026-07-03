@@ -54,6 +54,9 @@ namespace IsoCore.Foundation
         static readonly System.Collections.Generic.List<Mob> _active = new System.Collections.Generic.List<Mob>();
         void OnEnable() { if (!_active.Contains(this)) _active.Add(this); }
         void OnDisable() { _active.Remove(this); }
+        /// <summary>All live mobs. Used by the player's directional melee (mobs have no
+        /// physics colliders, so Physics2D overlaps cannot find them).</summary>
+        public static System.Collections.Generic.IReadOnlyList<Mob> Active => _active;
 
         // Humanoid NPCs are dressed by the layered character creator. The Assembly-CSharp
         // LayeredNpcHook listens to Spawned, attaches a LayeredCharacterAnimator, and drives it

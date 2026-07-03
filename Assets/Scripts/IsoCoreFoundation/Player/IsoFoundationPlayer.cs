@@ -392,7 +392,15 @@ namespace IsoCore.Foundation
             for (int i = n; i >= 1; i--)
             {
                 Vector2 cand = _ground + dir * (maxDist * i / n);
-                if (Walkable(cand)) return cand;
+                if (!Walkable(cand)) continue;
+                // Land on the cell CENTRE, not wherever the scan sample fell. Edge landings
+                // used to leave the ground point half-inside the neighbouring water/void
+                // cell, so the wall-inset correction kicked in on the landing frame and the
+                // player visibly stuttered / got "caught" on the bank (owner, 2026-07-02).
+                var lc = IsoGrid.WorldToCell(new Vector3(cand.x, cand.y, 0f));
+                Vector3 centre = IsoGrid.CellToWorld(lc.x, lc.y, 0);
+                Vector2 snapped = new Vector2(centre.x, centre.y);
+                return Walkable(snapped) ? snapped : cand;
             }
             return _ground;
         }
@@ -562,45 +570,57 @@ namespace IsoCore.Foundation
             if (_heldTool == null) _heldTool = GetComponent<PlayerHeldTool>();
             _heldTool?.Swing();
 
-            // Always-visible slash arc in the facing direction, so the attack reads even
-            // bare-handed / without a hotbar tool selected.
-            Vector3 facing = new Vector3(MoveDir.x, MoveDir.y, 0f);
-            if (facing.sqrMagnitude < 0.0001f) facing = Vector3.down;
-            facing.Normalize();
-            // Prominent slash arc so the basic attack always reads as a swing, even
-            // bare-handed / with no hotbar tool selected (the held-tool swing only shows
-            // when an actual tool is held).
-            WorldFx.Trail(
-                transform.position + facing * 0.2f,
-                transform.position + facing * (AttackRangeWorld + 0.15f),
-                new Color(1f, 0.97f, 0.78f, 0.95f), puffs: 10, size: 0.22f);
+            Vector2 facing2 = MoveDir;
+            if (facing2.sqrMagnitude < 0.0001f) facing2 = Vector2.down;
+            facing2.Normalize();
+            Vector3 facing = new Vector3(facing2.x, facing2.y, 0f);
 
-            // Flash the sprite white-hot briefly for feedback (longer so it actually registers).
-            if (_sr != null)
+            // Presentation gate (owner, 2026-07-02): the extra slash arc + sprite flash are
+            // opt-in via cfg.attackVfxEnabled so the raw LPC/tool animations stay readable.
+            if (_cfg != null && _cfg.attackVfxEnabled)
             {
-                _sr.color = new Color(1f, 0.85f, 0.6f, 1f);
-                _attackFlashTimer = 0.16f;
+                WorldFx.Trail(
+                    transform.position + facing * 0.2f,
+                    transform.position + facing * (AttackRangeWorld + 0.15f),
+                    new Color(1f, 0.97f, 0.78f, 0.95f), puffs: 10, size: 0.22f);
+                if (_sr != null)
+                {
+                    _sr.color = new Color(1f, 0.85f, 0.6f, 1f);
+                    _attackFlashTimer = 0.16f;
+                }
             }
 
-            // Deal damage to all IDamageable components within melee range using a physics overlap
+            // Directional melee (owner, 2026-07-02): the swing hits what is IN FRONT of the
+            // player, within reach. Mobs carry no physics colliders, so they are tested via
+            // the live mob registry with a forward-cone check; world IDamageables (nodes,
+            // structures) keep the physics overlap but pass the same facing filter.
             bool hitAnything = false;
-            var hits = Physics2D.OverlapCircleAll((Vector2)transform.position, AttackRangeWorld);
+            Vector2 origin = (Vector2)transform.position;
+
+            var mobs = Mob.Active;
+            for (int i = mobs.Count - 1; i >= 0; i--)
+            {
+                var mob = mobs[i];
+                if (!mob) continue;
+                Vector2 to = (Vector2)mob.transform.position - origin;
+                float dist = to.magnitude;
+                if (dist > AttackRangeWorld * 1.15f) continue;
+                // In-front check: generous ~120° cone, and anything practically on top of
+                // the player always counts (you don't whiff a swing at point-blank).
+                if (dist > 0.35f && Vector2.Dot(to / dist, facing2) < 0.35f) continue;
+                mob.TakeMobDamage(AttackBaseDamage);
+                hitAnything = true;
+            }
+
+            var hits = Physics2D.OverlapCircleAll(origin + facing2 * (AttackRangeWorld * 0.5f), AttackRangeWorld * 0.75f);
             foreach (var hit in hits)
             {
                 var damageable = hit.GetComponentInParent<IDamageable>();
-                if (damageable != null)
-                {
-                    damageable.TakeDamage(AttackBaseDamage);
-                    hitAnything = true;
-                    continue;
-                }
-
-                var mob = hit.GetComponentInParent<Mob>();
-                if (mob != null)
-                {
-                    mob.TakeMobDamage(AttackBaseDamage);
-                    hitAnything = true;
-                }
+                if (damageable == null) continue;
+                Vector2 to = (Vector2)hit.transform.position - origin;
+                if (to.sqrMagnitude > 0.35f * 0.35f && Vector2.Dot(to.normalized, facing2) < 0.2f) continue;
+                damageable.TakeDamage(AttackBaseDamage);
+                hitAnything = true;
             }
             if (hitAnything)
                 FoundationImpactFeedback.Pulse(1f);
@@ -666,7 +686,14 @@ namespace IsoCore.Foundation
         void Refresh()
         {
             var c = CurrentCell;
-            _height = _world.GetHeight(c.x, c.y);
+            // While arcing over water/void in a leap, the cell under the player is NOT
+            // ground — sampling it made the height (and sorting) pop per-tile mid-flight,
+            // which read as stutter over rivers/gaps (owner, 2026-07-02). Hold the takeoff
+            // height until landing; the landing frame re-samples the real bank height.
+            if (_jumping && _leaping)
+                _height = _jumpStartHeight;
+            else
+                _height = _world.GetHeight(c.x, c.y);
             // Visual-only hop arc: a parabola peaking at cfg.jumpHeightUnits mid-jump.
             // It only lifts the transform — cell/height queries and sorting are untouched.
             float lift = 0f;
