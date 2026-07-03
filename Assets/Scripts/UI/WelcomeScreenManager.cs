@@ -739,7 +739,15 @@ public class WelcomeScreenManager : MonoBehaviour
         // before the world loads. Confirm persists via LayeredAppearance.Save,
         // then the trial launches.
         if (contentPanel != null) contentPanel.gameObject.SetActive(false);
-        LitIso.CharacterCreator.CharacterCreatorUI.Show(_ => LaunchWorld(world, null));
+        LitIso.CharacterCreator.CharacterCreatorUI.Show(
+            _ => LaunchWorld(world, null),
+            onCancelled: () =>
+            {
+                // BACK/ESC from the creator (review 2026-07-03): return to the menu
+                // instead of stranding the player. The world was already saved, so it
+                // remains available under Load Game.
+                if (contentPanel != null) contentPanel.gameObject.SetActive(true);
+            });
     }
 
     /// <summary>Soft 0.22s fade-in for whichever screen was just built — menu
@@ -1992,15 +2000,4 @@ public class WelcomeScreenManager : MonoBehaviour
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Truncate;
         text.resizeTextForBestFit = true;
-        text.resizeTextMaxSize = text.fontSize;
-        text.resizeTextMinSize = 11;
-        if (size >= 30 && text.GetComponent<Shadow>() == null)
-        {
-            var sh = go.AddComponent<Shadow>();
-            sh.effectColor = LitIsoTheme.Base;
-            sh.effectDistance = new Vector2(3f, -3f);
-            sh.useGraphicAlpha = true;
-        }
-        return text;
-    }
-}
+   

@@ -44,15 +44,21 @@ namespace LitIso.CharacterCreator
         // WarmTan and Parchment; no exact LitIsoTheme token, so define it here.
         static readonly Color LabelColor = LitIsoTheme.Hex("#a39e90");
 
-        public static CharacterCreatorUI Show(Action<LayeredAppearance> onConfirmed = null)
+        Action<LayeredAppearance> _confirmHandler;
+        Action _onCancelled;
+
+        public static CharacterCreatorUI Show(Action<LayeredAppearance> onConfirmed = null,
+            Action onCancelled = null)
         {
             var go = new GameObject("CharacterCreatorUI");
             var ui = go.AddComponent<CharacterCreatorUI>();
+            ui._onCancelled = onCancelled;
             if (onConfirmed != null)
             {
                 Action<LayeredAppearance> handler = null;
                 handler = a => { onConfirmed(a); OnConfirmed -= handler; };
                 OnConfirmed += handler;
+                ui._confirmHandler = handler; // unsubscribed on cancel so it can't fire later
             }
             return ui;
         }
@@ -72,6 +78,10 @@ namespace LitIso.CharacterCreator
 
         void Update()
         {
+            // Review 2026-07-03: the creator had NO exit besides CONFIRM (which
+            // launches the world) — a mis-click stranded the player. ESC = cancel.
+            if (Input.GetKeyDown(KeyCode.Escape)) { Cancel(); return; }
+
             if (_baked == null || _previewImage == null) return;
             bool cycling = (CurrentAnimId == "walk" && _previewWalking) || CurrentAnimId != "walk";
             if (cycling)
@@ -384,6 +394,10 @@ namespace LitIso.CharacterCreator
             var fH = foot.gameObject.AddComponent<HorizontalLayoutGroup>();
             fH.spacing = 12f; fH.childControlWidth = true; fH.childControlHeight = true;
             fH.childForceExpandWidth = false; fH.childForceExpandHeight = true;
+
+            var back = ThemeButton(foot, "Back", "◂  BACK", false, Cancel, 14, true);
+            var backLe = back.GetComponent<LayoutElement>();
+            backLe.preferredWidth = 130f; backLe.preferredHeight = ftrH;
 
             var reset = ThemeButton(foot, "Reset", "RESET", false, () =>
             {
@@ -712,6 +726,12 @@ namespace LitIso.CharacterCreator
             BuildLabeledSliderRow(block.transform, "S", 0f, out sSlider, "SSlider");
             BuildLabeledSliderRow(block.transform, "V", 0f, out vSlider, "VSlider");
 
+            // Review 2026-07-03: ApplyFromHSV -> Rebake -> refreshers -> SyncToVariant
+            // snapped the sliders to the matched variant's exact colour MID-DRAG,
+            // yanking the handle out from under the pointer. While the user drives the
+            // sliders, skip the slider write-back (preview + hex still update).
+            bool applyingFromSliders = false;
+
             void SyncToVariant()
             {
                 var def = getDef();
@@ -719,10 +739,13 @@ namespace LitIso.CharacterCreator
                 string vv = getVariant();
                 if (string.IsNullOrEmpty(vv)) vv = def.variants[0];
                 Color c = CharacterCompositor.SwatchColor(def, vv, _appearance.bodyType);
-                Color.RGBToHSV(c, out float h, out float s, out float val);
-                hSlider?.SetValueWithoutNotify(h);
-                sSlider?.SetValueWithoutNotify(s);
-                vSlider?.SetValueWithoutNotify(val);
+                if (!applyingFromSliders)
+                {
+                    Color.RGBToHSV(c, out float h, out float s, out float val);
+                    hSlider?.SetValueWithoutNotify(h);
+                    sSlider?.SetValueWithoutNotify(s);
+                    vSlider?.SetValueWithoutNotify(val);
+                }
                 if (previewImg != null) previewImg.color = c;
                 if (hexIF != null && !hexIF.isFocused) hexIF.text = ColorToHex(c);
             }
@@ -733,7 +756,12 @@ namespace LitIso.CharacterCreator
                 if (def?.variants == null || def.variants.Length == 0) return;
                 Color target = Color.HSVToRGB(hSlider.value, sSlider.value, vSlider.value);
                 string best = BestVariant(def, target, _appearance.bodyType);
-                if (best != getVariant()) { setVariant(best); Rebake(); }
+                if (best != getVariant())
+                {
+                    applyingFromSliders = true;
+                    try { setVariant(best); Rebake(); }
+                    finally { applyingFromSliders = false; }
+                }
                 Color actual = CharacterCompositor.SwatchColor(def, getVariant(), _appearance.bodyType);
                 if (previewImg != null) previewImg.color = actual;
             }
@@ -1241,6 +1269,20 @@ namespace LitIso.CharacterCreator
             Destroy(gameObject);
         }
 
+        void Cancel()
+        {
+            if (_confirmHandler != null) { OnConfirmed -= _confirmHandler; _confirmHandler = null; }
+            _onCancelled?.Invoke();
+            Destroy(gameObject);
+        }
+
+        void OnDestroy()
+        {
+            // Review 2026-07-03: the last baked spritesheet texture leaked on close
+            // (Rebake destroyed the previous one, nothing destroyed the final one).
+            if (_baked?.texture != null) Destroy(_baked.texture);
+        }
+
         // ---------------------------------------------------------------- helpers
         static RectTransform NewRect(string name, Transform parent)
         {
@@ -1318,94 +1360,4 @@ namespace LitIso.CharacterCreator
             btn.targetGraphic = img;
             btn.transition = Selectable.Transition.ColorTint;
             var cb = btn.colors;
-            cb.normalColor = Color.white;
-            cb.highlightedColor = new Color(0.88f, 0.88f, 0.88f, 1f);
-            cb.pressedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
-            cb.fadeDuration = 0.06f;
-            btn.colors = cb;
-
-            var t = NewText(rt, "L", label, size, TextAnchor.MiddleCenter,
-                gold ? LitIsoTheme.GoldText : LitIsoTheme.Parchment, display);
-            var trt = t.rectTransform;
-            trt.anchorMin = Vector2.zero; trt.anchorMax = Vector2.one;
-            trt.offsetMin = new Vector2(8f, 4f); trt.offsetMax = new Vector2(-8f, -4f);
-            t.resizeTextForBestFit = true; t.resizeTextMaxSize = t.fontSize; t.resizeTextMinSize = 10;
-
-            btn.onClick.AddListener(() => onClick());
-            return btn;
-        }
-
-        static void AddGoldInnerLine(RectTransform parent)
-        {
-            var go = new GameObject("GoldFrame", typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            var img = go.AddComponent<Image>();
-            img.color = new Color(LitIsoTheme.GoldDeep.r, LitIsoTheme.GoldDeep.g,
-                                  LitIsoTheme.GoldDeep.b, 0.55f);
-            img.raycastTarget = false;
-            var rt = img.rectTransform;
-            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
-            rt.offsetMin = new Vector2(3f, 3f); rt.offsetMax = new Vector2(-3f, -3f);
-            var fillGo = new GameObject("Fill", typeof(RectTransform));
-            fillGo.transform.SetParent(rt, false);
-            var frt = fillGo.GetComponent<RectTransform>();
-            frt.anchorMin = Vector2.zero; frt.anchorMax = Vector2.one;
-            frt.offsetMin = new Vector2(1f, 1f); frt.offsetMax = new Vector2(-1f, -1f);
-            fillGo.AddComponent<Image>().color = LitIsoTheme.Panel;
-            go.transform.SetAsFirstSibling();
-        }
-
-        static void AddCornerBrackets(RectTransform parent)
-        {
-            var corners = new (Vector2 anchor, string name)[]
-            {
-                (new Vector2(0, 1), "BracketTL"),
-                (new Vector2(1, 1), "BracketTR"),
-                (new Vector2(0, 0), "BracketBL"),
-                (new Vector2(1, 0), "BracketBR"),
-            };
-            foreach (var (anchor, name) in corners)
-            {
-                var go = new GameObject(name, typeof(RectTransform));
-                go.transform.SetParent(parent, false);
-                var rt = go.GetComponent<RectTransform>();
-                rt.anchorMin = rt.anchorMax = anchor;
-                rt.pivot = anchor;
-                rt.sizeDelta = new Vector2(12f, 12f);
-                rt.anchoredPosition = new Vector2(anchor.x == 0 ? 6f : -6f,
-                                                  anchor.y == 1 ? -6f : 6f);
-
-                void AddBar(string n, bool horiz)
-                {
-                    var b = new GameObject(n, typeof(RectTransform));
-                    b.transform.SetParent(go.transform, false);
-                    var bImg = b.AddComponent<Image>();
-                    bImg.color = LitIsoTheme.Gold; bImg.raycastTarget = false;
-                    var brt = bImg.rectTransform;
-                    if (horiz)
-                    {
-                        brt.anchorMin = new Vector2(0, anchor.y == 1 ? 1 : 0);
-                        brt.anchorMax = new Vector2(1, anchor.y == 1 ? 1 : 0);
-                        brt.pivot     = new Vector2(0.5f, anchor.y == 1 ? 1f : 0f);
-                        brt.sizeDelta = new Vector2(0, 2f);
-                    }
-                    else
-                    {
-                        brt.anchorMin = new Vector2(anchor.x == 0 ? 0 : 1, 0);
-                        brt.anchorMax = new Vector2(anchor.x == 0 ? 0 : 1, 1);
-                        brt.pivot     = new Vector2(anchor.x == 0 ? 0f : 1f, 0.5f);
-                        brt.sizeDelta = new Vector2(2f, 0);
-                    }
-                    brt.anchoredPosition = Vector2.zero;
-                }
-                AddBar("H", true);
-                AddBar("V", false);
-            }
-        }
-
-        void OnDestroy()
-        {
-            if (_baked?.texture != null) Destroy(_baked.texture);
-        }
-    }
-}
+            cb.no
