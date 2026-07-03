@@ -320,8 +320,11 @@ namespace IsoCore.Foundation
 
             // Snow only on the TOP-FACE diamond (same geometry as FlatTile); the cube
             // side walls stay earthen so cliffs keep their contrast. Coverage grows with
-            // the band: h5 dusting -> h7 deep cap.
-            float strength = 0.30f + 0.20f * (band - SnowLineHeight); // 0.30 / 0.50 / 0.70
+            // the band. Footage 2026-07-02 23:42: at 0.30 the mountain's alternating
+            // light/dark surface variants stayed visible through the dusting and the
+            // plateau read as a hard checkerboard — coverage is now high enough that
+            // every variant converges toward the same snowfield white.
+            float strength = 0.60f + 0.15f * (band - SnowLineHeight); // 0.60 / 0.75 / 0.90
             const float cx = 15.5f, cy = 16f, hw = 16f, hh = 11f;
             for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++)
@@ -334,7 +337,7 @@ namespace IsoCore.Foundation
                 if (c.a <= 0.4f) continue;
                 // Deterministic per-pixel dither so the snow edge looks organic, not flat.
                 float n = Mathf.PerlinNoise(x * 0.55f + band * 7.3f, y * 0.55f);
-                float k = Mathf.Clamp01(strength + (n - 0.5f) * 0.35f);
+                float k = Mathf.Clamp01(strength + (n - 0.5f) * 0.25f);
                 pixels[idx] = Color.Lerp(c, new Color(SnowColor.r, SnowColor.g, SnowColor.b, c.a), k);
             }
 
@@ -387,9 +390,4 @@ namespace IsoCore.Foundation
             return ns;
         }
 
-        // Returns a FLAT, top-face-only copy of the tile: the cube side walls are cleared so
-        // only the diamond top remains, with the light border baked on the diamond edge.
-        // Used for floor (height 0) cells so the ground reads flat. Cached per source sprite.
-        Sprite FlatTile(Sprite src)
-        {
-            if (_fl
+        // Returns a FLAT, top-face-only copy of the tile: the c

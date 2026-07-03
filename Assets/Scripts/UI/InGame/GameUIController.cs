@@ -114,7 +114,6 @@ namespace LitIso.UI.InGame
         CanvasGroup _canvasGroup;
         RectTransform _vitalsRoot;
         RectTransform _hotbarRoot;
-        RectTransform _statusFxRoot;
         RectTransform _dayBandRoot;
         RectTransform _topRightRoot;
         RectTransform _abilityRoot;
@@ -269,7 +268,6 @@ namespace LitIso.UI.InGame
             _canvasGroup = canvasGo.AddComponent<CanvasGroup>();
 
             BuildVitals(canvasGo.transform);
-            BuildStatusFx(canvasGo.transform);
             BuildDayTimeBand(canvasGo.transform);
             BuildTopRight(canvasGo.transform);
             BuildAbilityBar(canvasGo.transform);
@@ -635,53 +633,10 @@ namespace LitIso.UI.InGame
 
         // ------------------------------------------------------ status FX row
 
-        // Under the vitals box (top:248 left:28 in the design): a row of 40×40 icon
-        // chips, each a #0e1014 box with a colored ring border and an inner colored
-        // icon, plus a small timer label beneath. Static design data (no live FX feed
-        // bound into this controller).
-        void BuildStatusFx(Transform parent)
-        {
-            var root = NewRect("StatusFx", parent);
-            _statusFxRoot = root;
-            root.anchorMin = root.anchorMax = new Vector2(0f, 1f);
-            root.pivot = new Vector2(0f, 1f);
-            root.anchoredPosition = new Vector2(28f, -248f);
-            root.sizeDelta = new Vector2(200f, 56f);
-
-            (Color ring, Color icon, string time)[] fx =
-            {
-                (LitIsoTheme.Hex("#d9425a"), LitIsoTheme.Hex("#e0563c"), "0:12"),
-                (LitIsoTheme.Hex("#5f9ae8"), LitIsoTheme.Hex("#6fd0f0"), "0:30"),
-                (LitIsoTheme.Hex("#6fae6f"), LitIsoTheme.Hex("#7ad07a"), "1:05"),
-            };
-
-            const float chip = 40f, gap = 8f;
-            for (int i = 0; i < fx.Length; i++)
-            {
-                float x = i * (chip + gap);
-                var box = NewImage(root, "Fx" + i, null, HudPanelInset);
-                box.raycastTarget = false;
-                HardBorder(box.gameObject, fx[i].ring, 2f);
-                var br = box.rectTransform;
-                br.anchorMin = br.anchorMax = new Vector2(0f, 1f); br.pivot = new Vector2(0f, 1f);
-                br.anchoredPosition = new Vector2(x, 0f);
-                br.sizeDelta = new Vector2(chip, chip);
-
-                var ic = NewImage(br, "Ic", null, fx[i].icon);
-                ic.raycastTarget = false;
-                var icr = ic.rectTransform;
-                icr.anchorMin = Vector2.zero; icr.anchorMax = Vector2.one;
-                icr.offsetMin = new Vector2(7f, 7f); icr.offsetMax = new Vector2(-7f, -7f);
-
-                var t = NewText(root, "T" + i, fx[i].time, 9, TextAnchor.UpperCenter);
-                LitIsoTheme.ApplyDisplay(t, 9, LitIsoTheme.Hex("#a39e90"));
-                t.raycastTarget = false;
-                var tr = t.rectTransform;
-                tr.anchorMin = tr.anchorMax = new Vector2(0f, 1f); tr.pivot = new Vector2(0.5f, 1f);
-                tr.anchoredPosition = new Vector2(x + chip * 0.5f, -(chip + 3f));
-                tr.sizeDelta = new Vector2(chip + 12f, 14f);
-            }
-        }
+        // The status-FX chip row was a STATIC design mock (three fake buff chips with
+        // hardcoded 0:12/0:30/1:05 timers, always visible). Removed 2026-07-02 after
+        // the second footage review — same class of bug as the combat-text mock (#1).
+        // Rebuild here (live-bound to StatusEffectHandler) when the buff feed exists.
 
         // ------------------------------------------------ day/time + trial band
 
@@ -907,11 +862,15 @@ namespace LitIso.UI.InGame
                 var kr = k.rectTransform; kr.anchorMin = new Vector2(0f, 1f); kr.anchorMax = new Vector2(1f, 1f); kr.pivot = new Vector2(0.5f, 1f);
                 kr.offsetMin = new Vector2(0f, -16f); kr.offsetMax = new Vector2(0f, -4f);
 
-                var v = NewText(cr, "V", cells[i].v, 18, TextAnchor.LowerCenter);
-                LitIsoTheme.ApplyBody(v, 18, LitIsoTheme.Parchment);
+                var v = NewText(cr, "V", cells[i].v, 15, TextAnchor.LowerCenter);
+                LitIsoTheme.ApplyBody(v, 15, LitIsoTheme.Parchment);
                 v.raycastTarget = false;
+                // Footage 2026-07-02 23:42: the values were INVISIBLE in builds — an
+                // 18px glyph in a 16px rect trips uGUI's vertical Truncate, which drops
+                // the whole line. Taller rect + Overflow so the numbers can never vanish.
+                v.verticalOverflow = VerticalWrapMode.Overflow;
                 var vr = v.rectTransform; vr.anchorMin = new Vector2(0f, 0f); vr.anchorMax = new Vector2(1f, 0f); vr.pivot = new Vector2(0.5f, 0f);
-                vr.offsetMin = new Vector2(0f, 4f); vr.offsetMax = new Vector2(0f, 20f);
+                vr.offsetMin = new Vector2(0f, 3f); vr.offsetMax = new Vector2(0f, 24f);
 
                 if (i == 0) _coordX = v;
                 else if (i == 1) _coordY = v;
@@ -1707,7 +1666,6 @@ namespace LitIso.UI.InGame
             }
             SetVisible(_vitalsRoot, show);
             SetVisible(_hotbarRoot, show);
-            SetVisible(_statusFxRoot, show);
             SetVisible(_dayBandRoot, show);
             SetVisible(_topRightRoot, show);
             SetVisible(_abilityRoot, show);
@@ -1750,4 +1708,42 @@ namespace LitIso.UI.InGame
             bevel.raycastTarget = false;
             HardBorder(bevel.gameObject, LitIsoTheme.Stone, 2f);
             var bvr = bevel.rectTransform;
-            bvr.anchorMin = Vector2.zero; bvr.anchor
+            bvr.anchorMin = Vector2.zero; bvr.anchorMax = Vector2.one;
+            bvr.offsetMin = new Vector2(2f, 2f); bvr.offsetMax = new Vector2(-2f, -2f);
+        }
+
+        static Image NewImage(Transform parent, string name, Sprite sprite, Color color)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var img = go.AddComponent<Image>();
+            img.sprite = sprite;
+            img.color = sprite != null ? Color.white : color;
+            return img;
+        }
+
+        static Text NewText(Transform parent, string name, string value, int size, TextAnchor anchor)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var t = go.AddComponent<Text>();
+            t.text = value;
+            t.alignment = anchor;
+            t.color = TextCol;
+            t.horizontalOverflow = HorizontalWrapMode.Wrap;
+            t.verticalOverflow = VerticalWrapMode.Truncate;
+            LitIsoFont.Apply(t, size);
+            t.resizeTextForBestFit = true;
+            t.resizeTextMaxSize = t.fontSize;
+            // Floor low enough that long live strings (e.g. a full weather forecast)
+            // shrink to fit their box instead of spilling over the border. The user
+            // wants autofit-inside over overflow, so favour shrink over clip.
+            t.resizeTextMinSize = Mathf.Min(8, t.fontSize);
+            var shadow = go.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
+            shadow.effectDistance = new Vector2(1.5f, -1.5f);
+            shadow.useGraphicAlpha = true;
+            return t;
+        }
+    }
+}

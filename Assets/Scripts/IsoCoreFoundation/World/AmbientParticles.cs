@@ -74,9 +74,13 @@ namespace IsoCore.Foundation
             sol.enabled = true;
             sol.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.EaseInOut(0f, 0.6f, 1f, 1.2f));
 
-            // Additive, soft round particle so fireflies glow.
+            // Soft round particle so fireflies glow. Footage 2026-07-02 23:42: with no
+            // texture assigned, Sprites/Default rendered each particle as a hard opaque
+            // QUAD — the world was littered with green/gold squares. A tiny procedural
+            // radial-gradient texture (built once) makes them read as soft motes.
             var psr = GetComponent<ParticleSystemRenderer>();
             _particleMat = new Material(Shader.Find("Sprites/Default")) { name = "AmbientParticleMat" };
+            _particleMat.mainTexture = SoftDot();
             psr.material = _particleMat;
             psr.sortingLayerName = "Default";
             psr.sortingOrder = 9000; // above the world, below UI
@@ -84,33 +88,20 @@ namespace IsoCore.Foundation
             _ps.Play();
         }
 
-        float _lastNight = -1f;
+        static Texture2D _softDot;
 
-        void LateUpdate()
+        // 32px radial gradient (opaque centre -> transparent rim), built once.
+        static Texture2D SoftDot()
         {
-            if (cam != null)
+            if (_softDot != null) return _softDot;
+            const int s = 32;
+            _softDot = new Texture2D(s, s, TextureFormat.RGBA32, false)
+            { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            var px = new Color32[s * s];
+            float c = (s - 1) * 0.5f;
+            for (int y = 0; y < s; y++)
+            for (int x = 0; x < s; x++)
             {
-                var p = cam.transform.position;
-                transform.position = new Vector3(p.x, p.y, 0f);
-            }
-            if (dayNight == null) return;
-
-            float night = dayNight.NightFactor;          // 0 day, 1 deep night
-            // Perf (audit 2026-06-11, applied by Claude on owner instruction):
-            // ParticleSystem module writes are not free — only write on change.
-            if (Mathf.Abs(night - _lastNight) < 0.01f) return;
-            _lastNight = night;
-
-            // Fireflies appear at night, pollen by day; cross-fade colour + density.
-            Color c = Color.Lerp(Pollen, Firefly, night);
-            _main.startColor = c;
-            _emission.rateOverTime = Mathf.Lerp(10f, 22f, night); // a few more at night
-            _main.startSize = Mathf.Lerp(0.055f, 0.085f, night);
-        }
-
-        void OnDestroy()
-        {
-            if (_particleMat != null) Destroy(_particleMat);
-        }
-    }
-}
+                float d = Mathf.Sqrt((x - c) * (x - c) + (y - c) * (y - c)) / c;
+                float a = Mathf.Clamp01(1f - d);
+                a *= a; // soft falloff
