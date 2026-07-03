@@ -119,7 +119,6 @@ namespace LitIso.UI.InGame
         RectTransform _topRightRoot;
         RectTransform _abilityRoot;
         RectTransform _attackBtnRoot;
-        RectTransform _combatTextRoot;
         Text _selItemName;
         Text _hotbarRowText;
         FoundationHudViewMode _hudMode = FoundationHudViewMode.Adventure;
@@ -273,7 +272,6 @@ namespace LitIso.UI.InGame
             BuildAbilityBar(canvasGo.transform);
             BuildAttackButton(canvasGo.transform);
             BuildHotbar(canvasGo.transform);
-            BuildCombatText(canvasGo.transform);
             BuildInteractionPrompt(canvasGo.transform);
             BuildTutorialOverlay(canvasGo.transform);
             ApplyHudViewMode(_hudMode);
@@ -1178,34 +1176,10 @@ namespace LitIso.UI.InGame
             });
         }
 
-        // ---------------------------------------------------- floating combat text
-
-        // In-scene floating combat numbers — design has -12 (red), +40 XP (gold),
-        // FIRE TRAP! (orange) at fixed screen percentages. Static; purely cosmetic.
-        void BuildCombatText(Transform parent)
-        {
-            var root = NewRect("CombatText", parent);
-            _combatTextRoot = root;
-            root.anchorMin = Vector2.zero; root.anchorMax = Vector2.one;
-            root.offsetMin = Vector2.zero; root.offsetMax = Vector2.zero;
-
-            (string text, Color col, int size, Vector2 anchor)[] floats =
-            {
-                ("-12",       LitIsoTheme.Hex("#f0596b"), 30, new Vector2(0.58f, 0.62f)),
-                ("+40 XP",    LitIsoTheme.Gold,           20, new Vector2(0.64f, 0.54f)),
-                ("FIRE TRAP!",LitIsoTheme.Hex("#e07b3a"), 16, new Vector2(0.54f, 0.48f)),
-            };
-
-            foreach (var f in floats)
-            {
-                var t = NewText(root, "Float", f.text, f.size, TextAnchor.MiddleCenter);
-                LitIsoTheme.ApplyDisplay(t, f.size, f.col);
-                t.raycastTarget = false;
-                var tr = t.rectTransform;
-                tr.anchorMin = tr.anchorMax = f.anchor; tr.pivot = new Vector2(0.5f, 0.5f);
-                tr.sizeDelta = new Vector2(220f, 40f);
-            }
-        }
+        // Floating combat text is world-space (IsoCore.Foundation.FloatingText, pooled).
+        // The old static screen-space mock ("-12" / "+40 XP" / "FIRE TRAP!" pinned at fixed
+        // screen percentages) was removed 2026-07-02 — it never despawned in builds
+        // (playtest rec_20260702_195606, task #1).
 
         // BOTTOM-CENTRE contextual popup: 32×32 key chip (gold border) + action label.
         // Hidden by default; caller drives ShowInteractionPrompt / HideInteractionPrompt.
@@ -1681,7 +1655,6 @@ namespace LitIso.UI.InGame
             SetVisible(_dayBandRoot, show);
             SetVisible(_topRightRoot, show);
             SetVisible(_abilityRoot, show);
-            SetVisible(_combatTextRoot, show);
             if (!show)
             {
                 if (_interactRoot != null) _interactRoot.gameObject.SetActive(false);
@@ -1760,3 +1733,4 @@ namespace LitIso.UI.InGame
         }
     }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
