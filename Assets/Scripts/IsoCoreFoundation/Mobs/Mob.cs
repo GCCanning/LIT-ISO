@@ -47,6 +47,18 @@ namespace IsoCore.Foundation
         bool _resolved;
         const float AnimFps = 6f;
 
+        // Hit feedback kit (playtest 2026-07-02 #6): flash + knockback + hit-stop +
+        // hurt frames on every TakeMobDamage, Romestead-class action feel.
+        Color _baseColor = Color.white;   // restore target for the flash (night tint aware)
+        float _flashTimer;                // > 0 → sprite is flashed to the hit colour
+        float _hitStopTimer;              // > 0 → this mob's own update is frozen
+        float _hurtAnimTimer;             // > 0 → Animate() plays the _hurt frames
+        const float FlashSeconds = 0.08f;
+        const float HitStopSeconds = 0.06f;
+        const float HurtAnimSeconds = 0.30f;
+        const float KnockbackUnits = 0.20f;
+        static readonly Color FlashColor = new Color(1f, 0.35f, 0.30f, 1f);
+
         // Faction combat (mob vs mob) — independent of the player->mob kill path.
         float _hp = 20f;
         float _mobAtkTimer;
@@ -120,6 +132,7 @@ namespace IsoCore.Foundation
             body.radius = Mathf.Clamp(def.sizeUnits * 0.45f, 0.18f, 0.65f);
             body.offset = new Vector2(0f, Mathf.Max(0.1f, def.sizeUnits * 0.3f));
 
+            _baseColor = _sr.color; // hit flash restores here (ApplyNightDanger retints it)
             PickTarget();
             Place();
             Spawned?.Invoke(this); // lets the layered character creator dress humanoid NPCs
@@ -154,8 +167,9 @@ namespace IsoCore.Foundation
             // buffed (reference-integration pass, 2026-07-02): a warm blood-tinged cast
             // multiplies over the shared day/night ambient so empowered mobs stand out
             // against the cool night palette at a glance.
+            _baseColor = new Color(1.0f, 0.72f, 0.70f, 1f); // hit flash restores to THIS, not white
             if (_sr != null)
-                _sr.color = new Color(1.0f, 0.72f, 0.70f, 1f);
+                _sr.color = _baseColor;
         }
 
         /// <summary>Distance-from-spawn scaling: bumps level, HP and damage so enemies further
@@ -223,6 +237,16 @@ namespace IsoCore.Foundation
         void Update()
         {
             if (_world == null) return;
+
+            // Hit-stop (playtest #6): the mob's own simulation freezes for a few
+            // hundredths after taking a hit; only the flash-restore keeps ticking.
+            TickHitFeedback();
+            if (_hitStopTimer > 0f)
+            {
+                _hitStopTimer -= Time.deltaTime;
+                return;
+            }
+
             _attackTimer -= Time.deltaTime;
             _mobAtkTimer -= Time.deltaTime;
             _abilityTimer -= Time.deltaTime;
@@ -350,15 +374,53 @@ namespace IsoCore.Foundation
             float range = Mathf.Max(0.45f, _def.attackRange);
             if ((foe._ground - _ground).sqrMagnitude > range * range) return;
             _mobAtkTimer = Mathf.Max(0.5f, _def.attackCooldownSeconds);
-            foe.TakeMobDamage(Mathf.Max(1f, _def.meleeDamage * _tierDmgMul));
+            foe.TakeMobDamage(Mathf.Max(1f, _def.meleeDamage * _tierDmgMul), _ground);
         }
 
-        public void TakeMobDamage(float dmg)
+        public void TakeMobDamage(float dmg) => TakeMobDamage(dmg, null);
+
+        /// <summary>
+        /// Damage + the full hit-feedback kit (playtest 2026-07-02 #6): damage number,
+        /// hit flash, knockback nudge away from <paramref name="attackerGround"/>,
+        /// per-mob hit-stop, hurt frames and hurt/death SFX. Pass the attacker's ground
+        /// position when known so the knockback direction is honest; null falls back to
+        /// the player (the common case) or skips the nudge.
+        /// </summary>
+        public void TakeMobDamage(float dmg, Vector2? attackerGround)
         {
             if (_resolved) return;
             _hp -= dmg;
             FloatingText.Spawn(transform.position + Vector3.up * 0.7f,
                 $"-{Mathf.CeilToInt(dmg)}", new Color(1f, 0.7f, 0.3f));
+
+            // 1) Hit flash — a warm red multiply tint (a true white "additive" flash
+            //    can't brighten under the multiplied ambient material). Restores to
+            //    _baseColor, which tracks the night-danger tint, NOT plain white.
+            if (_sr != null) { _sr.color = FlashColor; _flashTimer = FlashSeconds; }
+
+            // 2) Knockback nudge — 0.2u away from the attacker, walkable-checked
+            //    (same clamp pattern as ApplySeparation). Instant, so it reads on the
+            //    exact hit frame even through the hit-stop.
+            Vector2? from = attackerGround;
+            if (from == null && _player != null) from = _player.Ground;
+            if (from.HasValue)
+            {
+                Vector2 d = _ground - from.Value;
+                if (d.sqrMagnitude > 1e-6f)
+                {
+                    Vector2 np = _ground + d.normalized * KnockbackUnits;
+                    var kc = IsoGrid.WorldToCell(new Vector3(np.x, np.y, 0f));
+                    if (_world != null && _world.IsWalkable(kc.x, kc.y)) { _ground = np; Place(); }
+                }
+            }
+
+            // 3) Hit-stop — freeze this mob's own update briefly so the hit "lands".
+            _hitStopTimer = HitStopSeconds;
+
+            // 5) Hurt frames — play the loaded _hurt strip for a beat (they loaded
+            //    before but never actually played on damage).
+            if (_hurt != null && _hurt.Length > 0) { _hurtAnimTimer = HurtAnimSeconds; _frame = 0; _animTimer = 0f; }
+
             if (_hp <= 0f)
             {
                 _resolved = true;
@@ -373,71 +435,3 @@ namespace IsoCore.Foundation
             }
         }
 
-        void TryAttack()
-        {
-            if (!_aggressive || _player == null || _stats == null || _attackTimer > 0f)
-                return;
-            if (_def == null || _def.contactDamage <= 0f)
-                return;
-
-            float range = Mathf.Max(0.1f, EffectiveAttackRange);
-            if ((_player.Ground - _ground).sqrMagnitude > range * range)
-                return;
-
-            _attackTimer = Mathf.Max(0.5f, _def.attackCooldownSeconds);
-            float damage = Mathf.Max(1f, EffectiveContactDamage);
-            _stats.Damage(damage);
-            FloatingText.Spawn(_player.transform.position + Vector3.up * 0.75f,
-                $"-{Mathf.CeilToInt(damage)} HP", new Color(1f, 0.35f, 0.25f));
-            SfxManager.PlayAt("hit", _player.transform.position, 0.75f);
-        }
-
-        // Phase 3: occasional NPC ability cast, gated by a per-mob cooldown. NPCs have no
-        // mana/stamina pool, so the cost is cooldown-only. Damage scales by _tierDmgMul via the
-        // ability's basePower; the actual VFX/animation is the Assembly-CSharp listener's job
-        // (AbilityUsed event). Targets the current foe (mob-vs-mob) or the player when aggressive.
-        void TryCastAbility()
-        {
-            if (_resolved || _def == null || _abilityTimer > 0f) return;
-            var ids = _def.abilityIds;
-            if (ids == null || ids.Length == 0) return;
-
-            Mob foeTarget = _foe;
-            bool playerTarget = _aggressive && _player != null && foeTarget == null;
-            if (foeTarget == null && !playerTarget) return;
-
-            string abilityId = ids[UnityEngine.Random.Range(0, ids.Length)];
-            var ability = _content != null ? _content.Abilities.Get(abilityId) : null;
-
-            float range = ability != null ? Mathf.Max(1.5f, ability.range) : Mathf.Max(2f, _def.attackRange * 2f);
-            Vector2 targetGround = foeTarget != null ? foeTarget.Ground : _player.Ground;
-            if ((targetGround - _ground).sqrMagnitude > range * range) return;
-
-            _abilityTimer = Mathf.Max(1f, _def.abilityCooldownSeconds);
-
-            float power = ability != null ? Mathf.Max(0.1f, ability.basePower) : 1f;
-            float damage = Mathf.Max(1f, power * _def.meleeDamage * _tierDmgMul);
-            if (foeTarget != null) foeTarget.TakeMobDamage(damage);
-            else if (_stats != null) _stats.Damage(damage);
-
-            AbilityUsed?.Invoke(abilityId);
-        }
-
-        void Animate()
-        {
-            if (_externalAppearance) return; // the layered character creator owns the sprite
-
-            // Cheap 2-direction facing (playtest 2026-07-02 #5): flip the sprite so the
-            // mob looks along its chase/move direction. Full 4-direction rows are
-            // blocked on owner art (HANDOVER_2026-06-29 §4.3). Applies to animated AND
-            // static (decoration-sprite) mobs; a dead-zone keeps near-vertical movement
-            // from jittering the flip.
-            if (_sr != null && _def != null && Mathf.Abs(_faceDir.x) > 0.05f)
-            {
-                bool movingLeft = _faceDir.x < 0f;
-                _sr.flipX = _def.artFacesLeft ? !movingLeft : movingLeft;
-            }
-
-            if (!_animated) return;
-            var frames = _moving && _move.Length > 0 ? _move : _idle;
-            if (frames == null || frames.Length == 0) return;

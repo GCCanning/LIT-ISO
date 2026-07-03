@@ -620,7 +620,7 @@ namespace IsoCore.Foundation
                 // In-front check: generous ~120° cone, and anything practically on top of
                 // the player always counts (you don't whiff a swing at point-blank).
                 if (dist > 0.35f && Vector2.Dot(to / dist, facing2) < 0.35f) continue;
-                mob.TakeMobDamage(AttackBaseDamage);
+                mob.TakeMobDamage(AttackBaseDamage, _ground); // origin → honest knockback direction
                 hitAnything = true;
             }
 
@@ -720,4 +720,4 @@ namespace IsoCore.Foundation
             // Ease visual height between integer cell levels so stepping a cliff doesn't
             // pop; sorting still uses the true integer _height.
             _visualHeight = Mathf.MoveTowards(_visualHeight, _height, Time.deltaTime * 8f);
-            transform.position = new Vector3(_ground.x
+    

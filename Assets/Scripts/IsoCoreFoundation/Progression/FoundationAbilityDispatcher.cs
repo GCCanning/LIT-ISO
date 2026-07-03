@@ -105,7 +105,7 @@ namespace IsoCore.Foundation
                         var mob = h.GetComponentInParent<Mob>();
                         if (mob != null)
                         {
-                            mob.TakeMobDamage(dmg);
+                            mob.TakeMobDamage(dmg, (Vector2)center);
                             hitAnything = true;
                         }
                     }
@@ -149,6 +149,4 @@ namespace IsoCore.Foundation
             FoundationAbilityElement.Glimmer => new Color(1f, 0.95f, 0.6f),
             FoundationAbilityElement.Hearth => new Color(1f, 0.8f, 0.5f),
             _ => new Color(0.7f, 0.85f, 1f),
-        };
-    }
-}
+  
