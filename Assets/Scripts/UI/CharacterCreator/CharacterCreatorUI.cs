@@ -38,7 +38,7 @@ namespace LitIso.CharacterCreator
         readonly List<Image> _pillImages = new();
         readonly List<Text>  _pillTexts  = new();
         RectTransform _scrollRoot;   // OptionsScroll RT — kept for RebuildOptions
-        static readonly string[] DirLabels = { "↑ N", "← W", "↓ S", "→ E" };
+        static readonly string[] DirLabels = { "NORTH", "WEST", "SOUTH", "EAST" };
 
         // HTML section-label colour (#a39e90) — dimmer than parchment, between
         // WarmTan and Parchment; no exact LitIsoTheme token, so define it here.
@@ -165,7 +165,7 @@ namespace LitIso.CharacterCreator
             tLeft.gameObject.AddComponent<LayoutElement>().preferredWidth = 110f;
             var tMid = NewText(topBar, "TBC", "[ CHARACTER CREATION ]", 10, TextAnchor.MiddleCenter, LitIsoTheme.Gold, true);
             tMid.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            var tRight = NewText(topBar, "TBR", "DAY 1 / 7", 9, TextAnchor.MiddleRight, LitIsoTheme.Amber, true);
+            var tRight = NewText(topBar, "TBR", "NEW WORLD", 9, TextAnchor.MiddleRight, LitIsoTheme.Amber, true);
             tRight.gameObject.AddComponent<LayoutElement>().preferredWidth = 110f;
 
             // Gold hairline below top bar
@@ -194,7 +194,13 @@ namespace LitIso.CharacterCreator
         {
             var panel = Panel(parent, "PreviewPanel");
             var le = panel.gameObject.AddComponent<LayoutElement>();
-            le.preferredWidth = 420f; le.flexibleHeight = 1f;
+            // Keep the preview bounded. Its VerticalLayoutGroup also reports flexible
+            // width, which previously let this column consume most of the card and
+            // squeezed the actual customization controls into a narrow strip.
+            le.minWidth = 520f;
+            le.preferredWidth = 600f;
+            le.flexibleWidth = 0f;
+            le.flexibleHeight = 1f;
             var v = panel.gameObject.AddComponent<VerticalLayoutGroup>();
             v.padding = new RectOffset(20, 20, 14, 14);
             v.spacing = 6f;
@@ -206,10 +212,13 @@ namespace LitIso.CharacterCreator
             FixedH(hdr, 22f);
             Divider(panel.transform, LitIsoTheme.GoldDeep, 1f);
 
-            // Avatar — fixed 320px so it doesn't swallow the panel
+            // Let the avatar use the remaining vertical space instead of leaving a
+            // large dead panel below the preview controls.
             var avatarHolder = NewRect("Avatar", panel.transform);
             var avLe = avatarHolder.gameObject.AddComponent<LayoutElement>();
-            avLe.minHeight = 200f; avLe.preferredHeight = 320f;
+            avLe.minHeight = 300f;
+            avLe.preferredHeight = 460f;
+            avLe.flexibleHeight = 1f;
             var avBg = avatarHolder.gameObject.AddComponent<Image>();
             avBg.color = LitIsoTheme.Base; avBg.raycastTarget = false;
             var avOl = avatarHolder.gameObject.AddComponent<Outline>();
@@ -217,7 +226,7 @@ namespace LitIso.CharacterCreator
             var charRt = NewRect("Char", avatarHolder);
             charRt.anchorMin = new Vector2(0.5f, 0.5f); charRt.anchorMax = new Vector2(0.5f, 0.5f);
             charRt.pivot = new Vector2(0.5f, 0.5f);
-            charRt.sizeDelta = new Vector2(300f, 300f);
+            charRt.sizeDelta = new Vector2(420f, 420f);
             _previewImage = charRt.gameObject.AddComponent<Image>();
             _previewImage.preserveAspect = true;
             _previewImage.raycastTarget = false;
@@ -305,22 +314,18 @@ namespace LitIso.CharacterCreator
             _dirLabel = NewText(dirRow, "Dir", DirLabels[0], 12, TextAnchor.MiddleLeft, LitIsoTheme.Parchment);
             _dirLabel.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
-            // Footer: frame counter + Randomize
+            // Footer: lightweight preview status. Randomize lives in the character
+            // header; a second copy here became an oversized duplicate CTA.
             var foot = NewRect("Footer", panel.transform);
             FixedH(foot, 32f);
             var fH = foot.gameObject.AddComponent<HorizontalLayoutGroup>();
             fH.spacing = 8f; fH.childControlWidth = true; fH.childControlHeight = true;
             fH.childForceExpandWidth = false; fH.childForceExpandHeight = true;
             _frameLabel = NewText(foot, "Frame", "frame 1/1", 11, TextAnchor.MiddleLeft, LitIsoTheme.WarmTan);
-            _frameLabel.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            var rndBtn = ThemeButton(foot, "Rand", "⚄  RANDOMIZE", true, () =>
-            {
-                var keep = _appearance.equipped;
-                _appearance = LayeredAppearance.Random(_cat);
-                _appearance.equipped = keep;
-                RebuildOptions();
-            }, 12);
-            rndBtn.GetComponent<LayoutElement>().preferredWidth = 160f;
+            _frameLabel.gameObject.AddComponent<LayoutElement>().preferredWidth = 110f;
+            var previewNote = NewText(foot, "PreviewNote", "COSMETIC PREVIEW - GEAR IS LOOT",
+                10, TextAnchor.MiddleRight, LabelColor, true);
+            previewNote.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
         }
 
         void BuildCharacterPanel(RectTransform parent)
@@ -420,6 +425,7 @@ namespace LitIso.CharacterCreator
 
             var viewport = NewRect("Viewport", _scrollRoot);
             Stretch(viewport);
+            viewport.offsetMax = new Vector2(-16f, 0f);
             viewport.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.001f);
             viewport.gameObject.AddComponent<RectMask2D>();
 
@@ -433,7 +439,44 @@ namespace LitIso.CharacterCreator
             var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            scroll.viewport = viewport; scroll.content = content;
+            // Visible scrollbar: the options extend below the fold, so relying on
+            // wheel input alone made shirt/pants/shoes look like missing features.
+            var scrollBarImage = NewImage(_scrollRoot, "Scrollbar", LitIsoTheme.Base);
+            var scrollBarRt = scrollBarImage.rectTransform;
+            scrollBarRt.anchorMin = new Vector2(1f, 0f);
+            scrollBarRt.anchorMax = new Vector2(1f, 1f);
+            scrollBarRt.pivot = new Vector2(1f, 0.5f);
+            scrollBarRt.anchoredPosition = new Vector2(-4f, 0f);
+            scrollBarRt.sizeDelta = new Vector2(8f, 0f);
+
+            var slidingArea = NewRect("SlidingArea", scrollBarRt);
+            Stretch(slidingArea);
+            slidingArea.offsetMin = new Vector2(1f, 2f);
+            slidingArea.offsetMax = new Vector2(-1f, -2f);
+
+            var handle = NewImage(slidingArea, "Handle", LitIsoTheme.GoldDeep);
+            Stretch(handle.rectTransform);
+
+            var scrollbar = scrollBarImage.gameObject.AddComponent<Scrollbar>();
+            scrollbar.handleRect = handle.rectTransform;
+            scrollbar.targetGraphic = handle;
+            scrollbar.direction = Scrollbar.Direction.BottomToTop;
+            scrollbar.colors = new ColorBlock
+            {
+                normalColor = Color.white,
+                highlightedColor = LitIsoTheme.Gold,
+                pressedColor = LitIsoTheme.Amber,
+                selectedColor = Color.white,
+                disabledColor = LitIsoTheme.Stone,
+                colorMultiplier = 1f,
+                fadeDuration = 0.08f
+            };
+
+            scroll.viewport = viewport;
+            scroll.content = content;
+            scroll.verticalScrollbar = scrollbar;
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+            scroll.verticalScrollbarSpacing = 6f;
 
             _charContent = content;
             BuildOptions(content);
@@ -1216,7 +1259,9 @@ namespace LitIso.CharacterCreator
         static void FixedH(Component c, float h)
         {
             var le = c.gameObject.GetComponent<LayoutElement>() ?? c.gameObject.AddComponent<LayoutElement>();
-            le.minHeight = h; le.preferredHeight = h;
+            le.minHeight = h;
+            le.preferredHeight = h;
+            le.flexibleHeight = 0f;
         }
 
         static Image NewImage(Transform parent, string name, Color color)
