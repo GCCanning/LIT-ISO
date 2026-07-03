@@ -292,9 +292,19 @@ namespace LitIso.UI.InGame
             col.anchoredPosition = new Vector2(28f, -26f);
             col.sizeDelta = new Vector2(362f, 214f);
             var box = col.gameObject.AddComponent<Image>();
-            box.color = HudPanelBg;
-            HardBorder(col.gameObject, LitIsoTheme.Base, 2f);
-            AddBevel(col);   // inner stone bevel — same frame grammar as every box
+            // Kenney dark-wood skin (2026-07-03): the panel uses the 9-sliced walnut
+            // frame when present; procedural flat box + borders stay as the fallback.
+            var panelSkin = Spr("vitals_bg");
+            if (panelSkin != null)
+            {
+                box.sprite = panelSkin; box.type = Image.Type.Sliced; box.color = Color.white;
+            }
+            else
+            {
+                box.color = HudPanelBg;
+                HardBorder(col.gameObject, LitIsoTheme.Base, 2f);
+                AddBevel(col);   // inner stone bevel — same frame grammar as every box
+            }
 
             const float pad = 14f;
             float innerW = 362f - pad * 2f;
@@ -336,17 +346,30 @@ namespace LitIso.UI.InGame
         Image VitalBar(RectTransform parent, string id, float pad, float innerW, float y, float h,
             Color fill, string label, bool withValue, out Text value)
         {
-            var track = NewImage(parent, id + "Track", null, LitIsoTheme.Hex("#0a0c10"));
-            HardBorder(track.gameObject, LitIsoTheme.Base, 2f);
+            // Skin slots (2026-07-03): brass-rimmed inset track + palette fill sprites.
+            var trackSkin = Spr(id == "XP" ? "bar_xp_track" : "bar_track");
+            string fillName = id == "HP" ? "bar_health_fill"
+                            : id == "MP" ? "bar_mana_fill"
+                            : id == "XP" ? "bar_xp_fill" : null;
+            var fillSkin = fillName != null ? Spr(fillName) : null;
+
+            var track = NewImage(parent, id + "Track", trackSkin,
+                trackSkin != null ? Color.white : LitIsoTheme.Hex("#0a0c10"));
+            if (trackSkin != null) track.type = Image.Type.Sliced;
+            else HardBorder(track.gameObject, LitIsoTheme.Base, 2f);
             var tr = track.rectTransform;
             tr.anchorMin = tr.anchorMax = new Vector2(0f, 1f); tr.pivot = new Vector2(0f, 1f);
             tr.anchoredPosition = new Vector2(pad, y); tr.sizeDelta = new Vector2(innerW, h);
 
-            var f = NewImage(track.rectTransform, "Fill", null, fill);
+            var f = NewImage(track.rectTransform, "Fill", fillSkin,
+                fillSkin != null ? Color.white : fill);
             f.type = Image.Type.Filled; f.fillMethod = Image.FillMethod.Horizontal;
             f.fillOrigin = (int)Image.OriginHorizontal.Left; f.raycastTarget = false;
             var fr = f.rectTransform;
-            fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one; fr.offsetMin = Vector2.zero; fr.offsetMax = Vector2.zero;
+            fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one;
+            // Inset the fill inside the skinned track so the brass rim stays visible.
+            float inset = trackSkin != null ? 2f : 0f;
+            fr.offsetMin = new Vector2(inset, inset); fr.offsetMax = new Vector2(-inset, -inset);
 
             if (!string.IsNullOrEmpty(label))
             {
@@ -1004,8 +1027,13 @@ namespace LitIso.UI.InGame
                 var shr = sh.rectTransform; shr.anchorMin = shr.anchorMax = new Vector2(0f, 0f); shr.pivot = new Vector2(0f, 0f);
                 shr.anchoredPosition = new Vector2(x, -5f); shr.sizeDelta = new Vector2(cell, cell);
 
-                var frame = NewImage(col, "Ability" + i, null, HudPanelInset);
-                HardBorder(frame.gameObject, a.border, 2f);
+                // Kenney skin (2026-07-03): ability chips use the same dark-wood slot
+                // well as the hotbar; flat inset + coloured border stays as fallback.
+                var slotSkin = Spr("slot");
+                var frame = NewImage(col, "Ability" + i, slotSkin,
+                    slotSkin != null ? Color.white : HudPanelInset);
+                if (slotSkin != null) frame.type = Image.Type.Sliced;
+                else HardBorder(frame.gameObject, a.border, 2f);
                 var fr = frame.rectTransform; fr.anchorMin = fr.anchorMax = new Vector2(0f, 0f); fr.pivot = new Vector2(0f, 0f);
                 fr.anchoredPosition = new Vector2(x, 0f); fr.sizeDelta = new Vector2(cell, cell);
 
@@ -1079,9 +1107,13 @@ namespace LitIso.UI.InGame
             shr.anchorMin = shr.anchorMax = new Vector2(0.5f, 0.5f); shr.pivot = new Vector2(0.5f, 0.5f);
             shr.anchoredPosition = new Vector2(0f, -5f); shr.sizeDelta = new Vector2(size, size);
 
-            // Frame — red-bordered for primary attack clarity
-            var frame = NewImage(root, "AtkFrame", null, HudPanelInset);
-            HardBorder(frame.gameObject, LitIsoTheme.Hex("#d9425a"), 3f);
+            // Frame — Kenney selected-slot well (brass highlight) when skinned; the
+            // red HardBorder mock remains only as the procedural fallback.
+            var atkSkin = Spr("slot_selected");
+            var frame = NewImage(root, "AtkFrame", atkSkin,
+                atkSkin != null ? Color.white : HudPanelInset);
+            if (atkSkin != null) frame.type = Image.Type.Sliced;
+            else HardBorder(frame.gameObject, LitIsoTheme.Hex("#d9425a"), 3f);
             frame.raycastTarget = true;
             var fr = frame.rectTransform;
             fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one;

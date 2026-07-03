@@ -110,6 +110,12 @@ namespace IsoCore.Foundation
         void OnDestroy()
         {
             if (Active == this) Active = null;
+            if (_miniTex != null)
+            {
+                Destroy(_miniTex);
+                _miniTex = null;
+                _miniPx = null;
+            }
             FoundationUiCoordinator.Active?.SetModalOpen("map", false);
         }
 
@@ -698,4 +704,55 @@ namespace IsoCore.Foundation
         static void GetActiveInstanceBounds(List<Vector2Int> cells, out int minX, out int minY, out int maxX, out int maxY)
         {
             minX = int.MaxValue; minY = int.MaxValue;
- 
+            maxX = int.MinValue; maxY = int.MinValue;
+
+            foreach (var c in cells)
+            {
+                if (c.x < minX) minX = c.x;
+                if (c.y < minY) minY = c.y;
+                if (c.x > maxX) maxX = c.x;
+                if (c.y > maxY) maxY = c.y;
+            }
+
+            if (minX != int.MaxValue)
+                return;
+
+            minX = minY = maxX = maxY = 0;
+        }
+
+        static Color RoomColor(FoundationDungeonRoomKind kind)
+        {
+            switch (kind)
+            {
+                case FoundationDungeonRoomKind.Spawn: return new Color(0.38f, 1f, 0.78f, 1f);
+                case FoundationDungeonRoomKind.Arena: return new Color(1f, 0.55f, 0.22f, 1f);
+                case FoundationDungeonRoomKind.Junction: return new Color(0.75f, 0.62f, 1f, 1f);
+                case FoundationDungeonRoomKind.Exit: return new Color(1f, 0.42f, 0.92f, 1f);
+                default: return new Color(0.95f, 0.75f, 0.28f, 1f);
+            }
+        }
+
+        static string RoomShortLabel(FoundationDungeonRoomKind kind)
+        {
+            switch (kind)
+            {
+                case FoundationDungeonRoomKind.Spawn: return "ENT";
+                case FoundationDungeonRoomKind.Arena: return "ARENA";
+                case FoundationDungeonRoomKind.Junction: return "JCT";
+                case FoundationDungeonRoomKind.Exit: return "EXIT";
+                default: return "ROOM";
+            }
+        }
+
+        static bool Overlaps(Rect a, Rect b) =>
+            a.xMax >= b.x && a.x <= b.xMax && a.yMax >= b.y && a.y <= b.yMax;
+
+        static long Key(int x, int y) => ((long)(uint)x << 32) | (uint)y;
+
+        static void DecodeKey(long key, out int x, out int y)
+        {
+            x = (int)(key >> 32);
+            y = (int)key;
+        }
+    }
+}
