@@ -35,6 +35,17 @@ namespace IsoCore.Foundation
         const float ScanInterval = 0.20f;
         const string PrefPrefix = "map.layout.";
 
+        // ---- live mini-map texture (playtest follow-up 2026-07-03) ----
+        // The HUD's round minimap frame (GameUIController) shows THIS texture via a
+        // RawImage: 1 texel = 1 world cell, point-filtered, refreshed every Scan().
+        // Replaces both the old decorative uGUI map AND the draggable IMGUI mini
+        // window that used to overlap it.
+        public static FoundationMapOverlay Active { get; private set; }
+        public Texture2D MiniTexture => _miniTex;
+        const int MiniRadius = 26;
+        Texture2D _miniTex;
+        Color32[] _miniPx;
+
         public void Init(IsoWorld world, IsoFoundationPlayer player, FoundationInstanceSystem instances,
             FoundationDungeonPortalSystem portals = null)
         {
@@ -43,6 +54,7 @@ namespace IsoCore.Foundation
             _instances = instances;
             _portals = portals;
             _pixel = Texture2D.whiteTexture;
+            Active = this;
             Scan();
         }
 
@@ -97,6 +109,7 @@ namespace IsoCore.Foundation
 
         void OnDestroy()
         {
+            if (Active == this) Active = null;
             FoundationUiCoordinator.Active?.SetModalOpen("map", false);
         }
 
@@ -110,6 +123,56 @@ namespace IsoCore.Foundation
             for (int x = c.x - ExploreRadius; x <= c.x + ExploreRadius; x++)
                 if ((x - c.x) * (x - c.x) + (y - c.y) * (y - c.y) <= ExploreRadius * ExploreRadius)
                     _explored.Add(Key(x, y));
+
+            RenderMiniTexture();
+        }
+
+        // 1 texel = 1 cell, player at the centre, world +y = texture up = North (matches
+        // the HUD compass and the region caption's octant). Unexplored stays transparent
+        // so the frame's dark disc shows through as fog.
+        void RenderMiniTexture()
+        {
+            int size = MiniRadius * 2 + 1;
+            if (_miniTex == null)
+            {
+                _miniTex = new Texture2D(size, size, TextureFormat.RGBA32, false)
+                { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+                _miniPx = new Color32[size * size];
+            }
+
+            for (int i = 0; i < _miniPx.Length; i++) _miniPx[i] = default;
+
+            var p = _player.CurrentCell;
+            if (IsDungeonMap && CopyActiveInstanceCells())
+            {
+                foreach (var c in _activeInstanceCells)
+                {
+                    int px = c.x - (p.x - MiniRadius);
+                    int py = c.y - (p.y - MiniRadius);
+                    if (px < 0 || px >= size || py < 0 || py >= size) continue;
+                    _miniPx[py * size + px] = MiniCellColor(c.x, c.y);
+                }
+            }
+            else
+            {
+                for (int y = -MiniRadius; y <= MiniRadius; y++)
+                for (int x = -MiniRadius; x <= MiniRadius; x++)
+                {
+                    int wx = p.x + x, wy = p.y + y;
+                    if (!IsExplored(wx, wy)) continue;
+                    _miniPx[(y + MiniRadius) * size + (x + MiniRadius)] = MiniCellColor(wx, wy);
+                }
+            }
+
+            _miniTex.SetPixels32(_miniPx);
+            _miniTex.Apply(false);
+        }
+
+        Color32 MiniCellColor(int x, int y)
+        {
+            var c = _world.GetCell(x, y);
+            if (c.HasOccupant) return new Color(1f, 0.62f, 0.25f, 1f);  // placeable marker
+            return CellColor(x, y);
         }
 
         void OnGUI()
@@ -128,12 +191,9 @@ namespace IsoCore.Foundation
             float sh = Screen.height / scale;
             EnsureLayout(sw, sh);
 
-            if (ShouldShowMiniMap(FoundationUiCoordinator.CurrentHudViewMode))
-            {
-                HandleLayout(ref _miniRect, "mini", new Vector2(132f, 132f), new Vector2(420f, 420f));
-                DrawMiniMap(_miniRect);
-            }
-
+            // The draggable IMGUI mini window is retired (2026-07-03): it overlapped the
+            // HUD's minimap frame, which now shows the live MiniTexture instead. Only
+            // the M-key large map remains an IMGUI window.
             if (_largeOpen)
             {
                 HandleLayout(ref _largeRect, "large", new Vector2(520f, 360f), new Vector2(sw - 40f, sh - 40f));
@@ -158,11 +218,6 @@ namespace IsoCore.Foundation
             LoadRect("mini", ref _miniRect);
             LoadRect("large", ref _largeRect);
             _layoutLoaded = true;
-        }
-
-        static bool ShouldShowMiniMap(FoundationHudViewMode mode)
-        {
-            return mode == FoundationHudViewMode.Adventure;
         }
 
         void LoadRect(string id, ref Rect rect)
@@ -262,19 +317,6 @@ namespace IsoCore.Foundation
                 DrawRect(move, new Color(1f, 1f, 1f, 0.035f));
                 DrawRect(resize, new Color(1f, 0.86f, 0.35f, 0.25f));
             }
-        }
-
-        void DrawMiniMap(Rect r)
-        {
-            DrawPanel(r, new Color(0.03f, 0.035f, 0.045f, 0.88f));
-            GUI.Label(new Rect(r.x + 10f, r.y + 8f, r.width - 20f, 18f),
-                IsDungeonMap ? $"Dungeon T{_instances.ActiveDungeonTier}" : "Map");
-            var body = new Rect(r.x + 10f, r.y + 30f, r.width - 20f, r.height - 56f);
-            if (IsDungeonMap)
-                DrawDungeonLocalMapCells(body, 30);
-            else
-                DrawLocalMapCells(body, 26);
-            GUI.Label(new Rect(r.x + 10f, r.y + r.height - 24f, r.width - 20f, 18f), "M map | Alt drag/resize");
         }
 
         void DrawLargeMap(Rect r)
@@ -656,55 +698,4 @@ namespace IsoCore.Foundation
         static void GetActiveInstanceBounds(List<Vector2Int> cells, out int minX, out int minY, out int maxX, out int maxY)
         {
             minX = int.MaxValue; minY = int.MaxValue;
-            maxX = int.MinValue; maxY = int.MinValue;
-
-            foreach (var c in cells)
-            {
-                if (c.x < minX) minX = c.x;
-                if (c.y < minY) minY = c.y;
-                if (c.x > maxX) maxX = c.x;
-                if (c.y > maxY) maxY = c.y;
-            }
-
-            if (minX != int.MaxValue)
-                return;
-
-            minX = minY = maxX = maxY = 0;
-        }
-
-        static Color RoomColor(FoundationDungeonRoomKind kind)
-        {
-            switch (kind)
-            {
-                case FoundationDungeonRoomKind.Spawn: return new Color(0.38f, 1f, 0.78f, 1f);
-                case FoundationDungeonRoomKind.Arena: return new Color(1f, 0.55f, 0.22f, 1f);
-                case FoundationDungeonRoomKind.Junction: return new Color(0.75f, 0.62f, 1f, 1f);
-                case FoundationDungeonRoomKind.Exit: return new Color(1f, 0.42f, 0.92f, 1f);
-                default: return new Color(0.95f, 0.75f, 0.28f, 1f);
-            }
-        }
-
-        static string RoomShortLabel(FoundationDungeonRoomKind kind)
-        {
-            switch (kind)
-            {
-                case FoundationDungeonRoomKind.Spawn: return "ENT";
-                case FoundationDungeonRoomKind.Arena: return "ARENA";
-                case FoundationDungeonRoomKind.Junction: return "JCT";
-                case FoundationDungeonRoomKind.Exit: return "EXIT";
-                default: return "ROOM";
-            }
-        }
-
-        static bool Overlaps(Rect a, Rect b) =>
-            a.xMax >= b.x && a.x <= b.xMax && a.yMax >= b.y && a.y <= b.yMax;
-
-        static long Key(int x, int y) => ((long)(uint)x << 32) | (uint)y;
-
-        static void DecodeKey(long key, out int x, out int y)
-        {
-            x = (int)(key >> 32);
-            y = (int)key;
-        }
-    }
-}
+ 

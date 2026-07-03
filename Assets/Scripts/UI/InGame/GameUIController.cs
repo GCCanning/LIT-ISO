@@ -149,6 +149,7 @@ namespace LitIso.UI.InGame
         RectTransform _trialBannerRow; // TRIAL chip row; hidden once the trial completes
         Text _regionText;        // minimap caption: "EMBERFALL WOODS · NW" (live)
         Text _regionDiscText;    // "Discovered" tag; blank while the biome is unknown
+        RawImage _minimapImage;  // live FoundationMapOverlay.MiniTexture (task 2026-07-03)
 
         // Minimap player marker.
         RectTransform _playerMarker;
@@ -767,33 +768,22 @@ namespace LitIso.UI.InGame
             discr.anchorMin = Vector2.zero; discr.anchorMax = Vector2.one;
             discr.offsetMin = new Vector2(pad, pad); discr.offsetMax = new Vector2(-pad, -pad);
 
-            // forest blobs
-            var f1 = NewImage(discr, "Forest1", null, LitIsoTheme.Hex("#243018"));
-            f1.raycastTarget = false;
-            var f1r = f1.rectTransform; f1r.anchorMin = new Vector2(-0.12f, 0.30f); f1r.anchorMax = new Vector2(0.63f, 0.88f);
-            f1r.offsetMin = Vector2.zero; f1r.offsetMax = Vector2.zero;
-            var f2 = NewImage(discr, "Forest2", null, LitIsoTheme.Hex("#1d2716"));
-            f2.raycastTarget = false;
-            var f2r = f2.rectTransform; f2r.anchorMin = new Vector2(0.42f, 0.46f); f2r.anchorMax = new Vector2(1.08f, 0.94f);
-            f2r.offsetMin = Vector2.zero; f2r.offsetMax = Vector2.zero;
-
-            // Clip decorative children to the map disc — the old fake "river" bar
-            // (16px × size*1.3 at -22°) overflowed the panel and read as a stray blue
-            // diagonal artifact in builds (playtest task #4); removed, and the disc
-            // now masks everything inside it.
+            // Mask everything to the disc (kept from playtest task #4).
             disc.gameObject.AddComponent<RectMask2D>();
 
-            // settlement marker (gold diamond)
-            var sett = NewImage(discr, "Settlement", null, LitIsoTheme.Gold);
-            sett.raycastTarget = false;
-            var settr = sett.rectTransform; settr.anchorMin = settr.anchorMax = new Vector2(0.64f, 0.66f); settr.pivot = new Vector2(0.5f, 0.5f);
-            settr.sizeDelta = new Vector2(11f, 11f); sett.transform.localEulerAngles = new Vector3(0f, 0f, 45f);
-
-            // objective ring (red circle outline)
-            var obj = NewImage(discr, "Objective", null, Color.clear);
-            obj.raycastTarget = false; HardBorder(obj.gameObject, LitIsoTheme.Hex("#d96a55"), 2f);
-            var objr = obj.rectTransform; objr.anchorMin = objr.anchorMax = new Vector2(0.30f, 0.38f); objr.pivot = new Vector2(0.5f, 0.5f);
-            objr.sizeDelta = new Vector2(10f, 10f);
+            // LIVE map (2026-07-03): the decorative forest blobs / settlement diamond /
+            // objective ring are gone — this RawImage shows FoundationMapOverlay's
+            // MiniTexture (1 texel = 1 explored cell, point-filtered, player-centred,
+            // North up). Bound lazily in RefreshMinimapCluster; colour stays clear
+            // until the texture exists so no white quad flashes.
+            var live = new GameObject("LiveMap", typeof(RectTransform)).AddComponent<RawImage>();
+            live.transform.SetParent(discr, false);
+            live.raycastTarget = false;
+            live.color = Color.clear;
+            var lvr = live.rectTransform;
+            lvr.anchorMin = Vector2.zero; lvr.anchorMax = Vector2.one;
+            lvr.offsetMin = new Vector2(2f, 2f); lvr.offsetMax = new Vector2(-2f, -2f);
+            _minimapImage = live;
 
             // player arrow (cyan triangle approximated by a small rotated square)
             var arrow = NewImage(discr, "Player", null, LitIsoTheme.Hex("#6fd0f0"));
@@ -1596,6 +1586,17 @@ namespace LitIso.UI.InGame
 
         void RefreshMinimapCluster()
         {
+            // Lazy-bind the live map texture (the overlay may init after the HUD).
+            if (_minimapImage != null && _minimapImage.texture == null)
+            {
+                var overlay = FoundationMapOverlay.Active;
+                if (overlay != null && overlay.MiniTexture != null)
+                {
+                    _minimapImage.texture = overlay.MiniTexture;
+                    _minimapImage.color = Color.white;
+                }
+            }
+
             if (_playerMarker == null || _player == null) return;
             Vector2 dir = _player.MoveDir;
             if (dir.sqrMagnitude < 1e-4f) return;
