@@ -111,3 +111,4 @@ Recordings/
 # Kenney CC0 staging kits (raw downloads; curated pieces are exported to
 # Assets/Resources/UI/InGame via Tools/UIKits/kenney_skin_build.py)
 Tools/UIKits/Kenney/
+Tools/UIKits/Shikashi/

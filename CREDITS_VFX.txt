@@ -17,3 +17,12 @@ Base pieces: "UI Pack" and "Fantasy UI Borders" by Kenney (kenney.nl)
 License: CC0 1.0 (public domain) - no attribution required; credited
 out of courtesy. Pieces recoloured to the LIT-ISO dark-wood adventurer
 palette via Tools/UIKits/kenney_skin_build.py.
+
+--------------------------------------------------------------------
+Item icons (Assets/Resources/Items/, 2026-07-03)
+"Shikashi's Fantasy Icons Pack v2" by Matt Firth (shikashipx),
+with designs based on game-icons.net (CC BY 3.0).
+License: free for commercial use with attribution - credit
+"Matt Firth (shikashipx)" and "game-icons.net".
+Extracted/recoloured via Tools/UIKits/shikashi_items_build.py
+(staging kit in gitignored Tools/UIKits/Shikashi/).
