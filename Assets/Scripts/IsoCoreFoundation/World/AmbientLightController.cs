@@ -25,10 +25,21 @@ namespace IsoCore.Foundation
         }
 
         Color _lastAmbient = new Color(-1f, -1f, -1f);
+        float _lastGrade = -1f;
 
         void LateUpdate()
         {
             if (dayNight == null) return;
+
+            // Night colour grade (playtest 2026-07-02 #8): drives the shader-side
+            // desaturate + blue-shift. Follows NightFactor so it eases in at dusk.
+            float grade = Mathf.Clamp01(dayNight.NightFactor);
+            if (Mathf.Abs(grade - _lastGrade) >= 0.01f)
+            {
+                _lastGrade = grade;
+                SpriteAmbient.SetNightGrade(grade);
+            }
+
             // Perf (audit 2026-06-11): skip the global shader write when the
             // ambient hasn't visibly changed (it moves slowly across the day).
             var c = Compute();
@@ -59,15 +70,4 @@ namespace IsoCore.Foundation
             if (weather == null || weather.AmbientDimming <= 0.001f)
                 return baseColor;
 
-            float dim = Mathf.Clamp01(weather.AmbientDimming);
-            Color tinted = new Color(
-                baseColor.r * weather.AmbientTint.r,
-                baseColor.g * weather.AmbientTint.g,
-                baseColor.b * weather.AmbientTint.b,
-                baseColor.a);
-            Color dimmed = Color.Lerp(tinted, tinted * 0.72f, dim);
-            dimmed.a = baseColor.a;
-            return dimmed;
-        }
-    }
-}
+   

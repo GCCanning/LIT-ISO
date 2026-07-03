@@ -42,17 +42,11 @@ Shader "IsoCore/SpriteAmbient"
             #include "UnitySprites.cginc"
 
             fixed4 _AmbientColor; // global, set via Shader.SetGlobalColor
+            float _NightGrade;    // global 0..1 (AmbientLightController): night colour grade
+            float _WarmExempt;    // per-material: 1 on SpriteAmbient.WarmMaterial (light sources)
 
             fixed4 SpriteFragAmbient(v2f IN) : SV_Target
             {
                 fixed4 c = SampleSpriteTexture(IN.texcoord) * IN.color;
-                c.rgb *= _AmbientColor.rgb; // day/night world tint
-                c.rgb *= c.a;               // premultiply (matches Sprites/Default blend)
-                return c;
-            }
-        ENDCG
-        }
-    }
 
-    Fallback "Sprites/Default"
-}
+                // Night grade (playtest 2026-07-02 #8): the world de

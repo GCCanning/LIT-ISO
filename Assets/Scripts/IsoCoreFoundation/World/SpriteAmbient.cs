@@ -11,7 +11,10 @@ namespace IsoCore.Foundation
     public static class SpriteAmbient
     {
         static readonly int AmbientId = Shader.PropertyToID("_AmbientColor");
+        static readonly int NightGradeId = Shader.PropertyToID("_NightGrade");
+        static readonly int WarmExemptId = Shader.PropertyToID("_WarmExempt");
         static Material _material;
+        static Material _warmMaterial;
 
         public static Material Material
         {
@@ -22,12 +25,6 @@ namespace IsoCore.Foundation
                     _material = Resources.Load<Material>("Materials/SpriteAmbient");
                     // Safe default so nothing renders black before the controller runs.
                     Shader.SetGlobalColor(AmbientId, Color.white);
+                    Shader.SetGlobalFloat(NightGradeId, 0f);
                 }
-                return _material;
-            }
-        }
-
-        /// <summary>Sets the global world tint (multiplied into every ambient-material sprite).</summary>
-        public static void SetAmbient(Color c) => Shader.SetGlobalColor(AmbientId, c);
-    }
-}
+   

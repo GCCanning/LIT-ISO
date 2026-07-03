@@ -30,7 +30,11 @@ namespace IsoCore.Foundation
             int h = world.GetHeight(wx, wy);
             transform.position = IsoGrid.CellToWorld(wx, wy, h);
             _renderer = GetComponent<SpriteRenderer>();
-            _renderer.sharedMaterial = SpriteAmbient.Material; // day/night tint like the world
+            // Warm light sources are exempt from the night desaturation grade and get a
+            // firelight-lifted ambient so they glow by contrast (playtest #8).
+            _renderer.sharedMaterial = def.emitsLight
+                ? SpriteAmbient.WarmMaterial
+                : SpriteAmbient.Material; // day/night tint like the world
             var art = FoundationPlaceableSpriteResolver.Resolve(def.id);
             _renderer.sprite = art != null ? art : PlaceholderArt.Box(def.color, def.widthUnits, def.heightUnits);
             transform.localScale = Vector3.one;
@@ -92,11 +96,4 @@ namespace IsoCore.Foundation
             if (spriteWidth <= 0.001f)
                 return 1f;
 
-            float desiredWidth = Mathf.Max(0.1f, def.widthUnits);
-            if (def.HasMultiCellFootprint)
-                desiredWidth = Mathf.Max(desiredWidth, def.FootprintWidth * 0.95f);
-
-            return Mathf.Clamp(desiredWidth / spriteWidth, 0.75f, 4f);
-        }
-    }
-}
+            float desiredWidth = Mat
