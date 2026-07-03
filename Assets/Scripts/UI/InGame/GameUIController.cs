@@ -148,6 +148,8 @@ namespace LitIso.UI.InGame
         Text _phaseText;         // "Night · Emberfall Woods"
         Text _dayChipText;       // "Day 4 of 7 · Forecast C"
         RectTransform _trialBannerRow; // TRIAL chip row; hidden once the trial completes
+        Text _regionText;        // minimap caption: "EMBERFALL WOODS · NW" (live)
+        Text _regionDiscText;    // "Discovered" tag; blank while the biome is unknown
 
         // Minimap player marker.
         RectTransform _playerMarker;
@@ -820,12 +822,11 @@ namespace LitIso.UI.InGame
             var f2r = f2.rectTransform; f2r.anchorMin = new Vector2(0.42f, 0.46f); f2r.anchorMax = new Vector2(1.08f, 0.94f);
             f2r.offsetMin = Vector2.zero; f2r.offsetMax = Vector2.zero;
 
-            // river (rotated bar)
-            var river = NewImage(discr, "River", null, LitIsoTheme.Hex("#27506e"));
-            river.raycastTarget = false; river.color = new Color(river.color.r, river.color.g, river.color.b, 0.8f);
-            var rivr = river.rectTransform; rivr.anchorMin = rivr.anchorMax = new Vector2(0.08f, 0.5f); rivr.pivot = new Vector2(0.5f, 0.5f);
-            rivr.sizeDelta = new Vector2(16f, size * 1.3f); rivr.anchoredPosition = new Vector2(0f, 0f);
-            river.transform.localEulerAngles = new Vector3(0f, 0f, -22f);
+            // Clip decorative children to the map disc — the old fake "river" bar
+            // (16px × size*1.3 at -22°) overflowed the panel and read as a stray blue
+            // diagonal artifact in builds (playtest task #4); removed, and the disc
+            // now masks everything inside it.
+            disc.gameObject.AddComponent<RectMask2D>();
 
             // settlement marker (gold diamond)
             var sett = NewImage(discr, "Settlement", null, LitIsoTheme.Gold);
@@ -872,12 +873,16 @@ namespace LitIso.UI.InGame
             var bvr = bevel.rectTransform; bvr.anchorMin = Vector2.zero; bvr.anchorMax = Vector2.one;
             bvr.offsetMin = new Vector2(2f, 2f); bvr.offsetMax = new Vector2(-2f, -2f);
 
-            var region = NewText(br, "Region", "EMBERFALL · NW", 10, TextAnchor.UpperLeft);
+            // Live region caption + discovery state (wired to FoundationBiomeDiscovery
+            // in RefreshCoordsCluster, playtest task #4 — was hard-coded "EMBERFALL · NW").
+            var region = NewText(br, "Region", "…", 10, TextAnchor.UpperLeft);
+            _regionText = region;
             LitIsoTheme.ApplyDisplay(region, 10, LitIsoTheme.Gold);
             var rr = region.rectTransform; rr.anchorMin = new Vector2(0f, 1f); rr.anchorMax = new Vector2(1f, 1f); rr.pivot = new Vector2(0f, 1f);
             rr.offsetMin = new Vector2(12f, -22f); rr.offsetMax = new Vector2(-110f, -10f);
 
-            var disc = NewText(br, "Disc", "Discovered", 14, TextAnchor.UpperRight);
+            var disc = NewText(br, "Disc", "", 14, TextAnchor.UpperRight);
+            _regionDiscText = disc;
             LitIsoTheme.ApplyBody(disc, 14, LitIsoTheme.WarmTan);
             var dr = disc.rectTransform; dr.anchorMin = new Vector2(1f, 1f); dr.anchorMax = new Vector2(1f, 1f); dr.pivot = new Vector2(1f, 1f);
             dr.anchoredPosition = new Vector2(-12f, -10f); dr.sizeDelta = new Vector2(110f, 18f);
@@ -1517,7 +1522,28 @@ namespace LitIso.UI.InGame
         float _nextLivePoll;
         string _lastClock, _lastPhase;
         string _lastCoordX, _lastCoordY, _lastCoordZ;
+        string _lastRegion;
         float _lastHeading = float.NaN;
+
+        // Compass octant of the player cell relative to the world origin (+y = N,
+        // +x = E, matching the minimap's N-up convention). Blank near the origin.
+        static string OctantSuffix(Vector2Int cell)
+        {
+            if (Mathf.Max(Mathf.Abs(cell.x), Mathf.Abs(cell.y)) < 12) return "";
+            float ang = Mathf.Atan2(cell.y, cell.x) * Mathf.Rad2Deg; // 0 = E, CCW
+            int oct = Mathf.RoundToInt(Mathf.Repeat(ang, 360f) / 45f) % 8;
+            switch (oct)
+            {
+                case 0: return " · E";
+                case 1: return " · NE";
+                case 2: return " · N";
+                case 3: return " · NW";
+                case 4: return " · W";
+                case 5: return " · SW";
+                case 6: return " · S";
+                default: return " · SE";
+            }
+        }
 
         void Update()
         {
@@ -1577,7 +1603,14 @@ namespace LitIso.UI.InGame
 
         void RefreshCoordsCluster()
         {
-            if (_player == null) return;
+            // Lazy player re-resolution (playtest task #4): in builds the bound handle
+            // can be null or destroyed (bind-order / respawn), which left the X/Y/Z
+            // cells empty forever. Re-find at the 0.25 s poll rate until bound.
+            if (_player == null)
+            {
+                _player = FindFirstObjectByType<IsoFoundationPlayer>();
+                if (_player == null) return;
+            }
             var cell = _player.CurrentCell;
             string x = cell.x.ToString();
             string y = cell.y.ToString();
@@ -1585,6 +1618,21 @@ namespace LitIso.UI.InGame
             if (_coordX != null && x != _lastCoordX) { _lastCoordX = x; _coordX.text = x; }
             if (_coordY != null && y != _lastCoordY) { _lastCoordY = y; _coordY.text = y; }
             if (_coordZ != null && z != _lastCoordZ) { _lastCoordZ = z; _coordZ.text = z; }
+
+            // Region caption: live biome (discovery journal) + compass octant from the
+            // world origin, e.g. "EMBERFALL WOODS · NW". Same feed as the phase band.
+            if (_regionText != null)
+            {
+                string biome = FoundationBiomeDiscovery.ActiveBiomeDisplay;
+                bool known = !string.IsNullOrEmpty(biome);
+                string caption = (known ? biome.ToUpperInvariant() : "UNCHARTED") + OctantSuffix(cell);
+                if (caption != _lastRegion) { _lastRegion = caption; _regionText.text = caption; }
+                if (_regionDiscText != null)
+                {
+                    string discShown = known ? "Discovered" : "";
+                    if (discShown != _regionDiscText.text) _regionDiscText.text = discShown;
+                }
+            }
         }
 
         void RefreshMinimapCluster()
@@ -1702,43 +1750,4 @@ namespace LitIso.UI.InGame
             bevel.raycastTarget = false;
             HardBorder(bevel.gameObject, LitIsoTheme.Stone, 2f);
             var bvr = bevel.rectTransform;
-            bvr.anchorMin = Vector2.zero; bvr.anchorMax = Vector2.one;
-            bvr.offsetMin = new Vector2(2f, 2f); bvr.offsetMax = new Vector2(-2f, -2f);
-        }
-
-        static Image NewImage(Transform parent, string name, Sprite sprite, Color color)
-        {
-            var go = new GameObject(name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            var img = go.AddComponent<Image>();
-            img.sprite = sprite;
-            img.color = sprite != null ? Color.white : color;
-            return img;
-        }
-
-        static Text NewText(Transform parent, string name, string value, int size, TextAnchor anchor)
-        {
-            var go = new GameObject(name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            var t = go.AddComponent<Text>();
-            t.text = value;
-            t.alignment = anchor;
-            t.color = TextCol;
-            t.horizontalOverflow = HorizontalWrapMode.Wrap;
-            t.verticalOverflow = VerticalWrapMode.Truncate;
-            LitIsoFont.Apply(t, size);
-            t.resizeTextForBestFit = true;
-            t.resizeTextMaxSize = t.fontSize;
-            // Floor low enough that long live strings (e.g. a full weather forecast)
-            // shrink to fit their box instead of spilling over the border. The user
-            // wants autofit-inside over overflow, so favour shrink over clip.
-            t.resizeTextMinSize = Mathf.Min(8, t.fontSize);
-            var shadow = go.AddComponent<Shadow>();
-            shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
-            shadow.effectDistance = new Vector2(1.5f, -1.5f);
-            shadow.useGraphicAlpha = true;
-            return t;
-        }
-    }
-}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+            bvr.anchorMin = Vector2.zero; bvr.anchor

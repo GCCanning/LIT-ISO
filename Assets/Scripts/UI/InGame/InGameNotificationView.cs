@@ -78,13 +78,17 @@ namespace LitIso.UI.InGame
             // 2026-06-13 layout pass: moved from upper-left (below vitals) to
             // upper-right, stacked below the quest tracker. Newest toast is
             // inserted at the top, growing downward.
+            // 2026-07-02 (playtest task #4): y offset was -160, which parked toasts
+            // ON the minimap/coords panels (the purple "FlashS…" chip in the footage).
+            // The top-right HUD column (minimap + coords + quest tracker) reaches
+            // y ≈ -546; start the stack below it.
             var stackGo = new GameObject("NotificationStack", typeof(RectTransform));
             stackGo.transform.SetParent(_canvas.transform, false);
             _stack = stackGo.GetComponent<RectTransform>();
             _stack.anchorMin = new Vector2(1f, 1f);
             _stack.anchorMax = new Vector2(1f, 1f);
             _stack.pivot     = new Vector2(1f, 1f);
-            _stack.anchoredPosition = new Vector2(-36f, -160f);
+            _stack.anchoredPosition = new Vector2(-36f, -560f);
             _stack.sizeDelta = new Vector2(ToastW, 0f);
             PlayerResizableUi.Attach(_stack, "hud.notifications", new Vector2(260f, 80f), new Vector2(900f, 520f));
 
@@ -193,15 +197,4 @@ namespace LitIso.UI.InGame
         }
 
         static IEnumerator Fade(CanvasGroup g, float from, float to, float dur)
-        {
-            float t = 0f;
-            while (t < dur && g != null)
-            {
-                t += Time.unscaledDeltaTime;
-                g.alpha = Mathf.Lerp(from, to, dur > 0f ? t / dur : 1f);
-                yield return null;
-            }
-            if (g != null) g.alpha = to;
-        }
-    }
-}
+      
