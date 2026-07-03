@@ -357,6 +357,11 @@ namespace IsoCore.Foundation
             BiomeDiscovery = gameObject.AddComponent<FoundationBiomeDiscovery>();
             BiomeDiscovery.Init(World, Player, Progression, InteractionOverlay, Instances);
 
+            // F10 gameplay recorder: PNG frame bursts + a session.json track under
+            // <project>/Recordings — footage both the owner and a reviewing AI can read.
+            gameObject.AddComponent<FoundationGameplayRecorder>()
+                .Init(Player, DayNight, InteractionOverlay);
+
             // "The System is watching" (owner, 2026-07-02): bold deeds weigh more on the
             // trial — +50% at night, +10% per distance tier from the spawn hearth (cap +50%).
             Vector2 hearth = Player != null ? Player.Ground : Vector2.zero;

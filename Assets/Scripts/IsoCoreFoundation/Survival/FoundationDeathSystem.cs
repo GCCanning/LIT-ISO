@@ -51,6 +51,41 @@ namespace IsoCore.Foundation
                 _progression.Stats.Changed -= OnStatsChanged;
         }
 
+        // ---- "I'm stuck" rescue (owner, 2026-07-02) --------------------------------
+        // Worldgen can still produce walkable pockets (deep pits, over-wide water) the
+        // jump cannot escape. Holding F9 for 1.5 s carries the player to the same wake
+        // point the death system uses (beside the nearest campfire, else the spawn
+        // clearing). No penalty — being trapped by the map is never the player's fault.
+        float _rescueHold;
+
+        void Update()
+        {
+            if (_respawning || _player == null) return;
+
+            if (Input.GetKey(KeyCode.F9))
+            {
+                if (Input.GetKeyDown(KeyCode.F9))
+                    _overlay?.Flash("Hold F9 to be carried to safety…", 1.4f);
+                _rescueHold += Time.deltaTime;
+                if (_rescueHold >= 1.5f)
+                {
+                    _rescueHold = -3f; // debounce so a continued hold doesn't re-fire
+                    if (_dungeonPortals != null && _dungeonPortals.IsActiveDungeon)
+                        _dungeonPortals.AbandonAndExit();
+                    else if (_instances != null && _instances.IsInsideInstance)
+                        _instances.Exit();
+                    _player.SetGround(WakePoint());
+                    _progression?.SystemFeed.Queue(SystemMessageChannel.Notice,
+                        "The System untangles the world around you.", "rescue", 2);
+                    _overlay?.Flash("Carried to safety.", 3f);
+                }
+            }
+            else
+            {
+                _rescueHold = _rescueHold < 0f ? Mathf.Min(0f, _rescueHold + Time.deltaTime) : 0f;
+            }
+        }
+
         void OnStatsChanged()
         {
             var stats = _progression?.Stats;

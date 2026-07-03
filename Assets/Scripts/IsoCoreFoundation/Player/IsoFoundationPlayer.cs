@@ -23,6 +23,9 @@ namespace IsoCore.Foundation
         // ---- jump state (hop, or a directional leap that arcs over water gaps) ----
         bool _jumping;
         float _jumpTimer;
+        float _jumpDur = 0.35f;         // this jump's duration: cfg.jumpDuration for a hop,
+                                        // scaled by leap distance so short leaps aren't floaty
+                                        // and long ones aren't teleports (owner, 2026-07-02)
         int _jumpStartHeight;           // takeoff height; climb allowance is relative to this
         bool _leaping;                  // true when the jump is a forward leap (drives _ground itself)
         Vector2 _leapStart;
@@ -340,6 +343,7 @@ namespace IsoCore.Foundation
                     // A held direction turns the hop into a forward leap that arcs over
                     // water/gaps and lands on the far bank (cfg.jumpLeapTiles range).
                     _leaping = false;
+                    _jumpDur = Mathf.Max(0.01f, _cfg.jumpDuration);
                     var inDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
                     if (inDir.sqrMagnitude >= 0.0001f && _cfg.jumpLeapTiles > 0)
                     {
@@ -351,6 +355,12 @@ namespace IsoCore.Foundation
                             _leapTarget = target;
                             MoveDir = inDir.normalized;
                             IsMoving = true;
+                            // Constant leap SPEED, not constant time: duration scales with
+                            // distance (45%..100% of jumpDuration) so a short hop over a
+                            // stream is snappy and a max-range leap has real hang time.
+                            float frac = (target - _ground).magnitude /
+                                Mathf.Max(0.4f, _cfg.jumpLeapTiles * TileToWorld);
+                            _jumpDur = Mathf.Max(0.01f, _cfg.jumpDuration * Mathf.Clamp(frac, 0.45f, 1f));
                         }
                     }
                 }
@@ -358,7 +368,7 @@ namespace IsoCore.Foundation
             }
 
             _jumpTimer += Time.deltaTime;
-            float dur = Mathf.Max(0.01f, _cfg.jumpDuration);
+            float dur = _jumpDur;
             if (_leaping)
             {
                 float t = Mathf.Clamp01(_jumpTimer / dur);
@@ -699,7 +709,7 @@ namespace IsoCore.Foundation
             float lift = 0f;
             if (_jumping)
             {
-                float t = Mathf.Clamp01(_jumpTimer / Mathf.Max(0.01f, _cfg.jumpDuration));
+                float t = Mathf.Clamp01(_jumpTimer / _jumpDur);
                 // 2026-06-13 (A7): STR scales the visual hop arc via
                 // _stats.JumpHeightMultiplier (1.0x at the baseline STR of 8).
                 float strMul = _stats != null ? _stats.JumpHeightMultiplier : 1f;

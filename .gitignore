@@ -77,6 +77,7 @@ __pycache__/
 
 # PixelLab MCP local proxy secret (never commit)
 /Tools/PixelLab/pixellab_token.local.txt
+/Tools/PixelLab/review/
 
 # local player builds
 Build/
@@ -105,3 +106,4 @@ handover_check_temp.png
 
 # Proprietary game binaries pulled in by a local tool — copyright risk, never commit
 /Tools/StardewNpcSheetGenerator/_local/
+Recordings/

@@ -111,6 +111,15 @@ namespace IsoCore.Foundation
             FoundationDepthPolish.Attach(gameObject, fadeWhenOccluding: false, castLongShadow: true,
                 contactScale: Mathf.Clamp(def.sizeUnits, 0.45f, 1.2f), contactAlpha: 0.24f);
 
+            // Body collider (owner, 2026-07-02): a trigger circle so projectiles, physics
+            // overlaps and click-targeting can find the mob. Trigger-only on purpose —
+            // player movement stays world-query (invariant), nothing is physically blocked;
+            // body separation is handled in ApplySeparation().
+            var body = gameObject.AddComponent<CircleCollider2D>();
+            body.isTrigger = true;
+            body.radius = Mathf.Clamp(def.sizeUnits * 0.45f, 0.18f, 0.65f);
+            body.offset = new Vector2(0f, Mathf.Max(0.1f, def.sizeUnits * 0.3f));
+
             PickTarget();
             Place();
             Spawned?.Invoke(this); // lets the layered character creator dress humanoid NPCs
@@ -263,11 +272,50 @@ namespace IsoCore.Foundation
                 if (_world.IsWalkable(c.x, c.y)) { _ground = np; _moving = true; _faceDir = dir.normalized; }
                 else PickTarget();
             }
+            ApplySeparation();
             TryAttack();
             if (_foe != null) TryAttackMob(_foe);
             TryCastAbility();
             Animate();
             Place();
+        }
+
+        /// <summary>
+        /// Soft body separation (owner, 2026-07-02): mobs no longer stack inside each
+        /// other or stand in the player. A gentle planar push, capped per frame and
+        /// respecting walkability, so crowds spread naturally without physics.
+        /// </summary>
+        void ApplySeparation()
+        {
+            const float MobRadius = 0.38f;
+            const float PlayerRadius = 0.45f;
+            Vector2 push = Vector2.zero;
+
+            for (int i = 0; i < _active.Count; i++)
+            {
+                var m = _active[i];
+                if (m == null || m == this || m._resolved) continue;
+                Vector2 d = _ground - m._ground;
+                float sq = d.sqrMagnitude;
+                if (sq >= MobRadius * MobRadius || sq < 1e-6f) continue;
+                float dist = Mathf.Sqrt(sq);
+                push += (d / dist) * (MobRadius - dist);
+            }
+            if (_player != null)
+            {
+                Vector2 d = _ground - _player.Ground;
+                float sq = d.sqrMagnitude;
+                if (sq < PlayerRadius * PlayerRadius && sq > 1e-6f)
+                {
+                    float dist = Mathf.Sqrt(sq);
+                    push += (d / dist) * (PlayerRadius - dist) * 1.5f;
+                }
+            }
+            if (push.sqrMagnitude < 1e-6f) return;
+
+            Vector2 np = _ground + Vector2.ClampMagnitude(push, Mathf.Max(0.5f, EffectiveMoveSpeed) * Time.deltaTime * 1.5f);
+            var c = IsoGrid.WorldToCell(new Vector3(np.x, np.y, 0f));
+            if (_world.IsWalkable(c.x, c.y)) _ground = np;
         }
 
         // ---- faction combat (mob vs mob) ----
