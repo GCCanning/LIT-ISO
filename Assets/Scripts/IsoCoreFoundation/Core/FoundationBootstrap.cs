@@ -42,7 +42,6 @@ namespace IsoCore.Foundation
         public float cameraMaxSize = 30f;   // ISO-CORE zoom-out limit
         public float cameraZoomUnitsPerSecond = 5f;
         public float cameraZoomTapStep = 0.75f;
-        public float cameraScrollStep = 1f;   // ISO-CORE: 1.0 per scroll tick
         public const string CameraZoomSensitivityPrefKey = "camera.zoom.sensitivity";
 
         public string ActiveWorldName { get; private set; } = DefaultWorldName;
@@ -871,17 +870,6 @@ namespace IsoCore.Foundation
         {
             if (_cam == null || !_cam.orthographic)
                 return;
-
-            // Scroll-wheel zoom, clamped to the ISO-CORE range (no modifier needed).
-            // Shift+wheel is reserved for hotbar row cycling.
-            float scroll = Input.mouseScrollDelta.y;
-            bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            if (!shift && Mathf.Abs(scroll) > 0.01f)
-            {
-                if (_pixelPerfectCamera != null && _pixelPerfectCamera.enabled) _pixelPerfectCamera.enabled = false;
-                _cam.orthographicSize = Mathf.Clamp(_cam.orthographicSize - scroll * cameraScrollStep, cameraMinSize, cameraMaxSize);
-                cameraSize = _cam.orthographicSize;
-            }
 
             float zoomSensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(CameraZoomSensitivityPrefKey, 1f), 0.35f, 2.5f);
             float zoomSpeed = cameraZoomUnitsPerSecond * zoomSensitivity;

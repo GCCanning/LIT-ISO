@@ -761,4 +761,30 @@ namespace IsoCore.Foundation
                 return _fallbackIndex >= 0 ? _fallbackIndex : 0;
             }
 
-            
+            int nb = 0;
+            float bestDist = float.MaxValue;
+            for (int i = 0; i < _biomes.Count; i++)
+            {
+                float d = _biomes[i].ClimateDistance(t, m);
+                if (d < bestDist) { bestDist = d; nb = i; }
+            }
+            return nb;
+        }
+
+        /// <summary>Biome index at a cell using the same smooth climate fields as the land
+        /// SelectBiome (temp salt 1/2, moist 3/4, climate-elevation 17/18). Used by the
+        /// border blend to find the neighbouring biome across a seam.</summary>
+        int BiomeIndexAt(int wx, int wy)
+        {
+            if (TrySelectStarterBiome(wx, wy, out int starterBiomeIndex))
+                return starterBiomeIndex;
+            float t = Perlin(wx, wy, _cfg.climateFrequency, 1, 2);
+            float m = Perlin(wx, wy, _cfg.climateFrequency, 3, 4);
+            float ce = Perlin(wx, wy, _cfg.climateFrequency, 17, 18);
+            return SelectBiome(t, m, ce);
+        }
+
+        public BiomeDefinition BiomeAt(int index) =>
+            (index >= 0 && index < _biomes.Count) ? _biomes[index] : null;
+    }
+}

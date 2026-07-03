@@ -566,4 +566,26 @@ namespace IsoCore.Foundation
                     kind = FoundationDungeonRoomKind.Junction,
                     label = "Junction",
                     x = renderMin.x + center.x,
-            
+                    y = renderMin.y + center.y,
+                    width = Mathf.Max(3, rooms[i].width / 2),
+                    height = Mathf.Max(3, rooms[i].height / 2),
+                });
+            }
+        }
+
+        static int Hash(int seed, string id, int x, int y, int tier)
+        {
+            unchecked
+            {
+                int h = seed;
+                h = h * 397 ^ x;
+                h = h * 397 ^ y;
+                h = h * 397 ^ tier;
+                if (!string.IsNullOrEmpty(id))
+                    for (int i = 0; i < id.Length; i++)
+                        h = h * 31 + id[i];
+                return h;
+            }
+        }
+    }
+}

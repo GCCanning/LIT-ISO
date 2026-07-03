@@ -96,4 +96,11 @@ namespace IsoCore.Foundation
             if (spriteWidth <= 0.001f)
                 return 1f;
 
-            float desiredWidth = Mat
+            float desiredWidth = Mathf.Max(0.1f, def.widthUnits);
+            if (def.HasMultiCellFootprint)
+                desiredWidth = Mathf.Max(desiredWidth, def.FootprintWidth * 0.95f);
+
+            return Mathf.Clamp(desiredWidth / spriteWidth, 0.75f, 4f);
+        }
+    }
+}

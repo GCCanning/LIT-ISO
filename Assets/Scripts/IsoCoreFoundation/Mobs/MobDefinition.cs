@@ -63,4 +63,13 @@ namespace IsoCore.Foundation
         public EquipTier[] equipTiers;
     }
 
-    /// <s
+    /// <summary>Phase 3: at/above <see cref="minLevel"/>, an NPC wears these LPC visual ids over its themed base.</summary>
+    [System.Serializable]
+    public struct EquipTier
+    {
+        public int minLevel;
+        public string[] lpcCatalogIds;
+    }
+
+    public class MobDatabase : Database<MobDefinition> { }
+}

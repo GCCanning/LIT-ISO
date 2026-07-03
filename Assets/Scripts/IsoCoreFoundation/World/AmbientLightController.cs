@@ -70,4 +70,15 @@ namespace IsoCore.Foundation
             if (weather == null || weather.AmbientDimming <= 0.001f)
                 return baseColor;
 
-   
+            float dim = Mathf.Clamp01(weather.AmbientDimming);
+            Color tinted = new Color(
+                baseColor.r * weather.AmbientTint.r,
+                baseColor.g * weather.AmbientTint.g,
+                baseColor.b * weather.AmbientTint.b,
+                baseColor.a);
+            Color dimmed = Color.Lerp(tinted, tinted * 0.72f, dim);
+            dimmed.a = baseColor.a;
+            return dimmed;
+        }
+    }
+}

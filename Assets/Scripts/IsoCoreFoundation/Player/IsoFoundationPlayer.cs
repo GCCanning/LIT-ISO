@@ -720,4 +720,8 @@ namespace IsoCore.Foundation
             // Ease visual height between integer cell levels so stepping a cliff doesn't
             // pop; sorting still uses the true integer _height.
             _visualHeight = Mathf.MoveTowards(_visualHeight, _height, Time.deltaTime * 8f);
-    
+            transform.position = new Vector3(_ground.x, _ground.y + _visualHeight * IsoGrid.HeightStep + lift, 0f);
+            _sr.sortingOrder = IsoGrid.SortingOrder(c.x, c.y, _height, IsoGrid.LayerActor);
+        }
+    }
+}

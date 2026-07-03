@@ -65,4 +65,7 @@ namespace IsoCore.Foundation
                 WorldFx.Debris(transform.position, _color, count: 10, size: 0.08f, speed: 2.4f);
                 WorldFx.Smoke(transform.position, _color, count: 8, size: 0.16f, radius: 0.12f, rise: 0.3f, life: 0.4f);
             }
-            Destroy(ga
+            Destroy(gameObject);
+        }
+    }
+}

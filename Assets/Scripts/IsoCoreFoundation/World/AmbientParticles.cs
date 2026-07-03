@@ -105,3 +105,40 @@ namespace IsoCore.Foundation
                 float d = Mathf.Sqrt((x - c) * (x - c) + (y - c) * (y - c)) / c;
                 float a = Mathf.Clamp01(1f - d);
                 a *= a; // soft falloff
+                px[y * s + x] = new Color(1f, 1f, 1f, a);
+            }
+            _softDot.SetPixels32(px);
+            _softDot.Apply();
+            return _softDot;
+        }
+
+        float _lastNight = -1f;
+
+        void LateUpdate()
+        {
+            if (cam != null)
+            {
+                var p = cam.transform.position;
+                transform.position = new Vector3(p.x, p.y, 0f);
+            }
+            if (dayNight == null) return;
+
+            float night = dayNight.NightFactor;          // 0 day, 1 deep night
+            // Perf (audit 2026-06-11, applied by Claude on owner instruction):
+            // ParticleSystem module writes are not free — only write on change.
+            if (Mathf.Abs(night - _lastNight) < 0.01f) return;
+            _lastNight = night;
+
+            // Fireflies appear at night, pollen by day; cross-fade colour + density.
+            Color c = Color.Lerp(Pollen, Firefly, night);
+            _main.startColor = c;
+            _emission.rateOverTime = Mathf.Lerp(10f, 22f, night); // a few more at night
+            _main.startSize = Mathf.Lerp(0.055f, 0.085f, night);
+        }
+
+        void OnDestroy()
+        {
+            if (_particleMat != null) Destroy(_particleMat);
+        }
+    }
+}

@@ -2000,4 +2000,15 @@ public class WelcomeScreenManager : MonoBehaviour
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Truncate;
         text.resizeTextForBestFit = true;
-   
+        text.resizeTextMaxSize = text.fontSize;
+        text.resizeTextMinSize = 11;
+        if (size >= 30 && text.GetComponent<Shadow>() == null)
+        {
+            var sh = go.AddComponent<Shadow>();
+            sh.effectColor = LitIsoTheme.Base;
+            sh.effectDistance = new Vector2(3f, -3f);
+            sh.useGraphicAlpha = true;
+        }
+        return text;
+    }
+}

@@ -197,4 +197,15 @@ namespace LitIso.UI.InGame
         }
 
         static IEnumerator Fade(CanvasGroup g, float from, float to, float dur)
-      
+        {
+            float t = 0f;
+            while (t < dur && g != null)
+            {
+                t += Time.unscaledDeltaTime;
+                g.alpha = Mathf.Lerp(from, to, dur > 0f ? t / dur : 1f);
+                yield return null;
+            }
+            if (g != null) g.alpha = to;
+        }
+    }
+}

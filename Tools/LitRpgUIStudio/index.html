@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIT-RPG UI Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <strong>LIT-RPG</strong>
+          <span>UI Studio</span>
+        </div>
+      </div>
+
+      <div class="screen-heading">
+        <span id="screen-group">Entry Flow</span>
+        <strong id="screen-title">Main Menu</strong>
+      </div>
+
+      <div class="topbar-tools">
+        <div class="segmented" aria-label="Editor mode">
+          <button id="mode-edit" class="active" type="button">Edit</button>
+          <button id="mode-preview" type="button">Preview</button>
+        </div>
+        <label class="compact-field">
+          <span>Viewport</span>
+          <select id="viewport-select">
+            <option value="1920x1080">1920 x 1080</option>
+            <option value="1600x900">1600 x 900</option>
+            <option value="1280x720">1280 x 720</option>
+          </select>
+        </label>
+        <button id="undo-button" class="icon-button" type="button" title="Undo" aria-label="Undo">↶</button>
+        <button id="redo-button" class="icon-button" type="button" title="Redo" aria-label="Redo">↷</button>
+        <button id="export-button" class="primary-button" type="button">Export</button>
+      </div>
+    </header>
+
+    <aside class="screen-rail">
+      <div class="rail-heading">
+        <span>Screens</span>
+        <button id="collapse-rail" class="icon-button subtle" type="button" title="Collapse screen list" aria-label="Collapse screen list">‹</button>
+      </div>
+      <nav id="screen-nav" aria-label="UI screens"></nav>
+      <div class="rail-footer">
+        <span class="status-dot"></span>
+        <span id="save-status">Saved locally</span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <div class="workspace-toolbar">
+        <div>
+          <button id="zoom-out" class="icon-button" type="button" title="Zoom out" aria-label="Zoom out">−</button>
+          <span id="zoom-label">Fit</span>
+          <button id="zoom-in" class="icon-button" type="button" title="Zoom in" aria-label="Zoom in">+</button>
+          <button id="zoom-fit" class="text-button" type="button">Fit</button>
+        </div>
+        <div class="workspace-help">
+          <span>Edit mode: drag components, resize from the lower-right corner.</span>
+          <span class="autosave-pill">Autosave on</span>
+        </div>
+      </div>
+
+      <div id="viewport-shell" class="viewport-shell">
+        <div id="viewport" class="viewport" aria-label="Editable game screen">
+          <div id="screen-background" class="screen-background"></div>
+          <div id="screen-scrim" class="screen-scrim"></div>
+          <div id="component-layer" class="component-layer"></div>
+          <div id="safe-area" class="safe-area" aria-hidden="true"></div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="inspector">
+      <div class="inspector-tabs" role="tablist">
+        <button class="active" data-inspector-tab="element" type="button">Element</button>
+        <button data-inspector-tab="screen" type="button">Screen</button>
+        <button data-inspector-tab="theme" type="button">Theme</button>
+        <button data-inspector-tab="assets" type="button">Assets</button>
+        <button data-inspector-tab="handoff" type="button">Handoff</button>
+      </div>
+
+      <section class="inspector-panel active" data-panel="element">
+        <div id="empty-selection" class="empty-state">
+          <span class="empty-icon">□</span>
+          <strong>Select a component</strong>
+          <p>Choose an item on the canvas or in the layer list.</p>
+        </div>
+        <div id="element-inspector" hidden>
+          <div class="section-heading">
+            <div>
+              <span id="element-type">Panel</span>
+              <strong id="element-name">Vitals</strong>
+            </div>
+            <div class="heading-actions">
+              <button id="duplicate-element" class="icon-button" type="button" title="Duplicate" aria-label="Duplicate">⧉</button>
+              <button id="toggle-lock" class="icon-button" type="button" title="Lock" aria-label="Lock">◇</button>
+              <button id="toggle-visible" class="icon-button" type="button" title="Visibility" aria-label="Visibility">◉</button>
+            </div>
+          </div>
+
+          <div class="field-grid four">
+            <label><span>X</span><input id="field-x" type="number"></label>
+            <label><span>Y</span><input id="field-y" type="number"></label>
+            <label><span>W</span><input id="field-w" type="number" min="40"></label>
+            <label><span>H</span><input id="field-h" type="number" min="30"></label>
+          </div>
+
+          <label class="field">
+            <span>Label</span>
+            <input id="field-label" type="text">
+          </label>
+
+          <div class="field-grid two">
+            <label>
+              <span>Anchor</span>
+              <select id="field-anchor">
+                <option value="top-left">Top left</option>
+                <option value="top-center">Top center</option>
+                <option value="top-right">Top right</option>
+                <option value="middle-left">Middle left</option>
+                <option value="center">Center</option>
+                <option value="middle-right">Middle right</option>
+                <option value="bottom-left">Bottom left</option>
+                <option value="bottom-center">Bottom center</option>
+                <option value="bottom-right">Bottom right</option>
+              </select>
+            </label>
+            <label>
+              <span>Variant</span>
+              <select id="field-variant">
+                <option value="wood">Wood</option>
+                <option value="canvas">Canvas</option>
+                <option value="plain">Plain</option>
+                <option value="floating">Floating</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Unity target</span>
+            <input id="field-runtime" type="text">
+          </label>
+
+          <label class="field">
+            <span>PixelLab asset ID</span>
+            <input id="field-resource" type="text">
+          </label>
+
+          <div class="field">
+            <span>Franuka skin</span>
+            <div class="skin-row">
+              <span id="skin-thumb" class="skin-thumb"></span>
+              <span id="skin-name" class="skin-name">None</span>
+              <button id="clear-skin" class="icon-button" type="button" title="Clear skin" aria-label="Clear skin">&times;</button>
+            </div>
+          </div>
+
+          <label class="field">
+            <span>Skin 9-slice border (source px, 0 = stretch)</span>
+            <input id="field-skin-slice" type="number" min="0" max="24">
+          </label>
+        </div>
+
+        <div class="layers-heading">
+          <span>Layers</span>
+          <button id="reset-screen" class="text-button danger" type="button">Reset</button>
+        </div>
+        <div id="layer-list" class="layer-list"></div>
+      </section>
+
+      <section class="inspector-panel" data-panel="screen">
+        <div class="section-heading">
+          <div>
+            <span>Screen settings</span>
+            <strong id="screen-settings-title">Main Menu</strong>
+          </div>
+        </div>
+        <label class="field">
+          <span>Background</span>
+          <select id="background-select">
+            <option value="campfire">Campfire key art</option>
+            <option value="forest">Forest gameplay</option>
+            <option value="map">Illustrated world map</option>
+            <option value="solid">Solid color</option>
+          </select>
+        </label>
+        <label class="range-field">
+          <span><b>Background darkness</b><output id="scrim-output">36%</output></span>
+          <input id="scrim-range" type="range" min="0" max="75" step="1">
+        </label>
+        <label class="range-field">
+          <span><b>UI scale</b><output id="ui-scale-output">100%</output></span>
+          <input id="ui-scale-range" type="range" min="75" max="125" step="1">
+        </label>
+        <label class="check-field">
+          <input id="safe-area-toggle" type="checkbox">
+          <span>Show 5% safe area</span>
+        </label>
+        <div class="info-card">
+          <span>Runtime surface</span>
+          <strong id="runtime-surface"></strong>
+          <p id="runtime-notes"></p>
+        </div>
+      </section>
+
+      <section class="inspector-panel" data-panel="theme">
+        <div class="section-heading">
+          <div>
+            <span>Global tokens</span>
+            <strong>Cozy Forest</strong>
+          </div>
+        </div>
+        <label class="color-field"><span>Wood</span><input id="theme-wood" type="color"></label>
+        <label class="color-field"><span>Canvas</span><input id="theme-canvas" type="color"></label>
+        <label class="color-field"><span>Ember</span><input id="theme-ember" type="color"></label>
+        <label class="color-field"><span>Cream</span><input id="theme-cream" type="color"></label>
+        <label class="color-field"><span>Leaf</span><input id="theme-leaf" type="color"></label>
+        <label class="color-field"><span>Health</span><input id="theme-health" type="color"></label>
+        <label class="color-field"><span>Mana</span><input id="theme-mana" type="color"></label>
+        <label class="range-field">
+          <span><b>Corner bevel</b><output id="radius-output">4 px</output></span>
+          <input id="theme-radius" type="range" min="0" max="8" step="1">
+        </label>
+        <div class="theme-preview">
+          <button type="button">Wood button</button>
+          <span class="preview-slot selected"></span>
+          <span class="preview-slot"></span>
+          <span class="preview-slot"></span>
+        </div>
+        <label class="check-field">
+          <input id="franuka-skin-toggle" type="checkbox" checked>
+          <span>Franuka pack skin on mockups</span>
+        </label>
+        <button id="reset-theme" class="secondary-button" type="button">Reset cozy theme</button>
+      </section>
+
+      <section class="inspector-panel" data-panel="assets">
+        <div class="section-heading">
+          <div>
+            <span>Franuka RPG UI pack v1.6</span>
+            <strong>Asset Library</strong>
+          </div>
+        </div>
+        <div class="asset-controls">
+          <input id="asset-search" type="search" placeholder="Search assets" aria-label="Search assets">
+          <select id="asset-scale" aria-label="Asset scale">
+            <option value="1x">1x</option>
+            <option value="2x">2x</option>
+            <option value="3x">3x</option>
+          </select>
+        </div>
+        <select id="asset-category" class="asset-category" aria-label="Asset category">
+          <option value="">All categories</option>
+        </select>
+        <p id="asset-count" class="asset-count"></p>
+        <div id="asset-grid" class="asset-grid"></div>
+        <div class="info-card small">
+          <span>License</span>
+          <strong>RPG UI pack &mdash; Franuka</strong>
+          <p>Commercial use permitted. Add a credit link to franuka.itch.io in released builds if possible. Full terms: assets/franuka/license.txt.</p>
+        </div>
+      </section>
+
+      <section class="inspector-panel" data-panel="handoff">
+        <div class="section-heading">
+          <div>
+            <span>Implementation</span>
+            <strong>Unity handoff</strong>
+          </div>
+        </div>
+        <div class="handoff-checklist">
+          <span class="done">Layout coordinates</span>
+          <span class="done">Normalized anchors</span>
+          <span class="done">Theme tokens</span>
+          <span class="done">Runtime class targets</span>
+          <span class="done">PixelLab asset IDs</span>
+        </div>
+        <button id="copy-screen-json" class="secondary-button" type="button">Copy current screen JSON</button>
+        <button id="copy-pixellab-prompt" class="secondary-button" type="button">Copy PixelLab prompt</button>
+        <button id="download-project" class="primary-button full" type="button">Download Unity handoff</button>
+        <button id="import-project" class="secondary-button" type="button">Import handoff JSON</button>
+        <input id="import-file" type="file" accept=".json,application/json" hidden>
+        <div class="info-card small">
+          <span>Export schema</span>
+          <strong>lit-rpg-ui-layout@1</strong>
+          <p>Positions are exported in virtual pixels and normalized 0-1 coordinates.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="export-dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-heading">
+        <div>
+          <span>Implementation package</span>
+          <strong>Export LIT-RPG UI</strong>
+        </div>
+        <button class="icon-button" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="export-options">
+        <label class="check-field"><input id="export-all" type="checkbox" checked><span>All screens</span></label>
+        <label class="check-field"><input id="export-prompts" type="checkbox" checked><span>PixelLab prompt manifest</span></label>
+        <label class="check-field"><input id="export-runtime" type="checkbox" checked><span>Unity runtime targets</span></label>
+      </div>
+      <pre id="export-preview"></pre>
+      <div class="dialog-actions">
+        <button id="copy-export" class="secondary-button" type="button">Copy JSON</button>
+        <button id="confirm-download" class="primary-button" type="button">Download JSON</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="franuka-manifest.js"></script>
+  <script src="studio-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

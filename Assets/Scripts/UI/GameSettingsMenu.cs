@@ -23,7 +23,6 @@ public class GameSettingsMenu : MonoBehaviour
     private const string KeyCameraReverse   = "litiso.settings.cameraReverse";
     private const string KeyZoom            = "litiso.settings.zoom";
     private const string KeyPixelSnap       = "litiso.settings.pixelSnap";
-    private const string KeyScrollZoom      = "litiso.settings.scrollZoom";
     private const string KeyVignette        = "litiso.settings.vignette";
     private const string KeyVignetteStrength = "litiso.settings.vignetteStrength";
     private const string KeyDebugOverlay    = "litiso.settings.debugOverlay";
@@ -100,7 +99,6 @@ public class GameSettingsMenu : MonoBehaviour
         {
             zoomController.SetZoom(PlayerPrefs.GetFloat(KeyZoom,
                 targetCamera != null ? targetCamera.orthographicSize : zoomController.defaultZoom));
-            zoomController.enableScrollWheel = PlayerPrefs.GetInt(KeyScrollZoom, zoomController.enableScrollWheel ? 1 : 0) == 1;
         }
         else if (targetCamera != null)
         {

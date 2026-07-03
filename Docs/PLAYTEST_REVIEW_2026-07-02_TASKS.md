@@ -151,4 +151,25 @@ already exist — see `_DROP_INGAME_UI_HERE.md`), fix hierarchy per the UI hando
 Owner must approve the chosen pack's look before the batch restyle.
 
 ## 9a. APPROVED (owner, 2026-07-02): Kenney kit + dark-wood adventurer palette
-Owner approved proceeding with the K
+Owner approved proceeding with the Kenney skin. Locked palette (recolour Kenney's
+greyscale 9-slice panels with this — they're designed for tinting):
+- panel wood (dark walnut): `#3E2A1C`;  panel inset / slot wells: `#2A1B10`
+- trim / borders (aged brass): `#C9A24B`;  selected slot: `#E8C468`
+- text (parchment): `#E8DCC0`;  dim text: `#A89878`
+- accents: ember `#D96A2E` (warnings/night), HP `#C94F44`, MP `#4F7FC9`,
+  stamina `#6FA65A`, XP gold `#E8C468`
+Steps: owner downloads (agent cannot fetch binaries):
+1. kenney.nl/assets/ui-pack  and  kenney.nl/assets/fantasy-ui-borders  (both CC0, ~2-5 MB zips)
+2. Unzip into `Tools/UIKits/Kenney/` (staging — NOT Assets/; gitignore it until curated)
+3. Agent then: pick panel/slot/bar/button pieces → recolour to the palette above (PIL batch
+   script in Tools/UIKits/) → export to `Assets/Resources/UI/InGame/` skin slots (see
+   `_DROP_INGAME_UI_HERE.md`) + commit PNGs via LFS with .metas → HUD auto-loads them.
+   Add "Kenney.nl (CC0)" to CREDITS_VFX.txt (not required, but polite).
+
+## Sequencing
+1 → 2 → 3+4 (one HUD session) → 5 → 6 → 7 (audit table first, then batch PPU) → 8 → 9.
+Verify each in a REAL BUILD (F10-record before/after for comparison); commit per item;
+never to main; update this doc's checkboxes.
+
+## Explicitly deferred by owner
+- Dungeon portal sparseness / hint-gating (A4) — HOLD until called.

@@ -1,0 +1,2412 @@
+{
+  "$schema": "litiso-ui-export/v1",
+  "studioSchema": "lit-rpg-ui-studio@1",
+  "generatedAt": "2026-06-30T19:45:57.393Z",
+  "designResolution": [
+    1920,
+    1080
+  ],
+  "previewResolution": [
+    1920,
+    1080
+  ],
+  "theme": {
+    "wood": "#704627",
+    "canvas": "#2f4b37",
+    "ember": "#e99b45",
+    "cream": "#f4e8c4",
+    "leaf": "#7fa45c",
+    "health": "#c94f48",
+    "mana": "#4d8fba",
+    "radius": 4
+  },
+  "screens": [
+    {
+      "id": "main-menu",
+      "label": "Main Menu",
+      "group": "entry",
+      "background": "campfire",
+      "scrimPercent": 22,
+      "uiScalePercent": 100,
+      "runtimeSurface": "LitIso.UI.WelcomeScreenManager / MainMenu",
+      "components": [
+        {
+          "id": "welcome/Brand",
+          "type": "brand",
+          "label": "LIT-RPG wordmark",
+          "rect": {
+            "x": 92,
+            "y": 96,
+            "width": 520,
+            "height": 110,
+            "normalized": {
+              "x": 0.04792,
+              "y": 0.08889,
+              "width": 0.27083,
+              "height": 0.10185
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              92,
+              -96
+            ],
+            "sizeDelta": [
+              520,
+              110
+            ]
+          },
+          "style": {
+            "variant": "floating",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/Title",
+          "resourcesKey": "UI/Menu/logo",
+          "props": {}
+        },
+        {
+          "id": "welcome/MainNav",
+          "type": "menu",
+          "label": "Main navigation",
+          "rect": {
+            "x": 100,
+            "y": 250,
+            "width": 390,
+            "height": 390,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.23148,
+              "width": 0.20313,
+              "height": 0.36111
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              100,
+              -250
+            ],
+            "sizeDelta": [
+              390,
+              390
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/MainMenu",
+          "resourcesKey": "UI/Menu/button",
+          "props": {
+            "items": [
+              "Continue",
+              "New Adventure",
+              "Join Friends",
+              "Settings",
+              "Quit"
+            ]
+          }
+        },
+        {
+          "id": "welcome/Version",
+          "type": "text",
+          "label": "Version",
+          "rect": {
+            "x": 22,
+            "y": 1028,
+            "width": 210,
+            "height": 28,
+            "normalized": {
+              "x": 0.01146,
+              "y": 0.95185,
+              "width": 0.10938,
+              "height": 0.02593
+            },
+            "anchorMin": [
+              0,
+              0
+            ],
+            "anchorMax": [
+              0,
+              0
+            ],
+            "pivot": [
+              0,
+              0
+            ],
+            "anchoredPosition": [
+              22,
+              24
+            ],
+            "sizeDelta": [
+              210,
+              28
+            ]
+          },
+          "style": {
+            "variant": "minimal",
+            "visible": true,
+            "locked": true,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/Version",
+          "resourcesKey": null,
+          "props": {
+            "text": "Early Development"
+          }
+        }
+      ]
+    },
+    {
+      "id": "loading",
+      "label": "Loading",
+      "group": "entry",
+      "background": "campfire",
+      "scrimPercent": 18,
+      "uiScalePercent": 100,
+      "runtimeSurface": "LitIso.UI.LoadingScreen",
+      "components": [
+        {
+          "id": "loading/Destination",
+          "type": "heading",
+          "label": "Destination",
+          "rect": {
+            "x": 100,
+            "y": 86,
+            "width": 560,
+            "height": 94,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.07963,
+              "width": 0.29167,
+              "height": 0.08704
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              100,
+              -86
+            ],
+            "sizeDelta": [
+              560,
+              94
+            ]
+          },
+          "style": {
+            "variant": "floating",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "LoadingScreen/Title",
+          "resourcesKey": null,
+          "props": {
+            "kicker": "TRAVELLING TO",
+            "text": "Pinewood Vale"
+          }
+        },
+        {
+          "id": "loading/Tip",
+          "type": "loading-tip",
+          "label": "Loading tip",
+          "rect": {
+            "x": 510,
+            "y": 790,
+            "width": 900,
+            "height": 112,
+            "normalized": {
+              "x": 0.26563,
+              "y": 0.73148,
+              "width": 0.46875,
+              "height": 0.1037
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              0,
+              178
+            ],
+            "sizeDelta": [
+              900,
+              112
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "LoadingScreen/Tip",
+          "resourcesKey": "UI/Loading/tip_frame",
+          "props": {}
+        },
+        {
+          "id": "loading/Progress",
+          "type": "flames",
+          "label": "Campfire progress",
+          "rect": {
+            "x": 760,
+            "y": 930,
+            "width": 400,
+            "height": 72,
+            "normalized": {
+              "x": 0.39583,
+              "y": 0.86111,
+              "width": 0.20833,
+              "height": 0.06667
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              0,
+              78
+            ],
+            "sizeDelta": [
+              400,
+              72
+            ]
+          },
+          "style": {
+            "variant": "floating",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "LoadingScreen/Progress",
+          "resourcesKey": "UI/Loading/flame",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "character-creator",
+      "label": "Character Creator",
+      "group": "entry",
+      "background": "forest",
+      "scrimPercent": 44,
+      "uiScalePercent": 100,
+      "runtimeSurface": "WelcomeScreenManager / CallingSelect + character appearance flow",
+      "components": [
+        {
+          "id": "creator/Name",
+          "type": "name-field",
+          "label": "Character name",
+          "rect": {
+            "x": 660,
+            "y": 42,
+            "width": 600,
+            "height": 68,
+            "normalized": {
+              "x": 0.34375,
+              "y": 0.03889,
+              "width": 0.3125,
+              "height": 0.06296
+            },
+            "anchorMin": [
+              0.5,
+              1
+            ],
+            "anchorMax": [
+              0.5,
+              1
+            ],
+            "pivot": [
+              0.5,
+              1
+            ],
+            "anchoredPosition": [
+              0,
+              -42
+            ],
+            "sizeDelta": [
+              600,
+              68
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterCreator/Name",
+          "resourcesKey": null,
+          "props": {}
+        },
+        {
+          "id": "creator/Categories",
+          "type": "category-tabs",
+          "label": "Appearance categories",
+          "rect": {
+            "x": 70,
+            "y": 160,
+            "width": 265,
+            "height": 570,
+            "normalized": {
+              "x": 0.03646,
+              "y": 0.14815,
+              "width": 0.13802,
+              "height": 0.52778
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              70,
+              -160
+            ],
+            "sizeDelta": [
+              265,
+              570
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterCreator/Categories",
+          "resourcesKey": "UI/Creator/category_button",
+          "props": {}
+        },
+        {
+          "id": "creator/Preview",
+          "type": "avatar",
+          "label": "Character preview",
+          "rect": {
+            "x": 390,
+            "y": 150,
+            "width": 650,
+            "height": 670,
+            "normalized": {
+              "x": 0.20313,
+              "y": 0.13889,
+              "width": 0.33854,
+              "height": 0.62037
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              390,
+              -150
+            ],
+            "sizeDelta": [
+              650,
+              670
+            ]
+          },
+          "style": {
+            "variant": "floating",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterCreator/Preview",
+          "resourcesKey": null,
+          "props": {}
+        },
+        {
+          "id": "creator/Options",
+          "type": "swatches",
+          "label": "Appearance choices",
+          "rect": {
+            "x": 1120,
+            "y": 150,
+            "width": 720,
+            "height": 670,
+            "normalized": {
+              "x": 0.58333,
+              "y": 0.13889,
+              "width": 0.375,
+              "height": 0.62037
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              1120,
+              -150
+            ],
+            "sizeDelta": [
+              720,
+              670
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterCreator/Options",
+          "resourcesKey": "UI/Creator/option_slot",
+          "props": {}
+        },
+        {
+          "id": "creator/Classes",
+          "type": "classes",
+          "label": "Class tokens",
+          "rect": {
+            "x": 450,
+            "y": 840,
+            "width": 1020,
+            "height": 170,
+            "normalized": {
+              "x": 0.23438,
+              "y": 0.77778,
+              "width": 0.53125,
+              "height": 0.15741
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              0,
+              70
+            ],
+            "sizeDelta": [
+              1020,
+              170
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/CallingSelect",
+          "resourcesKey": "UI/Creator/class_slot",
+          "props": {}
+        },
+        {
+          "id": "creator/Back",
+          "type": "action",
+          "label": "Back",
+          "rect": {
+            "x": 70,
+            "y": 940,
+            "width": 190,
+            "height": 72,
+            "normalized": {
+              "x": 0.03646,
+              "y": 0.87037,
+              "width": 0.09896,
+              "height": 0.06667
+            },
+            "anchorMin": [
+              0,
+              0
+            ],
+            "anchorMax": [
+              0,
+              0
+            ],
+            "pivot": [
+              0,
+              0
+            ],
+            "anchoredPosition": [
+              70,
+              68
+            ],
+            "sizeDelta": [
+              190,
+              72
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterCreator/Back",
+          "resourcesKey": null,
+          "props": {
+            "text": "Back",
+            "tone": "secondary"
+          }
+        },
+        {
+          "id": "creator/Start",
+          "type": "action",
+          "label": "Start Adventure",
+          "rect": {
+            "x": 1600,
+            "y": 930,
+            "width": 250,
+            "height": 82,
+            "normalized": {
+              "x": 0.83333,
+              "y": 0.86111,
+              "width": 0.13021,
+              "height": 0.07593
+            },
+            "anchorMin": [
+              1,
+              0
+            ],
+            "anchorMax": [
+              1,
+              0
+            ],
+            "pivot": [
+              1,
+              0
+            ],
+            "anchoredPosition": [
+              -70,
+              68
+            ],
+            "sizeDelta": [
+              250,
+              82
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterCreator/Confirm",
+          "resourcesKey": null,
+          "props": {
+            "text": "Start Adventure",
+            "tone": "primary"
+          }
+        }
+      ]
+    },
+    {
+      "id": "create-world",
+      "label": "Create World",
+      "group": "entry",
+      "background": "map",
+      "scrimPercent": 18,
+      "uiScalePercent": 100,
+      "runtimeSurface": "LitIso.UI.WelcomeScreenManager / CreateWorld",
+      "components": [
+        {
+          "id": "world/Form",
+          "type": "world-form",
+          "label": "World settings",
+          "rect": {
+            "x": 90,
+            "y": 120,
+            "width": 620,
+            "height": 750,
+            "normalized": {
+              "x": 0.04688,
+              "y": 0.11111,
+              "width": 0.32292,
+              "height": 0.69444
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              90,
+              -120
+            ],
+            "sizeDelta": [
+              620,
+              750
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/CreateWorldPanel",
+          "resourcesKey": "UI/Menu/panel",
+          "props": {}
+        },
+        {
+          "id": "world/Preview",
+          "type": "world-map",
+          "label": "World preview",
+          "rect": {
+            "x": 790,
+            "y": 90,
+            "width": 1040,
+            "height": 830,
+            "normalized": {
+              "x": 0.41146,
+              "y": 0.08333,
+              "width": 0.54167,
+              "height": 0.76852
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              790,
+              -90
+            ],
+            "sizeDelta": [
+              1040,
+              830
+            ]
+          },
+          "style": {
+            "variant": "plain",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/WorldPreview",
+          "resourcesKey": "UI/World/preview_frame",
+          "props": {}
+        },
+        {
+          "id": "world/Back",
+          "type": "action",
+          "label": "Back",
+          "rect": {
+            "x": 90,
+            "y": 940,
+            "width": 190,
+            "height": 72,
+            "normalized": {
+              "x": 0.04688,
+              "y": 0.87037,
+              "width": 0.09896,
+              "height": 0.06667
+            },
+            "anchorMin": [
+              0,
+              0
+            ],
+            "anchorMax": [
+              0,
+              0
+            ],
+            "pivot": [
+              0,
+              0
+            ],
+            "anchoredPosition": [
+              90,
+              68
+            ],
+            "sizeDelta": [
+              190,
+              72
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/Back",
+          "resourcesKey": null,
+          "props": {
+            "text": "Back",
+            "tone": "secondary"
+          }
+        },
+        {
+          "id": "world/Create",
+          "type": "action",
+          "label": "Create World",
+          "rect": {
+            "x": 1530,
+            "y": 940,
+            "width": 300,
+            "height": 72,
+            "normalized": {
+              "x": 0.79688,
+              "y": 0.87037,
+              "width": 0.15625,
+              "height": 0.06667
+            },
+            "anchorMin": [
+              1,
+              0
+            ],
+            "anchorMax": [
+              1,
+              0
+            ],
+            "pivot": [
+              1,
+              0
+            ],
+            "anchoredPosition": [
+              -90,
+              68
+            ],
+            "sizeDelta": [
+              300,
+              72
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WelcomeScreenManager/Create",
+          "resourcesKey": null,
+          "props": {
+            "text": "Create World",
+            "tone": "primary"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hud",
+      "label": "Gameplay HUD",
+      "group": "gameplay",
+      "background": "forest",
+      "scrimPercent": 15,
+      "uiScalePercent": 101,
+      "runtimeSurface": "LitIso.UI.InGame.GameUIController",
+      "components": [
+        {
+          "id": "hud/Vitals",
+          "type": "vitals",
+          "label": "Vitals",
+          "rect": {
+            "x": 28,
+            "y": 28,
+            "width": 380,
+            "height": 170,
+            "normalized": {
+              "x": 0.01458,
+              "y": 0.02593,
+              "width": 0.19792,
+              "height": 0.15741
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              28,
+              -28
+            ],
+            "sizeDelta": [
+              380,
+              170
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/Vitals",
+          "resourcesKey": "UI/HUD/vitals_frame",
+          "props": {}
+        },
+        {
+          "id": "hud/DayBand",
+          "type": "day",
+          "label": "Day, time and weather",
+          "rect": {
+            "x": 740,
+            "y": 24,
+            "width": 440,
+            "height": 56,
+            "normalized": {
+              "x": 0.38542,
+              "y": 0.02222,
+              "width": 0.22917,
+              "height": 0.05185
+            },
+            "anchorMin": [
+              0.5,
+              1
+            ],
+            "anchorMax": [
+              0.5,
+              1
+            ],
+            "pivot": [
+              0.5,
+              1
+            ],
+            "anchoredPosition": [
+              0,
+              -24
+            ],
+            "sizeDelta": [
+              440,
+              56
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/DayBand",
+          "resourcesKey": "UI/HUD/day_band",
+          "props": {}
+        },
+        {
+          "id": "hud/Minimap",
+          "type": "minimap",
+          "label": "Minimap",
+          "rect": {
+            "x": 1650,
+            "y": 28,
+            "width": 230,
+            "height": 230,
+            "normalized": {
+              "x": 0.85938,
+              "y": 0.02593,
+              "width": 0.11979,
+              "height": 0.21296
+            },
+            "anchorMin": [
+              1,
+              1
+            ],
+            "anchorMax": [
+              1,
+              1
+            ],
+            "pivot": [
+              1,
+              1
+            ],
+            "anchoredPosition": [
+              -40,
+              -28
+            ],
+            "sizeDelta": [
+              230,
+              230
+            ]
+          },
+          "style": {
+            "variant": "wood",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/TopRight/Minimap",
+          "resourcesKey": "UI/HUD/minimap_frame",
+          "props": {}
+        },
+        {
+          "id": "hud/QuestTracker",
+          "type": "quests",
+          "label": "Pinned quest",
+          "rect": {
+            "x": 1650,
+            "y": 275,
+            "width": 230,
+            "height": 353,
+            "normalized": {
+              "x": 0.85938,
+              "y": 0.25463,
+              "width": 0.11979,
+              "height": 0.32685
+            },
+            "anchorMin": [
+              1,
+              1
+            ],
+            "anchorMax": [
+              1,
+              1
+            ],
+            "pivot": [
+              1,
+              1
+            ],
+            "anchoredPosition": [
+              -40,
+              -275
+            ],
+            "sizeDelta": [
+              230,
+              353
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/TopRight/QuestTracker",
+          "resourcesKey": "UI/HUD/quest_frame",
+          "props": {}
+        },
+        {
+          "id": "hud/AbilityBar",
+          "type": "ability-bar",
+          "label": "Abilities Q E R F",
+          "rect": {
+            "x": 10,
+            "y": 950,
+            "width": 476,
+            "height": 100,
+            "normalized": {
+              "x": 0.00521,
+              "y": 0.87963,
+              "width": 0.24792,
+              "height": 0.09259
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              -712,
+              30
+            ],
+            "sizeDelta": [
+              476,
+              100
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/AbilityBar",
+          "resourcesKey": "UI/HUD/ability_slot",
+          "props": {}
+        },
+        {
+          "id": "hud/Hotbar",
+          "type": "hotbar",
+          "label": "Inventory hotbar",
+          "rect": {
+            "x": 510,
+            "y": 950,
+            "width": 900,
+            "height": 100,
+            "normalized": {
+              "x": 0.26563,
+              "y": 0.87963,
+              "width": 0.46875,
+              "height": 0.09259
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              0,
+              30
+            ],
+            "sizeDelta": [
+              900,
+              100
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/Hotbar",
+          "resourcesKey": "UI/HUD/hotbar_slot",
+          "props": {
+            "slots": 10,
+            "activeRow": 2,
+            "rows": 4
+          }
+        },
+        {
+          "id": "hud/InteractPrompt",
+          "type": "context",
+          "label": "Context prompt",
+          "rect": {
+            "x": 760,
+            "y": 640,
+            "width": 400,
+            "height": 68,
+            "normalized": {
+              "x": 0.39583,
+              "y": 0.59259,
+              "width": 0.20833,
+              "height": 0.06296
+            },
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "anchoredPosition": [
+              0,
+              -134
+            ],
+            "sizeDelta": [
+              400,
+              68
+            ]
+          },
+          "style": {
+            "variant": "plain",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "GameUIController/InteractPrompt",
+          "resourcesKey": null,
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "backpack",
+      "label": "Backpack & Gear",
+      "group": "system",
+      "background": "forest",
+      "scrimPercent": 48,
+      "uiScalePercent": 100,
+      "runtimeSurface": "LitIso.UI.InGame.CharacterPanelView / Inventory",
+      "components": [
+        {
+          "id": "system/TabStrip",
+          "type": "tabs",
+          "label": "System tabs",
+          "rect": {
+            "x": 100,
+            "y": 52,
+            "width": 1720,
+            "height": 80,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.04815,
+              "width": 0.89583,
+              "height": 0.07407
+            },
+            "anchorMin": [
+              0.5,
+              1
+            ],
+            "anchorMax": [
+              0.5,
+              1
+            ],
+            "pivot": [
+              0.5,
+              1
+            ],
+            "anchoredPosition": [
+              0,
+              -52
+            ],
+            "sizeDelta": [
+              1720,
+              80
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/TabStrip",
+          "resourcesKey": "UI/System/tab",
+          "props": {}
+        },
+        {
+          "id": "inventory/Backpack",
+          "type": "items",
+          "label": "Backpack grid",
+          "rect": {
+            "x": 110,
+            "y": 160,
+            "width": 760,
+            "height": 720,
+            "normalized": {
+              "x": 0.05729,
+              "y": 0.14815,
+              "width": 0.39583,
+              "height": 0.66667
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              110,
+              -160
+            ],
+            "sizeDelta": [
+              760,
+              720
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/InventoryGrid",
+          "resourcesKey": "UI/System/item_slot",
+          "props": {
+            "columns": 8,
+            "count": 48
+          }
+        },
+        {
+          "id": "inventory/PaperDoll",
+          "type": "paper-doll",
+          "label": "Character and gear",
+          "rect": {
+            "x": 900,
+            "y": 160,
+            "width": 560,
+            "height": 720,
+            "normalized": {
+              "x": 0.46875,
+              "y": 0.14815,
+              "width": 0.29167,
+              "height": 0.66667
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              900,
+              -160
+            ],
+            "sizeDelta": [
+              560,
+              720
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Equipment",
+          "resourcesKey": "UI/System/equipment_slot",
+          "props": {}
+        },
+        {
+          "id": "inventory/Details",
+          "type": "item-detail",
+          "label": "Selected item",
+          "rect": {
+            "x": 1490,
+            "y": 160,
+            "width": 320,
+            "height": 720,
+            "normalized": {
+              "x": 0.77604,
+              "y": 0.14815,
+              "width": 0.16667,
+              "height": 0.66667
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              1490,
+              -160
+            ],
+            "sizeDelta": [
+              320,
+              720
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/ItemDetails",
+          "resourcesKey": "UI/System/detail_frame",
+          "props": {}
+        },
+        {
+          "id": "inventory/HotbarRow",
+          "type": "hotbar",
+          "label": "Exposed hotbar row",
+          "rect": {
+            "x": 480,
+            "y": 920,
+            "width": 960,
+            "height": 96,
+            "normalized": {
+              "x": 0.25,
+              "y": 0.85185,
+              "width": 0.5,
+              "height": 0.08889
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              0,
+              64
+            ],
+            "sizeDelta": [
+              960,
+              96
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/InvOpsOverlay",
+          "resourcesKey": "UI/HUD/hotbar_slot",
+          "props": {
+            "slots": 10,
+            "activeRow": 2,
+            "rows": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "label": "Skills & Wheel",
+      "group": "system",
+      "background": "forest",
+      "scrimPercent": 58,
+      "uiScalePercent": 100,
+      "runtimeSurface": "CharacterPanelView / Skills + LitIso.UI.InGame.AbilityWheelView",
+      "components": [
+        {
+          "id": "system/TabStrip",
+          "type": "tabs",
+          "label": "System tabs",
+          "rect": {
+            "x": 100,
+            "y": 52,
+            "width": 1720,
+            "height": 80,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.04815,
+              "width": 0.89583,
+              "height": 0.07407
+            },
+            "anchorMin": [
+              0.5,
+              1
+            ],
+            "anchorMax": [
+              0.5,
+              1
+            ],
+            "pivot": [
+              0.5,
+              1
+            ],
+            "anchoredPosition": [
+              0,
+              -52
+            ],
+            "sizeDelta": [
+              1720,
+              80
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/TabStrip",
+          "resourcesKey": "UI/System/tab",
+          "props": {}
+        },
+        {
+          "id": "skills/Grid",
+          "type": "skills",
+          "label": "Learned skills",
+          "rect": {
+            "x": 100,
+            "y": 165,
+            "width": 560,
+            "height": 740,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.15278,
+              "width": 0.29167,
+              "height": 0.68519
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              100,
+              -165
+            ],
+            "sizeDelta": [
+              560,
+              740
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Skills",
+          "resourcesKey": "UI/Skills/skill_slot",
+          "props": {
+            "icons": [
+              "✦",
+              "✣",
+              "◆",
+              "◈",
+              "▲",
+              "●",
+              "✚",
+              "◇"
+            ]
+          }
+        },
+        {
+          "id": "skills/Wheel",
+          "type": "wheel",
+          "label": "Ability wheel",
+          "rect": {
+            "x": 670,
+            "y": 150,
+            "width": 760,
+            "height": 760,
+            "normalized": {
+              "x": 0.34896,
+              "y": 0.13889,
+              "width": 0.39583,
+              "height": 0.7037
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              670,
+              -150
+            ],
+            "sizeDelta": [
+              760,
+              760
+            ]
+          },
+          "style": {
+            "variant": "floating",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "AbilityWheelView/Wheel",
+          "resourcesKey": "UI/Skills/wheel_segment",
+          "props": {}
+        },
+        {
+          "id": "skills/Details",
+          "type": "skill-detail",
+          "label": "Skill details",
+          "rect": {
+            "x": 1460,
+            "y": 165,
+            "width": 360,
+            "height": 590,
+            "normalized": {
+              "x": 0.76042,
+              "y": 0.15278,
+              "width": 0.1875,
+              "height": 0.5463
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              1460,
+              -165
+            ],
+            "sizeDelta": [
+              360,
+              590
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/SkillDetails",
+          "resourcesKey": "UI/System/detail_frame",
+          "props": {}
+        },
+        {
+          "id": "skills/Loadout",
+          "type": "ability-bar",
+          "label": "Q E R F loadout",
+          "rect": {
+            "x": 1415,
+            "y": 790,
+            "width": 450,
+            "height": 105,
+            "normalized": {
+              "x": 0.73698,
+              "y": 0.73148,
+              "width": 0.23438,
+              "height": 0.09722
+            },
+            "anchorMin": [
+              1,
+              0
+            ],
+            "anchorMax": [
+              1,
+              0
+            ],
+            "pivot": [
+              1,
+              0
+            ],
+            "anchoredPosition": [
+              -55,
+              185
+            ],
+            "sizeDelta": [
+              450,
+              105
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "AbilityWheelView/AnchorQ,AnchorE,AnchorR,AnchorF",
+          "resourcesKey": "UI/HUD/ability_slot",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "quests-map",
+      "label": "Quests & Map",
+      "group": "system",
+      "background": "map",
+      "scrimPercent": 18,
+      "uiScalePercent": 100,
+      "runtimeSurface": "CharacterPanelView / Journal + LitIso.UI.InGame.WorldMapView",
+      "components": [
+        {
+          "id": "system/TabStrip",
+          "type": "tabs",
+          "label": "System tabs",
+          "rect": {
+            "x": 100,
+            "y": 52,
+            "width": 1720,
+            "height": 80,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.04815,
+              "width": 0.89583,
+              "height": 0.07407
+            },
+            "anchorMin": [
+              0.5,
+              1
+            ],
+            "anchorMax": [
+              0.5,
+              1
+            ],
+            "pivot": [
+              0.5,
+              1
+            ],
+            "anchoredPosition": [
+              0,
+              -52
+            ],
+            "sizeDelta": [
+              1720,
+              80
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/TabStrip",
+          "resourcesKey": "UI/System/tab",
+          "props": {}
+        },
+        {
+          "id": "quests/List",
+          "type": "quest-book",
+          "label": "Quest log",
+          "rect": {
+            "x": 100,
+            "y": 160,
+            "width": 560,
+            "height": 780,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.14815,
+              "width": 0.29167,
+              "height": 0.72222
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              100,
+              -160
+            ],
+            "sizeDelta": [
+              560,
+              780
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Journal",
+          "resourcesKey": "UI/Quest/log_frame",
+          "props": {}
+        },
+        {
+          "id": "map/MapArea",
+          "type": "world-map",
+          "label": "World map",
+          "rect": {
+            "x": 690,
+            "y": 160,
+            "width": 1130,
+            "height": 780,
+            "normalized": {
+              "x": 0.35938,
+              "y": 0.14815,
+              "width": 0.58854,
+              "height": 0.72222
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              690,
+              -160
+            ],
+            "sizeDelta": [
+              1130,
+              780
+            ]
+          },
+          "style": {
+            "variant": "plain",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "WorldMapView/MapArea",
+          "resourcesKey": "UI/Map/frame",
+          "props": {}
+        }
+      ]
+    },
+    {
+      "id": "crafting-storage",
+      "label": "Crafting & Storage",
+      "group": "system",
+      "background": "forest",
+      "scrimPercent": 54,
+      "uiScalePercent": 100,
+      "runtimeSurface": "CharacterPanelView / Crafting",
+      "components": [
+        {
+          "id": "system/TabStrip",
+          "type": "tabs",
+          "label": "System tabs",
+          "rect": {
+            "x": 100,
+            "y": 52,
+            "width": 1720,
+            "height": 80,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.04815,
+              "width": 0.89583,
+              "height": 0.07407
+            },
+            "anchorMin": [
+              0.5,
+              1
+            ],
+            "anchorMax": [
+              0.5,
+              1
+            ],
+            "pivot": [
+              0.5,
+              1
+            ],
+            "anchoredPosition": [
+              0,
+              -52
+            ],
+            "sizeDelta": [
+              1720,
+              80
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/TabStrip",
+          "resourcesKey": "UI/System/tab",
+          "props": {}
+        },
+        {
+          "id": "crafting/Recipes",
+          "type": "recipes",
+          "label": "Recipes",
+          "rect": {
+            "x": 100,
+            "y": 160,
+            "width": 650,
+            "height": 760,
+            "normalized": {
+              "x": 0.05208,
+              "y": 0.14815,
+              "width": 0.33854,
+              "height": 0.7037
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              100,
+              -160
+            ],
+            "sizeDelta": [
+              650,
+              760
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Crafting/Recipes",
+          "resourcesKey": "UI/Crafting/recipe_slot",
+          "props": {}
+        },
+        {
+          "id": "crafting/Details",
+          "type": "recipe-detail",
+          "label": "Recipe details",
+          "rect": {
+            "x": 780,
+            "y": 160,
+            "width": 470,
+            "height": 760,
+            "normalized": {
+              "x": 0.40625,
+              "y": 0.14815,
+              "width": 0.24479,
+              "height": 0.7037
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              780,
+              -160
+            ],
+            "sizeDelta": [
+              470,
+              760
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Crafting/Details",
+          "resourcesKey": "UI/System/detail_frame",
+          "props": {}
+        },
+        {
+          "id": "crafting/Storage",
+          "type": "items",
+          "label": "Nearby storage",
+          "rect": {
+            "x": 1280,
+            "y": 160,
+            "width": 540,
+            "height": 760,
+            "normalized": {
+              "x": 0.66667,
+              "y": 0.14815,
+              "width": 0.28125,
+              "height": 0.7037
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              1280,
+              -160
+            ],
+            "sizeDelta": [
+              540,
+              760
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Crafting/Storage",
+          "resourcesKey": "UI/System/item_slot",
+          "props": {
+            "columns": 6,
+            "count": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "label": "Settings & Pause",
+      "group": "system",
+      "background": "campfire",
+      "scrimPercent": 58,
+      "uiScalePercent": 100,
+      "runtimeSurface": "CharacterPanelView / Settings + pause actions",
+      "components": [
+        {
+          "id": "settings/Categories",
+          "type": "settings-tabs",
+          "label": "Settings categories",
+          "rect": {
+            "x": 240,
+            "y": 170,
+            "width": 310,
+            "height": 650,
+            "normalized": {
+              "x": 0.125,
+              "y": 0.15741,
+              "width": 0.16146,
+              "height": 0.60185
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              240,
+              -170
+            ],
+            "sizeDelta": [
+              310,
+              650
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Settings/Categories",
+          "resourcesKey": "UI/Settings/category",
+          "props": {}
+        },
+        {
+          "id": "settings/Options",
+          "type": "settings",
+          "label": "Settings controls",
+          "rect": {
+            "x": 580,
+            "y": 170,
+            "width": 720,
+            "height": 650,
+            "normalized": {
+              "x": 0.30208,
+              "y": 0.15741,
+              "width": 0.375,
+              "height": 0.60185
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              580,
+              -170
+            ],
+            "sizeDelta": [
+              720,
+              650
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Settings/Options",
+          "resourcesKey": "UI/Settings/panel",
+          "props": {}
+        },
+        {
+          "id": "settings/Keybinds",
+          "type": "keybinds",
+          "label": "Keybinds",
+          "rect": {
+            "x": 1330,
+            "y": 170,
+            "width": 350,
+            "height": 650,
+            "normalized": {
+              "x": 0.69271,
+              "y": 0.15741,
+              "width": 0.18229,
+              "height": 0.60185
+            },
+            "anchorMin": [
+              0,
+              1
+            ],
+            "anchorMax": [
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              1
+            ],
+            "anchoredPosition": [
+              1330,
+              -170
+            ],
+            "sizeDelta": [
+              350,
+              650
+            ]
+          },
+          "style": {
+            "variant": "canvas",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Settings/Keybinds",
+          "resourcesKey": "UI/Settings/keycap",
+          "props": {}
+        },
+        {
+          "id": "settings/Actions",
+          "type": "pause-actions",
+          "label": "Pause actions",
+          "rect": {
+            "x": 480,
+            "y": 860,
+            "width": 960,
+            "height": 100,
+            "normalized": {
+              "x": 0.25,
+              "y": 0.7963,
+              "width": 0.5,
+              "height": 0.09259
+            },
+            "anchorMin": [
+              0.5,
+              0
+            ],
+            "anchorMax": [
+              0.5,
+              0
+            ],
+            "pivot": [
+              0.5,
+              0
+            ],
+            "anchoredPosition": [
+              0,
+              120
+            ],
+            "sizeDelta": [
+              960,
+              100
+            ]
+          },
+          "style": {
+            "variant": "floating",
+            "visible": true,
+            "locked": false,
+            "z": 1
+          },
+          "runtimeNode": "CharacterPanelView/Body/Settings/Actions",
+          "resourcesKey": null,
+          "props": {}
+        }
+      ]
+    }
+  ],
+  "bindings": {
+    "hud.health.fill": "IGameHudModel.Health01",
+    "hud.mana.fill": "IGameHudModel.Mana01",
+    "hud.hotbar.items": "IGameHudModel.GetSlot",
+    "inventory.items": "IInventoryViewModel.GetSlot",
+    "ability.items": "IAbilityLoadoutViewModel.GetAbility",
+    "map.pins": "WorldMapView.SetPins"
+  },
+  "pixelLab": [
+    {
+      "screenId": "main-menu",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Main Menu screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: full-screen warm nighttime forest campsite key art with four friendly adventurers around a campfire, clear left-side negative space, crisp original pixel art. Required transparent asset IDs: UI/Menu/logo, UI/Menu/button. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/Menu/logo",
+        "UI/Menu/button"
+      ]
+    },
+    {
+      "screenId": "loading",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Loading screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: warm cinematic pixel-art forest campsite loading scene, four adventurers resting, subtle fireflies, large unobstructed environment. Required transparent asset IDs: UI/Loading/tip_frame, UI/Loading/flame. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/Loading/tip_frame",
+        "UI/Loading/flame"
+      ]
+    },
+    {
+      "screenId": "character-creator",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Character Creator screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: transparent cozy pixel UI kit for character creation: thin wood tabs, green stitched canvas panels, appearance thumbnails, class object icons, no text. Required transparent asset IDs: UI/Creator/category_button, UI/Creator/option_slot, UI/Creator/class_slot. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/Creator/category_button",
+        "UI/Creator/option_slot",
+        "UI/Creator/class_slot"
+      ]
+    },
+    {
+      "screenId": "create-world",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Create World screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: original colorful isometric pixel world-map preview with forest, meadow, coast, mountains, village, camp and dungeon markers. Required transparent asset IDs: UI/Menu/panel, UI/World/preview_frame. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/Menu/panel",
+        "UI/World/preview_frame"
+      ]
+    },
+    {
+      "screenId": "hud",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Gameplay HUD screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: transparent cozy survival-game HUD kit: compact wood and green canvas frames, ten square hotbar slots, four skill slots, circular minimap frame, quest tracker. Required transparent asset IDs: UI/HUD/vitals_frame, UI/HUD/day_band, UI/HUD/minimap_frame, UI/HUD/quest_frame, UI/HUD/ability_slot, UI/HUD/hotbar_slot. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/HUD/vitals_frame",
+        "UI/HUD/day_band",
+        "UI/HUD/minimap_frame",
+        "UI/HUD/quest_frame",
+        "UI/HUD/ability_slot",
+        "UI/HUD/hotbar_slot"
+      ]
+    },
+    {
+      "screenId": "backpack",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Backpack & Gear screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: transparent cozy inventory UI kit with stitched forest-green canvas, medium wood slots, paper-doll equipment frames, colorful pixel item placeholders, no baked text. Required transparent asset IDs: UI/System/tab, UI/System/item_slot, UI/System/equipment_slot, UI/System/detail_frame, UI/HUD/hotbar_slot. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/System/tab",
+        "UI/System/item_slot",
+        "UI/System/equipment_slot",
+        "UI/System/detail_frame",
+        "UI/HUD/hotbar_slot"
+      ]
+    },
+    {
+      "screenId": "skills",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Skills & Wheel screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: transparent cozy ability UI kit with natural wood ring segments, elemental skill icons, green canvas skill grid and four Q E R F loadout slots. Required transparent asset IDs: UI/System/tab, UI/Skills/skill_slot, UI/Skills/wheel_segment, UI/System/detail_frame, UI/HUD/ability_slot. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/System/tab",
+        "UI/Skills/skill_slot",
+        "UI/Skills/wheel_segment",
+        "UI/System/detail_frame",
+        "UI/HUD/ability_slot"
+      ]
+    },
+    {
+      "screenId": "quests-map",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Quests & Map screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: colorful explored pixel world map with forest paths, river, village, camp, dungeon, resource and quest markers; separate transparent quest panel frame. Required transparent asset IDs: UI/System/tab, UI/Quest/log_frame, UI/Map/frame. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/System/tab",
+        "UI/Quest/log_frame",
+        "UI/Map/frame"
+      ]
+    },
+    {
+      "screenId": "crafting-storage",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Crafting & Storage screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: transparent cozy crafting and storage UI kit: recipe tabs, item slots, ingredient rows, craft queue, wood buttons, green stitched canvas. Required transparent asset IDs: UI/System/tab, UI/Crafting/recipe_slot, UI/System/detail_frame, UI/System/item_slot. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/System/tab",
+        "UI/Crafting/recipe_slot",
+        "UI/System/detail_frame",
+        "UI/System/item_slot"
+      ]
+    },
+    {
+      "screenId": "settings",
+      "prompt": "Create original production-ready pixel-art UI assets for the LIT-RPG Settings & Pause screen. Direction: warm cozy indie survival-crafting game, medium brown wood, stitched forest-green canvas, cream markings, ember-orange focus, crisp pixel edges. Scene or kit brief: transparent warm indie-game settings panel kit with compact wood category tabs, green canvas rows, pixel sliders, toggles and controller keycaps. Required transparent asset IDs: UI/Settings/category, UI/Settings/panel, UI/Settings/keycap. No text baked into UI sprites. Keep corners square or lightly beveled. Each component must be isolated, centered, and suitable for Unity 9-slicing where applicable. Avoid copied game assets, MMO ornament, gothic black-and-gold framing, purple gradients, smooth vector rendering, excessive filigree, watermarks.",
+      "resources": [
+        "UI/Settings/category",
+        "UI/Settings/panel",
+        "UI/Settings/keycap"
+      ]
+    }
+  ],
+  "runtime": [
+    {
+      "screenId": "main-menu",
+      "target": "LitIso.UI.WelcomeScreenManager / MainMenu",
+      "notes": "Procedural menu surface. Keep the left side menu-safe and the campfire party visible."
+    },
+    {
+      "screenId": "loading",
+      "target": "LitIso.UI.LoadingScreen",
+      "notes": "Full-bleed scene art. Existing fade timing remains 0.35 / 0.25 / 0.5 seconds."
+    },
+    {
+      "screenId": "character-creator",
+      "target": "WelcomeScreenManager / CallingSelect + character appearance flow",
+      "notes": "Appearance selection is visual-first. Class tokens lead into the existing calling selection state."
+    },
+    {
+      "screenId": "create-world",
+      "target": "LitIso.UI.WelcomeScreenManager / CreateWorld",
+      "notes": "Matches the current CreateWorld state while making the generated world preview the visual focus."
+    },
+    {
+      "screenId": "hud",
+      "target": "LitIso.UI.InGame.GameUIController",
+      "notes": "Canvas order 100 at 1920x1080. Hotbar pages inventory rows; ability loadout remains Q/E/R/F."
+    },
+    {
+      "screenId": "backpack",
+      "target": "LitIso.UI.InGame.CharacterPanelView / Inventory",
+      "notes": "The system book owns this surface. InventoryView remains a secondary standalone view with its existing 6-column model."
+    },
+    {
+      "screenId": "skills",
+      "target": "CharacterPanelView / Skills + LitIso.UI.InGame.AbilityWheelView",
+      "notes": "Ability wheel canvas order 210. Q/E/R/F are stable assignment anchors and hold-X opens the wheel."
+    },
+    {
+      "screenId": "quests-map",
+      "target": "CharacterPanelView / Journal + LitIso.UI.InGame.WorldMapView",
+      "notes": "WorldMapView uses normalized pin positions, fog opacity, and a dedicated map canvas at order 120."
+    },
+    {
+      "screenId": "crafting-storage",
+      "target": "CharacterPanelView / Crafting",
+      "notes": "Crafting stays inside the system book. Storage is a split-view extension for nearby containers."
+    },
+    {
+      "screenId": "settings",
+      "target": "CharacterPanelView / Settings + pause actions",
+      "notes": "Shared preference keys include hud.scale and audio.master. Every overlay closes with Esc and an explicit close control."
+    }
+  ]
+}

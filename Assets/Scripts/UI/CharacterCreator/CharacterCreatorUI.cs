@@ -23,7 +23,7 @@ namespace LitIso.CharacterCreator
         // preview
         Image _previewImage;
         CharacterCompositor.BakeResult _baked;
-        int _previewRow;
+        int _previewRow = 2; // South-facing row so the character greets the player.
         bool _previewWalking = true;
         string[] _animIds;
         int _previewAnimIndex;
@@ -568,7 +568,7 @@ namespace LitIso.CharacterCreator
                 () => _cat.Find(_appearance.shoesId), () => _appearance.shoesVariant, v => _appearance.shoesVariant = v);
         }
 
-        // ---- new slot-row builders (style picker + HSV colour picker) -----------
+        // ---- consistent slot sections (style selector + paged swatches) ----------
 
         void BuildSlotRow(RectTransform content, string label, string slot,
             Func<string> getCurrentId, Action<string, string> setIdVariant,
@@ -583,41 +583,22 @@ namespace LitIso.CharacterCreator
             block.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
                 ContentSizeFitter.FitMode.PreferredSize;
 
-            // Label row — two columns matching content below
-            var labelRow = NewRect("LabelRow", block.transform);
-            FixedH(labelRow, 22f);
-            var lh = labelRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            lh.spacing = 16f; lh.childControlWidth = true; lh.childControlHeight = true;
-            lh.childForceExpandWidth = false; lh.childForceExpandHeight = true;
-            NewText(labelRow.transform, "SL", label + " STYLE", 14, TextAnchor.MiddleLeft, LabelColor, true)
-                .gameObject.AddComponent<LayoutElement>().preferredWidth = 200f;
-            NewText(labelRow.transform, "CL", label + " COLOUR", 14, TextAnchor.MiddleLeft, LabelColor, true)
-                .gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-
-            // Content row
-            var contentRow = NewRect("ContentRow", block.transform);
-            contentRow.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
-                ContentSizeFitter.FitMode.PreferredSize;
-            var ch = contentRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            ch.spacing = 16f; ch.childControlWidth = true; ch.childControlHeight = true;
-            ch.childForceExpandWidth = false; ch.childForceExpandHeight = true;
+            var title = NewText(block.transform, "Title", label, 15,
+                TextAnchor.MiddleLeft, LitIsoTheme.Gold, true);
+            FixedH(title, 24f);
 
             if (items.Count > 0)
             {
-                var leftPane = NewRect("StylePane", contentRow.transform);
-                var lv = leftPane.gameObject.AddComponent<VerticalLayoutGroup>();
-                lv.spacing = 4f; lv.childControlWidth = true; lv.childControlHeight = true;
-                lv.childForceExpandWidth = true; lv.childForceExpandHeight = false;
-                leftPane.gameObject.AddComponent<LayoutElement>().preferredWidth = 200f;
-                leftPane.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
-                    ContentSizeFitter.FitMode.PreferredSize;
-                BuildInlineItemPicker(leftPane.transform, items, getCurrentId, setIdVariant);
+                var styleLabel = NewText(block.transform, "StyleLabel", "STYLE", 11,
+                    TextAnchor.MiddleLeft, LabelColor, true);
+                FixedH(styleLabel, 18f);
+                BuildInlineItemPicker(block.transform, items, getCurrentId, setIdVariant);
             }
 
-            var rightPane = NewRect("ColorPane", contentRow.transform);
-            var rightLe = rightPane.gameObject.AddComponent<LayoutElement>();
-            rightLe.flexibleWidth = 1f;
-            BuildInlineColorPicker(rightPane.transform, getDef, getVariant, setVariant);
+            var colourLabel = NewText(block.transform, "ColourLabel", "COLOUR", 11,
+                TextAnchor.MiddleLeft, LabelColor, true);
+            FixedH(colourLabel, 18f);
+            BuildInlineColorPicker(block.transform, getDef, getVariant, setVariant);
         }
 
         void BuildColorOnlyRow(RectTransform content, string label,
@@ -633,9 +614,7 @@ namespace LitIso.CharacterCreator
             var lbl = NewText(block.transform, "L", label, 14, TextAnchor.UpperLeft, LabelColor, true);
             FixedH(lbl, 22f);
 
-            var colorPane = NewRect("ColorPane", block.transform);
-            colorPane.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            BuildInlineColorPicker(colorPane.transform, getDef, getVariant, setVariant);
+            BuildInlineColorPicker(block.transform, getDef, getVariant, setVariant);
         }
 
         void BuildInlineItemPicker(Transform parent, List<ItemDef> items,
@@ -672,12 +651,12 @@ namespace LitIso.CharacterCreator
                 Rebake();
             }
 
-            var prevBtn = ThemeButton(pickerRow, "Prev", "◀", false,
+            var prevBtn = ThemeButton(pickerRow, "Prev", "<", false,
                 () => { curIdx = ((curIdx - 1) + items.Count) % items.Count; Refresh(curIdx); });
             prevBtn.transform.SetSiblingIndex(0);
             prevBtn.GetComponent<LayoutElement>().preferredWidth = 44f;
 
-            var nextBtn = ThemeButton(pickerRow, "Next", "▶", false,
+            var nextBtn = ThemeButton(pickerRow, "Next", ">", false,
                 () => { curIdx = (curIdx + 1) % items.Count; Refresh(curIdx); });
             nextBtn.GetComponent<LayoutElement>().preferredWidth = 44f;
 
@@ -692,100 +671,180 @@ namespace LitIso.CharacterCreator
         void BuildInlineColorPicker(Transform parent,
             Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
         {
-            var block = NewRect("HSVPicker", parent);
+            const int pageSize = 24;
+            const int columns = 12;
+
+            var block = NewRect("PalettePicker", parent);
             var bv = block.gameObject.AddComponent<VerticalLayoutGroup>();
-            bv.spacing = 4f; bv.childControlWidth = true; bv.childControlHeight = true;
+            bv.spacing = 6f; bv.childControlWidth = true; bv.childControlHeight = true;
             bv.childForceExpandWidth = true; bv.childForceExpandHeight = false;
             block.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
                 ContentSizeFitter.FitMode.PreferredSize;
 
-            // Top row: colour preview + hex InputField
-            var topRow = NewRect("TopRow", block.transform);
-            FixedH(topRow, 36f);
-            var trh = topRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            trh.spacing = 8f; trh.childControlWidth = true; trh.childControlHeight = true;
-            trh.childForceExpandWidth = false; trh.childForceExpandHeight = true;
+            var selectedRow = NewRect("SelectedRow", block.transform);
+            FixedH(selectedRow, 40f);
+            var selectedLayout = selectedRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            selectedLayout.spacing = 8f;
+            selectedLayout.childControlWidth = true; selectedLayout.childControlHeight = true;
+            selectedLayout.childForceExpandWidth = false; selectedLayout.childForceExpandHeight = true;
 
-            var previewGo = NewRect("Preview", topRow.transform);
-            previewGo.gameObject.AddComponent<LayoutElement>().preferredWidth = 44f;
-            var previewImg = previewGo.gameObject.AddComponent<Image>();
-            previewImg.raycastTarget = false;
-            var previewOl = previewGo.gameObject.AddComponent<Outline>();
-            previewOl.effectColor = LitIsoTheme.Base;
-            previewOl.effectDistance = new Vector2(2f, -2f);
-            previewOl.useGraphicAlpha = false;
+            var previous = ThemeButton(selectedRow, "PreviousColor", "<", false, () => { });
+            previous.GetComponent<LayoutElement>().preferredWidth = 40f;
 
-            var hexIF = BuildHexInput(topRow.transform, "HexInput", "#000000");
-            var hexLe = hexIF.gameObject.GetComponent<LayoutElement>() ??
-                        hexIF.gameObject.AddComponent<LayoutElement>();
-            hexLe.flexibleWidth = 1f;
+            var preview = NewImage(selectedRow, "SelectedColor", LitIsoTheme.Base);
+            preview.gameObject.AddComponent<LayoutElement>().preferredWidth = 40f;
+            var previewOutline = preview.gameObject.AddComponent<Outline>();
+            previewOutline.effectColor = LitIsoTheme.GoldDeep;
+            previewOutline.effectDistance = new Vector2(2f, -2f);
+            previewOutline.useGraphicAlpha = false;
 
-            // H / S / V sliders
-            Slider hSlider = null, sSlider = null, vSlider = null;
-            BuildLabeledSliderRow(block.transform, "H", 0f, out hSlider, "HSlider");
-            BuildLabeledSliderRow(block.transform, "S", 0f, out sSlider, "SSlider");
-            BuildLabeledSliderRow(block.transform, "V", 0f, out vSlider, "VSlider");
+            var selectedText = NewText(selectedRow, "SelectedText", "NO COLOURS",
+                12, TextAnchor.MiddleCenter, LitIsoTheme.Parchment, true);
+            selectedText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 
-            // Review 2026-07-03: ApplyFromHSV -> Rebake -> refreshers -> SyncToVariant
-            // snapped the sliders to the matched variant's exact colour MID-DRAG,
-            // yanking the handle out from under the pointer. While the user drives the
-            // sliders, skip the slider write-back (preview + hex still update).
-            bool applyingFromSliders = false;
+            var next = ThemeButton(selectedRow, "NextColor", ">", false, () => { });
+            next.GetComponent<LayoutElement>().preferredWidth = 40f;
 
-            void SyncToVariant()
+            var grid = NewRect("Swatches", block.transform);
+            FixedH(grid, 76f);
+            var gridLayout = grid.gameObject.AddComponent<GridLayoutGroup>();
+            gridLayout.cellSize = new Vector2(34f, 34f);
+            gridLayout.spacing = new Vector2(8f, 8f);
+            gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            gridLayout.constraintCount = columns;
+            gridLayout.childAlignment = TextAnchor.UpperLeft;
+
+            var cells = new Image[pageSize];
+            var outlines = new Outline[pageSize];
+            int pageStart = 0;
+            for (int i = 0; i < pageSize; i++)
             {
-                var def = getDef();
-                if (def?.variants == null || def.variants.Length == 0) return;
-                string vv = getVariant();
-                if (string.IsNullOrEmpty(vv)) vv = def.variants[0];
-                Color c = CharacterCompositor.SwatchColor(def, vv, _appearance.bodyType);
-                if (!applyingFromSliders)
-                {
-                    Color.RGBToHSV(c, out float h, out float s, out float val);
-                    hSlider?.SetValueWithoutNotify(h);
-                    sSlider?.SetValueWithoutNotify(s);
-                    vSlider?.SetValueWithoutNotify(val);
-                }
-                if (previewImg != null) previewImg.color = c;
-                if (hexIF != null && !hexIF.isFocused) hexIF.text = ColorToHex(c);
-            }
-
-            void ApplyFromHSV()
-            {
-                var def = getDef();
-                if (def?.variants == null || def.variants.Length == 0) return;
-                Color target = Color.HSVToRGB(hSlider.value, sSlider.value, vSlider.value);
-                string best = BestVariant(def, target, _appearance.bodyType);
-                if (best != getVariant())
-                {
-                    applyingFromSliders = true;
-                    try { setVariant(best); Rebake(); }
-                    finally { applyingFromSliders = false; }
-                }
-                Color actual = CharacterCompositor.SwatchColor(def, getVariant(), _appearance.bodyType);
-                if (previewImg != null) previewImg.color = actual;
-            }
-
-            hSlider.onValueChanged.AddListener(_ => ApplyFromHSV());
-            sSlider.onValueChanged.AddListener(_ => ApplyFromHSV());
-            vSlider.onValueChanged.AddListener(_ => ApplyFromHSV());
-
-            hexIF.onEndEdit.AddListener(hex =>
-            {
-                if (TryParseHex(hex, out Color target))
+                int slot = i;
+                var cell = NewImage(grid, "Color_" + i, LitIsoTheme.Base);
+                cells[i] = cell;
+                var outline = cell.gameObject.AddComponent<Outline>();
+                outline.effectColor = LitIsoTheme.Base;
+                outline.effectDistance = new Vector2(2f, -2f);
+                outline.useGraphicAlpha = false;
+                outlines[i] = outline;
+                var button = cell.gameObject.AddComponent<Button>();
+                button.targetGraphic = cell;
+                button.onClick.AddListener(() =>
                 {
                     var def = getDef();
-                    if (def?.variants != null && def.variants.Length > 0)
-                    {
-                        string best = BestVariant(def, target, _appearance.bodyType);
-                        if (best != getVariant()) { setVariant(best); Rebake(); }
-                    }
+                    int index = pageStart + slot;
+                    if (def?.variants == null || index < 0 || index >= def.variants.Length) return;
+                    setVariant(def.variants[index]);
+                    Rebake();
+                });
+            }
+
+            var pageRow = NewRect("PageRow", block.transform);
+            FixedH(pageRow, 28f);
+            var pageLayout = pageRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            pageLayout.spacing = 8f;
+            pageLayout.childControlWidth = true; pageLayout.childControlHeight = true;
+            pageLayout.childForceExpandWidth = false; pageLayout.childForceExpandHeight = true;
+
+            var previousPage = ThemeButton(pageRow, "PreviousPage", "< PAGE", false, () => { }, 10, true);
+            previousPage.GetComponent<LayoutElement>().preferredWidth = 82f;
+            var pageText = NewText(pageRow, "PageText", "PALETTE 1 / 1",
+                10, TextAnchor.MiddleCenter, LabelColor, true);
+            pageText.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            var nextPage = ThemeButton(pageRow, "NextPage", "PAGE >", false, () => { }, 10, true);
+            nextPage.GetComponent<LayoutElement>().preferredWidth = 82f;
+
+            void RefreshPalette(bool followSelection)
+            {
+                var def = getDef();
+                var variants = def?.variants;
+                int count = variants?.Length ?? 0;
+                if (count == 0)
+                {
+                    preview.color = LitIsoTheme.Base;
+                    selectedText.text = "NO COLOURS";
+                    pageText.text = "PALETTE 0 / 0";
+                    grid.gameObject.SetActive(false);
+                    pageRow.gameObject.SetActive(false);
+                    for (int i = 0; i < pageSize; i++) cells[i].gameObject.SetActive(false);
+                    previous.interactable = next.interactable = false;
+                    previousPage.interactable = nextPage.interactable = false;
+                    return;
                 }
-                SyncToVariant();
+
+                int selected = Array.IndexOf(variants, getVariant());
+                if (selected < 0) selected = 0;
+                grid.gameObject.SetActive(count > 1);
+                pageRow.gameObject.SetActive(count > pageSize);
+                int maxStart = ((count - 1) / pageSize) * pageSize;
+                if (followSelection && (selected < pageStart || selected >= pageStart + pageSize))
+                    pageStart = (selected / pageSize) * pageSize;
+                pageStart = Mathf.Clamp(pageStart, 0, maxStart);
+
+                Color selectedColor = CharacterCompositor.SwatchColor(
+                    def, variants[selected], _appearance.bodyType);
+                preview.color = selectedColor;
+                selectedText.text = $"{ColorToHex(selectedColor)}  {selected + 1} / {count}";
+
+                for (int i = 0; i < pageSize; i++)
+                {
+                    int index = pageStart + i;
+                    bool visible = index < count;
+                    cells[i].gameObject.SetActive(visible);
+                    if (!visible) continue;
+                    cells[i].color = CharacterCompositor.SwatchColor(
+                        def, variants[index], _appearance.bodyType);
+                    bool isSelected = index == selected;
+                    outlines[i].effectColor = isSelected ? LitIsoTheme.Gold : LitIsoTheme.Base;
+                    outlines[i].effectDistance = isSelected
+                        ? new Vector2(3f, -3f) : new Vector2(2f, -2f);
+                }
+
+                int page = pageStart / pageSize;
+                int pages = Mathf.CeilToInt(count / (float)pageSize);
+                pageText.text = $"PALETTE {page + 1} / {pages}";
+                previous.interactable = next.interactable = count > 1;
+                previousPage.interactable = pageStart > 0;
+                nextPage.interactable = pageStart + pageSize < count;
+            }
+
+            previous.onClick.RemoveAllListeners();
+            previous.onClick.AddListener(() =>
+            {
+                var variants = getDef()?.variants;
+                if (variants == null || variants.Length == 0) return;
+                int selected = Mathf.Max(0, Array.IndexOf(variants, getVariant()));
+                selected = (selected - 1 + variants.Length) % variants.Length;
+                setVariant(variants[selected]);
+                Rebake();
+            });
+            next.onClick.RemoveAllListeners();
+            next.onClick.AddListener(() =>
+            {
+                var variants = getDef()?.variants;
+                if (variants == null || variants.Length == 0) return;
+                int selected = Mathf.Max(0, Array.IndexOf(variants, getVariant()));
+                selected = (selected + 1) % variants.Length;
+                setVariant(variants[selected]);
+                Rebake();
+            });
+            previousPage.onClick.RemoveAllListeners();
+            previousPage.onClick.AddListener(() =>
+            {
+                pageStart = Mathf.Max(0, pageStart - pageSize);
+                RefreshPalette(false);
+            });
+            nextPage.onClick.RemoveAllListeners();
+            nextPage.onClick.AddListener(() =>
+            {
+                int count = getDef()?.variants?.Length ?? 0;
+                int maxStart = count > 0 ? ((count - 1) / pageSize) * pageSize : 0;
+                pageStart = Mathf.Min(maxStart, pageStart + pageSize);
+                RefreshPalette(false);
             });
 
-            _refreshers.Add(() => SyncToVariant());
-            SyncToVariant();
+            _refreshers.Add(() => RefreshPalette(true));
+            RefreshPalette(true);
         }
 
         void BuildLabeledSliderRow(Transform parent, string labelText, float initVal,
@@ -962,7 +1021,7 @@ namespace LitIso.CharacterCreator
             FixedH(row, 44f);
             var h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             h.spacing = 6f; h.childControlWidth = true; h.childControlHeight = true;
-            h.childForceExpandWidth = false; h.childForceExpandHeight = true;
+            h.childForceExpandWidth = true; h.childForceExpandHeight = true;
 
             var btnImages = new List<Image>();
             for (int i = 0; i < items.Count; i++)
@@ -1038,7 +1097,7 @@ namespace LitIso.CharacterCreator
                     _appearance.bodyType = captured;
                     RebuildOptions();
                 });
-                b.GetComponent<LayoutElement>().preferredWidth = 130f;
+                b.GetComponent<LayoutElement>().flexibleWidth = 1f;
                 buttons.Add(b);
             }
 
@@ -1194,12 +1253,10 @@ namespace LitIso.CharacterCreator
             });
         }
 
-        // A labelled block with a wrapping grid of colour swatches for one def.
+        // A labelled block using the same paged palette as every other colour field.
         void SwatchBlock(RectTransform content, string label,
             Func<ItemDef> getDef, Func<string> getVariant, Action<string> setVariant)
         {
-            var def = getDef();
-
             var block = NewRect("Block_" + label, content);
             var v = block.gameObject.AddComponent<VerticalLayoutGroup>();
             v.spacing = 8f; v.childControlWidth = true; v.childControlHeight = true;
@@ -1209,55 +1266,7 @@ namespace LitIso.CharacterCreator
 
             var lbl = NewText(block.transform, "L", label, 14, TextAnchor.UpperLeft, LabelColor, true);
             FixedH(lbl, 20f);
-
-            if (def == null || def.variants == null || def.variants.Length == 0)
-            {
-                var none = NewText(block.transform, "None", "—", 14, TextAnchor.UpperLeft, LitIsoTheme.WarmTan);
-                FixedH(none, 24f);
-                return;
-            }
-
-            // HTML: 46x46 swatches, 12px gap, wrapping flex row.
-            var grid = NewRect("Grid", block.transform);
-            var g = grid.gameObject.AddComponent<GridLayoutGroup>();
-            g.cellSize = new Vector2(46f, 46f);
-            g.spacing = new Vector2(12f, 12f);
-            g.padding = new RectOffset(0, 0, 0, 0);
-            var gfit = grid.gameObject.AddComponent<ContentSizeFitter>();
-            gfit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            var variants = def.variants;
-            var outlines = new List<Outline>(variants.Length);
-            for (int i = 0; i < variants.Length; i++)
-            {
-                string variant = variants[i];
-                var cell = NewRect("Sw", grid);
-                var img = cell.gameObject.AddComponent<Image>();
-                img.color = CharacterCompositor.SwatchColor(def, variant, _appearance.bodyType);
-                var ol = cell.gameObject.AddComponent<Outline>();
-                ol.effectColor = LitIsoTheme.Base; ol.effectDistance = new Vector2(3f, -3f); ol.useGraphicAlpha = false;
-                outlines.Add(ol);
-                var btn = cell.gameObject.AddComponent<Button>();
-                btn.targetGraphic = img;
-                string captured = variant;
-                btn.onClick.AddListener(() =>
-                {
-                    if (captured == getVariant()) return;
-                    setVariant(captured);
-                    Rebake();
-                });
-            }
-
-            _refreshers.Add(() =>
-            {
-                string cur = getVariant();
-                for (int i = 0; i < outlines.Count && i < variants.Length; i++)
-                {
-                    bool s = variants[i] == cur;
-                    outlines[i].effectColor = s ? LitIsoTheme.Gold : LitIsoTheme.Base;
-                    outlines[i].effectDistance = s ? new Vector2(4f, -4f) : new Vector2(3f, -3f);
-                }
-            });
+            BuildInlineColorPicker(block.transform, getDef, getVariant, setVariant);
         }
 
         void Confirm()
@@ -1360,4 +1369,90 @@ namespace LitIso.CharacterCreator
             btn.targetGraphic = img;
             btn.transition = Selectable.Transition.ColorTint;
             var cb = btn.colors;
-            cb.no
+            cb.normalColor = Color.white;
+            cb.highlightedColor = new Color(0.88f, 0.88f, 0.88f, 1f);
+            cb.pressedColor = new Color(0.75f, 0.75f, 0.75f, 1f);
+            cb.fadeDuration = 0.06f;
+            btn.colors = cb;
+
+            var t = NewText(rt, "L", label, size, TextAnchor.MiddleCenter,
+                gold ? LitIsoTheme.GoldText : LitIsoTheme.Parchment, display);
+            var trt = t.rectTransform;
+            trt.anchorMin = Vector2.zero; trt.anchorMax = Vector2.one;
+            trt.offsetMin = new Vector2(8f, 4f); trt.offsetMax = new Vector2(-8f, -4f);
+            t.resizeTextForBestFit = true; t.resizeTextMaxSize = t.fontSize; t.resizeTextMinSize = 10;
+
+            btn.onClick.AddListener(() => onClick());
+            return btn;
+        }
+
+        static void AddGoldInnerLine(RectTransform parent)
+        {
+            var go = new GameObject("GoldFrame", typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var img = go.AddComponent<Image>();
+            img.color = new Color(LitIsoTheme.GoldDeep.r, LitIsoTheme.GoldDeep.g,
+                                  LitIsoTheme.GoldDeep.b, 0.55f);
+            img.raycastTarget = false;
+            var rt = img.rectTransform;
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+            rt.offsetMin = new Vector2(3f, 3f); rt.offsetMax = new Vector2(-3f, -3f);
+            var fillGo = new GameObject("Fill", typeof(RectTransform));
+            fillGo.transform.SetParent(rt, false);
+            var frt = fillGo.GetComponent<RectTransform>();
+            frt.anchorMin = Vector2.zero; frt.anchorMax = Vector2.one;
+            frt.offsetMin = new Vector2(1f, 1f); frt.offsetMax = new Vector2(-1f, -1f);
+            fillGo.AddComponent<Image>().color = LitIsoTheme.Panel;
+            go.transform.SetAsFirstSibling();
+        }
+
+        static void AddCornerBrackets(RectTransform parent)
+        {
+            var corners = new (Vector2 anchor, string name)[]
+            {
+                (new Vector2(0, 1), "BracketTL"),
+                (new Vector2(1, 1), "BracketTR"),
+                (new Vector2(0, 0), "BracketBL"),
+                (new Vector2(1, 0), "BracketBR"),
+            };
+            foreach (var (anchor, name) in corners)
+            {
+                var go = new GameObject(name, typeof(RectTransform));
+                go.transform.SetParent(parent, false);
+                var rt = go.GetComponent<RectTransform>();
+                rt.anchorMin = rt.anchorMax = anchor;
+                rt.pivot = anchor;
+                rt.sizeDelta = new Vector2(12f, 12f);
+                rt.anchoredPosition = new Vector2(anchor.x == 0 ? 6f : -6f,
+                                                  anchor.y == 1 ? -6f : 6f);
+
+                void AddBar(string n, bool horiz)
+                {
+                    var b = new GameObject(n, typeof(RectTransform));
+                    b.transform.SetParent(go.transform, false);
+                    var bImg = b.AddComponent<Image>();
+                    bImg.color = LitIsoTheme.Gold; bImg.raycastTarget = false;
+                    var brt = bImg.rectTransform;
+                    if (horiz)
+                    {
+                        brt.anchorMin = new Vector2(0, anchor.y == 1 ? 1 : 0);
+                        brt.anchorMax = new Vector2(1, anchor.y == 1 ? 1 : 0);
+                        brt.pivot     = new Vector2(0.5f, anchor.y == 1 ? 1f : 0f);
+                        brt.sizeDelta = new Vector2(0, 2f);
+                    }
+                    else
+                    {
+                        brt.anchorMin = new Vector2(anchor.x == 0 ? 0 : 1, 0);
+                        brt.anchorMax = new Vector2(anchor.x == 0 ? 0 : 1, 1);
+                        brt.pivot     = new Vector2(anchor.x == 0 ? 0f : 1f, 0.5f);
+                        brt.sizeDelta = new Vector2(2f, 0);
+                    }
+                    brt.anchoredPosition = Vector2.zero;
+                }
+                AddBar("H", true);
+                AddBar("V", false);
+            }
+        }
+
+    }
+}

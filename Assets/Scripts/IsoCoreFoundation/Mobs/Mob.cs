@@ -435,3 +435,110 @@ namespace IsoCore.Foundation
             }
         }
 
+        // Ticks the flash restore even while hit-stopped, so a killed/frozen mob never
+        // gets stuck red.
+        void TickHitFeedback()
+        {
+            if (_flashTimer > 0f)
+            {
+                _flashTimer -= Time.deltaTime;
+                if (_flashTimer <= 0f && _sr != null) _sr.color = _baseColor;
+            }
+            if (_hurtAnimTimer > 0f) _hurtAnimTimer -= Time.deltaTime;
+        }
+
+        void TryAttack()
+        {
+            if (!_aggressive || _player == null || _stats == null || _attackTimer > 0f)
+                return;
+            if (_def == null || _def.contactDamage <= 0f)
+                return;
+
+            float range = Mathf.Max(0.1f, EffectiveAttackRange);
+            if ((_player.Ground - _ground).sqrMagnitude > range * range)
+                return;
+
+            _attackTimer = Mathf.Max(0.5f, _def.attackCooldownSeconds);
+            float damage = Mathf.Max(1f, EffectiveContactDamage);
+            _stats.Damage(damage);
+            FloatingText.Spawn(_player.transform.position + Vector3.up * 0.75f,
+                $"-{Mathf.CeilToInt(damage)} HP", new Color(1f, 0.35f, 0.25f));
+            SfxManager.PlayAt("hit", _player.transform.position, 0.75f);
+        }
+
+        // Phase 3: occasional NPC ability cast, gated by a per-mob cooldown. NPCs have no
+        // mana/stamina pool, so the cost is cooldown-only. Damage scales by _tierDmgMul via the
+        // ability's basePower; the actual VFX/animation is the Assembly-CSharp listener's job
+        // (AbilityUsed event). Targets the current foe (mob-vs-mob) or the player when aggressive.
+        void TryCastAbility()
+        {
+            if (_resolved || _def == null || _abilityTimer > 0f) return;
+            var ids = _def.abilityIds;
+            if (ids == null || ids.Length == 0) return;
+
+            Mob foeTarget = _foe;
+            bool playerTarget = _aggressive && _player != null && foeTarget == null;
+            if (foeTarget == null && !playerTarget) return;
+
+            string abilityId = ids[UnityEngine.Random.Range(0, ids.Length)];
+            var ability = _content != null ? _content.Abilities.Get(abilityId) : null;
+
+            float range = ability != null ? Mathf.Max(1.5f, ability.range) : Mathf.Max(2f, _def.attackRange * 2f);
+            Vector2 targetGround = foeTarget != null ? foeTarget.Ground : _player.Ground;
+            if ((targetGround - _ground).sqrMagnitude > range * range) return;
+
+            _abilityTimer = Mathf.Max(1f, _def.abilityCooldownSeconds);
+
+            float power = ability != null ? Mathf.Max(0.1f, ability.basePower) : 1f;
+            float damage = Mathf.Max(1f, power * _def.meleeDamage * _tierDmgMul);
+            if (foeTarget != null) foeTarget.TakeMobDamage(damage, _ground);
+            else if (_stats != null) _stats.Damage(damage);
+
+            AbilityUsed?.Invoke(abilityId);
+        }
+
+        void Animate()
+        {
+            if (_externalAppearance) return; // the layered character creator owns the sprite
+
+            // Cheap 2-direction facing (playtest 2026-07-02 #5): flip the sprite so the
+            // mob looks along its chase/move direction. Full 4-direction rows are
+            // blocked on owner art (HANDOVER_2026-06-29 §4.3). Applies to animated AND
+            // static (decoration-sprite) mobs; a dead-zone keeps near-vertical movement
+            // from jittering the flip.
+            if (_sr != null && _def != null && Mathf.Abs(_faceDir.x) > 0.05f)
+            {
+                bool movingLeft = _faceDir.x < 0f;
+                _sr.flipX = _def.artFacesLeft ? !movingLeft : movingLeft;
+            }
+
+            if (!_animated) return;
+            // Hurt strip wins while its timer runs (playtest #6), then move/idle.
+            var frames = _hurtAnimTimer > 0f && _hurt != null && _hurt.Length > 0
+                ? _hurt
+                : (_moving && _move.Length > 0 ? _move : _idle);
+            if (frames == null || frames.Length == 0) return;
+            _animTimer += Time.deltaTime;
+            float spf = 1f / AnimFps;
+            while (_animTimer >= spf) { _animTimer -= spf; _frame++; }
+            _sr.sprite = frames[_frame % frames.Length];
+        }
+
+
+        void PickTarget()
+        {
+            _repathTimer = _def.repathSeconds;
+            float ang = UnityEngine.Random.value * Mathf.PI * 2f;
+            float r = UnityEngine.Random.value * _def.wanderRadius;
+            _target = _ground + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
+        }
+
+        void Place()
+        {
+            var c = IsoGrid.WorldToCell(new Vector3(_ground.x, _ground.y, 0f));
+            _height = _world.GetHeight(c.x, c.y);
+            transform.position = new Vector3(_ground.x, _ground.y + _height * IsoGrid.HeightStep, 0f);
+            _sr.sortingOrder = IsoGrid.SortingOrder(c.x, c.y, _height, IsoGrid.LayerActor);
+        }
+    }
+}

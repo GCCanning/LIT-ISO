@@ -390,4 +390,120 @@ namespace IsoCore.Foundation
             return ns;
         }
 
-        // Returns a FLAT, top-face-only copy of the tile: the c
+        // Returns a FLAT, top-face-only copy of the tile: the cube side walls are cleared so
+        // only the diamond top remains, with the light border baked on the diamond edge.
+        // Used for floor (height 0) cells so the ground reads flat. Cached per source sprite.
+        Sprite FlatTile(Sprite src)
+        {
+            if (_flat.TryGetValue(src, out var cached) && cached != null) return cached;
+
+            var rect = src.textureRect;
+            int w = (int)rect.width, h = (int)rect.height;
+            Color[] pixels;
+            try { pixels = src.texture.GetPixels((int)rect.x, (int)rect.y, w, h); }
+            catch { _flat[src] = src; return src; }
+
+            // Keep only pixels inside the top-face diamond (rhombus); clear the side walls.
+            // Diamond centre ≈ (15.5, 16), half-width 16, half-height 11 (top vertex at y=27).
+            const float cx = 15.5f, cy = 16f, hw = 16f, hh = 11f;
+            for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+            {
+                float nx = Mathf.Abs(x - cx) / hw;
+                float ny = Mathf.Abs(y - cy) / hh;
+                if (nx + ny > 1.0f) pixels[y * w + x] = new Color(0, 0, 0, 0);
+            }
+
+            BlendBorderLine(pixels, w, h, new Vector2Int(15, 27), new Vector2Int(31, 16));
+            BlendBorderLine(pixels, w, h, new Vector2Int(31, 16), new Vector2Int(15, 5));
+            BlendBorderLine(pixels, w, h, new Vector2Int(15, 5), new Vector2Int(0, 16));
+            BlendBorderLine(pixels, w, h, new Vector2Int(0, 16), new Vector2Int(15, 27));
+
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false)
+            { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            tex.SetPixels(pixels);
+            tex.Apply();
+
+            var ns = Sprite.Create(tex, new Rect(0, 0, w, h),
+                new Vector2(src.pivot.x / w, src.pivot.y / h), src.pixelsPerUnit);
+            ns.name = src.name + "_flat";
+            _flat[src] = ns;
+            return ns;
+        }
+
+        // Lightens the existing (opaque) tile pixels along a line — so the border hugs the
+        // tile art and never paints onto transparent areas outside the top face.
+        // Operates on the CPU-side pixel array (perf: no per-pixel texture calls).
+        static void BlendBorderLine(Color[] px, int w, int h, Vector2Int a, Vector2Int b)
+        {
+            int x0 = a.x, y0 = a.y, x1 = b.x, y1 = b.y;
+            int dx = Mathf.Abs(x1 - x0), dy = Mathf.Abs(y1 - y0);
+            int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+            int err = dx - dy;
+            while (true)
+            {
+                if (x0 >= 0 && x0 < w && y0 >= 0 && y0 < h)
+                {
+                    int idx = y0 * w + x0;
+                    var c = px[idx];
+                    if (c.a > 0.4f)
+                    {
+                        c = Color.Lerp(c, BorderColor, BorderStrength);
+                        c.a = 1f;
+                        px[idx] = c;
+                    }
+                }
+                if (x0 == x1 && y0 == y1) break;
+                int e2 = 2 * err;
+                if (e2 > -dy) { err -= dy; x0 += sx; }
+                if (e2 < dx) { err += dx; y0 += sy; }
+            }
+        }
+
+        void EnsureStack(SpriteRenderer sr, IsoWorld world, int wx, int wy, int height, Sprite sprite)
+        {
+            if (!_stacks.TryGetValue(sr, out var stack))
+            {
+                stack = new List<SpriteRenderer>();
+                _stacks[sr] = stack;
+            }
+
+            // Grow the children list to cover every level below the surface.
+            while (stack.Count < height)
+            {
+                var go = new GameObject("StackTile");
+                go.transform.SetParent(sr.transform.parent, false); // sibling of the surface SR (same flat parent)
+                var stackSr = go.AddComponent<SpriteRenderer>();
+                stackSr.sharedMaterial = SpriteAmbient.Material;
+                stack.Add(stackSr);
+            }
+
+            // Configure the active levels, hide the rest.
+            for (int i = 0; i < stack.Count; i++)
+            {
+                var child = stack[i];
+                if (i < height)
+                {
+                    child.gameObject.SetActive(true);
+                    child.sprite = sprite;
+                    child.transform.position = IsoGrid.CellToWorld(wx, wy, i);
+                    child.sortingLayerName = GroundSortingLayer;
+                    child.sortingOrder = GroundOrder(wx, wy, i, 0);
+                    // Side faces darker than tops so the cliff body reads as a shaded wall.
+                    var st = DepthTint(i);
+                    child.color = new Color(st.r * SideFaceShade, st.g * SideFaceShade, st.b * SideFaceShade, 1f);
+                }
+                else child.gameObject.SetActive(false);
+            }
+        }
+
+        void HideStack(SpriteRenderer sr)
+        {
+            if (!_stacks.TryGetValue(sr, out var stack)) return;
+            foreach (var child in stack)
+                if (child != null) child.gameObject.SetActive(false);
+        }
+
+
+    }
+}

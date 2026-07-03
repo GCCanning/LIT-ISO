@@ -1,13 +1,12 @@
 using UnityEngine;
 
 /// <summary>
-/// Smooth camera zoom controller with keyboard, mouse-wheel, and UI button support.
+/// Smooth camera zoom controller with keyboard and UI button support.
 ///
 /// Keyboard shortcuts:
 ///   - Ctrl + '=' or Ctrl + '+' : zoom in
 ///   - Ctrl + '-'              : zoom out
 ///   - Hold the keys for smooth continuous zoom
-///   - Mouse wheel (optional)  : zoom in/out
 ///
 /// Public API for UI buttons:
 ///   - <see cref="ZoomIn"/>      — Step zoom in
@@ -41,9 +40,6 @@ public class ZoomController : MonoBehaviour
     [Tooltip("Step amount applied on initial tap of Ctrl +/- (instant feedback).")]
     public float tapZoomStep = 1f;
 
-    [Tooltip("Mouse wheel zoom speed (negative to invert).")]
-    public float scrollZoomSpeed = 2.5f;
-
     [Header("Smoothing")]
     [Tooltip("How quickly current zoom catches up to target. Higher = snappier.")]
     [Range(2f, 20f)]
@@ -52,9 +48,6 @@ public class ZoomController : MonoBehaviour
     [Header("Input")]
     [Tooltip("Require Ctrl to be held for +/- to zoom (true = standard, false = always zoom on +/-).")]
     public bool requireCtrl = true;
-
-    [Tooltip("Enable mouse-wheel zoom.")]
-    public bool enableScrollWheel = true;
 
     [Header("Debug — Read-only")]
     [SerializeField] private float targetZoom;
@@ -80,7 +73,6 @@ public class ZoomController : MonoBehaviour
     private void Update()
     {
         HandleKeyboardInput();
-        HandleScrollInput();
         ApplyZoom();
     }
 
@@ -124,18 +116,6 @@ public class ZoomController : MonoBehaviour
         }
 
         targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
-    }
-
-    private void HandleScrollInput()
-    {
-        if (!enableScrollWheel) return;
-
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scroll) > 0.0001f)
-        {
-            targetZoom -= scroll * scrollZoomSpeed;
-            targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
-        }
     }
 
     private void ApplyZoom()

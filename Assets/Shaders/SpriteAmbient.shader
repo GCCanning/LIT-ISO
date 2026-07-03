@@ -49,4 +49,28 @@ Shader "IsoCore/SpriteAmbient"
             {
                 fixed4 c = SampleSpriteTexture(IN.texcoord) * IN.color;
 
-                // Night grade (playtest 2026-07-02 #8): the world de
+                // Night grade (playtest 2026-07-02 #8): the world desaturates and
+                // blue-shifts as night deepens, EXCEPT warm light sources (campfire,
+                // lantern flames on the Warm material), whose ambient is lifted toward
+                // firelight instead — so they glow by contrast against the cool night.
+                fixed3 amb = _AmbientColor.rgb;
+                if (_WarmExempt > 0.5)
+                    amb = lerp(amb, fixed3(1.0, 0.92, 0.78), _NightGrade * 0.85);
+                c.rgb *= amb;
+
+                float g = _NightGrade * (1.0 - saturate(_WarmExempt));
+                if (g > 0.001)
+                {
+                    float lum = dot(c.rgb, fixed3(0.299, 0.587, 0.114));
+                    c.rgb = lerp(c.rgb, lum * fixed3(0.80, 0.88, 1.16), 0.40 * g);
+                }
+
+                c.rgb *= c.a;               // premultiply (matches Sprites/Default blend)
+                return c;
+            }
+        ENDCG
+        }
+    }
+
+    Fallback "Sprites/Default"
+}
