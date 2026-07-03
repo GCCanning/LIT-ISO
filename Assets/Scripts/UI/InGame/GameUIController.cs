@@ -1739,44 +1739,4 @@ namespace LitIso.UI.InGame
         {
             var bevel = NewImage(box, "Bevel", null, Color.clear);
             bevel.raycastTarget = false;
-            HardBorder(bevel.gameObject, LitIsoTheme.Stone, 2f);
-            var bvr = bevel.rectTransform;
-            bvr.anchorMin = Vector2.zero; bvr.anchorMax = Vector2.one;
-            bvr.offsetMin = new Vector2(2f, 2f); bvr.offsetMax = new Vector2(-2f, -2f);
-        }
-
-        static Image NewImage(Transform parent, string name, Sprite sprite, Color color)
-        {
-            var go = new GameObject(name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            var img = go.AddComponent<Image>();
-            img.sprite = sprite;
-            img.color = sprite != null ? Color.white : color;
-            return img;
-        }
-
-        static Text NewText(Transform parent, string name, string value, int size, TextAnchor anchor)
-        {
-            var go = new GameObject(name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            var t = go.AddComponent<Text>();
-            t.text = value;
-            t.alignment = anchor;
-            t.color = TextCol;
-            t.horizontalOverflow = HorizontalWrapMode.Wrap;
-            t.verticalOverflow = VerticalWrapMode.Truncate;
-            LitIsoFont.Apply(t, size);
-            t.resizeTextForBestFit = true;
-            t.resizeTextMaxSize = t.fontSize;
-            // Floor low enough that long live strings (e.g. a full weather forecast)
-            // shrink to fit their box instead of spilling over the border. The user
-            // wants autofit-inside over overflow, so favour shrink over clip.
-            t.resizeTextMinSize = Mathf.Min(8, t.fontSize);
-            var shadow = go.AddComponent<Shadow>();
-            shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
-            shadow.effectDistance = new Vector2(1.5f, -1.5f);
-            shadow.useGraphicAlpha = true;
-            return t;
-        }
-    }
-}
+            HardBorder(be
