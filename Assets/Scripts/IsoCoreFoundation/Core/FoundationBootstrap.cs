@@ -357,6 +357,18 @@ namespace IsoCore.Foundation
             BiomeDiscovery = gameObject.AddComponent<FoundationBiomeDiscovery>();
             BiomeDiscovery.Init(World, Player, Progression, InteractionOverlay, Instances);
 
+            // "The System is watching" (owner, 2026-07-02): bold deeds weigh more on the
+            // trial — +50% at night, +10% per distance tier from the spawn hearth (cap +50%).
+            Vector2 hearth = Player != null ? Player.Ground : Vector2.zero;
+            Progression.TrialIntensity = () =>
+            {
+                float mul = 1f;
+                if (DayNight != null && DayNight.IsNight) mul += 0.5f;
+                if (Player != null)
+                    mul += Mathf.Min(0.5f, Mathf.Floor((Player.Ground - hearth).magnitude / 24f) * 0.1f);
+                return mul;
+            };
+
             // The old IMGUI FoundationHUD backup is intentionally not created.
             // uGUI is the canonical runtime UI; GameHudInitializer spawns it when Ready fires.
 
@@ -779,6 +791,7 @@ namespace IsoCore.Foundation
 
         Vector3 _camVel;
         Vector2 _lastImpactOffset;
+        float _lastDayNightTime = -1f;
         bool _camPanning;
         Vector3 _panGrabWorld;
         [SerializeField] float cameraFollowSmoothTime = 0.15f;
@@ -833,6 +846,19 @@ namespace IsoCore.Foundation
             {
                 _lastImpactOffset = FoundationImpactFeedback.Tick(Time.unscaledDeltaTime);
                 _cam.transform.position += (Vector3)_lastImpactOffset;
+            }
+
+            // Proving-Week clock: the trial day advances when the day/night cycle wraps
+            // past midnight (naturally, or by sleeping at a campfire, which jumps the
+            // clock forward over the wrap). Day 7 completing triggers the existing
+            // CompleteTrial() → class-offer pipeline. (Owner direction, 2026-07-02 —
+            // previously nothing in gameplay ever advanced the trial day.)
+            if (DayNight != null && Progression != null)
+            {
+                float t = DayNight.time;
+                if (_lastDayNightTime >= 0f && t < _lastDayNightTime - 0.5f)
+                    Progression.AdvanceTrialDay();
+                _lastDayNightTime = t;
             }
         }
 

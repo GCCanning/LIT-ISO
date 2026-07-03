@@ -22,6 +22,18 @@ namespace IsoCore.Foundation
         readonly Dictionary<string, int> _affinityScores = new();
         readonly List<string> _acquiredTitles = new();
         readonly List<FoundationTrialEvidenceEntry> _evidenceLog = new();
+        // --- "The System is watching" (owner direction, 2026-07-02) -----------------
+        // Repetition is judged once: per-event counts drive hard diminishing returns on
+        // TRIAL SCORE only (skill/affinity XP keeps flowing, so play stays worthwhile).
+        // Novelty (a new sourceId for an event, e.g. first kill of each creature) always
+        // counts in full. Both rebuild from the persisted evidence log — no save change.
+        readonly Dictionary<string, int> _evidenceEventCounts = new(StringComparer.Ordinal);
+        readonly HashSet<string> _evidenceNovelty = new(StringComparer.Ordinal);
+        readonly Dictionary<TrialEvidenceCategory, int> _weighedTiers = new();
+        int _lastVerdictScore;
+        /// <summary>Optional context multiplier (set by bootstrap): bold deeds — at night,
+        /// far from the hearth — weigh more. Clamped to [1, 2].</summary>
+        public Func<float> TrialIntensity;
         FoundationTrialLifecycleSaveData _trialLifecycle = CreateDefaultTrialLifecycle();
         int _nextEvidenceSequence = 1;
         int _callingXp;
@@ -285,13 +297,34 @@ namespace IsoCore.Foundation
             var xpBefore = CopyIntDictionary(_xpChannels);
             var titleBefore = CopyIntDictionary(_titleProgress);
             var affinityBefore = CopyIntDictionary(_affinityScores);
-            ApplyEvidenceWeights(evidence.evidenceWeights, amount);
+
+            // The System judges PROOF, not repetition: the first few of each deed count in
+            // full, then the trial-score weight decays to nothing (~20 repeats). A deed
+            // with a NEW source (first kill of each creature, first craft of each recipe,
+            // each new biome) always counts in full. Bold context (night / far from the
+            // hearth) multiplies the weight. XP, titles and affinities never decay.
+            _evidenceEventCounts.TryGetValue(evidence.id, out int priorCount);
+            string effectiveSource = string.IsNullOrWhiteSpace(sourceId) ? evidence.id : sourceId;
+            bool novel = _evidenceNovelty.Add(evidence.id + "|" + effectiveSource);
+            float judgment = JudgmentWeight(priorCount);
+            if (novel && judgment < 1f) judgment = 1f;
+            float intensity = 1f;
+            if (TrialIntensity != null)
+            {
+                intensity = TrialIntensity();
+                if (intensity < 1f) intensity = 1f;
+                else if (intensity > 2f) intensity = 2f;
+            }
+            _evidenceEventCounts[evidence.id] = priorCount + Math.Max(1, amount);
+
+            ApplyEvidenceWeights(evidence.evidenceWeights, amount, judgment * intensity);
             ApplyXpGrants(evidence.xpGrants, amount);
             ApplyTitleProgress(evidence.titleProgress, amount);
             ApplyAffinityProgress(evidence.affinityProgress, amount);
 
-            if (!string.IsNullOrWhiteSpace(evidence.message))
-                SystemFeed.Queue(evidence.messageChannel, evidence.message, string.IsNullOrWhiteSpace(sourceId) ? evidence.id : sourceId, 1);
+            // The System speaks rarely (owner choice, 2026-07-02): routine evidence goes
+            // to the ledger silently; the voice appears only at weighings and verdicts
+            // (see below and QueueDailyVerdict).
 
             _evidenceLog.Add(new FoundationTrialEvidenceEntry
             {
@@ -309,9 +342,67 @@ namespace IsoCore.Foundation
 
             TrialEvidenceAdded?.Invoke(evidence, amount);
             if (GradeForecast != beforeGrade)
+            {
                 GradeForecastChanged?.Invoke(GradeForecast);
+                SystemFeed.Queue(SystemMessageChannel.TrialEvidence,
+                    $"The System revises its measure of you. Forecast: {GradeForecast}.",
+                    "system_watcher", 2);
+            }
+            QueueCategoryWeighings(scoreBefore);
             Changed?.Invoke();
             return true;
+        }
+
+        /// <summary>Hard-cutoff diminishing returns on repeated proof (owner choice):
+        /// full value for the first 5, half to 10, a quarter to 20, then nothing.</summary>
+        static float JudgmentWeight(int priorCount)
+        {
+            if (priorCount < 5) return 1f;
+            if (priorCount < 10) return 0.5f;
+            if (priorCount < 20) return 0.25f;
+            return 0f;
+        }
+
+        /// <summary>One "weighed" line each time a category's score crosses a 40-point
+        /// tier — the System acknowledging a body of work, not a single act.</summary>
+        void QueueCategoryWeighings(Dictionary<TrialEvidenceCategory, int> before)
+        {
+            foreach (var pair in _trialScores)
+            {
+                int prev = before != null && before.TryGetValue(pair.Key, out int b) ? b : 0;
+                int prevTier = prev / 40;
+                int tier = pair.Value / 40;
+                if (tier <= prevTier) continue;
+                _weighedTiers.TryGetValue(pair.Key, out int announced);
+                if (tier <= announced) continue;
+                _weighedTiers[pair.Key] = tier;
+                SystemFeed.Queue(SystemMessageChannel.TrialEvidence,
+                    $"Your {pair.Key.ToString().ToLowerInvariant()} has been weighed.",
+                    "system_watcher", 2);
+            }
+        }
+
+        /// <summary>Dawn verdict, once per trial day — tone tracks the forecast and
+        /// whether yesterday actually added proof.</summary>
+        void QueueDailyVerdict(int day)
+        {
+            int total = TotalTrialScore;
+            int delta = total - _lastVerdictScore;
+            _lastVerdictScore = total;
+
+            string tone = GradeForecast switch
+            {
+                FoundationGrade.S => "exceptional",
+                FoundationGrade.A => "promising",
+                FoundationGrade.B => "capable",
+                FoundationGrade.C => "adequate",
+                FoundationGrade.D => "uneven",
+                _ => "wanting",
+            };
+            string line = $"Day {day} of {TrialDurationDays}. The System weighs your record: {tone}.";
+            if (delta <= 2 && day > 1)
+                line += " It expects more than survival.";
+            SystemFeed.Queue(SystemMessageChannel.TrialEvidence, line, "system_watcher", 3);
         }
 
         public bool SetTrialDay(int day)
@@ -320,7 +411,10 @@ namespace IsoCore.Foundation
             int next = Math.Max(1, Math.Min(TrialDurationDays, day));
             if (_trialLifecycle.trialDay == next) return false;
 
+            bool advanced = next > _trialLifecycle.trialDay;
             _trialLifecycle.trialDay = next;
+            if (advanced && !_trialLifecycle.completed)
+                QueueDailyVerdict(next);
             if (_trialLifecycle.trialDay >= TrialDurationDays)
                 CompleteTrial();
             Changed?.Invoke();
@@ -574,6 +668,10 @@ namespace IsoCore.Foundation
             _activeBuffs.Clear();
             _regionShifts.Clear();
             _trialScores.Clear();
+            _evidenceEventCounts.Clear();
+            _evidenceNovelty.Clear();
+            _weighedTiers.Clear();
+            _lastVerdictScore = 0;
             _xpChannels.Clear();
             _titleProgress.Clear();
             _affinityScores.Clear();
@@ -637,12 +735,14 @@ namespace IsoCore.Foundation
             return true;
         }
 
-        void ApplyEvidenceWeights(FoundationEvidenceWeight[] weights, int multiplier)
+        void ApplyEvidenceWeights(FoundationEvidenceWeight[] weights, int multiplier, float judgmentFactor = 1f)
         {
-            if (weights == null) return;
+            if (weights == null || judgmentFactor <= 0f) return;
             for (int i = 0; i < weights.Length; i++)
             {
-                int amount = weights[i].amount * multiplier;
+                // Round-half-up so a half-weight deed still registers, but a fully
+                // judged (factor 0) deed adds nothing.
+                int amount = (int)(weights[i].amount * multiplier * judgmentFactor + 0.5f);
                 if (amount <= 0) continue;
                 if (!_trialScores.ContainsKey(weights[i].category)) _trialScores[weights[i].category] = 0;
                 _trialScores[weights[i].category] += amount;
@@ -759,8 +859,25 @@ namespace IsoCore.Foundation
                 entries[i].affinityDeltas = entries[i].affinityDeltas ?? Array.Empty<FoundationKeyValueInt>();
                 _evidenceLog.Add(entries[i]);
                 maxSequence = Math.Max(maxSequence, entries[i].sequence);
+
+                // Rebuild the watcher's memory (repetition counts + novelty) from the
+                // persisted ledger, so diminishing returns survive save/reload without
+                // any save-format change.
+                string evId = entries[i].eventId ?? "";
+                if (evId.Length > 0)
+                {
+                    _evidenceEventCounts.TryGetValue(evId, out int c);
+                    _evidenceEventCounts[evId] = c + Math.Max(1, entries[i].amount);
+                    string src = string.IsNullOrWhiteSpace(entries[i].sourceId) ? evId : entries[i].sourceId;
+                    _evidenceNovelty.Add(evId + "|" + src);
+                }
             }
             _nextEvidenceSequence = Math.Max(1, maxSequence + 1);
+
+            // Already-weighed tiers and the verdict baseline derive from restored scores.
+            foreach (var pair in _trialScores)
+                _weighedTiers[pair.Key] = pair.Value / 40;
+            _lastVerdictScore = TotalTrialScore;
         }
 
         static FoundationTrialLifecycleSaveData CreateDefaultTrialLifecycle()

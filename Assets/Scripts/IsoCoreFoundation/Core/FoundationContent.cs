@@ -1142,6 +1142,12 @@ namespace IsoCore.Foundation
                 new[] { X(FoundationXpChannel.SkillMastery, "foraging", 3), X(FoundationXpChannel.Character, "character", 1) },
                 new[] { T("trail_cook", 1) },
                 new[] { A("root", 2), A("hearth", 1) });
+            Evidence("night_endured", "Night Endured",
+                "Entry recorded: a night faced without firelight. The System marks your nerve.",
+                new[] { W(TrialEvidenceCategory.Survival, 4), W(TrialEvidenceCategory.Exploration, 1) },
+                new[] { X(FoundationXpChannel.SkillMastery, "exploration", 3), X(FoundationXpChannel.Character, "character", 2) },
+                new[] { T("first_night_survivor", 1) },
+                new FoundationAffinityGrant[0]);
             Evidence("biome_discovered", "Region Discovered",
                 "Entry recorded: a new region charted. The System notes your reach.",
                 new[] { W(TrialEvidenceCategory.Exploration, 3), W(TrialEvidenceCategory.Survival, 1) },

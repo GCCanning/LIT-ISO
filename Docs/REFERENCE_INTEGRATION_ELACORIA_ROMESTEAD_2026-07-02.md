@@ -163,6 +163,33 @@ and every first footstep into a new biome is a scored System moment that feeds t
 Proving-Week grade — gathering→camp prep→night survival→exploration→Trial score now form
 one visible loop.
 
+## 9b. Addendum — same-day follow-up pass (owner-directed, 2026-07-02 PM)
+
+**"The System is watching" trial scoring** (`FoundationProgression.cs`, `FoundationBootstrap.cs`,
+`FoundationContent.cs`, `FoundationCampingSystem.cs`): trial score now uses hard diminishing
+returns per deed (full ×5 → half ×10 → quarter ×20 → zero; XP/titles/affinities never decay),
+full-value novelty for each new source per deed (first kill of each species, each biome, each
+recipe), a night/distance boldness multiplier (cap ×2), and a rare System voice — category
+weighings every 40 points, forecast-change lines, and one dawn verdict per trial day. The trial
+day now actually advances when the day/night cycle wraps (it previously never advanced in
+gameplay) and day 7 completes into the existing CompleteTrial → class-offer pipeline. New
+`night_endured` evidence for spending 20+ real seconds of night outside a ward. Judgment
+memory rebuilds from the persisted evidence ledger — save stays v13.
+
+**Combat/movement fixes** (`IsoFoundationPlayer.cs`, `Mob.cs`, `FoundationConfig.cs`): melee
+now damages what is in front of the facing direction via the live mob registry (mobs carry no
+physics colliders, so the old OverlapCircle path could not hit them); leaps land on cell
+centres and hold takeoff height mid-arc so river/gap jumps no longer stutter or catch on the
+bank; `jumpLeapTiles` 2→3; new `attackVfxEnabled=false` gate hides the slash arc + sprite
+flash so raw animations are reviewable (`abilityVfxEnabled` already gates cast VFX).
+
+Verification for this addendum is the same owner run-list as §7, plus: melee swings hit only
+in the facing cone; a Space+direction leap clears a 2–3-tile river without stutter; no slash
+arc/flash appears; chopping the same tree repeatedly stops moving the Forecast while the first
+kill of a new creature still does; dawn brings one verdict line; the trial completes on day 7.
+Tuning knobs to revisit after playtest: GradeForTotal thresholds, the 40-point weighing tier,
+and the decay curve (5/10/20).
+
 ## 10. Ranked next improvements
 
 1. Land + verify this pass (owner build + smoke list in §7), push the 24+2 commits.

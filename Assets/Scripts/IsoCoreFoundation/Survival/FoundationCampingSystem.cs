@@ -127,9 +127,26 @@ namespace IsoCore.Foundation
                         ? "Night has fallen. The fire ward holds — stay inside its light."
                         : "Night has fallen. The hunt begins. Firelight is safety.",
                     "camping", 2);
+                _enduredUnwarded = false;
+            }
+            // Spending real time at night outside any ward is a deed the System marks
+            // once at dawn ("night_endured" evidence, owner direction 2026-07-02).
+            if (night && !AtCampsite)
+                _unwardedNightSeconds += Time.deltaTime;
+            if (night)
+                _enduredUnwarded |= _unwardedNightSeconds >= 20f;
+            if (!night && _wasNight)
+            {
+                if (_enduredUnwarded)
+                    _progression?.RecordEvidence("night_endured", 1, "night");
+                _enduredUnwarded = false;
+                _unwardedNightSeconds = 0f;
             }
             _wasNight = night;
         }
+
+        bool _enduredUnwarded;
+        float _unwardedNightSeconds;
 
         /// <summary>
         /// Keeps the pooled ward-radius ring on the active camp, fading in from dusk so
