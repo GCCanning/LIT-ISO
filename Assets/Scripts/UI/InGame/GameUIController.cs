@@ -147,6 +147,7 @@ namespace LitIso.UI.InGame
         Text _timeText;          // "18:24"
         Text _phaseText;         // "Night · Emberfall Woods"
         Text _dayChipText;       // "Day 4 of 7 · Forecast C"
+        RectTransform _trialBannerRow; // TRIAL chip row; hidden once the trial completes
 
         // Minimap player marker.
         RectTransform _playerMarker;
@@ -683,8 +684,8 @@ namespace LitIso.UI.InGame
         // ------------------------------------------------ day/time + trial band
 
         // TOP-CENTER: a clock band (time + moon + phase/location) over a TRIAL banner
-        // ("TRIAL" gold chip + "Day 4 of 7 · Forecast C" dark chip). Static design
-        // text — the live day/forecast feed is owned by TrialStatusBanner elsewhere.
+        // ("TRIAL" gold chip + "Day 4 of 7 · Forecast C" dark chip). Live-fed by
+        // RefreshDayChip; this is the single trial-status element (task #3, 2026-07-02).
         void BuildDayTimeBand(Transform parent)
         {
             var col = NewRect("DayBand", parent);
@@ -727,8 +728,9 @@ namespace LitIso.UI.InGame
             var phr = phase.rectTransform; phr.anchorMin = new Vector2(0f, 0.5f); phr.anchorMax = new Vector2(1f, 0.5f); phr.pivot = new Vector2(0f, 0.5f);
             phr.offsetMin = new Vector2(120f, -10f); phr.offsetMax = new Vector2(-12f, 10f);
 
-            // --- trial banner ---
+            // --- trial banner (the ONLY trial status element; live-fed by RefreshDayChip) ---
             var banner = NewRect("TrialBanner", col);
+            _trialBannerRow = banner;
             banner.anchorMin = banner.anchorMax = new Vector2(0.5f, 1f); banner.pivot = new Vector2(0.5f, 1f);
             banner.anchoredPosition = new Vector2(0f, -46f);
             banner.sizeDelta = new Vector2(360f, 34f);
@@ -1563,6 +1565,12 @@ namespace LitIso.UI.InGame
         void RefreshDayChip()
         {
             if (_dayChipText == null || _progression == null) return;
+            // Hide the whole TRIAL row once the trial completes (behaviour ported from
+            // the retired standalone TrialStatusBanner, playtest task #3).
+            bool show = !_progression.TrialCompleted;
+            if (_trialBannerRow != null && _trialBannerRow.gameObject.activeSelf != show)
+                _trialBannerRow.gameObject.SetActive(show);
+            if (!show) return;
             string shown = "Day " + _progression.TrialDay + " of " + _progression.TrialDurationDays + " · Forecast " + _progression.GradeForecast;
             if (shown != _dayChipText.text) _dayChipText.text = shown;
         }
@@ -1733,4 +1741,4 @@ namespace LitIso.UI.InGame
         }
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              

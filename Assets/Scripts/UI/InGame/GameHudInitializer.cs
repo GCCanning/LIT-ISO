@@ -36,7 +36,6 @@ namespace LitIso.UI.InGame
         static PlayerInteraction         _boundInteraction;
         static FoundationBootstrap       _boundBootstrap;
         static AbilityWheelView          _abilityWheel;
-        static TrialStatusBanner         _trialBanner;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Hook()
@@ -112,17 +111,10 @@ namespace LitIso.UI.InGame
             _panels.BindProgression(progression, bootstrap.QoL);
             _panels.BindAdmin(new FoundationAdminAdapter(bootstrap.Inventory, bootstrap.Content, stats));
 
-            // ---- Trial status banner (live data: day + grade forecast) -----
-            if (progression != null)
-            {
-                if (_trialBanner == null)
-                {
-                    var tgo = new GameObject("TrialBanner");
-                    Object.DontDestroyOnLoad(tgo);
-                    _trialBanner = tgo.AddComponent<TrialStatusBanner>();
-                }
-                _trialBanner.Bind(progression);
-            }
+            // Trial status (day + grade forecast) lives in GameUIController's day band
+            // (the TRIAL chip). The old standalone TrialStatusBanner canvas was removed
+            // 2026-07-02 - it stacked a duplicate gold bar on top of the clock band
+            // (playtest task #3).
 
             // ---- Ability slots + hold-X wheel (live cast through the Foundation
             //      ability system + dispatcher) --------------------------------
@@ -232,7 +224,6 @@ namespace LitIso.UI.InGame
             DestroyGo(_notifyView != null ? _notifyView.gameObject : null);
             DestroyGo(_dayView != null ? _dayView.gameObject : null);
             DestroyGo(_abilityWheel != null ? _abilityWheel.gameObject : null);
-            DestroyGo(_trialBanner != null ? _trialBanner.gameObject : null);
 
             _adapter?.Dispose();
             _adapter = null;
@@ -248,7 +239,6 @@ namespace LitIso.UI.InGame
             _notifyView = null;
             _dayView = null;
             _abilityWheel = null;
-            _trialBanner = null;
 
             _boundInteraction = null;
             _boundBootstrap = null;
@@ -261,3 +251,4 @@ namespace LitIso.UI.InGame
         }
     }
 }
+                                                                                                                                                                                                                                                                                                                                      
