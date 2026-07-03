@@ -107,3 +107,7 @@ handover_check_temp.png
 # Proprietary game binaries pulled in by a local tool — copyright risk, never commit
 /Tools/StardewNpcSheetGenerator/_local/
 Recordings/
+
+# Kenney CC0 staging kits (raw downloads; curated pieces are exported to
+# Assets/Resources/UI/InGame via Tools/UIKits/kenney_skin_build.py)
+Tools/UIKits/Kenney/
