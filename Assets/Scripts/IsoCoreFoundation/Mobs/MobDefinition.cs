@@ -11,6 +11,10 @@ namespace IsoCore.Foundation
         [Header("Render")]
         public Color color = new Color(0.4f, 0.8f, 0.4f);
         public float sizeUnits = 0.55f;
+        [Tooltip("Which way the base art looks. Cheap 2-direction facing flips the sprite " +
+                 "so mobs face their chase direction (playtest 2026-07-02 #5). Predator " +
+                 "plants face RIGHT (false); the slime sheet faces LEFT (true).")]
+        public bool artFacesLeft = false;
 
         [Header("Behaviour")]
         public MobBehavior behaviour = MobBehavior.Passive;
@@ -59,13 +63,4 @@ namespace IsoCore.Foundation
         public EquipTier[] equipTiers;
     }
 
-    /// <summary>Phase 3: at/above <see cref="minLevel"/>, an NPC wears these LPC visual ids over its themed base.</summary>
-    [System.Serializable]
-    public struct EquipTier
-    {
-        public int minLevel;
-        public string[] lpcCatalogIds;
-    }
-
-    public class MobDatabase : Database<MobDefinition> { }
-}
+    /// <s

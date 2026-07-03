@@ -264,6 +264,10 @@ namespace IsoCore.Foundation
 
             _moving = false;
             var dir = _target - _ground;
+            // Hunters face their prey even while standing still (in attack range or
+            // blocked) — playtest 2026-07-02 #5: mob sprites never turned.
+            if ((_aggressive || _foe != null) && dir.sqrMagnitude > 1e-4f)
+                _faceDir = dir.normalized;
             if (dir.sqrMagnitude > 0.0001f)
             {
                 var step = dir.normalized * EffectiveMoveSpeed * Time.deltaTime;
@@ -422,30 +426,18 @@ namespace IsoCore.Foundation
         void Animate()
         {
             if (_externalAppearance) return; // the layered character creator owns the sprite
+
+            // Cheap 2-direction facing (playtest 2026-07-02 #5): flip the sprite so the
+            // mob looks along its chase/move direction. Full 4-direction rows are
+            // blocked on owner art (HANDOVER_2026-06-29 §4.3). Applies to animated AND
+            // static (decoration-sprite) mobs; a dead-zone keeps near-vertical movement
+            // from jittering the flip.
+            if (_sr != null && _def != null && Mathf.Abs(_faceDir.x) > 0.05f)
+            {
+                bool movingLeft = _faceDir.x < 0f;
+                _sr.flipX = _def.artFacesLeft ? !movingLeft : movingLeft;
+            }
+
             if (!_animated) return;
             var frames = _moving && _move.Length > 0 ? _move : _idle;
             if (frames == null || frames.Length == 0) return;
-            _animTimer += Time.deltaTime;
-            float spf = 1f / AnimFps;
-            while (_animTimer >= spf) { _animTimer -= spf; _frame++; }
-            _sr.sprite = frames[_frame % frames.Length];
-        }
-
-
-        void PickTarget()
-        {
-            _repathTimer = _def.repathSeconds;
-            float ang = UnityEngine.Random.value * Mathf.PI * 2f;
-            float r = UnityEngine.Random.value * _def.wanderRadius;
-            _target = _ground + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
-        }
-
-        void Place()
-        {
-            var c = IsoGrid.WorldToCell(new Vector3(_ground.x, _ground.y, 0f));
-            _height = _world.GetHeight(c.x, c.y);
-            transform.position = new Vector3(_ground.x, _ground.y + _height * IsoGrid.HeightStep, 0f);
-            _sr.sortingOrder = IsoGrid.SortingOrder(c.x, c.y, _height, IsoGrid.LayerActor);
-        }
-    }
-}

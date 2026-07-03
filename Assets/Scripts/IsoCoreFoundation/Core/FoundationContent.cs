@@ -437,6 +437,7 @@ namespace IsoCore.Foundation
             slime.threatTier = 1;
             slime.campWardIgnoreChance = 0.12f;
             slime.contactDamage = 4f;
+            slime.artFacesLeft = true; // slime sheet's eye/face is on the LEFT
             var fox = Mob("fox", new Color(0.85f, 0.45f, 0.20f), MobBehavior.Skittish, 2.0f, 7f,
                 new[] { new ItemDrop("hide", 1, 1) });
             fox.threatTier = 2;
@@ -481,14 +482,17 @@ namespace IsoCore.Foundation
                 new[] { new ItemDrop("slime_goo", 1, 2) });
             slimeCommon.threatTier = 1; slimeCommon.maxHealth = 20f; slimeCommon.contactDamage = 4f;
             slimeCommon.meleeDamage = 4f; slimeCommon.campWardIgnoreChance = 0.12f;
+            slimeCommon.artFacesLeft = true;
             var slimeRare = Mob("slime_rare", new Color(0.45f, 0.55f, 0.95f), MobBehavior.Hostile, 1.95f, 5f,
                 new[] { new ItemDrop("slime_goo", 1, 3) });
             slimeRare.threatTier = 2; slimeRare.maxHealth = 48f; slimeRare.contactDamage = 8f;
             slimeRare.meleeDamage = 8f; slimeRare.campWardIgnoreChance = 0.2f;
+            slimeRare.artFacesLeft = true;
             var slimeBoss = Mob("slime_boss", new Color(0.85f, 0.35f, 0.55f), MobBehavior.Hostile, 1.05f, 5f,
                 new[] { new ItemDrop("slime_goo", 3, 6) });
             slimeBoss.threatTier = 4; slimeBoss.maxHealth = 180f; slimeBoss.contactDamage = 18f;
             slimeBoss.meleeDamage = 18f; slimeBoss.campWardIgnoreChance = 0.4f; slimeBoss.sizeUnits = 0.9f;
+            slimeBoss.artFacesLeft = true;
 
             // ---- Crops ----
             void Crop(string id, Color young, Color ripe, int stages, float secs, float matureH, ItemDrop[] harvest)
@@ -1387,10 +1391,4 @@ namespace IsoCore.Foundation
             // biome_suite.json is the authority for the climate-selectable biome roster:
             // it sets each listed biome's climate rectangle, priority, and mob list, and
             // excludes everything else from climate selection. Safe no-op if the file is
-            // missing (SelectBiome then keeps its original nearest-centroid behaviour).
-            c.fallbackBiomeId = BiomeSuiteLoader.Apply(c.Biomes, c.Mobs, c.Blocks, out c.biomeSuiteApplied);
-
-            return c;
-        }
-    }
-}
+            // missing (SelectB
